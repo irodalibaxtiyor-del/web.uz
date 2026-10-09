@@ -1,0 +1,59 @@
+import { z } from 'zod';
+
+const envSchema = z.object({
+  NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+  PORT: z.coerce.number().int().positive().default(4000),
+  /** `pglite://memory`, `pglite://./.data/pg` (local dev/tests) or a `postgres://` URL. */
+  DATABASE_URL: z.string().min(1).default('pglite://./.data/pg'),
+  /** Comma-separated list of browser origins allowed to call the API with credentials. */
+  WEB_ORIGINS: z.string().default('http://localhost:3000'),
+  SESSION_TTL_HOURS: z.coerce
+    .number()
+    .int()
+    .positive()
+    .default(24 * 7),
+  SESSION_IDLE_HOURS: z.coerce.number().int().positive().default(24),
+  DEFAULT_ORG_SLUG: z.string().min(1).default('webdizayn'),
+  LOGIN_MAX_FAILURES: z.coerce.number().int().positive().default(5),
+  LOGIN_WINDOW_MINUTES: z.coerce.number().int().positive().default(15),
+  /** `process`: Playwright in a child process. `disabled`: every CHECK reports ERROR (never PASS). */
+  CHECK_ENGINE: z.enum(['process', 'disabled']).default('process'),
+  /** Chrome/Chromium executable for CHECK. Empty: the installed Google Chrome. */
+  CHECK_CHROME_PATH: z.string().optional(),
+  /** Chrome's renderer sandbox. Only `false` where the OS cannot provide it (e.g. some containers). */
+  CHECK_CHROMIUM_SANDBOX: z
+    .enum(['true', 'false'])
+    .default('true')
+    .transform((v) => v === 'true'),
+  CHECK_CONCURRENCY: z.coerce.number().int().min(1).max(16).default(2),
+  CHECK_BUDGET_MS: z.coerce.number().int().min(2_000).max(120_000).default(20_000),
+  /** Max CHECK runs per user per 10 minutes. */
+  CHECK_RATE_LIMIT: z.coerce.number().int().positive().default(20),
+});
+
+export type AppConfig = z.infer<typeof envSchema> & {
+  webOrigins: string[];
+  cookieSecure: boolean;
+};
+
+export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
+  const parsed = envSchema.safeParse(env);
+  if (!parsed.success) {
+    // Only report variable names, never values (they may be secrets).
+    const keys = parsed.error.issues.map((i) => i.path.join('.')).join(', ');
+    throw new Error(`Invalid environment configuration: ${keys}`);
+  }
+  const cfg = parsed.data;
+  if (cfg.NODE_ENV === 'production' && cfg.DATABASE_URL.startsWith('pglite://')) {
+    throw new Error('PGlite is not allowed in production; set DATABASE_URL to a Postgres URL');
+  }
+  return {
+    ...cfg,
+    webOrigins: cfg.WEB_ORIGINS.split(',')
+      .map((o) => o.trim())
+      .filter(Boolean),
+    cookieSecure: cfg.NODE_ENV === 'production',
+  };
+}
+
+export const APP_CONFIG = Symbol('APP_CONFIG');

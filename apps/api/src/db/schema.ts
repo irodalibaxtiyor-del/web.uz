@@ -1,0 +1,446 @@
+import { sql } from 'drizzle-orm';
+import {
+  boolean,
+  check,
+  index,
+  integer,
+  jsonb,
+  pgEnum,
+  pgTable,
+  primaryKey,
+  text,
+  timestamp,
+  uniqueIndex,
+  uuid,
+} from 'drizzle-orm/pg-core';
+import {
+  ASSIGNMENT_STATUSES,
+  CHECK_RUN_STATUSES,
+  COURSE_STATUSES,
+  DIFFICULTIES,
+  EXERCISE_STATUSES,
+  ROLES,
+  SUBMISSION_STATUSES,
+  type CheckEngineResult,
+  type CheckErrorCode,
+  type CheckRule,
+  type GradingPolicy,
+  type ProjectFile,
+  type RubricCriterion,
+} from '@webdizayn/shared';
+
+export const roleEnum = pgEnum('role', ROLES);
+export const courseStatusEnum = pgEnum('course_status', COURSE_STATUSES);
+export const progressStatusEnum = pgEnum('progress_status', ['IN_PROGRESS', 'COMPLETED']);
+export const difficultyEnum = pgEnum('difficulty', DIFFICULTIES);
+export const exerciseStatusEnum = pgEnum('exercise_status', EXERCISE_STATUSES);
+export const checkRunStatusEnum = pgEnum('check_run_status', CHECK_RUN_STATUSES);
+export const assignmentStatusEnum = pgEnum('assignment_status', ASSIGNMENT_STATUSES);
+export const submissionStatusEnum = pgEnum('submission_status', SUBMISSION_STATUSES);
+
+const createdAt = () => timestamp('created_at', { withTimezone: true }).notNull().defaultNow();
+
+export const organizations = pgTable('organizations', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  slug: text('slug').notNull().unique(),
+  name: text('name').notNull(),
+  createdAt: createdAt(),
+});
+
+export const users = pgTable(
+  'users',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    email: text('email').notNull(),
+    passwordHash: text('password_hash').notNull(),
+    fullName: text('full_name').notNull(),
+    createdAt: createdAt(),
+  },
+  (t) => [uniqueIndex('users_email_lower_idx').on(sql`lower(${t.email})`)],
+);
+
+export const memberships = pgTable(
+  'memberships',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    organizationId: uuid('organization_id')
+      .notNull()
+      .references(() => organizations.id, { onDelete: 'cascade' }),
+    role: roleEnum('role').notNull(),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    uniqueIndex('memberships_user_org_idx').on(t.userId, t.organizationId),
+    index('memberships_org_idx').on(t.organizationId),
+  ],
+);
+
+export const sessions = pgTable(
+  'sessions',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    /** SHA-256 of the cookie token; the raw token is never stored. */
+    tokenHash: text('token_hash').notNull().unique(),
+    createdAt: createdAt(),
+    lastSeenAt: timestamp('last_seen_at', { withTimezone: true }).notNull().defaultNow(),
+    expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+  },
+  (t) => [index('sessions_user_idx').on(t.userId)],
+);
+
+export const auditEvents = pgTable(
+  'audit_events',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    actorUserId: uuid('actor_user_id').references(() => users.id, { onDelete: 'set null' }),
+    organizationId: uuid('organization_id').references(() => organizations.id, {
+      onDelete: 'set null',
+    }),
+    action: text('action').notNull(),
+    targetType: text('target_type'),
+    targetId: text('target_id'),
+    metadata: jsonb('metadata').$type<Record<string, unknown>>(),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    index('audit_events_org_idx').on(t.organizationId, t.createdAt),
+    index('audit_events_actor_idx').on(t.actorUserId),
+  ],
+);
+
+const updatedAt = () => timestamp('updated_at', { withTimezone: true }).notNull().defaultNow();
+
+export const courses = pgTable(
+  'courses',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    organizationId: uuid('organization_id')
+      .notNull()
+      .references(() => organizations.id, { onDelete: 'cascade' }),
+    slug: text('slug').notNull(),
+    title: text('title').notNull(),
+    description: text('description').notNull().default(''),
+    status: courseStatusEnum('status').notNull().default('DRAFT'),
+    createdBy: uuid('created_by').references(() => users.id, { onDelete: 'set null' }),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (t) => [
+    uniqueIndex('courses_org_slug_idx').on(t.organizationId, t.slug),
+    index('courses_org_status_idx').on(t.organizationId, t.status),
+  ],
+);
+
+/** Teachers assigned to a course. A TEACHER may manage only courses listed here. */
+export const courseTeachers = pgTable(
+  'course_teachers',
+  {
+    courseId: uuid('course_id')
+      .notNull()
+      .references(() => courses.id, { onDelete: 'cascade' }),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.courseId, t.userId] }),
+    index('course_teachers_user_idx').on(t.userId),
+  ],
+);
+
+export const modules = pgTable(
+  'modules',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    courseId: uuid('course_id')
+      .notNull()
+      .references(() => courses.id, { onDelete: 'cascade' }),
+    title: text('title').notNull(),
+    position: integer('position').notNull(),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    index('modules_course_pos_idx').on(t.courseId, t.position),
+    check('modules_position_nonneg', sql`${t.position} >= 0`),
+  ],
+);
+
+export const lessons = pgTable(
+  'lessons',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    moduleId: uuid('module_id')
+      .notNull()
+      .references(() => modules.id, { onDelete: 'cascade' }),
+    /** Denormalized for course-scoped lookups and ownership checks. */
+    courseId: uuid('course_id')
+      .notNull()
+      .references(() => courses.id, { onDelete: 'cascade' }),
+    title: text('title').notNull(),
+    content: text('content').notNull().default(''),
+    position: integer('position').notNull(),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (t) => [
+    index('lessons_module_pos_idx').on(t.moduleId, t.position),
+    index('lessons_course_idx').on(t.courseId),
+    check('lessons_position_nonneg', sql`${t.position} >= 0`),
+  ],
+);
+
+export const enrollments = pgTable(
+  'enrollments',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    courseId: uuid('course_id')
+      .notNull()
+      .references(() => courses.id, { onDelete: 'cascade' }),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    uniqueIndex('enrollments_user_course_idx').on(t.userId, t.courseId),
+    index('enrollments_course_idx').on(t.courseId),
+  ],
+);
+
+export const lessonProgress = pgTable(
+  'lesson_progress',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    lessonId: uuid('lesson_id')
+      .notNull()
+      .references(() => lessons.id, { onDelete: 'cascade' }),
+    courseId: uuid('course_id')
+      .notNull()
+      .references(() => courses.id, { onDelete: 'cascade' }),
+    status: progressStatusEnum('status').notNull(),
+    startedAt: timestamp('started_at', { withTimezone: true }).notNull().defaultNow(),
+    completedAt: timestamp('completed_at', { withTimezone: true }),
+  },
+  (t) => [
+    uniqueIndex('lesson_progress_user_lesson_idx').on(t.userId, t.lessonId),
+    index('lesson_progress_user_course_idx').on(t.userId, t.courseId),
+  ],
+);
+
+export const exercises = pgTable(
+  'exercises',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    lessonId: uuid('lesson_id')
+      .notNull()
+      .references(() => lessons.id, { onDelete: 'cascade' }),
+    /** Denormalized for course-scoped ownership checks. */
+    courseId: uuid('course_id')
+      .notNull()
+      .references(() => courses.id, { onDelete: 'cascade' }),
+    title: text('title').notNull(),
+    description: text('description').notNull().default(''),
+    instructions: text('instructions').notNull().default(''),
+    /** Student-visible description of the expected result. Hidden CHECK rules live elsewhere (12C). */
+    expectedBehavior: text('expected_behavior').notNull().default(''),
+    starterFiles: jsonb('starter_files').$type<ProjectFile[]>().notNull(),
+    difficulty: difficultyEnum('difficulty').notNull().default('EASY'),
+    position: integer('position').notNull(),
+    isActive: boolean('is_active').notNull().default(true),
+    /** Hidden CHECK rules. Staff-only; students get a safe summary of run results. */
+    checks: jsonb('checks').$type<CheckRule[]>().notNull().default([]),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (t) => [
+    index('exercises_lesson_pos_idx').on(t.lessonId, t.position),
+    index('exercises_course_idx').on(t.courseId),
+    check('exercises_position_nonneg', sql`${t.position} >= 0`),
+  ],
+);
+
+/** A student's own workspace and status for one exercise. Only that student may read it. */
+export const studentExercises = pgTable(
+  'student_exercises',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    exerciseId: uuid('exercise_id')
+      .notNull()
+      .references(() => exercises.id, { onDelete: 'cascade' }),
+    courseId: uuid('course_id')
+      .notNull()
+      .references(() => courses.id, { onDelete: 'cascade' }),
+    lessonId: uuid('lesson_id')
+      .notNull()
+      .references(() => lessons.id, { onDelete: 'cascade' }),
+    status: exerciseStatusEnum('status').notNull().default('NOT_STARTED'),
+    files: jsonb('files').$type<ProjectFile[]>().notNull(),
+    teacherNote: text('teacher_note'),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+    passedAt: timestamp('passed_at', { withTimezone: true }),
+  },
+  (t) => [
+    uniqueIndex('student_exercises_user_exercise_idx').on(t.userId, t.exerciseId),
+    index('student_exercises_exercise_idx').on(t.exerciseId),
+    index('student_exercises_user_lesson_idx').on(t.userId, t.lessonId),
+  ],
+);
+
+/**
+ * One server-side CHECK of a student's saved workspace. Files and rules are snapshotted at
+ * enqueue time, so a run is immutable evidence of what was checked against what.
+ */
+export const checkRuns = pgTable(
+  'check_runs',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    exerciseId: uuid('exercise_id')
+      .notNull()
+      .references(() => exercises.id, { onDelete: 'cascade' }),
+    courseId: uuid('course_id')
+      .notNull()
+      .references(() => courses.id, { onDelete: 'cascade' }),
+    status: checkRunStatusEnum('status').notNull().default('QUEUED'),
+    errorCode: text('error_code').$type<CheckErrorCode>(),
+    files: jsonb('files').$type<ProjectFile[]>().notNull(),
+    rules: jsonb('rules').$type<CheckRule[]>().notNull(),
+    results: jsonb('results').$type<CheckEngineResult['results']>(),
+    durationMs: integer('duration_ms'),
+    createdAt: createdAt(),
+    startedAt: timestamp('started_at', { withTimezone: true }),
+    finishedAt: timestamp('finished_at', { withTimezone: true }),
+  },
+  (t) => [
+    index('check_runs_user_exercise_idx').on(t.userId, t.exerciseId, t.createdAt),
+    index('check_runs_user_created_idx').on(t.userId, t.createdAt),
+    index('check_runs_status_idx').on(t.status),
+  ],
+);
+
+export const assignments = pgTable(
+  'assignments',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    lessonId: uuid('lesson_id')
+      .notNull()
+      .references(() => lessons.id, { onDelete: 'cascade' }),
+    /** Denormalized for course-scoped ownership checks. */
+    courseId: uuid('course_id')
+      .notNull()
+      .references(() => courses.id, { onDelete: 'cascade' }),
+    title: text('title').notNull(),
+    instructions: text('instructions').notNull().default(''),
+    requirements: jsonb('requirements').$type<string[]>().notNull().default([]),
+    starterFiles: jsonb('starter_files').$type<ProjectFile[]>().notNull(),
+    rubric: jsonb('rubric').$type<RubricCriterion[]>().notNull().default([]),
+    gradingPolicy: jsonb('grading_policy').$type<GradingPolicy>().notNull(),
+    deadline: timestamp('deadline', { withTimezone: true }),
+    maxAttempts: integer('max_attempts').notNull().default(3),
+    /** Hidden CHECK rules run on each submitted version. Staff-only. */
+    checks: jsonb('checks').$type<CheckRule[]>().notNull().default([]),
+    position: integer('position').notNull(),
+    status: assignmentStatusEnum('status').notNull().default('DRAFT'),
+    createdBy: uuid('created_by').references(() => users.id, { onDelete: 'set null' }),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+    publishedAt: timestamp('published_at', { withTimezone: true }),
+    closedAt: timestamp('closed_at', { withTimezone: true }),
+  },
+  (t) => [
+    index('assignments_lesson_pos_idx').on(t.lessonId, t.position),
+    index('assignments_course_idx').on(t.courseId),
+    check('assignments_position_nonneg', sql`${t.position} >= 0`),
+    check('assignments_attempts_range', sql`${t.maxAttempts} between 1 and 20`),
+  ],
+);
+
+/** One per student and assignment: status and the mutable working draft. */
+export const submissions = pgTable(
+  'submissions',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    assignmentId: uuid('assignment_id')
+      .notNull()
+      .references(() => assignments.id, { onDelete: 'cascade' }),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    courseId: uuid('course_id')
+      .notNull()
+      .references(() => courses.id, { onDelete: 'cascade' }),
+    status: submissionStatusEnum('status').notNull().default('DRAFT'),
+    files: jsonb('files').$type<ProjectFile[]>().notNull(),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+    lastSubmittedAt: timestamp('last_submitted_at', { withTimezone: true }),
+  },
+  (t) => [
+    uniqueIndex('submissions_assignment_user_idx').on(t.assignmentId, t.userId),
+    index('submissions_user_idx').on(t.userId),
+  ],
+);
+
+/** Each submit creates a new row. Rows are never updated (enforced by a DB trigger). */
+export const submissionVersions = pgTable(
+  'submission_versions',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    submissionId: uuid('submission_id')
+      .notNull()
+      .references(() => submissions.id, { onDelete: 'cascade' }),
+    assignmentId: uuid('assignment_id')
+      .notNull()
+      .references(() => assignments.id, { onDelete: 'cascade' }),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    version: integer('version').notNull(),
+    files: jsonb('files').$type<ProjectFile[]>().notNull(),
+    isLate: boolean('is_late').notNull().default(false),
+    submittedAt: timestamp('submitted_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex('submission_versions_submission_version_idx').on(t.submissionId, t.version),
+    check('submission_versions_version_pos', sql`${t.version} >= 1`),
+  ],
+);
+
+/** CHECK of one submitted version; kept apart so versions stay insert-only. */
+export const submissionChecks = pgTable(
+  'submission_checks',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    versionId: uuid('version_id')
+      .notNull()
+      .references(() => submissionVersions.id, { onDelete: 'cascade' }),
+    status: checkRunStatusEnum('status').notNull().default('QUEUED'),
+    errorCode: text('error_code').$type<CheckErrorCode>(),
+    rules: jsonb('rules').$type<CheckRule[]>().notNull(),
+    results: jsonb('results').$type<CheckEngineResult['results']>(),
+    durationMs: integer('duration_ms'),
+    createdAt: createdAt(),
+    startedAt: timestamp('started_at', { withTimezone: true }),
+    finishedAt: timestamp('finished_at', { withTimezone: true }),
+  },
+  (t) => [
+    uniqueIndex('submission_checks_version_idx').on(t.versionId),
+    index('submission_checks_status_idx').on(t.status),
+  ],
+);

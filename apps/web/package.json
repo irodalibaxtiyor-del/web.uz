@@ -1,0 +1,36 @@
+{
+  "name": "@webdizayn/web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "predev": "node scripts/copy-monaco.mjs",
+    "dev": "next dev -p 3000",
+    "prebuild": "node scripts/copy-monaco.mjs",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
+    "@webdizayn/shared": "workspace:*",
+    "monaco-editor": "^0.57.0",
+    "next": "16.4.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "eslint": "^9.39.0",
+    "eslint-config-next": "16.4.0",
+    "tailwindcss": "^4.3.3",
+    "typescript": "5.9.3",
+    "vitest": "^4.0.0"
+  }
+}

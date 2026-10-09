@@ -1,0 +1,9 @@
+node_modules
+dist
+.next
+coverage
+pnpm-lock.yaml
+apps/api/drizzle
+WEBDIZAYN_UZ_COMPLETE_CLAUDE_ROADMAP.md
+apps/web/next-env.d.ts
+apps/web/public/monaco

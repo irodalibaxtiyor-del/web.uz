@@ -1,0 +1,23 @@
+{
+  "name": "webdizayn-uz",
+  "private": true,
+  "packageManager": "pnpm@12.9.1",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev:api": "pnpm --filter @webdizayn/api dev",
+    "dev:web": "pnpm --filter @webdizayn/web dev",
+    "dev:sandbox": "pnpm --filter @webdizayn/sandbox dev",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "pnpm -r lint",
+    "test": "pnpm -r test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2",
+    "typescript": "5.9.3"
+  }
+}

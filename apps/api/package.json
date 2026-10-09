@@ -1,0 +1,51 @@
+{
+  "name": "@webdizayn/api",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "node --watch -r @swc-node/register src/main.ts",
+    "start": "node dist/main.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint src test",
+    "test": "vitest run",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "node -r @swc-node/register src/db/migrate.ts",
+    "db:seed": "node -r @swc-node/register src/db/seed.ts"
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "^0.5.8",
+    "@nestjs/common": "^11.2.7",
+    "@nestjs/core": "^11.2.7",
+    "@nestjs/platform-express": "^11.2.7",
+    "@node-rs/argon2": "^2.2.2",
+    "@webdizayn/check-engine": "workspace:*",
+    "@webdizayn/shared": "workspace:*",
+    "cookie-parser": "^1.4.7",
+    "drizzle-orm": "^0.45.3",
+    "helmet": "^8.1.0",
+    "pg": "^8.23.1",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.0",
+    "@nestjs/testing": "^11.2.7",
+    "@swc-node/register": "^1.11.1",
+    "@swc/core": "^1.16.13",
+    "@types/cookie-parser": "^1.4.9",
+    "@types/express": "^5.0.3",
+    "@types/express-serve-static-core": "^5.1.3",
+    "@types/node": "^24.0.0",
+    "@types/pg": "^8.15.5",
+    "@types/supertest": "^6.0.3",
+    "drizzle-kit": "^0.31.11",
+    "eslint": "^9.39.0",
+    "supertest": "^7.1.4",
+    "typescript": "5.9.3",
+    "typescript-eslint": "^8.46.0",
+    "unplugin-swc": "^2.0.0",
+    "vitest": "^4.0.0"
+  }
+}
