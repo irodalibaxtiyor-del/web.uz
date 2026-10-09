@@ -420,3 +420,52 @@ Har bir amal shu yerga qo'shib boriladi (eng yangisi pastda).
   - Topshiriqni o'chirish yo'q. Muddat avtomatik yopmaydi (faqat qabul qilish qoidasini o'zgartiradi).
   - Topshiriq darsni tugatishga ta'sir qilmaydi.
 - Keyingi qadam: **12E — Teacher review** (javobni ko'rish, kod preview, CHECK natijalari, rubrika bo'yicha ball, feedback, qayta ishlash so'rovi, yakunlash, audit).
+
+### Git va GitHub
+
+- Foydalanuvchi GitHub token berdi va push'ni so'radi. Token GitHub API orqali tekshirildi: egasi `irodalibaxtiyor-del`, unda bo'sh **public** repo `web.uz` bor.
+- Public repo bo'lgani uchun lokal demo paroli CLAUDE.md dan olib tashlandi (lokal Claude xotirasiga ko'chirildi).
+- Git config o'zgartirilmadi. Muallif faqat commit buyrug'ida `-c` bilan berildi: `irodalibaxtiyor-del` va GitHub noreply email.
+- Branch `master` → `main`. Birinchi commit `2d639c8`: `phase(f0-12d)`. Fazalar git sozlanishidan oldin qilingani uchun bitta commitga tushdi.
+- `origin` = `https://github.com/irodalibaxtiyor-del/web.uz.git` (tokensiz). Token faqat bitta buyruqda vaqtinchalik HTTP header sifatida ishlatildi, hech qayerda saqlanmadi.
+- **Push 403 bilan rad etildi:** fine-grained tokenda faqat `metadata=read` bor. Foydalanuvchi tokenga `Contents: Read and write` ruxsatini berishi kerak. Token chatda ochiq bo'lgani uchun uni revoke qilib, yangisini yaratish tavsiya etildi.
+
+### 12E — Teacher review
+
+- **Holatlar mashinasi** (faqat o'qituvchi workflow orqali, kurs xodimi bo'lishi shart):
+  - `start-review`: SUBMITTED → IN_REVIEW (talaba endi javobni almashtira olmaydi);
+  - `request-revision`: IN_REVIEW / GRADED → REVISION_REQUESTED (feedback majburiy, ball tozalanadi);
+  - `grade`: IN_REVIEW / GRADED → GRADED (FINALIZED'gacha qayta baholash mumkin);
+  - `finalize`: GRADED → FINALIZED (oxirgi baho va feedback ko'chiriladi, keyin hech narsa o'zgarmaydi).
+  - Har amalda o'qituvchi ko'rgan versiya raqami yuboriladi. U eng yangisi bo'lmasa 409 `STALE_VERSION`.
+  - Submission qatori `FOR UPDATE` bilan qulflanadi: parallel finalize'da faqat bittasi o'tadi.
+- **Ochiq masala yechildi:** o'qituvchi qayta ishlashni so'raganda talaba urinishlar limitidan tashqari qayta topshira oladi (umumiy cheklov `SUBMISSION_MAX_VERSIONS` = 40). Qayta topshirilgach, oddiy limit yana amal qiladi.
+- **Shared** (`reviews.ts`): `requestRevisionSchema`, `gradeSubmissionSchema` (`scores` yoki `score` — faqat bittasi), `reviewVersionSchema`. `scoreTotal()` API va UI uchun umumiy: har mezon bir marta, 0..maxPoints; rubrikasiz bo'lsa 0..maxScore. Tiplar: `SubmissionReviewView`, `StudentReview`, `StudentGrade`, `ReviewEntry`, `StaffVersionView`. 4 ta yangi test.
+- Migratsiya `0005_reviews.sql`: `submission_reviews` (append-only tarix: harakat, versiya, reviewer, feedback, ball, rubrika ballari) va `submissions.score`.
+  - Trigger UPDATE'ni taqiqlaydi. Yagona istisno: reviewer akkaunti o'chirilganda `ON DELETE SET NULL` (aks holda o'qituvchini o'chirib bo'lmay qolardi — testda tekshirildi).
+- **API** (`ReviewsService`, `ReviewsController`, `/assignments/:id/submissions/:studentId`):
+  - `GET`: versiyalar, to'liq CHECK tafsiloti (yashirin qoidalar bilan), review tarixi (reviewer ismi bilan).
+  - `GET versions/:n`: kod preview.
+  - `POST start-review | request-revision | grade | finalize`.
+  - Audit: `submission.review_start`, `submission.revision_request`, `submission.grade`, `submission.finalize` (studentId, versiya, ball bilan).
+  - Talaba ko'rinishiga `review` qo'shildi: oxirgi feedback va baho (ball, o'tdi yoki yo'q, yakuniymi, rubrika ballari). Reviewer kimligi talabaga ko'rsatilmaydi.
+  - Xodimlar jadvaliga `score` qo'shildi.
+  - Testlar `test/reviews.test.ts` (13 ta): RBAC (talaba 403, begona o'qituvchi 403, boshqa org 404, javobi yo'q talaba 404); to'liq CHECK va kod; noto'g'ri holatdan o'tish 409; eskirgan versiya 409; review paytida talaba bloklanadi; rubrika validatsiyasi; feedback majburiy; reviewer talabaga ko'rinmaydi; revision'dan keyin limitdan tashqari qayta topshirish; qayta baholash; parallel finalize; FINALIZED'dan keyin hech narsa o'zgarmaydi; immutable tarix va audit; rubrikasiz baholash; reviewer akkauntini o'chirish.
+- **Web**:
+  - Javoblar jadvalida "Ball" ustuni va "Ko'rib chiqish" havolasi.
+  - Yangi sahifa `/manage/assignments/[id]/submissions/[studentId]`:
+    - versiya tanlash, faqat o'qish uchun kod + sandbox preview;
+    - to'liq CHECK ("baho emas" izohi bilan);
+    - holatga qarab amallar: boshlash; rubrika bo'yicha ball (jami va o'tish balini jonli hisoblaydi) yoki bitta ball; feedback; baholash/yangilash; qayta ishlashni so'rash; yakunlash (tasdiq bilan);
+    - review tarixi.
+  - Talaba sahifasida feedback/baho paneli: qayta ishlash so'rovi (kutilayotgan yoki "oldingi izoh"), ball, o'tdi/o'tmadi, rubrika bo'yicha ballar, yakuniy yoki o'zgarishi mumkinligi.
+- Regressiya: typecheck ✅, lint ✅, test ✅ (shared 25 + sandbox 15 + web 15 + check-engine 12 + api 129 = **196**), build ✅, format ✅.
+- Brauzerda to'liq oqim bosib tekshirildi (`ui-12e.cjs`, demo topshiriq): o'qituvchi jadvaldan javobga o'tdi → ko'rib chiqishni boshladi → izoh bilan qayta ishlashni so'radi → Aziza panelda izohni ko'rdi va 2-versiyani topshirdi (CHECK 3/3) → o'qituvchi 2-versiyani rubrika bo'yicha baholadi (36+27+22 = 85) → Aziza bahoni, mezonlar bo'yicha ballarni va izohni ko'rdi. Konsol xatolari 0. Yakunlash API testlarida tekshirilgan.
+- Demo: Aziza'ning "Shaxsiy vizitka sahifasi" javobi **GRADED (85/100)**, yakunlanmagan. "Yakunlash" tugmasini o'qituvchi sifatida o'zingiz sinab ko'rishingiz mumkin.
+- **STATUS: READY_WITH_INFRASTRUCTURE_LIMITATIONS** (CHECK infratuzilma cheklovlari saqlanib qolgan).
+- Cheklovlar:
+  - Bitta javobni bir vaqtda ikki o'qituvchi tahrirlasa, faqat versiya va holat himoyalangan: ikkinchi `grade` birinchisini ustiga yozadi (tarixda ikkalasi ham qoladi).
+  - Talabaga baho/izoh haqida bildirishnoma (email yoki notification) yo'q.
+  - Satr darajasidagi izohlar (kod qatoriga comment) yo'q, feedback umumiy matn.
+  - FINALIZED bahoni bekor qilish mexanizmi yo'q (ataylab).
+- Keyingi qadam: **13A — Course map & progress**.

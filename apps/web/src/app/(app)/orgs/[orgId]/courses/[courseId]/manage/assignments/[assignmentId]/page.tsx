@@ -430,7 +430,8 @@ function Submissions({ base, assignmentId }: { base: string; assignmentId: strin
         Talabalar javoblari
       </h2>
       <p className="text-sm text-slate-500">
-        Javoblarni ko&apos;rib chiqish va baholash keyingi bosqichda qo&apos;shiladi.
+        &quot;Ko&apos;rib chiqish&quot; orqali kodni, CHECK natijasini ko&apos;rasiz, rubrika
+        bo&apos;yicha baholaysiz yoki qayta ishlashni so&apos;raysiz.
       </p>
       <LoadState state={state}>
         {(rows) =>
@@ -450,8 +451,14 @@ function Submissions({ base, assignmentId }: { base: string; assignmentId: strin
                     <th scope="col" className="py-2 pr-4">
                       Versiyalar
                     </th>
-                    <th scope="col" className="py-2">
+                    <th scope="col" className="py-2 pr-4">
                       Oxirgi topshirish
+                    </th>
+                    <th scope="col" className="py-2 pr-4">
+                      Ball
+                    </th>
+                    <th scope="col" className="py-2">
+                      <span className="sr-only">Amallar</span>
                     </th>
                   </tr>
                 </thead>
@@ -463,12 +470,24 @@ function Submissions({ base, assignmentId }: { base: string; assignmentId: strin
                         <SubmissionStatusBadge status={r.status} />
                       </td>
                       <td className="py-2 pr-4">{r.versions}</td>
-                      <td className="py-2">
+                      <td className="py-2 pr-4">
                         {r.lastSubmittedAt ? formatDateTime(r.lastSubmittedAt) : '—'}
                         {r.lastIsLate && (
                           <span className="ml-2 text-xs font-semibold text-amber-700 dark:text-amber-400">
                             kechikkan
                           </span>
+                        )}
+                      </td>
+                      <td className="py-2 pr-4">{r.score ?? '—'}</td>
+                      <td className="py-2 text-right">
+                        {r.versions > 0 && (
+                          <Link
+                            href={`${base}/manage/assignments/${assignmentId}/submissions/${r.userId}`}
+                            className="font-semibold text-brand-600 hover:underline dark:text-brand-400"
+                            aria-label={`${r.fullName}: javobni ko'rib chiqish`}
+                          >
+                            Ko&apos;rib chiqish
+                          </Link>
                         )}
                       </td>
                     </tr>

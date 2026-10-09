@@ -11,9 +11,9 @@ import {
   type PipeTransform,
 } from '@nestjs/common';
 import {
-  ASSIGNMENT_MAX_ATTEMPTS,
   createAssignmentSchema,
   previewChecksSchema,
+  SUBMISSION_MAX_VERSIONS,
   saveSubmissionDraftSchema,
   updateAssignmentSchema,
   type CreateAssignmentInput,
@@ -27,11 +27,11 @@ import type { AuthContext, MembershipContext } from '../common/types';
 import { ZodPipe } from '../common/zod.pipe';
 import { AssignmentsService } from './assignments.service';
 
-/** Version numbers in URLs: positive integers within the attempt limit, otherwise 404. */
-class VersionPipe implements PipeTransform<string, number> {
+/** Version numbers in URLs: positive integers within the version cap, otherwise 404. */
+export class VersionPipe implements PipeTransform<string, number> {
   transform(value: string): number {
     const n = Number(value);
-    if (!/^\d{1,2}$/.test(value) || n < 1 || n > ASSIGNMENT_MAX_ATTEMPTS) {
+    if (!/^\d{1,2}$/.test(value) || n < 1 || n > SUBMISSION_MAX_VERSIONS) {
       throw new NotFoundException('Versiya topilmadi');
     }
     return n;

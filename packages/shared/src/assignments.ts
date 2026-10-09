@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { CHECK_ID_RE, checkRulesSchema, type CheckRule, type CheckRunView } from './checks';
 import { projectFilesSchema, type ProjectFile } from './exercises';
+import type { StudentReview } from './reviews';
 
 export const ASSIGNMENT_STATUSES = ['DRAFT', 'PUBLISHED', 'CLOSED'] as const;
 export type AssignmentStatus = (typeof ASSIGNMENT_STATUSES)[number];
@@ -23,6 +24,8 @@ export const SUBMITTABLE_STATUSES: readonly SubmissionStatus[] = [
 ];
 
 export const ASSIGNMENT_MAX_ATTEMPTS = 20;
+/** Hard cap on versions per submission, including resubmits after a requested revision. */
+export const SUBMISSION_MAX_VERSIONS = 40;
 
 export const rubricCriterionSchema = z.object({
   id: z.string().regex(CHECK_ID_RE),
@@ -175,6 +178,8 @@ export interface AssignmentView {
     wouldBeLate: boolean;
   };
   versions: SubmissionVersionSummary[];
+  /** Latest teacher feedback / grade, if any. */
+  review: StudentReview | null;
 }
 
 export interface SubmissionVersionView {
@@ -192,4 +197,6 @@ export interface AssignmentSubmissionRow {
   versions: number;
   lastSubmittedAt: string | null;
   lastIsLate: boolean;
+  /** Current grade (GRADED or FINALIZED), otherwise null. */
+  score: number | null;
 }

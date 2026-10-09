@@ -10,6 +10,7 @@ import {
 import { and, asc, count, desc, eq, inArray, isNotNull, max, sql } from 'drizzle-orm';
 import {
   rubricMatchesPolicy,
+  SUBMISSION_MAX_VERSIONS,
   SUBMITTABLE_STATUSES,
   type AssignmentAdmin,
   type AssignmentSubmissionRow,
@@ -18,6 +19,7 @@ import {
   type CreateAssignmentInput,
   type ProjectFile,
   type SubmissionVersionView,
+  type StudentReview,
   type SubmitBlocker,
   type UpdateAssignmentInput,
 } from '@webdizayn/shared';
@@ -34,6 +36,7 @@ import {
   assignments,
   enrollments,
   submissionChecks,
+  submissionReviews,
   submissions,
   submissionVersions,
   users,
@@ -62,7 +65,11 @@ export function submitState(
   if (!SUBMITTABLE_STATUSES.includes(sub.status)) {
     return { blockedBy: 'SUBMISSION_LOCKED', late: false };
   }
-  if (attemptsUsed >= a.maxAttempts) return { blockedBy: 'ATTEMPTS_EXHAUSTED', late: false };
+  // A revision the teacher asked for always earns one more submission (within a hard cap).
+  const limit = sub.status === 'REVISION_REQUESTED' ? SUBMISSION_MAX_VERSIONS : a.maxAttempts;
+  if (attemptsUsed >= Math.min(limit, SUBMISSION_MAX_VERSIONS)) {
+    return { blockedBy: 'ATTEMPTS_EXHAUSTED', late: false };
+  }
   // A revision the teacher asked for is not bound by the original deadline.
   const past = a.deadline !== null && now > a.deadline && sub.status !== 'REVISION_REQUESTED';
   if (past && !a.gradingPolicy.allowLate) return { blockedBy: 'DEADLINE_PASSED', late: false };
@@ -253,6 +260,7 @@ export class AssignmentsService implements OnModuleInit {
         fullName: users.fullName,
         submissionId: submissions.id,
         status: submissions.status,
+        score: submissions.score,
         lastSubmittedAt: submissions.lastSubmittedAt,
       })
       .from(enrollments)
@@ -286,6 +294,7 @@ export class AssignmentsService implements OnModuleInit {
         versions: v?.version ?? 0,
         lastSubmittedAt: r.lastSubmittedAt?.toISOString() ?? null,
         lastIsLate: v?.isLate ?? false,
+        score: r.score,
       };
     });
   }
@@ -523,6 +532,39 @@ export class AssignmentsService implements OnModuleInit {
       .orderBy(desc(submissionVersions.version));
     const used = versions[0]?.version ?? 0;
     const state = submitState(a, sub, used);
+    const [latest] = await this.dbs.db
+      .select({
+        action: submissionReviews.action,
+        feedback: submissionReviews.feedback,
+        score: submissionReviews.score,
+        scores: submissionReviews.scores,
+        createdAt: submissionReviews.createdAt,
+        version: submissionVersions.version,
+      })
+      .from(submissionReviews)
+      .innerJoin(submissionVersions, eq(submissionVersions.id, submissionReviews.versionId))
+      .where(eq(submissionReviews.submissionId, sub.id))
+      .orderBy(desc(submissionReviews.createdAt))
+      .limit(1);
+    // Reviewer identity is not shown to the student.
+    const review: StudentReview | null = latest
+      ? {
+          action: latest.action,
+          version: latest.version,
+          feedback: latest.feedback,
+          createdAt: latest.createdAt.toISOString(),
+          grade:
+            latest.action === 'REVISION_REQUESTED' || latest.score === null
+              ? null
+              : {
+                  score: latest.score,
+                  maxScore: a.gradingPolicy.maxScore,
+                  passed: latest.score >= a.gradingPolicy.passingScore,
+                  final: latest.action === 'FINALIZED',
+                  scores: latest.scores,
+                },
+        }
+      : null;
     return {
       id: a.id,
       lessonId: a.lessonId,
@@ -549,6 +591,7 @@ export class AssignmentsService implements OnModuleInit {
         submittedAt: v.submittedAt.toISOString(),
         check: v.check ? toView(v.check) : null,
       })),
+      review,
     };
   }
 

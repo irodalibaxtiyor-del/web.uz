@@ -19,6 +19,7 @@ import {
   COURSE_STATUSES,
   DIFFICULTIES,
   EXERCISE_STATUSES,
+  REVIEW_ACTIONS,
   ROLES,
   SUBMISSION_STATUSES,
   type CheckEngineResult,
@@ -27,6 +28,7 @@ import {
   type GradingPolicy,
   type ProjectFile,
   type RubricCriterion,
+  type RubricScore,
 } from '@webdizayn/shared';
 
 export const roleEnum = pgEnum('role', ROLES);
@@ -37,6 +39,7 @@ export const exerciseStatusEnum = pgEnum('exercise_status', EXERCISE_STATUSES);
 export const checkRunStatusEnum = pgEnum('check_run_status', CHECK_RUN_STATUSES);
 export const assignmentStatusEnum = pgEnum('assignment_status', ASSIGNMENT_STATUSES);
 export const submissionStatusEnum = pgEnum('submission_status', SUBMISSION_STATUSES);
+export const reviewActionEnum = pgEnum('review_action', REVIEW_ACTIONS);
 
 const createdAt = () => timestamp('created_at', { withTimezone: true }).notNull().defaultNow();
 
@@ -387,6 +390,8 @@ export const submissions = pgTable(
       .references(() => courses.id, { onDelete: 'cascade' }),
     status: submissionStatusEnum('status').notNull().default('DRAFT'),
     files: jsonb('files').$type<ProjectFile[]>().notNull(),
+    /** Current grade, set only through the teacher review workflow. */
+    score: integer('score'),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
     lastSubmittedAt: timestamp('last_submitted_at', { withTimezone: true }),
@@ -443,4 +448,25 @@ export const submissionChecks = pgTable(
     uniqueIndex('submission_checks_version_idx').on(t.versionId),
     index('submission_checks_status_idx').on(t.status),
   ],
+);
+
+/** Teacher review history. Insert-only (enforced by a DB trigger); the latest row is current. */
+export const submissionReviews = pgTable(
+  'submission_reviews',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    submissionId: uuid('submission_id')
+      .notNull()
+      .references(() => submissions.id, { onDelete: 'cascade' }),
+    versionId: uuid('version_id')
+      .notNull()
+      .references(() => submissionVersions.id, { onDelete: 'cascade' }),
+    reviewerId: uuid('reviewer_id').references(() => users.id, { onDelete: 'set null' }),
+    action: reviewActionEnum('action').notNull(),
+    feedback: text('feedback').notNull().default(''),
+    score: integer('score'),
+    scores: jsonb('scores').$type<RubricScore[]>(),
+    createdAt: createdAt(),
+  },
+  (t) => [index('submission_reviews_submission_idx').on(t.submissionId, t.createdAt)],
 );

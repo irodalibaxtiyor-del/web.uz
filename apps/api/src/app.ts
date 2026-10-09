@@ -5,6 +5,8 @@ import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import { AssignmentsController } from './assignments/assignments.controller';
 import { AssignmentsService } from './assignments/assignments.service';
+import { ReviewsController } from './assignments/reviews.controller';
+import { ReviewsService } from './assignments/reviews.service';
 import { AuditService } from './audit/audit.service';
 import { AuthController } from './auth/auth.controller';
 import { AuthGuard } from './auth/auth.guard';
@@ -49,6 +51,7 @@ export class AppModule {
         ExercisesController,
         ChecksController,
         AssignmentsController,
+        ReviewsController,
       ],
       providers: [
         { provide: APP_CONFIG, useValue: config },
@@ -65,6 +68,7 @@ export class AppModule {
         CheckQueue,
         ChecksService,
         AssignmentsService,
+        ReviewsService,
         // Order matters: authenticate first, then resolve org role.
         { provide: APP_GUARD, useClass: AuthGuard },
         { provide: APP_GUARD, useClass: OrgRoleGuard },

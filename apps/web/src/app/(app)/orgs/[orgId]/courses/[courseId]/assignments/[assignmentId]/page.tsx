@@ -206,6 +206,8 @@ function Workspace({ initial, courseBase }: { initial: AssignmentView; courseBas
         </div>
       </div>
 
+      {a.review && <ReviewPanel view={a} />}
+
       <section aria-label="Javob muharriri" className="space-y-3">
         <Playground
           files={files}
@@ -317,6 +319,84 @@ function Versions({ view, url }: { view: AssignmentView; url: string }) {
             onChange={() => {}}
           />
         </div>
+      )}
+    </section>
+  );
+}
+
+/** Latest teacher feedback and grade. GRADED may still change; FINALIZED is final. */
+function ReviewPanel({ view }: { view: AssignmentView }) {
+  const r = view.review!;
+  const g = r.grade;
+  const titles = new Map(view.rubric.map((c) => [c.id, c]));
+  // After a resubmit the revision request is history, not a pending task.
+  const pending = !g && view.submission.status === 'REVISION_REQUESTED';
+  return (
+    <section
+      aria-labelledby="review-h"
+      className={`card space-y-4 p-6 sm:p-8 ${
+        pending ? 'border border-amber-300 dark:border-amber-800' : ''
+      }`}
+    >
+      <header className="flex flex-wrap items-center justify-between gap-3">
+        <h2 id="review-h" className="text-xl font-semibold">
+          {g
+            ? g.final
+              ? 'Yakuniy baho'
+              : 'Baho'
+            : pending
+              ? 'O‘qituvchi qayta ishlashni so‘radi'
+              : 'O‘qituvchining oldingi izohi'}
+        </h2>
+        <span className="text-sm text-slate-500">
+          {r.version}-versiya · {formatDateTime(r.createdAt)}
+        </span>
+      </header>
+      {g && (
+        <div className="flex flex-wrap items-baseline gap-3">
+          <span className="text-3xl font-bold">
+            {g.score}
+            <span className="text-lg font-normal text-slate-500"> / {g.maxScore}</span>
+          </span>
+          <span
+            className={`text-sm font-semibold ${
+              g.passed
+                ? 'text-emerald-700 dark:text-emerald-400'
+                : 'text-amber-700 dark:text-amber-400'
+            }`}
+          >
+            {g.passed ? '✓ O‘tdi' : `! O‘tish bali: ${view.gradingPolicy.passingScore}`}
+          </span>
+          {!g.final && (
+            <span className="text-xs text-slate-500">
+              Baho hali yakunlanmagan va o‘zgarishi mumkin.
+            </span>
+          )}
+        </div>
+      )}
+      {g?.scores && (
+        <table className="w-full text-sm">
+          <tbody>
+            {g.scores.map((s) => (
+              <tr key={s.criterionId} className="border-b border-slate-100 dark:border-slate-800">
+                <td className="py-2 pr-3">{titles.get(s.criterionId)?.title ?? s.criterionId}</td>
+                <td className="py-2 text-right font-semibold whitespace-nowrap">
+                  {s.points} / {titles.get(s.criterionId)?.maxPoints ?? '?'}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+      {r.feedback && (
+        <blockquote className="rounded-xl bg-surface px-4 py-3 whitespace-pre-wrap dark:bg-slate-800/50">
+          {r.feedback}
+        </blockquote>
+      )}
+      {pending && (
+        <p className="text-sm text-slate-600 dark:text-slate-400">
+          Izohni hisobga olib kodni tuzating va yangi versiyani topshiring.
+        </p>
       )}
     </section>
   );
