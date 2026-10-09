@@ -27,6 +27,7 @@ import {
   type CheckRule,
   type GradingPolicy,
   type ProjectFile,
+  type QuizQuestion,
   type RubricCriterion,
   type RubricScore,
 } from '@webdizayn/shared';
@@ -469,4 +470,60 @@ export const submissionReviews = pgTable(
     createdAt: createdAt(),
   },
   (t) => [index('submission_reviews_submission_idx').on(t.submissionId, t.createdAt)],
+);
+
+export const quizzes = pgTable(
+  'quizzes',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    lessonId: uuid('lesson_id')
+      .notNull()
+      .references(() => lessons.id, { onDelete: 'cascade' }),
+    /** Denormalized for course-scoped ownership checks and the course map. */
+    courseId: uuid('course_id')
+      .notNull()
+      .references(() => courses.id, { onDelete: 'cascade' }),
+    title: text('title').notNull(),
+    description: text('description').notNull().default(''),
+    /** Includes the correct answers: staff-only, never serialized to students. */
+    questions: jsonb('questions').$type<QuizQuestion[]>().notNull().default([]),
+    passingPercent: integer('passing_percent').notNull().default(70),
+    isActive: boolean('is_active').notNull().default(false),
+    position: integer('position').notNull(),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (t) => [
+    index('quizzes_lesson_pos_idx').on(t.lessonId, t.position),
+    index('quizzes_course_idx').on(t.courseId),
+    check('quizzes_position_nonneg', sql`${t.position} >= 0`),
+    check('quizzes_passing_range', sql`${t.passingPercent} between 1 and 100`),
+  ],
+);
+
+/** Graded attempts. The quiz counts as passed once any attempt passed. */
+export const quizAttempts = pgTable(
+  'quiz_attempts',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    quizId: uuid('quiz_id')
+      .notNull()
+      .references(() => quizzes.id, { onDelete: 'cascade' }),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    courseId: uuid('course_id')
+      .notNull()
+      .references(() => courses.id, { onDelete: 'cascade' }),
+    answers: jsonb('answers').$type<{ questionId: string; optionIds: string[] }[]>().notNull(),
+    correct: integer('correct').notNull(),
+    total: integer('total').notNull(),
+    score: integer('score').notNull(),
+    passed: boolean('passed').notNull(),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    index('quiz_attempts_user_quiz_idx').on(t.userId, t.quizId, t.createdAt),
+    index('quiz_attempts_quiz_idx').on(t.quizId),
+  ],
 );

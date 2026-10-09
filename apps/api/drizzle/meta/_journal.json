@@ -43,6 +43,13 @@
       "when": 1791546768887,
       "tag": "0005_reviews",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1791548967509,
+      "tag": "0006_quizzes",
+      "breakpoints": true
     }
   ]
 }

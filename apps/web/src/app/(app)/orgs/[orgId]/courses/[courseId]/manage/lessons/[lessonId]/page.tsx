@@ -7,6 +7,7 @@ import { useId, useState, type FormEvent } from 'react';
 import { AssignmentsPanel } from '@/components/assignments-panel';
 import { ExercisesPanel } from '@/components/exercises-panel';
 import { Markdown } from '@/components/markdown';
+import { QuizzesPanel } from '@/components/quizzes-panel';
 import { Button, ErrorText, inputClass, LoadState } from '@/components/ui';
 import { send } from '@/lib/api';
 import { useApi } from '@/lib/use-api';
@@ -33,6 +34,7 @@ export default function EditLessonPage() {
         <div className="card space-y-12 p-6 sm:p-10">
           <Editor key={lesson.id} lesson={lesson} base={base} />
           <ExercisesPanel base={base} lessonId={lesson.id} />
+          <QuizzesPanel base={base} lessonId={lesson.id} />
           <AssignmentsPanel base={base} lessonId={lesson.id} />
         </div>
       )}

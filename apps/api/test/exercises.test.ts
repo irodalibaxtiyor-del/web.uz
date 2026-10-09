@@ -244,7 +244,8 @@ describe('teacher status and lesson completion', () => {
       status: 'NEEDS_IMPROVEMENT',
       teacherNote: 'Sarlavha teg noto‘g‘ri',
     });
-    expect(await lessonStates(student)).toEqual(['IN_PROGRESS', 'LOCKED']);
+    // 13A: an open lesson with work to fix is shown as NEEDS_IMPROVEMENT (still accessible).
+    expect(await lessonStates(student)).toEqual(['NEEDS_IMPROVEMENT', 'LOCKED']);
   });
 
   it('shows staff a progress list without files or emails', async () => {

@@ -219,7 +219,7 @@ export class ExercisesService {
         },
       });
     if (status === 'PASSED') {
-      await this.learning.completeIfExercisesPassed(db, userId, courseId, exercise.lessonId);
+      await this.learning.completeIfRequirementsMet(db, userId, courseId, exercise.lessonId);
     }
   }
 

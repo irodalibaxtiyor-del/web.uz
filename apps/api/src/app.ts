@@ -32,6 +32,8 @@ import { ExercisesService } from './exercises/exercises.service';
 import { organizations } from './db/schema';
 import { HealthController } from './health/health.controller';
 import { OrganizationsController } from './organizations/organizations.controller';
+import { QuizzesController } from './quizzes/quizzes.controller';
+import { QuizzesService } from './quizzes/quizzes.service';
 
 @Module({})
 export class AppModule {
@@ -52,6 +54,7 @@ export class AppModule {
         ChecksController,
         AssignmentsController,
         ReviewsController,
+        QuizzesController,
       ],
       providers: [
         { provide: APP_CONFIG, useValue: config },
@@ -69,6 +72,7 @@ export class AppModule {
         ChecksService,
         AssignmentsService,
         ReviewsService,
+        QuizzesService,
         // Order matters: authenticate first, then resolve org role.
         { provide: APP_GUARD, useClass: AuthGuard },
         { provide: APP_GUARD, useClass: OrgRoleGuard },

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { SubmissionStatusBadge } from '@/components/assignment-ui';
+import { QuizStatusBadge } from '@/components/quiz-ui';
 import { Markdown } from '@/components/markdown';
 import {
   Button,
@@ -97,6 +98,29 @@ export default function LessonPage() {
               </ul>
             </section>
           )}
+          {lesson.quizzes.length > 0 && (
+            <section aria-labelledby="quizzes-heading" className="space-y-3">
+              <h2 id="quizzes-heading" className="text-xl font-semibold">
+                Testlar
+              </h2>
+              <ul className="divide-y divide-slate-100 overflow-hidden rounded-2xl border border-slate-100 bg-surface/60 dark:divide-slate-800 dark:border-slate-800 dark:bg-slate-800/40">
+                {lesson.quizzes.map((q) => (
+                  <li
+                    key={q.id}
+                    className="flex flex-wrap items-center justify-between gap-3 px-5 py-4"
+                  >
+                    <Link
+                      href={`${courseBase}/quizzes/${q.id}`}
+                      className="font-semibold text-ink hover:text-brand-600 dark:text-white dark:hover:text-brand-300"
+                    >
+                      {q.title}
+                    </Link>
+                    <QuizStatusBadge status={q.status} bestScore={q.bestScore} />
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
           {lesson.assignments.length > 0 && (
             <section aria-labelledby="assignments-heading" className="space-y-3">
               <h2 id="assignments-heading" className="text-xl font-semibold">
@@ -154,9 +178,10 @@ export default function LessonPage() {
                   Kurs xaritasiga qaytish
                 </Link>
               )
-            ) : lesson.exercises.some((ex) => ex.status !== 'PASSED') ? (
+            ) : lesson.exercises.some((ex) => ex.status !== 'PASSED') ||
+              lesson.quizzes.some((q) => q.status !== 'PASSED') ? (
               <p className="text-sm text-slate-500">
-                Keyingi darsga o&apos;tish uchun barcha mashqlardan o&apos;ting
+                Keyingi darsga o&apos;tish uchun barcha mashq va testlardan o&apos;ting
               </p>
             ) : (
               <Button onClick={complete} disabled={pending}>

@@ -1,6 +1,6 @@
 'use client';
 
-import type { CourseMap, LessonState } from '@webdizayn/shared';
+import type { CourseMap, CourseMapLesson, LessonState } from '@webdizayn/shared';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
@@ -15,6 +15,7 @@ const DOT: Record<LessonState, string> = {
   COMPLETED: 'bg-emerald-500 text-white',
   IN_PROGRESS: 'bg-brand-600 text-white ring-4 ring-brand-100 dark:ring-brand-900',
   AVAILABLE: 'bg-white text-brand-600 ring-2 ring-brand-600 dark:bg-slate-900',
+  NEEDS_IMPROVEMENT: 'bg-amber-400 text-amber-950 ring-4 ring-amber-100 dark:ring-amber-900',
   LOCKED: 'bg-slate-100 text-slate-400 dark:bg-slate-800',
 };
 
@@ -57,7 +58,12 @@ export default function CourseMapPage() {
       {(map) => {
         const next = map.modules
           .flatMap((m) => m.lessons)
-          .find((l) => l.state === 'AVAILABLE' || l.state === 'IN_PROGRESS');
+          .find(
+            (l) =>
+              l.state === 'AVAILABLE' ||
+              l.state === 'IN_PROGRESS' ||
+              l.state === 'NEEDS_IMPROVEMENT',
+          );
         return (
           <>
             <PageHeader
@@ -121,6 +127,7 @@ export default function CourseMapPage() {
                                 {l.title}
                               </Link>
                             )}
+                            <LessonItems lesson={l} base={base} />
                           </div>
                           <StateBadge state={l.state} />
                         </li>
@@ -149,11 +156,99 @@ export default function CourseMapPage() {
                     </dd>
                   </div>
                 </dl>
+                <dl className="space-y-2 border-t border-slate-100 pt-4 text-sm dark:border-slate-800">
+                  {(
+                    [
+                      ['Mashqlar', map.stats.exercises],
+                      ['Testlar', map.stats.quizzes],
+                      ['Topshiriqlar (baholangan)', map.stats.assignments],
+                    ] as const
+                  )
+                    .filter(([, s]) => s.total > 0)
+                    .map(([label, s]) => (
+                      <div key={label} className="flex justify-between gap-3">
+                        <dt className="text-slate-500">{label}</dt>
+                        <dd className="font-semibold">
+                          {s.done} / {s.total}
+                        </dd>
+                      </div>
+                    ))}
+                </dl>
               </aside>
             </div>
           </>
         );
       }}
     </LoadState>
+  );
+}
+
+/** Exercises, quizzes and assignments of a lesson as compact status chips. */
+function LessonItems({ lesson: l, base }: { lesson: CourseMapLesson; base: string }) {
+  const chips = [
+    ...l.exercises.map((e) => ({
+      key: `e-${e.id}`,
+      kind: 'Mashq',
+      title: e.title,
+      href: `${base}/exercises/${e.id}`,
+      icon: e.status === 'PASSED' ? '✓' : e.status === 'NEEDS_IMPROVEMENT' ? '!' : '○',
+      tone: e.status === 'PASSED' ? 'ok' : e.status === 'NEEDS_IMPROVEMENT' ? 'warn' : 'todo',
+    })),
+    ...l.quizzes.map((q) => ({
+      key: `q-${q.id}`,
+      kind: 'Test',
+      title: q.bestScore === null ? q.title : `${q.title} · ${q.bestScore}%`,
+      href: `${base}/quizzes/${q.id}`,
+      icon: q.status === 'PASSED' ? '✓' : q.status === 'FAILED' ? '!' : '○',
+      tone: q.status === 'PASSED' ? 'ok' : q.status === 'FAILED' ? 'warn' : 'todo',
+    })),
+    ...l.assignments.map((a) => {
+      const done = a.submissionStatus === 'GRADED' || a.submissionStatus === 'FINALIZED';
+      const fix = a.submissionStatus === 'REVISION_REQUESTED';
+      return {
+        key: `a-${a.id}`,
+        kind: 'Topshiriq',
+        title: a.title,
+        href: `${base}/assignments/${a.id}`,
+        icon: done ? '✓' : fix ? '!' : a.submissionStatus ? '↑' : '○',
+        tone: done ? 'ok' : fix ? 'warn' : 'todo',
+      };
+    }),
+  ];
+  if (chips.length === 0) return null;
+  const tone = {
+    ok: 'border-emerald-200 text-emerald-800 dark:border-emerald-900 dark:text-emerald-300',
+    warn: 'border-amber-300 text-amber-800 dark:border-amber-800 dark:text-amber-300',
+    todo: 'border-slate-200 text-slate-600 dark:border-slate-700 dark:text-slate-400',
+  } as const;
+  const locked = l.state === 'LOCKED';
+  return (
+    <ul className="mt-2 flex flex-wrap gap-1.5 text-xs" aria-label={`${l.title}: vazifalar`}>
+      {chips.map((c) => {
+        const body = (
+          <>
+            <span aria-hidden="true">{c.icon}</span> {c.kind}: {c.title}
+          </>
+        );
+        return (
+          <li key={c.key}>
+            {locked ? (
+              <span
+                className={`inline-block rounded-full border px-2 py-0.5 opacity-60 ${tone.todo}`}
+              >
+                {body}
+              </span>
+            ) : (
+              <Link
+                href={c.href}
+                className={`inline-block rounded-full border px-2 py-0.5 hover:bg-white dark:hover:bg-slate-800 ${tone[c.tone as keyof typeof tone]}`}
+              >
+                {body}
+              </Link>
+            )}
+          </li>
+        );
+      })}
+    </ul>
   );
 }

@@ -118,6 +118,7 @@ export const STATE_LABEL: Record<LessonState, string> = {
   LOCKED: 'Yopiq',
   AVAILABLE: 'Ochiq',
   IN_PROGRESS: 'Jarayonda',
+  NEEDS_IMPROVEMENT: 'Tuzatish kerak',
   COMPLETED: 'Tugatilgan',
 };
 
@@ -125,6 +126,7 @@ const STATE_ICON: Record<LessonState, string> = {
   LOCKED: '🔒',
   AVAILABLE: '○',
   IN_PROGRESS: '◐',
+  NEEDS_IMPROVEMENT: '!',
   COMPLETED: '✓',
 };
 
@@ -134,7 +136,9 @@ export function StateBadge({ state }: { state: LessonState }) {
       ? 'text-emerald-700 dark:text-emerald-400'
       : state === 'LOCKED'
         ? 'text-slate-400'
-        : 'text-brand-700 dark:text-brand-300';
+        : state === 'NEEDS_IMPROVEMENT'
+          ? 'text-amber-700 dark:text-amber-400'
+          : 'text-brand-700 dark:text-brand-300';
   return (
     <span className={`text-sm ${tone}`}>
       <span aria-hidden="true">{STATE_ICON[state]}</span> {STATE_LABEL[state]}

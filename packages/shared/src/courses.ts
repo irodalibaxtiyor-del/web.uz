@@ -1,12 +1,24 @@
 import { z } from 'zod';
 import type { ExerciseSummary } from './exercises';
 import type { AssignmentSummary } from './assignments';
+import type { QuizSummary } from './quizzes';
 
 export const COURSE_STATUSES = ['DRAFT', 'PUBLISHED', 'ARCHIVED'] as const;
 export type CourseStatus = (typeof COURSE_STATUSES)[number];
 
 /** Server-computed lesson state for a student. NEEDS_IMPROVEMENT arrives with 13A. */
-export const LESSON_STATES = ['LOCKED', 'AVAILABLE', 'IN_PROGRESS', 'COMPLETED'] as const;
+/**
+ * LOCKED / AVAILABLE / IN_PROGRESS / COMPLETED come from sequential unlocking.
+ * NEEDS_IMPROVEMENT is an accessible lesson with an exercise marked for improvement or a
+ * failed quiz; access rules treat it exactly like IN_PROGRESS.
+ */
+export const LESSON_STATES = [
+  'LOCKED',
+  'AVAILABLE',
+  'IN_PROGRESS',
+  'NEEDS_IMPROVEMENT',
+  'COMPLETED',
+] as const;
 export type LessonState = (typeof LESSON_STATES)[number];
 
 export const LESSON_CONTENT_MAX = 100_000;
@@ -77,6 +89,18 @@ export interface CourseMapLesson {
   id: string;
   title: string;
   state: LessonState;
+  exercises: ExerciseSummary[];
+  quizzes: QuizSummary[];
+  assignments: AssignmentSummary[];
+}
+
+/** Done / total per item type across the course. */
+export interface CourseProgressStats {
+  lessons: { done: number; total: number };
+  exercises: { done: number; total: number };
+  quizzes: { done: number; total: number };
+  /** Done = graded or finalized. */
+  assignments: { done: number; total: number };
 }
 
 export interface CourseMapModule {
@@ -90,7 +114,9 @@ export interface CourseMap {
   modules: CourseMapModule[];
   completedLessons: number;
   totalLessons: number;
+  /** Share of completed lessons; lessons are the unit of sequential unlocking. */
   progressPercent: number;
+  stats: CourseProgressStats;
 }
 
 export interface LessonView {
@@ -103,6 +129,8 @@ export interface LessonView {
   nextLessonId: string | null;
   /** Active exercises. When non-empty, the lesson completes only when all are PASSED. */
   exercises: ExerciseSummary[];
+  /** Active quizzes. They gate completion like exercises. */
+  quizzes: QuizSummary[];
   /** Published or closed assignments of this lesson. They do not gate lesson completion. */
   assignments: AssignmentSummary[];
 }

@@ -469,3 +469,58 @@ Har bir amal shu yerga qo'shib boriladi (eng yangisi pastda).
   - Satr darajasidagi izohlar (kod qatoriga comment) yo'q, feedback umumiy matn.
   - FINALIZED bahoni bekor qilish mexanizmi yo'q (ataylab).
 - Keyingi qadam: **13A — Course map & progress**.
+
+### 13A — Course map & progress
+
+- Audit: kurs xaritasi (modullar, darslar, LOCKED/AVAILABLE/IN_PROGRESS/COMPLETED, foiz) F2'dan beri bor edi. Roadmap talabiga ko'ra bo'shliqlar:
+  - xaritada mashqlar va topshiriqlar yo'q edi;
+  - `NEEDS_IMPROVEMENT` holati yo'q edi;
+  - **quizzes umuman yo'q edi.**
+- **Qaror (quiz):** quiz roadmap'da faqat 13A xarita ro'yxatida tilga olingan, uni yaratadigan alohida faza yo'q. Xaritada ko'rsatish uchun minimal quiz shu fazada qo'shildi: dars testi, server baholaydi, to'g'ri javoblar klientga chiqmaydi.
+- **Shared** (`quizzes.ts`):
+  - savol (SINGLE/MULTIPLE, 2–8 variant, to'g'ri javoblar variantlarga ishora qilishi shart, SINGLE'da aniq bitta);
+  - test (30 tagacha savol, o'tish foizi 1–100, yangi test faol emas, faol test savolsiz bo'lolmaydi);
+  - `gradeQuiz()`: savol faqat to'g'ri to'plam aynan tanlansa hisoblanadi.
+  - Tiplar: `QuizView` (javoblarsiz), `QuizAdmin`, `QuizSummary`, `QuizAttemptResult`.
+  - `courses.ts`: `LESSON_STATES` ga `NEEDS_IMPROVEMENT`; `CourseMapLesson` endi `exercises`, `quizzes`, `assignments` ni o'z ichiga oladi; `CourseMap.stats` (darslar, mashqlar, testlar, baholangan topshiriqlar: bajarilgan/jami); `LessonView.quizzes`.
+  - 4 ta yangi test.
+- Migratsiya `0006_quizzes.sql`: `quizzes` (savollar to'g'ri javoblar bilan, faqat xodim uchun) va `quiz_attempts` (javoblar, to'g'ri soni, foiz, o'tdi/o'tmadi).
+- **API**:
+  - `QuizzesService` va `QuizzesController`:
+    - xodim: yaratish, ro'yxat, tahrir (faol test savolsiz bo'lsa 400), statistika (urinib ko'rgan va o'tgan talabalar);
+    - talaba: ko'rish (savol id, matn va variantlar, `correct` yo'q) va urinish. Javob faqat jami natijani qaytaradi — qaysi savol to'g'ri ekani aytilmaydi.
+    - 10 daqiqada 10 urinish (429 `QUIZ_RATE_LIMITED`). Bir marta o'tilsa, keyingi mashq urinishlari statusni tushirmaydi.
+  - `LearningService` qayta tuzildi:
+    - `items()` bitta dars yoki butun kurs bo'yicha mashq, test va topshiriqlarni bitta so'rov to'plamida oladi;
+    - `completeIfRequirementsMet()` (oldingi `completeIfExercisesPassed`): dars barcha faol mashq **va** testlar o'tilganda tugaydi;
+    - qo'lda tugatishda ham shu shart (kod `EXERCISES_REQUIRED` moslik uchun saqlandi, matn yangilandi);
+    - `decorate()`: ochiq darsda tuzatish kerak bo'lgan mashq yoki o'tilmagan test bo'lsa `NEEDS_IMPROVEMENT`. Kirish qoidalari o'zgarmagan (faqat LOCKED tekshiriladi).
+  - Eski test yangilandi: tuzatish kerak bo'lgan mashqi bor dars endi `NEEDS_IMPROVEMENT` (13A'ning maqsadli o'zgarishi).
+  - Testlar `test/quizzes.test.ts` (11 ta):
+    - authoring (faol emas default, savolsiz faollashtirish 400, savol validatsiyasi, RBAC);
+    - javoblar talabaga chiqmasligi;
+    - yopiq dars, faol emas test, yozilmagan talaba, boshqa org;
+    - FAILED → `NEEDS_IMPROVEMENT` va qo'lda tugatish 409; PASSED → dars tugaydi, keyingisi ochiladi; keyingi xato urinish o'tganlikni o'chirmaydi;
+    - mashq + test birga talab qilinadi; rate limit; xodim statistikasi;
+    - xaritada elementlar, statistika va foiz; qoralama topshiriq va faol emas test yashirin.
+- **Web**:
+  - `StateBadge` va xarita nuqtalarida `NEEDS_IMPROVEMENT` (sariq, "Tuzatish kerak").
+  - Xarita: har dars ostida mashq, test va topshiriq belgilari (ikonka + matn, ochiq darsda havola), yon panelda mashqlar, testlar va baholangan topshiriqlar hisobi. "Davom etish" `NEEDS_IMPROVEMENT` darsni ham topadi.
+  - Dars sahifasi: "Testlar" bo'limi. "Darsni tugatdim" testlarni ham hisobga oladi.
+  - Talaba test sahifasi `/quizzes/[id]`: radio/checkbox savollar (fieldset/legend), javob berilgan savollar hisobi, natija (`role=status`), qaysi javob noto'g'ri ekani aytilmaydi.
+  - O'qituvchi: dars muharririda `QuizzesPanel`; `/manage/quizzes/[id]` savollar konstruktori (savol turi, variantlar qo'shish/o'chirish, to'g'ri javob belgilash, faollashtirish, o'tish foizi, statistika).
+- Regressiya: typecheck ✅, lint ✅, test ✅ (shared 29 + sandbox 15 + web 15 + check-engine 12 + api 140 = **211**), build ✅, format ✅.
+- Brauzerda bosib tekshirildi (`ui-13a.cjs`):
+  - o'qituvchi demo'dagi "Sahifa tuzilishi" darsiga UI orqali 2 savolli test yaratdi (bitta va bir nechta javobli), faollashtirdi;
+  - Aziza xaritada test belgisini va `Tuzatish kerak` holatini ko'rdi;
+  - sahifa HTML'ida `correct` yo'q;
+  - xato urinish 0%, xaritada "Test · 0%"; to'g'ri urinish 100% → "O'tdi".
+  - Konsol xatolari 0.
+- Demo: "Sahifa tuzilishi" darsida "HTML tuzilmasi testi" bor, Aziza uni o'tgan. Dars hali `Tuzatish kerak`, chunki "Birinchi sahifam" mashqi tuzatilmagan.
+- **STATUS: READY_WITH_INFRASTRUCTURE_LIMITATIONS** (avvalgi infratuzilma cheklovlari saqlanib qolgan).
+- Cheklovlar:
+  - Quiz minimal: faqat yopiq savollar (bitta yoki bir nechta javob), savollar aralashtirilmaydi, vaqt chegarasi va tushuntirishlar yo'q.
+  - Faqat test yechilganda dars `IN_PROGRESS` ga o'tmaydi (dars sahifasi ochilganda o'tadi).
+  - Progress foizi darslar bo'yicha hisoblanadi (ketma-ket ochilish birligi). Elementlar bo'yicha hisob alohida ko'rsatiladi.
+  - Testni o'chirish yo'q (faolsizlantirish bor).
+- Keyingi qadam: **13B — Portfolio**.
