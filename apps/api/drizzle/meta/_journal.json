@@ -50,6 +50,13 @@
       "when": 1791548967509,
       "tag": "0006_quizzes",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1791623406650,
+      "tag": "0007_portfolio",
+      "breakpoints": true
     }
   ]
 }

@@ -7,3 +7,4 @@ export * from './checks';
 export * from './assignments';
 export * from './reviews';
 export * from './quizzes';
+export * from './portfolio';

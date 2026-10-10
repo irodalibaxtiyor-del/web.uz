@@ -24,6 +24,12 @@ export function formatDateTime(iso: string): string {
   return `${d.getDate()}-${MONTHS[d.getMonth()]} ${d.getFullYear()}, ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
+/** Local date in Uzbek, e.g. "9-oktabr 2026". */
+export function formatDate(iso: string): string {
+  const d = new Date(iso);
+  return `${d.getDate()}-${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+}
+
 /** ISO timestamp → value for `<input type="datetime-local">` in the browser's time zone. */
 export function toLocalInput(iso: string | null): string {
   if (!iso) return '';

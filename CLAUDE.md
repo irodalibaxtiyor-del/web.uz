@@ -557,3 +557,42 @@ Har bir amal shu yerga qo'shib boriladi (eng yangisi pastda).
   - Canvas va drag-drop mashqlarida chizma yoki sudrashning o'zi tekshirilmaydi (engine'da drag action yo'q), faqat tuzilma va konsol xatolari.
   - 1-darsda sahifa sarlavhasi va birinchi bo'lim sarlavhasi bir xil ("HTML nima?").
 - Keyingi qadam: **13B — Portfolio**.
+
+### 13B — Portfolio
+
+- Roadmap talabi: tugatilgan loyihalar, tanlangan topshiriqlar, ko'nikmalar, yutuqlar, kurs yakunlari, skrinshotlar, tavsiflar. Ochiq portfolio faqat aniq e'lon qilinganda, maxfiy ma'lumot chiqmaydi.
+- **Qarorlar:**
+  - Portfolio har foydalanuvchida bitta (tashkilotdan qat'i nazar) va default holatda **yashirin**.
+  - Qo'shish mumkin bo'lgan ishlar: **PASSED** mashqlar va **GRADED/FINALIZED** topshiriqlar. Bu shart serverda qayta tekshiriladi, begona yoki tugallanmagan ish 404 `NOT_ELIGIBLE` oladi.
+  - Ish qo'shilganda fayllar, nom va kurs nomi **snapshot** qilinadi. Manbaga FK yo'q, keyingi tahrirlar va o'chirishlar portfolioga ta'sir qilmaydi. Topshiriqdan oxirgi (baholangan) versiya olinadi.
+  - Yutuqlar va tugatilgan kurslar har o'qishda o'quv ma'lumotlaridan hisoblanadi, saqlanmaydi va klient ularni o'zgartira olmaydi. Yutuqlar: FIRST_EXERCISE, TEN_EXERCISES, QUIZ_MASTER (5 test), FIRST_GRADED_ASSIGNMENT, COURSE_COMPLETED.
+  - "Skrinshot" o'rnida loyihaning jonli ko'rinishi sandbox runner'da chiqadi (alohida site, opaque origin, faqat `allow-scripts`). Fayllar faqat "Natijani ko'rish" bosilganda yuklanadi.
+  - Ochiq ko'rinishda ism (o'zgartirsa bo'ladigan `displayName`), tavsif, ko'nikmalar, yutuqlar, kurslar va tanlangan ishlar bor. Email, user/org/course/source ID'lari, ball va o'qituvchi izohlari **yo'q**.
+- **Shared** (`portfolio.ts`): `updatePortfolioSchema` (slug 3–40, `a-z0-9-`, `--` yo'q, kichik harfga o'tkaziladi; 20 tagacha ko'nikma, registrga qaramay takrorlanmaydi), `addPortfolioItemSchema`, `updatePortfolioItemSchema`, `ACHIEVEMENTS`, tiplar. 3 ta test.
+- Migratsiya `0007_portfolio.sql`:
+  - `portfolios`: PK user, unique slug, CHECK "e'lon qilingan bo'lsa slug bor";
+  - `portfolio_items`: unique (user, kind, source), 20 ta limit.
+- **API** (`src/portfolio/`), egasi doim sessiyadan olinadi:
+  - `GET/PUT /portfolio/me`, `POST /portfolio/me/publish|unpublish`;
+  - `POST /portfolio/me/items`, `GET|PATCH|DELETE /portfolio/me/items/:id`;
+  - ochiq: `GET /portfolio/public/:slug`, `GET /portfolio/public/:slug/items/:id`. E'lon qilinmagan va mavjud bo'lmagan portfolio bir xil 404 qaytaradi.
+  - Xatolar: 409 `SLUG_REQUIRED`, `SLUG_TAKEN`, `ALREADY_ADDED`, `PORTFOLIO_FULL`.
+  - Qo'shish egasi qatori bo'yicha `FOR UPDATE` bilan ketma-ket bajariladi.
+  - Audit: `portfolio.publish`, `portfolio.unpublish`.
+- Testlar `test/portfolio.test.ts` (14 ta): sessiyasiz 401; default yashirin; nomzodlar faqat o'z tugatgan ishlari; begona, tugallanmagan va noto'g'ri turdagi manbalar rad etiladi; snapshot keyingi tahrirdan o'zgarmaydi; dublikat 409; begona item 404 (soxta `x-user-id` bilan ham); tahrir va tartib; 20 ta limit; slug'siz e'lon qilib bo'lmaydi; yashirin va mavjud bo'lmagan portfolio bir xil 404; slug unique; ochiq JSON'da email, ID'lar, `score`, izohlar va fayllar yo'q; boshqa egasining item'i 404; e'lon qilinganda slug'ni o'chirib bo'lmaydi; tugatilgan kurs va yutuq; yashirilgandan keyin 404 va audit.
+- **Web:**
+  - `/portfolio`: holat paneli (e'lon qilishdan oldin nima ko'rinishini va nima ko'rinmasligini aytadigan tasdiq), profil formasi, ishlar (ko'rish, tahrirlash, ↑↓ tartib, o'chirish), qo'shish mumkin bo'lgan ishlar, yutuqlar va kurslar;
+  - ochiq `/p/[slug]` (login shart emas);
+  - kabinetda "Portfolio" tugmasi; `components/portfolio-ui.tsx`, `formatDate()`, `send()` endi `DELETE` ni ham qo'llaydi.
+  - 3 ta yangi web test.
+- Regressiya: typecheck ✅, lint ✅, test ✅ (shared 32 + sandbox 15 + web 18 + check-engine 12 + api 166 = **243**), build ✅, format ✅, secret skan (grep) ✅.
+- Brauzerda bosib tekshirildi (`ui-13b.cjs`, demo baza): Aziza kabinetdan portfolioga o'tdi, slug'siz "E'lon qilish" o'chiq, profilni to'ldirdi, baholangan "Shaxsiy vizitka sahifasi"ni qo'shdi va e'lon qildi. Login'siz mehmon `/p/aziza-karimova` da sahifani va sandbox'dagi jonli loyihani ko'rdi. Ochiq JSON'da email va ball yo'q. Yashirilgandan keyin "Portfolio topilmadi". Mobil va dark mode ko'rildi. Topilib tuzatildi: yon paneldagi yutuq kartasi siqilgan edi; saqlangandan keyin slug maydonida normallashmagan qiymat qolardi. Konsoldagi yagona xato — yashirishdan keyingi kutilgan 404.
+- Demo: Aziza'ning portfoliosi **e'lon qilingan** (`/p/aziza-karimova`, 1 ta loyiha). Yashirish uchun: `/portfolio` → "Yashirish".
+- **STATUS: READY_WITH_INFRASTRUCTURE_LIMITATIONS** (avvalgi infratuzilma cheklovlari saqlanib qolgan).
+- Cheklovlar:
+  - Haqiqiy PNG skrinshot yo'q, jonli sandbox preview bor. Server tomonda Chrome bilan skrinshot olish keyinroq qo'shilishi mumkin.
+  - Ochiq sahifa klient tomonda render qilinadi, shuning uchun SEO/OpenGraph meta yo'q.
+  - Ochiq endpoint'larda rate limit yo'q (14A xavfsizlik fazasida ko'rib chiqiladi).
+  - Ishni yangilash (snapshot'ni yangi kod bilan almashtirish) yo'q: olib tashlab, qayta qo'shish kerak.
+  - Ko'nikmalar erkin matn, kurslardan avtomatik olinmaydi.
+- Keyingi qadam: **13C — Analytics**.

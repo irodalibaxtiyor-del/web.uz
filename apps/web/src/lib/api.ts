@@ -28,6 +28,10 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<ApiR
   };
 }
 
-export function send<T>(method: 'POST' | 'PATCH' | 'PUT', path: string, body: unknown = {}) {
-  return api<T>(path, { method, body: JSON.stringify(body) });
+export function send<T>(
+  method: 'POST' | 'PATCH' | 'PUT' | 'DELETE',
+  path: string,
+  body: unknown = {},
+) {
+  return api<T>(path, { method, body: method === 'DELETE' ? undefined : JSON.stringify(body) });
 }

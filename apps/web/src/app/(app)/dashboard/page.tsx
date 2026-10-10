@@ -1,6 +1,7 @@
 'use client';
 
 import type { MeResponse, Role } from '@webdizayn/shared';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { CourseList } from '@/components/course-list';
 import { Button, LoadState, PageHeader } from '@/components/ui';
@@ -32,13 +33,18 @@ export default function DashboardPage() {
             title={`Xush kelibsiz, ${me.fullName}`}
             subtitle="O'qishni davom ettiring yoki yangi kursni tanlang."
             actions={
-              <Button
-                variant="secondary"
-                onClick={logout}
-                className="border-white/40 bg-white/10 text-white hover:border-white hover:text-white dark:bg-white/10"
-              >
-                Chiqish
-              </Button>
+              <>
+                <Link href="/portfolio" className="btn btn-accent">
+                  Portfolio
+                </Link>
+                <Button
+                  variant="secondary"
+                  onClick={logout}
+                  className="border-white/40 bg-white/10 text-white hover:border-white hover:text-white dark:bg-white/10"
+                >
+                  Chiqish
+                </Button>
+              </>
             }
           />
           <div className="space-y-12">

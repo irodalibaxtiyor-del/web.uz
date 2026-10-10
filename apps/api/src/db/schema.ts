@@ -21,6 +21,7 @@ import {
   EXERCISE_STATUSES,
   REVIEW_ACTIONS,
   ROLES,
+  PORTFOLIO_ITEM_KINDS,
   SUBMISSION_STATUSES,
   type CheckEngineResult,
   type CheckErrorCode,
@@ -41,6 +42,7 @@ export const checkRunStatusEnum = pgEnum('check_run_status', CHECK_RUN_STATUSES)
 export const assignmentStatusEnum = pgEnum('assignment_status', ASSIGNMENT_STATUSES);
 export const submissionStatusEnum = pgEnum('submission_status', SUBMISSION_STATUSES);
 export const reviewActionEnum = pgEnum('review_action', REVIEW_ACTIONS);
+export const portfolioItemKindEnum = pgEnum('portfolio_item_kind', PORTFOLIO_ITEM_KINDS);
 
 const createdAt = () => timestamp('created_at', { withTimezone: true }).notNull().defaultNow();
 
@@ -525,5 +527,58 @@ export const quizAttempts = pgTable(
   (t) => [
     index('quiz_attempts_user_quiz_idx').on(t.userId, t.quizId, t.createdAt),
     index('quiz_attempts_quiz_idx').on(t.quizId),
+  ],
+);
+
+/** One per user. Private until `isPublished`; the public view is looked up by `slug`. */
+export const portfolios = pgTable(
+  'portfolios',
+  {
+    userId: uuid('user_id')
+      .primaryKey()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    /** Lowercase; required before publishing. */
+    slug: text('slug'),
+    displayName: text('display_name').notNull(),
+    headline: text('headline').notNull().default(''),
+    bio: text('bio').notNull().default(''),
+    skills: jsonb('skills').$type<string[]>().notNull().default([]),
+    isPublished: boolean('is_published').notNull().default(false),
+    publishedAt: timestamp('published_at', { withTimezone: true }),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (t) => [
+    uniqueIndex('portfolios_slug_idx').on(t.slug),
+    check('portfolios_published_has_slug', sql`not ${t.isPublished} or ${t.slug} is not null`),
+  ],
+);
+
+/**
+ * Work the owner chose to show. Files and titles are snapshots taken when the item was added,
+ * so the item does not depend on the source (which may change or be deleted later).
+ */
+export const portfolioItems = pgTable(
+  'portfolio_items',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => portfolios.userId, { onDelete: 'cascade' }),
+    kind: portfolioItemKindEnum('kind').notNull(),
+    /** Exercise or assignment id. Not a foreign key: the snapshot outlives the source. */
+    sourceId: uuid('source_id').notNull(),
+    title: text('title').notNull(),
+    description: text('description').notNull().default(''),
+    courseTitle: text('course_title').notNull(),
+    files: jsonb('files').$type<ProjectFile[]>().notNull(),
+    position: integer('position').notNull(),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (t) => [
+    uniqueIndex('portfolio_items_user_source_idx').on(t.userId, t.kind, t.sourceId),
+    index('portfolio_items_user_pos_idx').on(t.userId, t.position),
+    check('portfolio_items_position_nonneg', sql`${t.position} >= 0`),
   ],
 );
