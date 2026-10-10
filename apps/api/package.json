@@ -11,7 +11,9 @@
     "test": "vitest run",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "node -r @swc-node/register src/db/migrate.ts",
-    "db:seed": "node -r @swc-node/register src/db/seed.ts"
+    "db:seed": "node -r @swc-node/register src/db/seed.ts",
+    "db:seed:html": "node -r @swc-node/register src/db/seed-html-course.ts",
+    "content:verify": "node -r @swc-node/register src/db/html-course/verify.ts"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.8",

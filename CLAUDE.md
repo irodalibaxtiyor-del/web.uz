@@ -524,3 +524,36 @@ Har bir amal shu yerga qo'shib boriladi (eng yangisi pastda).
   - Progress foizi darslar bo'yicha hisoblanadi (ketma-ket ochilish birligi). Elementlar bo'yicha hisob alohida ko'rsatiladi.
   - Testni o'chirish yo'q (faolsizlantirish bor).
 - Keyingi qadam: **13B — Portfolio**.
+
+### HTML kursi (W3Schools tartibida) — to'xtatildi, davom ettiriladi
+
+- So'rov: w3schools.com/html materiallarini o'zbekchaga o'girib joylashtirish. Qaror: W3Schools kontenti mualliflik huquqi bilan himoyalangan (tarjima ham hosila asar), shuning uchun faqat mavzular tartibi olinib, **original o'zbekcha** kurs yozilmoqda.
+- Tuzilma: 12 modul, 60 dars. 48 ta dars matni yozildi (`apps/api/content/html-course/*.md`). Media (5) va Web API (7) darslari qoldi.
+- Foydalanuvchi so'rovi bilan ish to'xtatildi. To'liq holat, qolgan vazifalar (manifest, mashqlar va CHECK qoidalari, testlar, seed, haqiqiy Chrome bilan tekshiruv) va ochiq savollar: [HTML_KURS_HOLATI.md](HTML_KURS_HOLATI.md).
+
+## 2026-10-10
+
+### HTML kursi — yakunlandi
+
+- Davom ettirildi: [HTML_KURS_HOLATI.md](HTML_KURS_HOLATI.md) dagi reja bo'yicha.
+- **Qolgan 12 dars yozildi** (jami 60/60): Media (`media`, `video`, `audio`, `plugins`, `youtube`) va Web API (`web-apis`, `geolocation`, `drag-drop`, `popover`, `web-storage`, `web-workers`, `sse`). Sandbox'da ishlamaydigan API'lar (Geolocation, Worker, SSE, localStorage, tashqi media) uchun "kompyuteringizda sinab ko'ring" eslatmasi bor.
+- **Manifest** `apps/api/src/db/html-course/`:
+  - `manifest.ts`: kurs `html` ("HTML: to'liq kurs"), 12 modul, 60 dars, **49 mashq** (har biri CHECK qoidalari bilan) va **12 modul testi** (har modulning oxirgi darsida, 4–5 savol, o'tish 70%). 11 ta nazariy dars mashqsiz.
+  - `helpers.ts`: `page()`, `has()`, `text()`, `attr()`, `style()`, `clean()`, `after()` (actions), `at()` (viewport), `q()`, `quiz()`.
+  - Interaktiv CHECK'lar ham bor: tugma bosilgandan keyingi matn, `details` ochilishi, `:invalid` (min/max/pattern), `:popover-open`, media so'rov (375 va 1024 px).
+  - Qoida: tashqi resurs (rasm, video, iframe) bloklanganda Chrome konsolga xato yozadi, shuning uchun `noConsoleErrors` faqat tashqi resurssiz JS mashqlarida ishlatiladi.
+- **Seed** (`seed.ts` + CLI `src/db/seed-html-course.ts`, skript `db:seed:html`):
+  - avval butun manifest `createExerciseSchema`/`createQuizSchema` bilan validatsiya qilinadi va md fayllar o'qiladi, xatolar bitta ro'yxatda chiqadi;
+  - kurs PUBLISHED, egasi `SEED_TEACHER_EMAIL` (TEACHER yoki ORG_ADMIN bo'lishi shart), hammasi bitta tranzaksiyada;
+  - `html` slug'i bor bo'lsa to'xtaydi; `--replace` bilan qayta yaratadi (ogohlantirish bilan, progress o'chadi).
+- **Tekshiruv** `verify.ts` (skript `content:verify`): har mashq haqiqiy Chrome'da — namunaviy yechim (`solutions.ts`) PASSED, boshlang'ich kod PASSED emas. Natija **49/49**.
+- **Testlar** `test/html-course.test.ts` (12 ta): 12 modul/60 dars, har md fayl aynan bir marta ishlatilgan, har modulda bitta test, har mashqning yechimi bor, yetishmayotgan fayl xatosi, seed soni, qayta seed rad etiladi, talaba egasi bo'lolmaydi, `--replace`, talabaga faqat 1-dars ochiq, yashirin CHECK qoidalari va test javoblari chiqmaydi, ketma-ket ochilish.
+- Regressiya: typecheck ✅, lint ✅, test ✅ (shared 29 + sandbox 15 + web 15 + check-engine 12 + api 152 = **223**), build ✅, format ✅.
+- Demo bazaga yuklandi: 12 modul, 60 dars, 49 mashq, 12 test. Aziza kursga yozildi (brauzerda bosib tekshirildi: kabinet → kurs → yozilish → xarita → 1-dars → mashq IDE). Konsoldagi yagona xato — yozilishdan oldingi kutilgan 403 `NOT_ENROLLED`.
+- Real smoke (vaqtinchalik talaba, `/api` proxy, haqiqiy CHECK): noto'g'ri sahifa FAILED 1/3, to'g'ri sahifa PASSED 3/3 → 1-dars COMPLETED, 2-dars AVAILABLE. Smoke talabasi keyin bazadan o'chirildi.
+- Cheklovlar va ochiq savollar:
+  - CHECK qoidalari va namunaviy yechimlar public repoda ochiq (boshlang'ich mashqlar uchun qabul qilindi, foydalanuvchi qaroriga qoldirildi).
+  - Eski demo kurs "HTML asoslari" saqlab qolindi.
+  - Canvas va drag-drop mashqlarida chizma yoki sudrashning o'zi tekshirilmaydi (engine'da drag action yo'q), faqat tuzilma va konsol xatolari.
+  - 1-darsda sahifa sarlavhasi va birinchi bo'lim sarlavhasi bir xil ("HTML nima?").
+- Keyingi qadam: **13B — Portfolio**.

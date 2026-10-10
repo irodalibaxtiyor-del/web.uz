@@ -1,0 +1,191 @@
+import type { CheckAction, CheckRuleInput, Difficulty, ProjectFile } from '@webdizayn/shared';
+
+/** Authoring helpers for the bundled HTML course manifest. */
+
+export interface ExerciseDef {
+  title: string;
+  description: string;
+  instructions: string;
+  expectedBehavior: string;
+  difficulty: Difficulty;
+  starterFiles: ProjectFile[];
+  checks: CheckRuleInput[];
+}
+
+export interface QuizDef {
+  title: string;
+  description: string;
+  passingPercent: number;
+  questions: {
+    id: string;
+    prompt: string;
+    kind: 'SINGLE' | 'MULTIPLE';
+    options: { id: string; text: string }[];
+    correct: string[];
+  }[];
+}
+
+export interface LessonDef {
+  /** File name in `content/html-course/<slug>.md`. Unique across the course. */
+  slug: string;
+  title: string;
+  exercise?: ExerciseDef;
+  quiz?: QuizDef;
+}
+
+export interface ModuleDef {
+  title: string;
+  lessons: LessonDef[];
+}
+
+interface RuleOpts {
+  hint?: string;
+  hidden?: boolean;
+}
+
+/** A complete HTML document with the given body (and optional extra head markup). */
+export function page(body: string, opts: { title?: string; head?: string } = {}): string {
+  const head = opts.head ? `\n${indent(opts.head.trim(), 4)}` : '';
+  return `<!DOCTYPE html>
+<html lang="uz">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>${opts.title ?? 'Mashq'}</title>${head}
+  </head>
+  <body>
+${indent(body.trim(), 4)}
+  </body>
+</html>
+`;
+}
+
+function indent(text: string, n: number): string {
+  const pad = ' '.repeat(n);
+  return text
+    .split('\n')
+    .map((l) => (l ? pad + l : l))
+    .join('\n');
+}
+
+export function html(content: string): ProjectFile[] {
+  return [{ path: 'index.html', content }];
+}
+
+export function files(map: Record<string, string>): ProjectFile[] {
+  return Object.entries(map).map(([path, content]) => ({ path, content }));
+}
+
+export function has(
+  id: string,
+  title: string,
+  selector: string,
+  opts: RuleOpts & { min?: number; max?: number } = {},
+): CheckRuleInput {
+  return {
+    id,
+    title,
+    hint: opts.hint,
+    hidden: opts.hidden,
+    assert: { type: 'count', selector, min: opts.min ?? 1, max: opts.max },
+  };
+}
+
+export function text(
+  id: string,
+  title: string,
+  selector: string,
+  value: string,
+  opts: RuleOpts & { equals?: boolean } = {},
+): CheckRuleInput {
+  return {
+    id,
+    title,
+    hint: opts.hint,
+    hidden: opts.hidden,
+    assert: { type: 'text', selector, value, match: opts.equals ? 'equals' : 'contains' },
+  };
+}
+
+export function attr(
+  id: string,
+  title: string,
+  selector: string,
+  name: string,
+  value?: string,
+  opts: RuleOpts = {},
+): CheckRuleInput {
+  return {
+    id,
+    title,
+    hint: opts.hint,
+    hidden: opts.hidden,
+    assert: { type: 'attribute', selector, name, value },
+  };
+}
+
+export function style(
+  id: string,
+  title: string,
+  selector: string,
+  property: string,
+  value: string,
+  opts: RuleOpts = {},
+): CheckRuleInput {
+  return {
+    id,
+    title,
+    hint: opts.hint,
+    hidden: opts.hidden,
+    assert: { type: 'style', selector, property, value },
+  };
+}
+
+export function clean(opts: RuleOpts = {}): CheckRuleInput {
+  return {
+    id: 'clean',
+    title: 'Konsolda xato yo‘q',
+    hint: opts.hint ?? 'Konsolni oching va JavaScript xatosini tuzating.',
+    hidden: opts.hidden,
+    assert: { type: 'noConsoleErrors' },
+  };
+}
+
+/** Runs the actions before the rule's assertion. */
+export function after(actions: CheckAction[], rule: CheckRuleInput): CheckRuleInput {
+  return { ...rule, actions };
+}
+
+/** Evaluates the rule at the given viewport size. */
+export function at(width: number, height: number, rule: CheckRuleInput): CheckRuleInput {
+  return { ...rule, viewport: { width, height } };
+}
+
+/**
+ * Quiz question. `correct` holds 0-based indexes into `options`; more than one makes it
+ * a MULTIPLE question.
+ */
+export function q(
+  id: string,
+  prompt: string,
+  options: string[],
+  correct: number[],
+): QuizDef['questions'][number] {
+  const ids = options.map((_, i) => String.fromCharCode(97 + i));
+  return {
+    id,
+    prompt,
+    kind: correct.length > 1 ? 'MULTIPLE' : 'SINGLE',
+    options: options.map((t, i) => ({ id: ids[i]!, text: t })),
+    correct: correct.map((i) => ids[i]!),
+  };
+}
+
+export function quiz(title: string, questions: QuizDef['questions']): QuizDef {
+  return {
+    title,
+    description: 'Modul bo‘yicha qisqa test. O‘tish uchun kamida 70% to‘g‘ri javob kerak.',
+    passingPercent: 70,
+    questions,
+  };
+}
