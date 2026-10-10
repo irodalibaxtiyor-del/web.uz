@@ -11,8 +11,9 @@ import {
   quiz,
   style,
   text,
+  type CourseMeta,
   type ModuleDef,
-} from './helpers';
+} from '../helpers';
 
 /**
  * Original Uzbek HTML course. Only the topic order follows the usual HTML curriculum; every
@@ -20,13 +21,14 @@ import {
  * `apps/api/content/html-course/<slug>.md`.
  */
 
-export const HTML_COURSE = {
+export const HTML_COURSE: CourseMeta = {
   slug: 'html',
+  contentDir: 'html-course',
   title: 'HTML: to‘liq kurs',
   description:
     'HTML’ni noldan o‘rganing: matn, havolalar, rasmlar, jadvallar, formalar, semantika, ' +
     'media va brauzer API’lari. 12 modul, 60 dars, amaliy mashqlar va modul testlari.',
-} as const;
+};
 
 const md = (...lines: string[]) => lines.join('\n');
 const TODO = '<!-- Shu yerga yozing -->';

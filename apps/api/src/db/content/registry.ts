@@ -1,0 +1,15 @@
+import { CSS_COURSE, CSS_MODULES } from './css/manifest';
+import { CSS_SOLUTIONS } from './css/solutions';
+import type { CourseDef } from './helpers';
+import { HTML_COURSE, HTML_MODULES } from './html/manifest';
+import { HTML_SOLUTIONS } from './html/solutions';
+
+/** Bundled original courses, in the order they are meant to be taken. */
+export const CONTENT_COURSES: CourseDef[] = [
+  { ...HTML_COURSE, modules: HTML_MODULES, solutions: HTML_SOLUTIONS },
+  { ...CSS_COURSE, modules: CSS_MODULES, solutions: CSS_SOLUTIONS },
+];
+
+export function findContentCourse(slug: string): CourseDef | undefined {
+  return CONTENT_COURSES.find((c) => c.slug === slug);
+}

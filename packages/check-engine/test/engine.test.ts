@@ -255,6 +255,75 @@ describe('check engine (real Chrome)', () => {
     expect(res.status).toBe('PASSED');
   });
 
+  it('reads pseudo-element styles and custom properties', async () => {
+    const css = `:root { --brand: #0071dc; }
+      .star { border: 3px solid; }
+      .star::before { content: "★"; color: red; }
+      li::marker { color: rgb(0, 113, 220); }`;
+    const ok = await runChecks(
+      project(`<style>${css}</style><p class="star">x</p><ul><li>a</li></ul>`),
+      rules([
+        {
+          id: 'var',
+          title: 'var',
+          assert: { type: 'style', selector: 'html', property: '--brand', value: '#0071dc' },
+        },
+        {
+          id: 'content',
+          title: 'content',
+          assert: {
+            type: 'style',
+            selector: '.star',
+            pseudo: '::before',
+            property: 'content',
+            value: '"★"',
+          },
+        },
+        {
+          id: 'before-color',
+          title: 'before',
+          assert: {
+            type: 'style',
+            selector: '.star',
+            pseudo: '::before',
+            property: 'color',
+            value: 'red',
+          },
+        },
+        {
+          id: 'marker',
+          title: 'marker',
+          assert: {
+            type: 'style',
+            selector: 'li',
+            pseudo: '::marker',
+            property: 'color',
+            value: '#0071dc',
+          },
+        },
+        {
+          id: 'border-width',
+          title: 'border width needs no probe',
+          assert: { type: 'style', selector: '.star', property: 'border-top-width', value: '3px' },
+        },
+        {
+          id: 'not-element',
+          title: 'element itself is not red',
+          assert: { type: 'style', selector: '.star', property: 'color', value: 'red' },
+        },
+      ]),
+      opts,
+    );
+    expect(passedIds(ok)).toEqual({
+      var: true,
+      content: true,
+      'before-color': true,
+      marker: true,
+      'border-width': true,
+      'not-element': false,
+    });
+  });
+
   it('reports ERROR when the browser cannot start (never a fake PASS)', async () => {
     const res = await runChecks(
       project('<h1>x</h1>'),

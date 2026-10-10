@@ -24,6 +24,18 @@ export const checkActionSchema = z.discriminatedUnion('type', [
 ]);
 export type CheckAction = z.infer<typeof checkActionSchema>;
 
+/** Standard (`color`, `-webkit-…`) or custom (`--brand`) CSS property name. */
+export const CSS_PROPERTY_RE = /^(?:-?[a-z][a-z-]{0,60}|--[A-Za-z0-9_-]{1,60})$/;
+
+export const CHECK_PSEUDO_ELEMENTS = [
+  '::before',
+  '::after',
+  '::first-letter',
+  '::first-line',
+  '::marker',
+  '::placeholder',
+] as const;
+
 export const checkAssertionSchema = z.discriminatedUnion('type', [
   /** Number of matching elements is within [min, max]. `max: 0` asserts absence. */
   z
@@ -49,12 +61,16 @@ export const checkAssertionSchema = z.discriminatedUnion('type', [
     name: z.string().regex(/^[A-Za-z_:][A-Za-z0-9_:.-]{0,60}$/),
     value: shortText.optional(),
   }),
-  /** Computed style of the first match equals `value` once both are normalized by the browser. */
+  /**
+   * Computed style of the first match equals `value` once both are normalized by the browser.
+   * `property` may be a custom property (`--brand`); `pseudo` reads a pseudo-element's style.
+   */
   z.object({
     type: z.literal('style'),
     selector,
-    property: z.string().regex(/^-?[a-z][a-z-]{0,60}$/),
+    property: z.string().regex(CSS_PROPERTY_RE),
     value: z.string().trim().min(1).max(200),
+    pseudo: z.enum(CHECK_PSEUDO_ELEMENTS).optional(),
   }),
   /** No uncaught exceptions and no console.error during load and actions. */
   z.object({ type: z.literal('noConsoleErrors') }),

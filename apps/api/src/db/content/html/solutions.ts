@@ -1,9 +1,9 @@
 import type { ProjectFile } from '@webdizayn/shared';
-import { files, html, page } from './helpers';
+import { files, html, page } from '../helpers';
 
 /**
  * Reference solutions, keyed by lesson slug. Used only to verify the CHECK rules in a real
- * browser (`pnpm --filter @webdizayn/api content:verify`); never seeded or sent to students.
+ * browser (`pnpm --filter @webdizayn/api content:verify html`); never seeded or sent to students.
  */
 export const HTML_SOLUTIONS: Record<string, ProjectFile[]> = {
   introduction: html(

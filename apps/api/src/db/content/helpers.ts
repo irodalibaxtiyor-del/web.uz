@@ -1,6 +1,6 @@
 import type { CheckAction, CheckRuleInput, Difficulty, ProjectFile } from '@webdizayn/shared';
 
-/** Authoring helpers for the bundled HTML course manifest. */
+/** Authoring helpers for the bundled course manifests (`content/<course>/manifest.ts`). */
 
 export interface ExerciseDef {
   title: string;
@@ -38,6 +38,20 @@ export interface ModuleDef {
   lessons: LessonDef[];
 }
 
+export interface CourseMeta {
+  slug: string;
+  title: string;
+  description: string;
+  /** Folder under `apps/api/content/` with one `<lesson slug>.md` per lesson. */
+  contentDir: string;
+}
+
+export interface CourseDef extends CourseMeta {
+  modules: ModuleDef[];
+  /** Reference solutions by lesson slug; used only by `content:verify`, never seeded. */
+  solutions: Record<string, ProjectFile[]>;
+}
+
 interface RuleOpts {
   hint?: string;
   hidden?: boolean;
@@ -70,6 +84,21 @@ function indent(text: string, n: number): string {
 
 export function html(content: string): ProjectFile[] {
   return [{ path: 'index.html', content }];
+}
+
+/** `index.html` linked to `style.css`: the usual shape of a CSS exercise. */
+export function site(
+  body: string,
+  css: string,
+  opts: { title?: string; head?: string } = {},
+): ProjectFile[] {
+  const head = [opts.head ?? '', '<link rel="stylesheet" href="style.css">']
+    .filter(Boolean)
+    .join('\n');
+  return [
+    { path: 'index.html', content: page(body, { title: opts.title, head }) },
+    { path: 'style.css', content: `${css.trim()}\n` },
+  ];
 }
 
 export function files(map: Record<string, string>): ProjectFile[] {

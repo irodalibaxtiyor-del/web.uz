@@ -1,13 +1,7 @@
 import { readdirSync } from 'node:fs';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { HTML_MODULES } from '../src/db/html-course/manifest';
-import {
-  HTML_CONTENT_DIR,
-  HtmlCourseExistsError,
-  prepareHtmlCourse,
-  seedHtmlCourse,
-} from '../src/db/html-course/seed';
-import { HTML_SOLUTIONS } from '../src/db/html-course/solutions';
+import { CONTENT_COURSES, findContentCourse } from '../src/db/content/registry';
+import { CourseExistsError, contentDirOf, prepareCourse, seedCourse } from '../src/db/content/seed';
 import { createMember, createOrg, setup, type TestContext } from './helpers';
 
 type Member = { userId: string; cookie: string };
@@ -18,6 +12,7 @@ let teacher: Member;
 let student: Member;
 let courseId: string;
 
+const HTML = findContentCourse('html')!;
 const course = () => `/orgs/${org}/courses/${courseId}`;
 const get = (who: Member, path: string) => ctx.http().get(path).set('Cookie', who.cookie);
 const send = (who: Member, method: 'post' | 'put', path: string, body: object = {}) =>
@@ -25,48 +20,53 @@ const send = (who: Member, method: 'post' | 'put', path: string, body: object = 
 
 beforeAll(async () => {
   ctx = await setup();
-  org = await createOrg(ctx, 'html-org');
-  teacher = await createMember(ctx, 'teacher@html.uz', org, 'TEACHER');
-  student = await createMember(ctx, 'student@html.uz', org, 'STUDENT');
+  org = await createOrg(ctx, 'content-org');
+  teacher = await createMember(ctx, 'teacher@content.uz', org, 'TEACHER');
+  student = await createMember(ctx, 'student@content.uz', org, 'STUDENT');
 });
 
 afterAll(async () => {
   await ctx.app.close();
 });
 
-describe('HTML course manifest', () => {
-  it('has 12 modules and 60 lessons, each with a non-empty lesson file', () => {
-    const prepared = prepareHtmlCourse();
-    expect(prepared).toHaveLength(12);
-    const lessons = prepared.flatMap((m) => m.lessons);
-    expect(lessons).toHaveLength(60);
-    expect(new Set(lessons.map((l) => l.slug)).size).toBe(60);
+describe.each(CONTENT_COURSES.map((c) => [c.slug, c] as const))('%s course manifest', (_, c) => {
+  it('validates and every lesson has a real lesson file', () => {
+    const lessons = prepareCourse(c).flatMap((m) => m.lessons);
+    expect(new Set(lessons.map((l) => l.slug)).size).toBe(lessons.length);
     for (const l of lessons) expect(l.content.length, l.slug).toBeGreaterThan(500);
   });
 
   it('uses every lesson file exactly once', () => {
-    const files = readdirSync(HTML_CONTENT_DIR)
+    const files = readdirSync(contentDirOf(c))
       .filter((f) => f.endsWith('.md'))
       .map((f) => f.slice(0, -3))
       .sort();
-    const slugs = HTML_MODULES.flatMap((m) => m.lessons.map((l) => l.slug)).sort();
+    const slugs = c.modules.flatMap((m) => m.lessons.map((l) => l.slug)).sort();
     expect(files).toEqual(slugs);
   });
 
   it('gives every module a quiz and every exercise a reference solution', () => {
-    for (const m of HTML_MODULES) {
+    for (const m of c.modules) {
       expect(
         m.lessons.filter((l) => l.quiz),
         m.title,
       ).toHaveLength(1);
     }
-    const withExercise = HTML_MODULES.flatMap((m) => m.lessons.filter((l) => l.exercise));
-    expect(withExercise.length).toBeGreaterThanOrEqual(45);
-    expect(Object.keys(HTML_SOLUTIONS).sort()).toEqual(withExercise.map((l) => l.slug).sort());
+    const withExercise = c.modules.flatMap((m) => m.lessons.filter((l) => l.exercise));
+    expect(withExercise.length).toBeGreaterThan(c.modules.length);
+    expect(Object.keys(c.solutions).sort()).toEqual(withExercise.map((l) => l.slug).sort());
+  });
+});
+
+describe('HTML course manifest', () => {
+  it('has 12 modules and 60 lessons', () => {
+    const prepared = prepareCourse(HTML);
+    expect(prepared).toHaveLength(12);
+    expect(prepared.flatMap((m) => m.lessons)).toHaveLength(60);
   });
 
   it('reports missing lesson files instead of seeding partial content', () => {
-    expect(() => prepareHtmlCourse(`${HTML_CONTENT_DIR}-missing`)).toThrow(
+    expect(() => prepareCourse(HTML, `${contentDirOf(HTML)}-missing`)).toThrow(
       /missing introduction\.md/,
     );
   });
@@ -74,12 +74,12 @@ describe('HTML course manifest', () => {
 
 describe('HTML course seed', () => {
   it('creates the published course in one go', async () => {
-    const r = await seedHtmlCourse(ctx.handle.db, {
+    const r = await seedCourse(ctx.handle.db, HTML, {
       organizationId: org,
       teacherId: teacher.userId,
     });
     expect(r).toMatchObject({ modules: 12, lessons: 60, quizzes: 12, replaced: false });
-    expect(r.exercises).toBe(Object.keys(HTML_SOLUTIONS).length);
+    expect(r.exercises).toBe(Object.keys(HTML.solutions).length);
     courseId = r.courseId;
 
     const list = await get(teacher, `/orgs/${org}/courses`).expect(200);
@@ -89,13 +89,13 @@ describe('HTML course seed', () => {
 
   it('refuses to overwrite an existing course without --replace', async () => {
     await expect(
-      seedHtmlCourse(ctx.handle.db, { organizationId: org, teacherId: teacher.userId }),
-    ).rejects.toBeInstanceOf(HtmlCourseExistsError);
+      seedCourse(ctx.handle.db, HTML, { organizationId: org, teacherId: teacher.userId }),
+    ).rejects.toBeInstanceOf(CourseExistsError);
   });
 
   it('requires a staff owner', async () => {
     await expect(
-      seedHtmlCourse(ctx.handle.db, {
+      seedCourse(ctx.handle.db, HTML, {
         organizationId: org,
         teacherId: student.userId,
         replace: true,
@@ -104,7 +104,7 @@ describe('HTML course seed', () => {
   });
 
   it('recreates the course with --replace', async () => {
-    const r = await seedHtmlCourse(ctx.handle.db, {
+    const r = await seedCourse(ctx.handle.db, HTML, {
       organizationId: org,
       teacherId: teacher.userId,
       replace: true,

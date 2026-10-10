@@ -596,3 +596,25 @@ Har bir amal shu yerga qo'shib boriladi (eng yangisi pastda).
   - Ishni yangilash (snapshot'ni yangi kod bilan almashtirish) yo'q: olib tashlab, qayta qo'shish kerak.
   - Ko'nikmalar erkin matn, kurslardan avtomatik olinmaydi.
 - Keyingi qadam: **13C — Analytics**.
+
+### CSS kursi (W3Schools tartibida) — boshlandi, to'xtatildi
+
+- So'rov: w3schools.com/css darsligini o'zbek tilida joylash. HTML kursidagi qaror saqlandi: faqat mavzular tartibi olinadi, matnlar, misollar va mashqlar **original o'zbekcha** yoziladi.
+- **CHECK engine kengaytirildi** (CSS mashqlari uchun):
+  - `style` tekshiruvida ixtiyoriy `pseudo` (`::before`, `::after`, `::first-letter`, `::first-line`, `::marker`, `::placeholder`);
+  - `property` CSS o'zgaruvchisi bo'lishi mumkin (`--rang`). O'zgaruvchilar va `content` yozilganidek solishtiriladi.
+  - **Topilgan xato va tuzatish:** probe elementda `border-style` yo'q, shuning uchun `border-width: 4px` 0px ga normallashardi. Endi qiymat hisoblangan qiymat bilan aynan mos kelsa, probe ishlatilmaydi.
+  - Engine testi qo'shildi (13 ta). Muharrirdagi qoidalar ma'lumotnomasi yangilandi.
+- **Kontent infratuzilmasi umumlashtirildi** (`apps/api/src/db/content/`):
+  - `helpers.ts`: `CourseMeta`, `CourseDef`, yangi `site(body, css)` (index.html + style.css);
+  - `seed.ts`: `prepareCourse()`, `seedCourse()`, `CourseExistsError` — har qanday kurs uchun;
+  - `registry.ts`: `CONTENT_COURSES` (html, css);
+  - `verify.ts`: `content:verify [kurs] [darslar...]`;
+  - HTML kursi `content/html/` ga ko'chirildi (manifest va yechimlar o'zgarmadi);
+  - CLI `src/db/seed-course.ts`, skriptlar `db:seed:course <slug>`, `db:seed:html`, `db:seed:css`.
+- Test `test/html-course.test.ts` → `test/content-courses.test.ts`: har bir kurs uchun manifest testlari (`describe.each`), HTML seed va o'quvchi oqimi testlari saqlandi.
+- **CSS kursi:** 15 modul, ~101 dars rejasi. Tayyor: **3 modul, 23 dars, 23 mashq, 3 test** (`content/css/modules/01..03`, `solutions/01..03`). Haqiqiy Chrome tekshiruvi **23/23** (yechim PASSED, boshlang'ich kod o'tmaydi).
+- Tajriba: bir mashqda 5 tadan ortiq qoida bo'lsa, yuklama ostida 20 s budjetdan oshib ketishi mumkin. Shu sabab `outline` mashqi qisqartirildi.
+- Regressiya: typecheck ✅, lint ✅, format ✅, api test **170/170** ✅, check-engine **13/13** ✅.
+- Demo bazaga CSS kursi hali **yuklanmagan** (kurs tugagandan keyin `db:seed:css`).
+- To'liq holat, qolgan 12 modul va mashq yozish qoidalari: [CSS_KURS_HOLATI.md](CSS_KURS_HOLATI.md).

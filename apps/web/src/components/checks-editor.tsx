@@ -19,7 +19,7 @@ function describe(a: CheckAssertion): string {
     case 'attribute':
       return `"${a.selector}" [${a.name}${a.value === undefined ? '' : `="${a.value}"`}]`;
     case 'style':
-      return `"${a.selector}" { ${a.property}: ${a.value} }`;
+      return `"${a.selector}${a.pseudo ?? ''}" { ${a.property}: ${a.value} }`;
     case 'noConsoleErrors':
       return 'Konsolda xato yo‘q';
   }
@@ -115,7 +115,8 @@ export function ChecksEditor({
             </li>
             <li>
               <code>style</code>: selector, property, value (hisoblangan CSS, masalan red = rgb(255,
-              0, 0))
+              0, 0)), pseudo (ixtiyoriy: ::before, ::after, ::first-letter, ::first-line, ::marker,
+              ::placeholder); property CSS o‘zgaruvchisi ham bo‘lishi mumkin (--rang)
             </li>
             <li>
               <code>noConsoleErrors</code>: yuklanish va amallarda JS xatosi yo‘q

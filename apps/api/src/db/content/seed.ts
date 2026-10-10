@@ -18,10 +18,12 @@ import {
   modules,
   quizzes,
 } from '../schema';
-import { HTML_COURSE, HTML_MODULES } from './manifest';
+import type { CourseDef } from './helpers';
 
-/** Works from both `src/db/html-course` and `dist/db/html-course`. */
-export const HTML_CONTENT_DIR = join(__dirname, '..', '..', '..', 'content', 'html-course');
+/** `apps/api/content`; works from both `src/db/content` and `dist/db/content`. */
+export const CONTENT_ROOT = join(__dirname, '..', '..', '..', 'content');
+
+export const contentDirOf = (course: CourseDef) => join(CONTENT_ROOT, course.contentDir);
 
 export interface PreparedLesson {
   slug: string;
@@ -40,11 +42,14 @@ export interface PreparedModule {
  * Reads lesson bodies and validates the whole manifest with the same schemas the API uses.
  * Throws a single error listing every problem so content mistakes surface before any write.
  */
-export function prepareHtmlCourse(contentDir = HTML_CONTENT_DIR): PreparedModule[] {
+export function prepareCourse(
+  course: CourseDef,
+  contentDir = contentDirOf(course),
+): PreparedModule[] {
   const problems: string[] = [];
   const slugs = new Set<string>();
 
-  const prepared = HTML_MODULES.map((m) => ({
+  const prepared = course.modules.map((m) => ({
     title: m.title,
     lessons: m.lessons.map((l): PreparedLesson => {
       if (slugs.has(l.slug)) problems.push(`${l.slug}: duplicate slug`);
@@ -76,12 +81,13 @@ export function prepareHtmlCourse(contentDir = HTML_CONTENT_DIR): PreparedModule
     }),
   }));
 
-  if (problems.length > 0)
-    throw new Error(`HTML course manifest is invalid:\n${problems.join('\n')}`);
+  if (problems.length > 0) {
+    throw new Error(`Course "${course.slug}" manifest is invalid:\n${problems.join('\n')}`);
+  }
   return prepared;
 }
 
-export interface SeedHtmlCourseOptions {
+export interface SeedCourseOptions {
   organizationId: string;
   teacherId: string;
   /** Deletes an existing course with the same slug (and all student progress in it) first. */
@@ -89,7 +95,7 @@ export interface SeedHtmlCourseOptions {
   contentDir?: string;
 }
 
-export interface SeedHtmlCourseResult {
+export interface SeedCourseResult {
   courseId: string;
   modules: number;
   lessons: number;
@@ -98,18 +104,19 @@ export interface SeedHtmlCourseResult {
   replaced: boolean;
 }
 
-export class HtmlCourseExistsError extends Error {
-  constructor() {
-    super(`Course "${HTML_COURSE.slug}" already exists; rerun with --replace to recreate it`);
+export class CourseExistsError extends Error {
+  constructor(slug: string) {
+    super(`Course "${slug}" already exists; rerun with --replace to recreate it`);
   }
 }
 
-/** Creates the published HTML course in one transaction. */
-export async function seedHtmlCourse(
+/** Creates the published course in one transaction. */
+export async function seedCourse(
   db: Db,
-  opts: SeedHtmlCourseOptions,
-): Promise<SeedHtmlCourseResult> {
-  const prepared = prepareHtmlCourse(opts.contentDir);
+  course: CourseDef,
+  opts: SeedCourseOptions,
+): Promise<SeedCourseResult> {
+  const prepared = prepareCourse(course, opts.contentDir);
 
   return db.transaction(async (tx) => {
     const [teacher] = await tx
@@ -122,34 +129,33 @@ export async function seedHtmlCourse(
           inArray(memberships.role, ['TEACHER', 'ORG_ADMIN']),
         ),
       );
-    if (!teacher)
+    if (!teacher) {
       throw new Error('Course owner must be a TEACHER or ORG_ADMIN of the organization');
+    }
 
     const [existing] = await tx
       .select({ id: courses.id })
       .from(courses)
-      .where(
-        and(eq(courses.organizationId, opts.organizationId), eq(courses.slug, HTML_COURSE.slug)),
-      )
+      .where(and(eq(courses.organizationId, opts.organizationId), eq(courses.slug, course.slug)))
       .for('update');
-    if (existing && !opts.replace) throw new HtmlCourseExistsError();
+    if (existing && !opts.replace) throw new CourseExistsError(course.slug);
     if (existing) await tx.delete(courses).where(eq(courses.id, existing.id));
 
-    const [course] = await tx
+    const [row] = await tx
       .insert(courses)
       .values({
         organizationId: opts.organizationId,
-        slug: HTML_COURSE.slug,
-        title: HTML_COURSE.title,
-        description: HTML_COURSE.description,
+        slug: course.slug,
+        title: course.title,
+        description: course.description,
         status: 'PUBLISHED',
         createdBy: opts.teacherId,
       })
       .returning({ id: courses.id });
-    const courseId = course!.id;
+    const courseId = row!.id;
     await tx.insert(courseTeachers).values({ courseId, userId: opts.teacherId });
 
-    const result: SeedHtmlCourseResult = {
+    const result: SeedCourseResult = {
       courseId,
       modules: 0,
       lessons: 0,

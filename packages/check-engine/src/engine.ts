@@ -270,8 +270,16 @@ async function assert(
     }
     case 'style':
       return el.evaluate(
-        (node, [prop, expected]) => {
-          const actual = getComputedStyle(node).getPropertyValue(prop).trim();
+        (node, [prop, expected, pseudo]) => {
+          const actual = getComputedStyle(node, pseudo || null)
+            .getPropertyValue(prop)
+            .trim();
+          // Custom properties and `content` are compared as written; the browser does not
+          // normalize them beyond trimming.
+          if (prop.startsWith('--') || prop === 'content') return actual === expected.trim();
+          // Already in computed form (e.g. `4px`). Probing would be wrong for values that
+          // depend on other properties: a probe without `border-style` has `border-width: 0px`.
+          if (actual === expected.trim()) return true;
           // Let the browser normalize the expected value (e.g. `red` -> `rgb(255, 0, 0)`)
           // by applying it to a sibling probe in the same context.
           const probe = document.createElement(node.tagName);
@@ -286,7 +294,7 @@ async function assert(
           probe.remove();
           return actual === normalized;
         },
-        [a.property, a.value] as const,
+        [a.property, a.value, a.pseudo ?? ''] as const,
         { timeout },
       );
   }
