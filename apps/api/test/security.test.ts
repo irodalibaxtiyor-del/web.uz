@@ -1,6 +1,10 @@
+import request from 'supertest';
 import { afterEach, describe, expect, it } from 'vitest';
+import { AiUsageService } from '../src/ai/usage.service';
 import { MockProvider, type AiProvider, type ProviderRequest } from '../src/ai/provider';
+import { createApp } from '../src/app';
 import { loadConfig } from '../src/config';
+import { aiUsage, rateLimitEvents } from '../src/db/schema';
 import { createMember, createOrg, PASSWORD, setup, type TestContext } from './helpers';
 
 /** Phase 14A: hardening found during the security audit. */
@@ -125,5 +129,64 @@ describe('AI quota under concurrency', () => {
     );
     const statuses = results.map((x) => x.status).sort();
     expect(statuses).toEqual([200, 200, 429, 429, 429, 429]);
+  });
+});
+
+describe('rate limits are shared across API instances', () => {
+  it('a second instance on the same database sees the first one’s failures', async () => {
+    const first = await app();
+    const config = loadConfig({ NODE_ENV: 'test', DATABASE_URL: 'pglite://memory' });
+    // Same database, separate app (as a second API instance); only the first owns the handle.
+    const shared = { ...first.handle, close: async () => {} };
+    const second = await createApp(config, { handle: shared, migrate: false });
+    await second.init();
+    try {
+      const org = await createOrg(first, 'org');
+      await createMember(first, 'victim@a.uz', org, 'STUDENT');
+      for (let i = 0; i < 5; i++) {
+        await login(first, 'victim@a.uz', 'wrong-password-123', '203.0.113.9').expect(401);
+      }
+      await request(second.getHttpServer())
+        .post('/auth/login')
+        .set('X-Forwarded-For', '203.0.113.9')
+        .send({ email: 'victim@a.uz', password: PASSWORD })
+        .expect(429);
+    } finally {
+      await second.close();
+    }
+  });
+
+  it('stores only hashed keys, never emails or IP addresses', async () => {
+    const ctx = await app();
+    await login(ctx, 'someone@a.uz', 'wrong-password-123', '203.0.113.77').expect(401);
+    const rows = await ctx.handle.db.select().from(rateLimitEvents);
+    expect(rows.length).toBeGreaterThan(0);
+    const dump = JSON.stringify(rows);
+    expect(dump).not.toContain('someone@a.uz');
+    expect(dump).not.toContain('203.0.113.77');
+    expect(rows.every((r) => /^[a-f0-9]{64}$/.test(r.keyHash))).toBe(true);
+  });
+});
+
+describe('AI usage reservations', () => {
+  it('closes PENDING rows left by a crash, but not ones that may still be running', async () => {
+    const ctx = await app();
+    const org = await createOrg(ctx, 'org');
+    const s = await createMember(ctx, 's@a.uz', org, 'STUDENT');
+    const base = {
+      userId: s.userId,
+      organizationId: org,
+      provider: 'mock',
+      model: 'm',
+      promptChars: 10,
+    };
+    await ctx.handle.db.insert(aiUsage).values([
+      { ...base, status: 'PENDING', createdAt: new Date(Date.now() - 60 * 60_000) },
+      { ...base, status: 'PENDING', createdAt: new Date() },
+    ]);
+    const closed = await ctx.app.get(AiUsageService).closeStale();
+    expect(closed).toBe(1);
+    const rows = await ctx.handle.db.select({ status: aiUsage.status }).from(aiUsage);
+    expect(rows.map((r) => r.status).sort()).toEqual(['ERROR', 'PENDING']);
   });
 });

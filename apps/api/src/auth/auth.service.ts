@@ -65,7 +65,7 @@ export class AuthService {
   }
 
   async login(input: LoginInput, ip: string) {
-    if (this.limiter.isBlocked(ip, input.email)) {
+    if (await this.limiter.isBlocked(ip, input.email)) {
       throw new HttpException(
         "Juda ko'p urinish. Birozdan keyin qayta urinib ko'ring",
         HttpStatus.TOO_MANY_REQUESTS,
@@ -79,10 +79,10 @@ export class AuthService {
 
     const ok = await this.passwords.verify(user?.passwordHash ?? null, input.password);
     if (!user || !ok) {
-      this.limiter.recordFailure(ip, input.email);
+      await this.limiter.recordFailure(ip, input.email);
       throw new UnauthorizedException(INVALID_CREDENTIALS);
     }
-    this.limiter.recordSuccess(ip, input.email);
+    await this.limiter.recordSuccess(ip, input.email);
     await this.audit.record({ action: 'auth.login', actorUserId: user.id });
     const session = await this.sessions.create(user.id);
     return { userId: user.id, ...session };

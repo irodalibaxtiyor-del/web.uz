@@ -709,3 +709,14 @@ Har bir amal shu yerga qo'shib boriladi (eng yangisi pastda).
   - Restart'da `PENDING` holatida qolgan `ai_usage` qatorlari shu kun kvotasiga kiradi.
   - Kirish jurnallari (access log) va xavfsizlik monitoringi yo'q (14C production readiness).
 - Keyingi qadam: **14B — Sandbox security**.
+
+### 14A — kamchiliklar tuzatildi
+
+- **Limitlar endi PostgreSQL'da** (`0009_rate_limits.sql`, `rate_limit_events`): login (IP+email, IP), ro'yxatdan o'tish va ochiq endpoint limitlari bir nechta API instance o'rtasida umumiy. Kalitlar SHA-256 xesh (email va IP ochiq saqlanmaydi), tekshirish+yozish per-key `pg_advisory_xact_lock` bilan atomik, 24 soatdan eski qatorlar muntazam o'chiriladi. Redis kerak emas.
+- **CSP nonce bilan** (`apps/web/src/proxy.ts`, Next 16 proxy): har so'rovda yangi nonce, `script-src 'self' 'nonce-…' 'strict-dynamic'` — skriptlar uchun `'unsafe-inline'` olib tashlandi. Barcha sahifalar dinamik (root layout cookie o'qiydi), Next o'z skriptlariga nonce qo'yadi. Monaco loader `'strict-dynamic'` orqali ishlaydi. Uslublar uchun `'unsafe-inline'` qoldi (Monaco va next/font runtime'da style qo'shadi).
+- **Monaco ichidagi DOMPurify**: yangi Monaco versiyasi yo'q (0.57.0 eng oxirgisi). Bundle tahlili: Monaco `sanitize` ni faqat `RETURN_DOM_FRAGMENT`/`RETURN_TRUSTED_TYPE` bilan chaqiradi, `IN_PLACE` ni hech qachon ishlatmaydi — advisory'larga yetib bo'lmaydi. `src/lib/monaco-bundle.test.ts` Monaco yangilanganda buni qayta tekshiradi.
+- **Haqiqiy HTTP provayder** to'liq tarmoq yo'li orqali sinaldi (`test/ai-http.test.ts`, mahalliy soxta OpenAI-mos server, `AI_PROVIDER=http`): kalit faqat `Authorization` da, so'rov body'sida kalit/yashirin selektor/email yo'q, 503/502 dan keyin 3-urinishda muvaffaqiyat va `attempts: 3`, upstream xatosi xavfsiz 503 (tafsilot va kalit sizmaydi), real model javobidagi yashirin qoida bloklanadi.
+- **Osilib qolgan AI band qilishlari**: ishga tushishda maksimal so'rov vaqtidan (`timeout × attempts + 60 s`) eski `PENDING` qatorlar `ERROR` qilinadi; yoshroqlari boshqa instance'ga tegishli bo'lishi mumkinligi uchun qoldiriladi.
+- Testlar: `security.test.ts` 9 ta (+ikki instance umumiy limit, xeshlangan kalitlar, eski band qilishlarni yopish), `ai-http.test.ts` 4 ta, web `proxy.test.ts` 2 ta va `monaco-bundle.test.ts` 1 ta.
+- Regressiya: typecheck ✅, lint ✅, format ✅, build ✅, test ✅ (shared 38 + sandbox 15 + web 26 + check-engine 13 + api 236 = **328**), `pnpm audit --prod` ✅. Brauzerda nonce CSP bilan Monaco, sandbox RUN, tutor va analitika oqimlari — CSP buzilishi 0.
+- Hal qilinmagan (infratuzilma/tashkiliy): production'da Next oldidagi proksi `X-Forwarded-For` ni almashtirishi kerak; haqiqiy AI provayder uchun DPA; email tasdiqlash (ro'yxatdan o'tishdagi 409 enumeration).

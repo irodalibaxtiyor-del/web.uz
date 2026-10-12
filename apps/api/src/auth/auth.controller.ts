@@ -40,7 +40,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     // Limits mass sign-ups and probing which emails exist (409) from one client.
-    this.limiter.consume(
+    await this.limiter.consume(
       `register:${req.ip ?? 'unknown'}`,
       this.config.REGISTER_MAX_PER_HOUR,
       60 * 60_000,

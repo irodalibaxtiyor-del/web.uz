@@ -92,25 +92,25 @@ export class PortfolioController {
 
   @Public()
   @Get('public/:slug')
-  publicView(@Param('slug') slug: string, @Req() req: Request) {
-    this.limitPublic(req);
+  async publicView(@Param('slug') slug: string, @Req() req: Request) {
+    await this.limitPublic(req);
     return this.portfolio.publicView(slug);
   }
 
   @Public()
   @Get('public/:slug/items/:itemId')
-  publicItem(
+  async publicItem(
     @Param('slug') slug: string,
     @Param('itemId', Id) itemId: string,
     @Req() req: Request,
   ) {
-    this.limitPublic(req);
+    await this.limitPublic(req);
     return this.portfolio.publicItem(slug, itemId);
   }
 
   /** Anonymous endpoints: slow down scraping and slug enumeration per client IP. */
-  private limitPublic(req: Request) {
-    this.limiter.consume(
+  private async limitPublic(req: Request) {
+    await this.limiter.consume(
       `public:${req.ip ?? 'unknown'}`,
       this.config.PUBLIC_RATE_PER_MINUTE,
       60_000,

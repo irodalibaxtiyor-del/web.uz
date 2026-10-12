@@ -1,5 +1,5 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { and, eq, gte, sql } from 'drizzle-orm';
+import { HttpException, HttpStatus, Inject, Injectable, OnModuleInit } from '@nestjs/common';
+import { and, eq, gte, lt, sql } from 'drizzle-orm';
 import type { TutorQuota } from '@webdizayn/shared';
 import { APP_CONFIG, type AppConfig } from '../config';
 import type { Db } from '../db/client';
@@ -33,11 +33,32 @@ function startOfUtcDay(now: Date): Date {
  * so parallel requests cannot all pass the check before any of them is recorded.
  */
 @Injectable()
-export class AiUsageService {
+export class AiUsageService implements OnModuleInit {
   constructor(
     private readonly dbs: DbService,
     @Inject(APP_CONFIG) private readonly config: AppConfig,
   ) {}
+
+  /**
+   * A crash between reserve() and finish() leaves a PENDING row. Close those that are older
+   * than any request could take (they still count: the provider may have been called).
+   * Younger ones may belong to another running instance and are left alone.
+   */
+  async onModuleInit(): Promise<void> {
+    await this.closeStale();
+  }
+
+  async closeStale(now = new Date()): Promise<number> {
+    const maxMs = this.config.AI_REQUEST_TIMEOUT_MS * this.config.AI_MAX_ATTEMPTS + 60_000;
+    const rows = await this.dbs.db
+      .update(aiUsage)
+      .set({ status: 'ERROR' })
+      .where(
+        and(eq(aiUsage.status, 'PENDING'), lt(aiUsage.createdAt, new Date(now.getTime() - maxMs))),
+      )
+      .returning({ id: aiUsage.id });
+    return rows.length;
+  }
 
   async quota(userId: string, now = new Date(), db: Db = this.dbs.db): Promise<TutorQuota> {
     const [row] = await db

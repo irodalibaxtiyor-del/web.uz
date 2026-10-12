@@ -715,3 +715,17 @@ export const aiHandoffs = pgTable(
   },
   (t) => [index('ai_handoffs_course_idx').on(t.courseId, t.createdAt)],
 );
+
+/**
+ * Sliding-window rate limiting shared by every API instance. Keys are SHA-256 hashes, so
+ * emails and IP addresses are not stored in clear text. Old rows are pruned regularly.
+ */
+export const rateLimitEvents = pgTable(
+  'rate_limit_events',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    keyHash: text('key_hash').notNull(),
+    createdAt: createdAt(),
+  },
+  (t) => [index('rate_limit_events_key_idx').on(t.keyHash, t.createdAt)],
+);
