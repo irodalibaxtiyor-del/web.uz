@@ -11,3 +11,5 @@ coverage/
 *.log
 .DS_Store
 apps/web/public/monaco/
+# Production env files referenced by deploy/docker-compose.prod.yml (contain secrets)
+deploy/*.env

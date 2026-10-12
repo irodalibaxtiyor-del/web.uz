@@ -720,3 +720,24 @@ Har bir amal shu yerga qo'shib boriladi (eng yangisi pastda).
 - Testlar: `security.test.ts` 9 ta (+ikki instance umumiy limit, xeshlangan kalitlar, eski band qilishlarni yopish), `ai-http.test.ts` 4 ta, web `proxy.test.ts` 2 ta va `monaco-bundle.test.ts` 1 ta.
 - Regressiya: typecheck ✅, lint ✅, format ✅, build ✅, test ✅ (shared 38 + sandbox 15 + web 26 + check-engine 13 + api 236 = **328**), `pnpm audit --prod` ✅. Brauzerda nonce CSP bilan Monaco, sandbox RUN, tutor va analitika oqimlari — CSP buzilishi 0.
 - Hal qilinmagan (infratuzilma/tashkiliy): production'da Next oldidagi proksi `X-Forwarded-For` ni almashtirishi kerak; haqiqiy AI provayder uchun DPA; email tasdiqlash (ro'yxatdan o'tishdagi 409 enumeration).
+
+### 14B — Sandbox security
+
+- Ikki sandbox tekshirildi: brauzerdagi RUN (`apps/sandbox`) va serverdagi CHECK (`packages/check-engine`). Qoida: mavjud bo'lmagan infratuzilma PASS deb ko'rsatilmaydi.
+- **RUN sandbox (haqiqiy Chrome E2E, `pnpm --filter @webdizayn/sandbox e2e`) — 21/21:**
+  - avvalgi 16 ta: izolyatsiya qilingan origin (alohida site), CSP, iframe cheklovlari (`allow-scripts` faqat), postMessage `runId`/manba tekshiruvi, parent/top DOM, cookie, localStorage, popup, top navigatsiya, fetch, rasm, cheksiz sikl va watchdog;
+  - **yangi:** IP literal'dagi "kanareyka" server (nazorat so'rovi bilan) — fetch, XHR, sendBeacon, EventSource, WebSocket, Worker, rasm, CSS `url()`, prefetch, iframe, forma, popup va preview'ni o'zi yo'naltirish (`location.href`) — **birorta so'rov yetib bormadi** (preview navigatsiyasini runner CSP `frame-src` bloklaydi); yuklangandan keyin boshlangan cheksiz siklda web ilova javob beradi (site isolation); begona sayt runner'ni embed qilib boshqara olmaydi (`frame-ancestors` + origin tekshiruvi).
+- **CHECK sandbox (haqiqiy Chrome, `test/sandbox.test.ts`):** kanareyka barcha kanallar bo'yicha 0 so'rov oldi (nazorat so'rovi bilan); `file://` (fetch va iframe) o'qilmaydi; xotira bombasi (renderer V8 heap 128 MB) PASS bermaydi, byudjet ichida tugaydi va keyingi tekshiruv normal ishlaydi. Mavjud testlar: Playwright/yuklanish/qadam timeout'lari, qattiq kill va yetim Chrome yo'qligi, env allowlist.
+- **Sirlar izolyatsiyasi — masofaviy CHECK worker:** API konteynerida Chrome ishlasa va renderer sandbox o'chiq bo'lsa, eksploit bir xil uid ostida API sirlarini (`/proc/*/environ`) o'qishi mumkin edi. Yangi:
+  - `packages/check-engine/src/server.ts` + `server-main.ts` (`pnpm --filter @webdizayn/check-engine start:worker`): faqat `POST /run` va `GET /health`; `Bearer` token (≥32, timing-safe); body ≤1.5 MB (413, ulanish yopiladi); fayl va qoidalar shared sxemalar bilan validatsiya; parallellik + navbat chegarasi (503); har run avvalgidek alohida o'ldirsa bo'ladigan jarayonda; token process env'dan o'chiriladi; config xatolarida faqat o'zgaruvchi nomi.
+  - API: `CHECK_ENGINE=remote`, `CHECK_WORKER_URL`, `CHECK_WORKER_TOKEN` (remote'da majburiy). `RemoteCheckExecutor` javobni `parseResult` bilan qayta tekshiradi: PASSED faqat barcha qoida o'tganda; noto'g'ri token, o'chiq worker yoki buzilgan javob — ERROR (hech qachon PASS emas).
+  - Testlar: check-engine `server.test.ts` 5 ta (zaif token, faqat /run, 401, 400/413, haqiqiy Chrome'da PASSED), api `check-worker.test.ts` 5 ta (config, haqiqiy verdict, soxta PASS → FAILED, noto'g'ri token/o'chiq worker, API orqali to'liq oqim → mashq PASSED). Kompilyatsiya qilingan `server-main.js` bilan HTTP smoke ham o'tdi.
+- **Production artefaktlari (TEKSHIRILMAGAN — lokal Docker yo'q):** `deploy/Dockerfile` (api, check-worker, web, sandbox target'lari; non-root `node`, slim image, API'da brauzer yo'q), `deploy/docker-compose.prod.yml` (read-only root FS + tmpfs, `cap_drop: ALL`, `no-new-privileges`, CPU/xotira/pids limitlari, `checks` va `backend` tarmoqlari `internal: true`, check-worker'da faqat token, ixtiyoriy `runtime: runsc` — gVisor), `deploy/README.md` (haqiqiy infratuzilmada bajariladigan 10 bandlik tekshiruv ro'yxati), `.dockerignore`, `deploy/*.env` gitignore'da.
+- Regressiya: typecheck ✅, lint ✅, format ✅, build ✅, test ✅ (shared 38 + sandbox 15 + web 26 + check-engine 21 + api 241 = **341**), sandbox E2E 21/21 ✅.
+- **STATUS: READY_WITH_INFRASTRUCTURE_LIMITATIONS.**
+- Tekshirilmagan / cheklovlar:
+  - Konteynerlar (non-root, read-only, resurs limitlari, tarmoq izolyatsiyasi, gVisor) build qilinmagan va ishga tushirilmagan — `deploy/README.md` ro'yxati bajarilmaguncha PASS emas.
+  - OS darajasidagi CPU/xotira limitlari (cgroups) lokal Windows'da yo'q; faqat V8 heap limiti va vaqt byudjeti tekshirildi. ArrayBuffer kabi heap'dan tashqari xotira faqat konteyner limiti bilan cheklanadi.
+  - Chromium renderer sandbox konteynerda user namespace yoki gVisor talab qiladi — CI (ubuntu) va production'da hali tekshirilmagan.
+  - Sandbox E2E production domenlarida (alohida registrable domen) ishga tushirilmagan.
+- Keyingi qadam: **14C — Production readiness**.

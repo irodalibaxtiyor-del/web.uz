@@ -1,0 +1,9 @@
+**/node_modules
+**/dist
+**/.next
+**/.data
+**/.env
+**/.env.*
+!.env.example
+apps/web/public/monaco
+.git

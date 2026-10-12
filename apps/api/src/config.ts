@@ -31,7 +31,14 @@ const envSchema = z.object({
   /** Requests per client IP per minute to public (no-login) endpoints. */
   PUBLIC_RATE_PER_MINUTE: z.coerce.number().int().positive().default(120),
   /** `process`: Playwright in a child process. `disabled`: every CHECK reports ERROR (never PASS). */
-  CHECK_ENGINE: z.enum(['process', 'disabled']).default('process'),
+  CHECK_ENGINE: z.enum(['process', 'remote', 'disabled']).default('process'),
+  /**
+   * `remote`: the CHECK worker service (packages/check-engine, `server-main.js`) in its own
+   * container, so Chrome never runs next to the API's database credentials.
+   */
+  CHECK_WORKER_URL: z.string().url().optional(),
+  /** Shared secret with the worker (>= 32 chars). Never logged or returned. */
+  CHECK_WORKER_TOKEN: z.string().min(32).optional(),
   /** Chrome/Chromium executable for CHECK. Empty: the installed Google Chrome. */
   CHECK_CHROME_PATH: z.string().optional(),
   /** Chrome's renderer sandbox. Only `false` where the OS cannot provide it (e.g. some containers). */
@@ -95,6 +102,9 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   const cfg = parsed.data;
   if (cfg.NODE_ENV === 'production' && cfg.DATABASE_URL.startsWith('pglite://')) {
     throw new Error('PGlite is not allowed in production; set DATABASE_URL to a Postgres URL');
+  }
+  if (cfg.CHECK_ENGINE === 'remote' && (!cfg.CHECK_WORKER_URL || !cfg.CHECK_WORKER_TOKEN)) {
+    throw new Error('Invalid environment configuration: CHECK_WORKER_URL, CHECK_WORKER_TOKEN');
   }
   const aiHttp =
     cfg.AI_PROVIDER === 'http' &&
