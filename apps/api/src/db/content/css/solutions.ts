@@ -7,6 +7,8 @@ import { s05 } from './solutions/05-lists-tables';
 import { s06 } from './solutions/06-layout';
 import { s07 } from './solutions/07-selectors';
 import { s08 } from './solutions/08-components';
+import { s09 } from './solutions/09-units';
+import { s10 } from './solutions/10-effects';
 
 /**
  * Reference solutions, keyed by lesson slug. Used only to verify the CHECK rules in a real
@@ -21,4 +23,6 @@ export const CSS_SOLUTIONS: Record<string, ProjectFile[]> = {
   ...s06,
   ...s07,
   ...s08,
+  ...s09,
+  ...s10,
 };

@@ -7,6 +7,8 @@ import { m05 } from './modules/05-lists-tables';
 import { m06 } from './modules/06-layout';
 import { m07 } from './modules/07-selectors';
 import { m08 } from './modules/08-components';
+import { m09 } from './modules/09-units';
+import { m10 } from './modules/10-effects';
 
 /**
  * Original Uzbek CSS course. Only the topic order follows the usual CSS curriculum; every
@@ -23,4 +25,4 @@ export const CSS_COURSE: CourseMeta = {
     'joylashuv, Flexbox, Grid, animatsiyalar va moslashuvchan dizayn. Har darsda amaliy mashq.',
 };
 
-export const CSS_MODULES: ModuleDef[] = [m01, m02, m03, m04, m05, m06, m07, m08];
+export const CSS_MODULES: ModuleDef[] = [m01, m02, m03, m04, m05, m06, m07, m08, m09, m10];
