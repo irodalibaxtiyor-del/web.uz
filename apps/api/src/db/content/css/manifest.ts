@@ -11,6 +11,8 @@ import { m09 } from './modules/09-units';
 import { m10 } from './modules/10-effects';
 import { m11 } from './modules/11-motion';
 import { m12 } from './modules/12-ui';
+import { m13 } from './modules/13-flexbox';
+import { m14 } from './modules/14-grid';
 
 /**
  * Original Uzbek CSS course. Only the topic order follows the usual CSS curriculum; every
@@ -40,4 +42,6 @@ export const CSS_MODULES: ModuleDef[] = [
   m10,
   m11,
   m12,
+  m13,
+  m14,
 ];
