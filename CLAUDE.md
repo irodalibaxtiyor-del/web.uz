@@ -772,3 +772,17 @@ Roadmap ro'yxati bo'yicha audit va tuzatishlar:
 - **STATUS: READY_WITH_INFRASTRUCTURE_LIMITATIONS.**
 - Infratuzilmaga bog'liq (soxta PASS qo'yilmadi): Docker image'lar va `deploy/README.md` tekshiruv ro'yxati; real managed Postgres (wire protokoli PGlite orqali sinaldi, lekin haqiqiy Postgres server emas); backup/restore mashqi; edge proksi (`X-Forwarded-For`); BullMQ'siz instance ichidagi CHECK navbati.
 - Keyingi qadam: **15A — Full E2E**.
+
+### 15A — Full E2E
+
+- `e2e/full-flow.e2e.mjs` (`pnpm -r build && pnpm e2e`): toza vaqtinchalik PGlite bazada haqiqiy stek — compiled API (haqiqiy CHECK engine Chrome'da, mock AI), Next web, sandbox origin, headless Chrome. `e2e/setup.cjs` compiled kod orqali ikki tashkilot, ikki o'qituvchi, admin va begona tashkilot o'qituvchisini yaratadi; parol har ishga tushishda tasodifiy. Portlar band bo'lsa to'xtaydi; oxirida barcha jarayonlar o'ldiriladi; xatoda skrinshot va server loglari `E2E_OUT` ga yoziladi.
+- Kursni tayyorlash o'qituvchining o'z brauzer sessiyasi orqali API bilan (bu UI oldingi fazalarda bosib tekshirilgan); o'quv, review va portfolio qadamlari **UI orqali**.
+- **Talaba:** forma orqali ro'yxatdan o'tish → chiqish/kirish → kurs → yozilish (1-dars ochiq, 2-dars yopiq; yopiq dars serverda 403) → dars → mashq → Monaco'da kod → **RUN** (sandbox konsolida natija) → **CHECK** FAILED → **AI tutor** (maslahat + xatoni tushuntirish, yashirin qoidasiz) → tuzatish → CHECK PASSED → 1-dars COMPLETED, 2-dars ochildi → topshiriq v1 → izohni ko'rish → v2 → yakuniy baho va izoh → portfolio (slug, ishni qo'shish, e'lon qilish) → mehmon ochiq sahifani ko'radi (email va ballsiz).
+- **O'qituvchi:** topshiriq → javoblar jadvali → javob → ko'rib chiqishni boshlash → izoh bilan qayta ishlash so'rovi → v2 ni ko'rib chiqish → rubrika bo'yicha 55 + 35 = 90 → izoh → baholash → yakunlash.
+- **Xavfsizlik (jonli serverlarga qarshi):** cross-student (begona CHECK run, review, yozilmagan mashq), cross-teacher (biriktirilmagan o'qituvchi review/tahrir 403), cross-org (404 va kursni boshqa org'ga qayta bog'lash 404), soxta rol (register'da `ORG_ADMIN` → STUDENT), soxta `x-user-id`/`x-role`, talabaga org analitikasi 403, ruxsatsiz AI konteksti (yozilmagan talaba, begona kurs tutor holati), yashirin CHECK qoidalari API/run/sahifa HTML'ida yo'q; kutilmagan brauzer xatolari 0.
+- Natija: **34/34**, ikki marta ketma-ket (barqaror).
+- Topilgan va tuzatilgan (faqat skriptda): o'qituvchi jadvalidagi havola nomi `aria-label` dan ("…: javobni ko'rib chiqish"); CHECK panel matnlari ASCII apostrof bilan.
+- CI: `e2e` job (build → `pnpm e2e`, xatoda artefaktlar yuklanadi) — ubuntu'da hali ishga tushirilmagan.
+- **STATUS: READY_WITH_INFRASTRUCTURE_LIMITATIONS** (avvalgi infratuzilma cheklovlari saqlanadi).
+- Cheklovlar: E2E portlari 3000/3100/4000 ga bog'liq (web build ularni o'z ichiga oladi); AI mock bilan; mobil va dark mode E2E'da emas (oldingi fazalarda alohida tekshirilgan); quiz va analitika sahifalari bu oqimda yo'q (13A/13C brauzer skriptlari bor).
+- Keyingi qadam: **15B — Regression audit**.

@@ -1,0 +1,505 @@
+// Phase 15A — full end-to-end run on a fresh database with the real stack:
+// compiled API (real CHECK engine in Chrome, mock AI), Next.js web, sandbox origin, headless Chrome.
+//
+//   pnpm -r build && pnpm e2e
+//
+// Needs ports 3000, 3100 and 4000 free (the web build bakes them in) and Google Chrome
+// (CHROME_PATH overrides). Course authoring uses the teacher's own browser session against the
+// API (its UI was click-tested in earlier phases); every learning, review and portfolio step
+// below is driven through the UI.
+import { execFileSync, spawn } from 'node:child_process';
+import { createWriteStream, mkdirSync, mkdtempSync } from 'node:fs';
+import { createRequire } from 'node:module';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { randomBytes } from 'node:crypto';
+
+const ROOT = join(import.meta.dirname, '..');
+const { chromium } = createRequire(join(ROOT, 'packages', 'check-engine', 'package.json'))(
+  'playwright-core',
+);
+const WEB = 'http://localhost:3000';
+const API = 'http://localhost:4000';
+const SANDBOX = 'http://127.0.0.1:3100';
+const PASSWORD = `E2e-${randomBytes(9).toString('base64url')}`;
+const WORK = mkdtempSync(join(tmpdir(), 'wd-e2e-'));
+const OUT = process.env.E2E_OUT ?? join(WORK, 'artifacts');
+mkdirSync(OUT, { recursive: true });
+
+const HIDDEN_TITLE = 'Tavsif paragrafi (yashirin)';
+const HIDDEN_SELECTOR = 'p.tavsif-maxfiy';
+
+// ---------------------------------------------------------------- reporting
+
+const results = [];
+let failed = 0;
+function record(ok, name, detail = '') {
+  results.push(`${ok ? 'OK  ' : 'FAIL'} ${name}${detail ? ` — ${detail}` : ''}`);
+  console.log(results.at(-1));
+  if (!ok) failed++;
+}
+function expect(cond, name, detail) {
+  record(Boolean(cond), name, cond ? '' : detail);
+  if (!cond) throw new Error(`assertion failed: ${name}`);
+}
+
+// ---------------------------------------------------------------- processes
+
+const children = [];
+function start(name, args, cwd, env) {
+  const log = createWriteStream(join(OUT, `${name}.log`));
+  const child = spawn(process.execPath, args, { cwd, env: { ...process.env, ...env } });
+  child.stdout.pipe(log);
+  child.stderr.pipe(log);
+  children.push(child);
+  return child;
+}
+function stopAll() {
+  for (const c of children) {
+    try {
+      if (process.platform === 'win32') {
+        execFileSync('taskkill', ['/PID', String(c.pid), '/T', '/F'], { stdio: 'ignore' });
+      } else {
+        c.kill('SIGKILL');
+      }
+    } catch {
+      // already gone
+    }
+  }
+}
+async function up(url, ms = 60_000) {
+  const until = Date.now() + ms;
+  while (Date.now() < until) {
+    try {
+      if ((await fetch(url)).status < 500) return;
+    } catch {
+      // not yet listening
+    }
+    await new Promise((r) => setTimeout(r, 300));
+  }
+  throw new Error(`${url} did not start (logs in ${OUT})`);
+}
+async function free(url) {
+  try {
+    await fetch(url);
+    return false;
+  } catch {
+    return true;
+  }
+}
+
+// ---------------------------------------------------------------- browser helpers
+
+async function api(ctx, method, path, body) {
+  const res = await ctx.request.fetch(`${WEB}/api${path}`, {
+    method,
+    data: body,
+    headers: { origin: WEB },
+  });
+  let json = null;
+  try {
+    json = await res.json();
+  } catch {
+    // empty body
+  }
+  return { status: res.status(), body: json };
+}
+
+async function login(page, email) {
+  await page.goto(`${WEB}/login`);
+  await page.locator('input[name="email"]').fill(email);
+  await page.locator('input[name="password"]').fill(PASSWORD);
+  await page.getByRole('button', { name: 'Kirish', exact: true }).click();
+  await page.waitForURL('**/dashboard');
+}
+
+/** Replaces the content of the active Monaco model (like a student selecting all and typing). */
+async function typeCode(page, code) {
+  const editor = page.locator('.monaco-editor').first();
+  await editor.waitFor({ timeout: 20_000 });
+  await editor.click();
+  await page.keyboard.press('Control+A');
+  await page.keyboard.press('Delete');
+  await page.keyboard.insertText(code);
+}
+
+async function waitText(page, text, timeout = 30_000) {
+  await page.getByText(text).first().waitFor({ timeout });
+}
+
+// ---------------------------------------------------------------- main
+
+let browser;
+async function run() {
+  for (const url of [WEB, API, SANDBOX]) {
+    if (!(await free(url))) throw new Error(`${url} is already in use; stop other servers first`);
+  }
+
+  // 1. Fresh database
+  const dbUrl = `pglite://${join(WORK, 'db').replaceAll('\\', '/')}`;
+  const setup = execFileSync(process.execPath, [join(ROOT, 'e2e', 'setup.cjs')], {
+    env: { ...process.env, DATABASE_URL: dbUrl, E2E_PASSWORD: PASSWORD, NODE_ENV: 'development' },
+  }).toString();
+  const { mainOrg, otherOrg } = JSON.parse(setup.trim().split('\n').at(-1));
+  record(true, 'fresh database with teachers in two organizations');
+
+  // 2. Stack
+  start('api', ['dist/main.js'], join(ROOT, 'apps', 'api'), {
+    NODE_ENV: 'development',
+    DATABASE_URL: dbUrl,
+    WEB_ORIGINS: WEB,
+    CHECK_ENGINE: 'process',
+    AI_RATE_PER_MINUTE: '100',
+    REGISTER_MAX_PER_HOUR: '100',
+    LOG_LEVEL: 'warn',
+  });
+  start('sandbox', ['src/main.js'], join(ROOT, 'apps', 'sandbox'), {});
+  start(
+    'web',
+    ['node_modules/next/dist/bin/next', 'start', '-p', '3000'],
+    join(ROOT, 'apps', 'web'),
+    {
+      API_URL: API,
+    },
+  );
+  await Promise.all([up(`${API}/health/ready`), up(`${SANDBOX}/runner.html`), up(`${WEB}/login`)]);
+  record(true, 'api, sandbox and web are up');
+
+  browser = await chromium.launch({ channel: 'chrome', executablePath: process.env.CHROME_PATH });
+  const consoleErrors = [];
+  const newPage = async (label) => {
+    const ctx = await browser.newContext({ viewport: { width: 1366, height: 900 } });
+    const page = await ctx.newPage();
+    page.on('dialog', (d) => d.accept());
+    page.on('pageerror', (e) => consoleErrors.push(`${label}: ${e.message}`));
+    page.on('console', (m) => {
+      // Expected 4xx (locked lesson, not enrolled, ...) are asserted explicitly below.
+      if (m.type() === 'error' && !/status of 4\d\d/.test(m.text())) {
+        consoleErrors.push(`${label}: ${m.text()}`);
+      }
+    });
+    return { ctx, page };
+  };
+
+  // 3. Teacher prepares a course
+  const teacher = await newPage('teacher');
+  await login(teacher.page, 'teacher@e2e.uz');
+  const T = (m, p, b) => api(teacher.ctx, m, p, b);
+  const course = (
+    await T('POST', `/orgs/${mainOrg}/courses`, { title: 'E2E HTML', slug: 'e2e-html' })
+  ).body.course;
+  const base = `/orgs/${mainOrg}/courses/${course.id}`;
+  const mod = (await T('POST', `${base}/modules`, { title: 'Asoslar' })).body;
+  const l1 = (await T('POST', `${base}/modules/${mod.id}/lessons`, { title: 'Sarlavhalar' })).body;
+  const l2 = (await T('POST', `${base}/modules/${mod.id}/lessons`, { title: 'Vizitka' })).body;
+  await T('PATCH', `${base}/lessons/${l1.id}`, {
+    content: '## Sarlavhalar\n\n`<h1>` — eng katta sarlavha.',
+  });
+  const ex = (
+    await T('POST', `${base}/lessons/${l1.id}/exercises`, {
+      title: 'Birinchi sarlavha',
+      instructions: 'Sahifaga `<h1>` sarlavha va tavsif paragrafi qo‘shing.',
+      checks: [
+        {
+          id: 'h1',
+          title: 'Sahifada h1 bor',
+          hint: '<h1> tegidan foydalaning',
+          assert: { type: 'count', selector: 'h1' },
+        },
+        {
+          id: 'p',
+          title: HIDDEN_TITLE,
+          hidden: true,
+          assert: { type: 'count', selector: HIDDEN_SELECTOR },
+        },
+      ],
+    })
+  ).body;
+  const asg = (
+    await T('POST', `${base}/lessons/${l2.id}/assignments`, {
+      title: 'Shaxsiy vizitka',
+      instructions: 'O‘zingiz haqingizda sahifa yarating.',
+      requirements: ['Sarlavha bo‘lsin', 'Tavsif bo‘lsin'],
+      rubric: [
+        { id: 'tuzilma', title: 'Sahifa tuzilishi', maxPoints: 60 },
+        { id: 'uslub', title: 'Mazmun', maxPoints: 40 },
+      ],
+      gradingPolicy: { maxScore: 100, passingScore: 60, allowLate: false },
+    })
+  ).body;
+  expect(
+    (await T('POST', `${base}/assignments/${asg.id}/publish`)).status === 200,
+    'teacher publishes the assignment',
+  );
+  expect(
+    (await T('PATCH', base, { status: 'PUBLISHED' })).status === 200,
+    'teacher publishes the course',
+  );
+
+  // 4. Student: register → login → course → enroll → lesson → exercise
+  const student = await newPage('student');
+  const sp = student.page;
+  await sp.goto(`${WEB}/register`);
+  await sp.locator('input[name="fullName"]').fill('Talaba Ergasheva');
+  await sp.locator('input[name="email"]').fill('talaba@e2e.uz');
+  await sp.locator('input[name="password"]').fill(PASSWORD);
+  await sp.getByRole('button', { name: "Ro'yxatdan o'tish" }).click();
+  await sp.waitForURL('**/dashboard');
+  record(true, 'student registers through the form');
+  await sp.getByRole('button', { name: 'Chiqish' }).click();
+  await sp.waitForURL('**/login');
+  await login(sp, 'talaba@e2e.uz');
+  record(true, 'student logs out and back in');
+
+  await sp.getByText('E2E HTML').first().click();
+  await sp.getByRole('button', { name: 'Kursga yozilish' }).click();
+  await waitText(sp, 'Sarlavhalar');
+  const map1 = (await api(student.ctx, 'GET', `${base}/map`)).body;
+  const states1 = map1.modules[0].lessons.map((l) => l.state);
+  expect(
+    states1[0] !== 'LOCKED' && states1[1] === 'LOCKED',
+    'enrolled: lesson 1 open, lesson 2 locked',
+    states1.join(),
+  );
+  const locked = await api(student.ctx, 'GET', `${base}/lessons/${l2.id}`);
+  expect(locked.status === 403, 'locked lesson is refused by the server', String(locked.status));
+
+  await sp
+    .getByRole('link', { name: /Sarlavhalar/ })
+    .first()
+    .click();
+  await waitText(sp, 'eng katta sarlavha');
+  await sp
+    .getByRole('link', { name: /Birinchi sarlavha/ })
+    .first()
+    .click();
+  await sp.waitForURL(`**/exercises/${ex.id}`);
+  record(true, 'student opens lesson and exercise');
+
+  // 5. Playground: RUN (browser preview) and CHECK (server)
+  await typeCode(sp, '<p>salom</p>\n<script>console.log("RUN-OK")</script>');
+  await sp.getByRole('button', { name: /Ishga tushirish/ }).click();
+  await waitText(sp, 'RUN-OK', 20_000);
+  record(true, 'RUN shows the program output from the sandbox');
+  await sp.getByRole('button', { name: /Tekshirish/ }).click();
+  await waitText(sp, /Tekshiruvdan o.tmadi/, 60_000);
+  record(true, 'CHECK on the saved code: FAILED with visible feedback');
+
+  // 6. AI tutor helps after the failure
+  const tutor = sp.getByRole('region', { name: /AI yordamchi/ });
+  await tutor.getByRole('button', { name: /^Maslahat/ }).click();
+  await tutor.getByText('Savol:').first().waitFor({ timeout: 20_000 });
+  await tutor.getByRole('button', { name: 'Xatoni tushuntir' }).click();
+  await tutor.getByText('Sahifada h1 bor').first().waitFor({ timeout: 20_000 });
+  const tutorText = await tutor.innerText();
+  expect(
+    !tutorText.includes(HIDDEN_TITLE) && !tutorText.includes(HIDDEN_SELECTOR),
+    'AI tutor explains the failure without hidden CHECK details',
+  );
+
+  // 7. Fix → PASS → unlock
+  await typeCode(sp, '<h1>Salom</h1>\n<p class="tavsif-maxfiy">Men talabaman</p>');
+  await sp.getByRole('button', { name: /Tekshirish/ }).click();
+  await waitText(sp, /Tekshiruvdan o.tdi/, 60_000);
+  record(true, 'CHECK passes after the fix');
+  const map2 = (await api(student.ctx, 'GET', `${base}/map`)).body;
+  const states2 = map2.modules[0].lessons.map((l) => l.state);
+  expect(
+    states2[0] === 'COMPLETED' && states2[1] !== 'LOCKED',
+    'passing the exercise completes lesson 1 and unlocks lesson 2',
+    states2.join(),
+  );
+
+  // 8. Assignment: submit v1
+  await sp.goto(`${WEB}${base}/lessons/${l2.id}`);
+  await sp
+    .getByRole('link', { name: /Shaxsiy vizitka/ })
+    .first()
+    .click();
+  await sp.waitForURL(`**/assignments/${asg.id}`);
+  await typeCode(sp, '<h1>Talaba Ergasheva</h1>');
+  await sp.getByRole('button', { name: /^Topshirish/ }).click();
+  await waitText(sp, '1-versiya', 20_000);
+  record(true, 'student submits version 1 of the assignment');
+
+  // 9. Teacher: assignment → submission → review → revision
+  const tp = teacher.page;
+  await tp.goto(`${WEB}${base}/manage/assignments/${asg.id}`);
+  await tp.getByRole('link', { name: /Talaba Ergasheva: javobni ko.rib chiqish/ }).click();
+  await tp.waitForURL('**/submissions/**');
+  await tp.getByRole('button', { name: /ko.rib chiqishni boshlash/ }).click();
+  await tp.getByLabel(/Talabaga izoh/).waitFor();
+  await tp.getByLabel(/Talabaga izoh/).fill('Tavsif paragrafini ham qo‘shing.');
+  await tp.getByRole('button', { name: /Qayta ishlashni so.rash/ }).click();
+  await waitText(tp, 'Qayta ishlash so‘raldi', 20_000);
+  record(true, 'teacher starts the review and requests a revision with feedback');
+
+  // 10. Student sees feedback and resubmits
+  await sp.reload();
+  await waitText(sp, 'Tavsif paragrafini ham qo‘shing.');
+  await typeCode(sp, '<h1>Talaba Ergasheva</h1>\n<p>Veb dizaynni o‘rganyapman.</p>');
+  await sp.getByRole('button', { name: /^Topshirish/ }).click();
+  await waitText(sp, '2-versiya', 20_000);
+  record(true, 'student reads the feedback and resubmits version 2');
+
+  // 11. Teacher grades with the rubric and finalizes
+  await tp.reload();
+  await tp.getByRole('button', { name: /2-versiyani ko.rib chiqishni boshlash/ }).click();
+  await tp.getByLabel('Sahifa tuzilishi').fill('55');
+  await tp.getByLabel('Mazmun').fill('35');
+  await tp.getByLabel(/Talabaga izoh/).fill('Yaxshi ish!');
+  await tp.getByRole('button', { name: 'Baholash', exact: true }).click();
+  await waitText(tp, '90', 20_000);
+  await tp.getByRole('button', { name: 'Yakunlash' }).click();
+  await waitText(tp, 'Yakunlandi', 20_000);
+  record(true, 'teacher grades 55 + 35 = 90 by rubric and finalizes');
+
+  await sp.reload();
+  await waitText(sp, 'Yaxshi ish!');
+  await waitText(sp, '90');
+  record(true, 'student sees the final grade and feedback');
+
+  // 12. Portfolio: add the graded assignment, publish, view anonymously
+  await sp.goto(`${WEB}/portfolio`);
+  await sp.getByPlaceholder('ism-familiya').fill('talaba-ergasheva');
+  await sp.getByRole('button', { name: 'Saqlash', exact: true }).first().click();
+  await sp.getByRole('button', { name: /Shaxsiy vizitka: portfolioga qo.shish/ }).click();
+  await sp.getByRole('button', { name: /E.lon qilish/ }).click();
+  await waitText(sp, '/p/talaba-ergasheva', 20_000);
+  const anon = await newPage('anonymous');
+  await anon.page.goto(`${WEB}/p/talaba-ergasheva`);
+  await waitText(anon.page, 'Shaxsiy vizitka');
+  const pub = (await api(anon.ctx, 'GET', '/portfolio/public/talaba-ergasheva')).body;
+  expect(
+    JSON.stringify(pub).indexOf('talaba@e2e.uz') === -1 && !('score' in (pub.items?.[0] ?? {})),
+    'public portfolio shows the work without email or grade',
+  );
+
+  // ---------------------------------------------------------------- security
+  const other = await newPage('student2');
+  await other.page.goto(`${WEB}/register`);
+  await other.page.locator('input[name="fullName"]').fill('Boshqa Talaba');
+  await other.page.locator('input[name="email"]').fill('boshqa@e2e.uz');
+  await other.page.locator('input[name="password"]').fill(PASSWORD);
+  await other.page.getByRole('button', { name: "Ro'yxatdan o'tish" }).click();
+  await other.page.waitForURL('**/dashboard');
+  const S2 = (m, p, b) => api(other.ctx, m, p, b);
+  const studentId = (await api(student.ctx, 'GET', '/auth/me')).body.id;
+  const run1 = (await api(student.ctx, 'GET', `${base}/exercises/${ex.id}/checks/latest`)).body.run;
+
+  // cross-student
+  expect(
+    (await S2('GET', `${base}/exercises/${ex.id}/checks/${run1.id}`)).status >= 403,
+    'cross-student: another student cannot read a CHECK run',
+  );
+  expect(
+    (await S2('GET', `${base}/assignments/${asg.id}/submissions/${studentId}`)).status === 403,
+    'cross-student: another student cannot open a submission review',
+  );
+  expect(
+    (await S2('GET', `${base}/exercises/${ex.id}`)).status === 403,
+    'cross-student: not enrolled, no access to the exercise',
+  );
+
+  // cross-teacher and cross-org
+  const teacher2 = await newPage('teacher2');
+  await login(teacher2.page, 'teacher2@e2e.uz');
+  expect(
+    (await api(teacher2.ctx, 'GET', `${base}/assignments/${asg.id}/submissions/${studentId}`))
+      .status === 403,
+    'cross-teacher: an unassigned teacher cannot review',
+  );
+  expect(
+    (await api(teacher2.ctx, 'PATCH', base, { title: 'Buzilgan' })).status === 403,
+    'cross-teacher: an unassigned teacher cannot edit the course',
+  );
+  const foreign = await newPage('foreign-teacher');
+  await login(foreign.page, 'teacher@other.uz');
+  expect(
+    (await api(foreign.ctx, 'GET', `${base}/structure`)).status === 404,
+    'cross-org: a teacher of another organization gets 404',
+  );
+  expect(
+    (await api(foreign.ctx, 'GET', `/orgs/${otherOrg}/courses/${course.id}/structure`)).status ===
+      404,
+    'cross-org: re-binding the course to another org gets 404',
+  );
+
+  // forged role / permission
+  const forged = await api(anon.ctx, 'POST', '/auth/register', {
+    email: 'hacker@e2e.uz',
+    password: PASSWORD,
+    fullName: 'Hacker',
+    role: 'ORG_ADMIN',
+  });
+  expect(
+    forged.status === 201 && forged.body.memberships[0].role === 'STUDENT',
+    'forged role on register is ignored (STUDENT)',
+  );
+  const spoof = await other.ctx.request.fetch(`${WEB}/api${base}/analytics`, {
+    headers: {
+      'x-user-id': (await T('GET', '/auth/me')).body.id,
+      'x-role': 'ORG_ADMIN',
+      origin: WEB,
+    },
+  });
+  expect(spoof.status() === 403, 'forged x-user-id / x-role headers grant nothing');
+  expect(
+    (await S2('GET', `/orgs/${mainOrg}/analytics`)).status === 403,
+    'forged permission: a student cannot open organization analytics',
+  );
+
+  // unauthorized AI context
+  expect(
+    (
+      await S2('POST', `${base}/tutor/ask`, {
+        targetKind: 'EXERCISE',
+        targetId: ex.id,
+        mode: 'HINT',
+      })
+    ).status === 403,
+    'AI context: not enrolled student is refused',
+  );
+  expect(
+    (await S2('GET', `${base}/tutor?targetKind=ASSIGNMENT&targetId=${asg.id}`)).status === 403,
+    'AI context: no tutor state for a foreign course',
+  );
+
+  // hidden CHECK inaccessible
+  const view = await api(student.ctx, 'GET', `${base}/exercises/${ex.id}`);
+  const latest = await api(student.ctx, 'GET', `${base}/exercises/${ex.id}/checks/latest`);
+  await sp.goto(`${WEB}${base}/exercises/${ex.id}`);
+  await sp.locator('.monaco-editor').first().waitFor();
+  const html = await sp.content();
+  const leaks = [JSON.stringify(view.body), JSON.stringify(latest.body), html].some(
+    (s) => s.includes(HIDDEN_TITLE) || s.includes(HIDDEN_SELECTOR),
+  );
+  expect(!leaks, 'hidden CHECK rules never reach the student (API, run view, page)');
+
+  expect(
+    consoleErrors.length === 0,
+    'no unexpected browser errors',
+    consoleErrors.slice(0, 3).join(' | '),
+  );
+}
+
+let crashed = null;
+try {
+  await run();
+} catch (e) {
+  crashed = e;
+  if (!String(e?.message).startsWith('assertion failed'))
+    record(false, 'run aborted', e?.message ?? String(e));
+  try {
+    const pages = browser ? browser.contexts().flatMap((c) => c.pages()) : [];
+    for (const [i, p] of pages.entries())
+      await p.screenshot({ path: join(OUT, `failure-${i}.png`), fullPage: true });
+  } catch {
+    // best effort
+  }
+} finally {
+  await browser?.close().catch(() => {});
+  stopAll();
+}
+console.log(`\n${results.length - failed}/${results.length} steps passed. Artifacts: ${OUT}`);
+process.exit(failed || crashed ? 1 : 0);

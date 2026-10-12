@@ -14,7 +14,8 @@
     "lint": "pnpm -r lint",
     "test": "pnpm -r test",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "e2e": "node e2e/full-flow.e2e.mjs"
   },
   "devDependencies": {
     "prettier": "^3.6.2",
