@@ -13,6 +13,7 @@ import {
   type CourseAnalytics,
   type OrgAnalytics,
   type OrgWeeklyPoint,
+  type StudentAiUsage,
   type StudentAnalytics,
   type StudentCourseAnalytics,
   type SubmissionStatus,
@@ -23,6 +24,8 @@ import { CourseAccessService } from '../courses/course-access.service';
 import type { Db } from '../db/client';
 import { DbService } from '../db/db.module';
 import {
+  aiFeedback,
+  aiInteractions,
   assignments,
   checkRuns,
   courses,
@@ -120,7 +123,38 @@ export class AnalyticsService {
       generatedAt: now.toISOString(),
       courses: result,
       trend: await this.trend(db, courseIds, [auth.userId], now),
-      aiUsage: { available: false },
+      aiUsage: await this.aiUsage(db, auth.userId, courseIds),
+    };
+  }
+
+  private async aiUsage(db: Db, userId: string, courseIds: string[]): Promise<StudentAiUsage> {
+    const none = {
+      available: true as const,
+      requests: 0,
+      hintsUsed: 0,
+      handoffs: 0,
+      helpful: 0,
+      notHelpful: 0,
+    };
+    if (courseIds.length === 0) return none;
+    const [row] = await db
+      .select({
+        requests: sql<number>`count(*)::int`,
+        hints: sql<number>`(count(*) filter (where ${aiInteractions.hintNumber} is not null))::int`,
+        handoffs: sql<number>`(count(*) filter (where ${aiInteractions.mode} = 'TEACHER_HANDOFF'))::int`,
+        helpful: sql<number>`(count(*) filter (where ${aiFeedback.helpful}))::int`,
+        notHelpful: sql<number>`(count(*) filter (where not ${aiFeedback.helpful}))::int`,
+      })
+      .from(aiInteractions)
+      .leftJoin(aiFeedback, eq(aiFeedback.interactionId, aiInteractions.id))
+      .where(and(eq(aiInteractions.userId, userId), inArray(aiInteractions.courseId, courseIds)));
+    return {
+      ...none,
+      requests: row?.requests ?? 0,
+      hintsUsed: row?.hints ?? 0,
+      handoffs: row?.handoffs ?? 0,
+      helpful: row?.helpful ?? 0,
+      notHelpful: row?.notHelpful ?? 0,
     };
   }
 

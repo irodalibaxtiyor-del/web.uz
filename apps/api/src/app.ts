@@ -3,6 +3,10 @@ import { APP_GUARD, NestFactory } from '@nestjs/core';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
+import { AI_PROVIDER, createAiProvider, type AiProvider } from './ai/provider';
+import { TutorController } from './ai/tutor.controller';
+import { TutorService } from './ai/tutor.service';
+import { AiUsageService } from './ai/usage.service';
 import { AnalyticsController } from './analytics/analytics.controller';
 import { AnalyticsService } from './analytics/analytics.service';
 import { AssignmentsController } from './assignments/assignments.controller';
@@ -45,6 +49,7 @@ export class AppModule {
     config: AppConfig,
     handle: DbHandle,
     checkExecutor: CheckExecutor = createCheckExecutor(config),
+    aiProvider: AiProvider = createAiProvider(config),
   ): DynamicModule {
     return {
       module: AppModule,
@@ -61,6 +66,7 @@ export class AppModule {
         QuizzesController,
         PortfolioController,
         AnalyticsController,
+        TutorController,
       ],
       providers: [
         { provide: APP_CONFIG, useValue: config },
@@ -81,6 +87,9 @@ export class AppModule {
         QuizzesService,
         PortfolioService,
         AnalyticsService,
+        { provide: AI_PROVIDER, useValue: aiProvider },
+        AiUsageService,
+        TutorService,
         // Order matters: authenticate first, then resolve org role.
         { provide: APP_GUARD, useClass: AuthGuard },
         { provide: APP_GUARD, useClass: OrgRoleGuard },
@@ -102,6 +111,8 @@ export interface CreateAppOptions {
   migrate?: boolean;
   /** Replaces the Playwright executor (tests). */
   checkExecutor?: CheckExecutor;
+  /** Replaces the configured AI provider (tests). */
+  aiProvider?: AiProvider;
 }
 
 export async function createApp(
@@ -113,7 +124,7 @@ export async function createApp(
   await ensureDefaultOrg(handle.db, config);
 
   const app = await NestFactory.create<NestExpressApplication>(
-    AppModule.forRoot(config, handle, opts.checkExecutor),
+    AppModule.forRoot(config, handle, opts.checkExecutor, opts.aiProvider),
     {
       logger: config.NODE_ENV === 'test' ? false : ['error', 'warn', 'log'],
       bodyParser: false,

@@ -3,6 +3,7 @@ import type { NestExpressApplication } from '@nestjs/platform-express';
 import type { Role } from '@webdizayn/shared';
 import request from 'supertest';
 import { createApp } from '../src/app';
+import type { AiProvider } from '../src/ai/provider';
 import type { CheckExecutor } from '../src/checks/check-executor';
 import { PasswordService } from '../src/auth/password.service';
 import { loadConfig, type AppConfig } from '../src/config';
@@ -20,7 +21,7 @@ export interface TestContext {
 
 export async function setup(
   env: Record<string, string> = {},
-  opts: { checkExecutor?: CheckExecutor } = {},
+  opts: { checkExecutor?: CheckExecutor; aiProvider?: AiProvider } = {},
 ): Promise<TestContext> {
   const config = loadConfig({ NODE_ENV: 'test', DATABASE_URL: 'pglite://memory', ...env });
   const handle = createDb(config.DATABASE_URL);

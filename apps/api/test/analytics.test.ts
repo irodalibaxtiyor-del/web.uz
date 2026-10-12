@@ -165,7 +165,14 @@ describe('student analytics', () => {
 
   it('reports the session user’s own progress, CHECK, quiz and assignment numbers', async () => {
     const res = await req(s1, 'get', '/analytics/me').expect(200);
-    expect(res.body.aiUsage).toEqual({ available: false });
+    expect(res.body.aiUsage).toEqual({
+      available: true,
+      requests: 0,
+      hintsUsed: 0,
+      handoffs: 0,
+      helpful: 0,
+      notHelpful: 0,
+    });
     expect(res.body.courses).toHaveLength(1);
     const c = res.body.courses[0];
     expect(c).toMatchObject({

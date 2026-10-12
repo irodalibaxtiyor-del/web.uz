@@ -9,3 +9,4 @@ export * from './reviews';
 export * from './quizzes';
 export * from './portfolio';
 export * from './analytics';
+export * from './ai';

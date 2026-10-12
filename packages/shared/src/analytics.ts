@@ -1,3 +1,4 @@
+import type { StudentAiUsage } from './ai';
 import type { AssignmentStatus, SubmissionStatus } from './assignments';
 import type { CourseStatus } from './courses';
 import type { Role } from './roles';
@@ -71,8 +72,8 @@ export interface StudentAnalytics {
   generatedAt: string;
   courses: StudentCourseAnalytics[];
   trend: WeeklyPoint[];
-  /** The AI Tutor (phase 11) is not built yet, so there is no usage to report. */
-  aiUsage: { available: false };
+  /** The student's own AI tutor usage in these courses. */
+  aiUsage: StudentAiUsage;
 }
 
 // ---------------------------------------------------------------- teacher

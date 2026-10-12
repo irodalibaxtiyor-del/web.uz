@@ -18,6 +18,10 @@ import {
   CHECK_RUN_STATUSES,
   COURSE_STATUSES,
   DIFFICULTIES,
+  HANDOFF_CATEGORIES,
+  TUTOR_LEVELS,
+  TUTOR_MODES,
+  TUTOR_TARGET_KINDS,
   EXERCISE_STATUSES,
   REVIEW_ACTIONS,
   ROLES,
@@ -43,6 +47,10 @@ export const assignmentStatusEnum = pgEnum('assignment_status', ASSIGNMENT_STATU
 export const submissionStatusEnum = pgEnum('submission_status', SUBMISSION_STATUSES);
 export const reviewActionEnum = pgEnum('review_action', REVIEW_ACTIONS);
 export const portfolioItemKindEnum = pgEnum('portfolio_item_kind', PORTFOLIO_ITEM_KINDS);
+export const tutorModeEnum = pgEnum('tutor_mode', TUTOR_MODES);
+export const tutorLevelEnum = pgEnum('tutor_level', TUTOR_LEVELS);
+export const tutorTargetKindEnum = pgEnum('tutor_target_kind', TUTOR_TARGET_KINDS);
+export const handoffCategoryEnum = pgEnum('handoff_category', HANDOFF_CATEGORIES);
 
 const createdAt = () => timestamp('created_at', { withTimezone: true }).notNull().defaultNow();
 
@@ -581,4 +589,129 @@ export const portfolioItems = pgTable(
     index('portfolio_items_user_pos_idx').on(t.userId, t.position),
     check('portfolio_items_position_nonneg', sql`${t.position} >= 0`),
   ],
+);
+
+/**
+ * One AI tutor exchange: the student's request and the (guarded) reply shown to them.
+ * Only the student who asked can read it. The context sent to the model is not stored.
+ */
+export const aiInteractions = pgTable(
+  'ai_interactions',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    organizationId: uuid('organization_id')
+      .notNull()
+      .references(() => organizations.id, { onDelete: 'cascade' }),
+    courseId: uuid('course_id')
+      .notNull()
+      .references(() => courses.id, { onDelete: 'cascade' }),
+    targetKind: tutorTargetKindEnum('target_kind').notNull(),
+    /** Exercise or assignment id (re-validated against the course on every request). */
+    targetId: uuid('target_id').notNull(),
+    requestMode: tutorModeEnum('request_mode').notNull(),
+    mode: tutorModeEnum('mode').notNull(),
+    level: tutorLevelEnum('level').notNull(),
+    hintNumber: integer('hint_number'),
+    message: text('message').notNull().default(''),
+    reply: text('reply').notNull(),
+    comprehensionQuestion: text('comprehension_question'),
+    refused: text('refused'),
+    blocked: boolean('blocked').notNull().default(false),
+    /** Why the output guard intervened. Staff/audit only, never shown to the student. */
+    guardReasons: jsonb('guard_reasons').$type<string[]>().notNull().default([]),
+    provider: text('provider').notNull(),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    index('ai_interactions_user_target_idx').on(t.userId, t.targetKind, t.targetId, t.createdAt),
+    index('ai_interactions_course_idx').on(t.courseId),
+  ],
+);
+
+/** Hint progression survives page refreshes: one row per student and target. */
+export const aiHintStates = pgTable(
+  'ai_hint_states',
+  {
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    targetKind: tutorTargetKindEnum('target_kind').notNull(),
+    targetId: uuid('target_id').notNull(),
+    hintsUsed: integer('hints_used').notNull().default(0),
+    updatedAt: updatedAt(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.userId, t.targetKind, t.targetId] }),
+    check('ai_hint_states_range', sql`${t.hintsUsed} between 0 and 3`),
+  ],
+);
+
+/** Usage ledger for quotas and cost: one row per provider call, including failed ones. */
+export const aiUsage = pgTable(
+  'ai_usage',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    organizationId: uuid('organization_id')
+      .notNull()
+      .references(() => organizations.id, { onDelete: 'cascade' }),
+    interactionId: uuid('interaction_id').references(() => aiInteractions.id, {
+      onDelete: 'set null',
+    }),
+    provider: text('provider').notNull(),
+    model: text('model').notNull(),
+    /** OK, ERROR or BLOCKED. */
+    status: text('status').notNull(),
+    promptChars: integer('prompt_chars').notNull(),
+    completionChars: integer('completion_chars').notNull().default(0),
+    attempts: integer('attempts').notNull().default(1),
+    estimatedCostMicroUsd: integer('estimated_cost_micro_usd').notNull().default(0),
+    createdAt: createdAt(),
+  },
+  (t) => [index('ai_usage_user_created_idx').on(t.userId, t.createdAt)],
+);
+
+/** Helpful / not helpful. Never affects grades or progress. */
+export const aiFeedback = pgTable('ai_feedback', {
+  interactionId: uuid('interaction_id')
+    .primaryKey()
+    .references(() => aiInteractions.id, { onDelete: 'cascade' }),
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  helpful: boolean('helpful').notNull(),
+  reason: text('reason'),
+  createdAt: createdAt(),
+  updatedAt: updatedAt(),
+});
+
+/** A student asked for a teacher. A record for staff only; grades and progress are untouched. */
+export const aiHandoffs = pgTable(
+  'ai_handoffs',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    organizationId: uuid('organization_id')
+      .notNull()
+      .references(() => organizations.id, { onDelete: 'cascade' }),
+    courseId: uuid('course_id')
+      .notNull()
+      .references(() => courses.id, { onDelete: 'cascade' }),
+    interactionId: uuid('interaction_id').references(() => aiInteractions.id, {
+      onDelete: 'set null',
+    }),
+    targetKind: tutorTargetKindEnum('target_kind').notNull(),
+    targetId: uuid('target_id').notNull(),
+    category: handoffCategoryEnum('category').notNull(),
+    note: text('note').notNull().default(''),
+    createdAt: createdAt(),
+  },
+  (t) => [index('ai_handoffs_course_idx').on(t.courseId, t.createdAt)],
 );

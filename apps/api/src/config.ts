@@ -29,11 +29,34 @@ const envSchema = z.object({
   CHECK_BUDGET_MS: z.coerce.number().int().min(2_000).max(120_000).default(20_000),
   /** Max CHECK runs per user per 10 minutes. */
   CHECK_RATE_LIMIT: z.coerce.number().int().positive().default(20),
+  /** `mock` (default) never leaves the server. `http` needs URL, key and the allow flag below. */
+  AI_PROVIDER: z.enum(['mock', 'http']).default('mock'),
+  /** Full OpenAI-compatible chat-completions endpoint URL. */
+  AI_PROVIDER_URL: z.string().url().optional(),
+  AI_PROVIDER_MODEL: z.string().min(1).max(200).default('tutor'),
+  /** Sent only in the Authorization header; never logged or returned. */
+  AI_PROVIDER_API_KEY: z.string().min(1).optional(),
+  AI_REQUEST_TIMEOUT_MS: z.coerce.number().int().min(1_000).max(120_000).default(20_000),
+  AI_MAX_ATTEMPTS: z.coerce.number().int().min(1).max(4).default(2),
+  /** Per student per UTC day. */
+  AI_DAILY_REQUESTS: z.coerce.number().int().min(1).default(40),
+  AI_DAILY_PROMPT_CHARS: z.coerce.number().int().min(1_000).default(150_000),
+  /** Per student per minute (burst protection). */
+  AI_RATE_PER_MINUTE: z.coerce.number().int().min(1).default(6),
+  /** Explicit consent that student work may be sent to the external provider (DPA, data location). */
+  AI_ALLOW_REAL_STUDENT_DATA: z
+    .enum(['true', 'false'])
+    .default('false')
+    .transform((v) => v === 'true'),
+  /** Cost estimate in micro-USD per 1000 characters sent and received. */
+  AI_COST_PER_1K_CHARS_MICROUSD: z.coerce.number().int().min(0).default(0),
 });
 
 export type AppConfig = z.infer<typeof envSchema> & {
   webOrigins: string[];
   cookieSecure: boolean;
+  /** The provider actually used: `http` only when every precondition holds. */
+  aiMode: 'mock' | 'http';
 };
 
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
@@ -47,8 +70,17 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   if (cfg.NODE_ENV === 'production' && cfg.DATABASE_URL.startsWith('pglite://')) {
     throw new Error('PGlite is not allowed in production; set DATABASE_URL to a Postgres URL');
   }
+  const aiHttp =
+    cfg.AI_PROVIDER === 'http' &&
+    cfg.AI_ALLOW_REAL_STUDENT_DATA &&
+    Boolean(cfg.AI_PROVIDER_URL) &&
+    Boolean(cfg.AI_PROVIDER_API_KEY);
+  if (aiHttp && cfg.NODE_ENV === 'production' && !cfg.AI_PROVIDER_URL!.startsWith('https://')) {
+    throw new Error('Invalid environment configuration: AI_PROVIDER_URL (https required)');
+  }
   return {
     ...cfg,
+    aiMode: aiHttp ? 'http' : 'mock',
     webOrigins: cfg.WEB_ORIGINS.split(',')
       .map((o) => o.trim())
       .filter(Boolean),
