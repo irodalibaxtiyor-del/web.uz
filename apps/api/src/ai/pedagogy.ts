@@ -331,6 +331,12 @@ function codeFacts(ctx: TutorContext) {
   return { facts, likely };
 }
 
+/** Ends a teacher-written fragment with a full stop so the next sentence reads correctly. */
+function sentence(text: string): string {
+  const t = text.trim();
+  return /[.!?…]$/.test(t) ? t : `${t}.`;
+}
+
 function firstFailing(ctx: TutorContext) {
   return ctx.check?.failing[0] ?? null;
 }
@@ -348,7 +354,7 @@ function hintText(plan: TutorPlan): string {
     case 2:
       return [
         `**2-maslahat (aniq yo‘nalish).** Hozir “${goal}” bajarilmayapti.`,
-        failing?.hint ? `O‘qituvchi izohi: ${failing.hint}` : '',
+        failing?.hint ? `O‘qituvchi izohi: ${sentence(failing.hint)}` : '',
         ctx.files[0]
           ? `E’tiboringizni \`${ctx.files.map((f) => f.path).join('`, `')}\` fayllaridagi shu talabga tegishli qismga qarating.`
           : '',
@@ -359,7 +365,7 @@ function hintText(plan: TutorPlan): string {
       return [
         `**3-maslahat (keyingi qadam).** Faqat “${goal}” talabiga tegishli o‘zgarishni qiling,`,
         'faylni saqlang, RUN bilan natijani ko‘ring va keyin CHECK’ni qayta ishga tushiring.',
-        failing?.hint ? `Yo‘l-yo‘riq: ${failing.hint}` : '',
+        failing?.hint ? `Yo‘l-yo‘riq: ${sentence(failing.hint)}` : '',
         'Shundan keyin ham o‘tmasa, “O‘qituvchiga murojaat” tugmasidan foydalaning.',
       ]
         .filter(Boolean)

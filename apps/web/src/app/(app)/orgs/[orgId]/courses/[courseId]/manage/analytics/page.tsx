@@ -1,6 +1,11 @@
 'use client';
 
-import type { CourseAnalytics, SubmissionStatus } from '@webdizayn/shared';
+import type {
+  CourseAnalytics,
+  HandoffCategory,
+  SubmissionStatus,
+  TutorHandoffView,
+} from '@webdizayn/shared';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import {
@@ -25,6 +30,55 @@ const SUBMISSION_LABEL: Record<SubmissionStatus, string> = {
   GRADED: 'Baholangan',
   FINALIZED: 'Yakunlangan',
 };
+
+const HANDOFF_LABEL: Record<HandoffCategory, string> = {
+  STUCK: 'Qotib qoldi',
+  CONCEPT: 'Mavzuni tushunmadi',
+  BUG: 'Kodi ishlamayapti',
+  OTHER: 'Boshqa',
+};
+
+/** Students who asked the AI tutor to bring in a teacher. Read-only; no grades involved. */
+function Handoffs({ base }: { base: string }) {
+  const { state } = useApi<TutorHandoffView[]>(`${base}/tutor/handoffs`);
+  return (
+    <Section
+      title="O‘qituvchiga murojaatlar"
+      description="Talabalar AI yordamchi orqali yuborgan so‘rovlar (oxirgi 100 ta)."
+    >
+      {state.kind === 'loading' && <Empty>Yuklanmoqda…</Empty>}
+      {state.kind === 'error' && <Empty>{state.message}</Empty>}
+      {state.kind === 'ready' &&
+        (state.data.length === 0 ? (
+          <Empty>Hozircha murojaat yo‘q.</Empty>
+        ) : (
+          <ul className="divide-y divide-slate-100 dark:divide-slate-800">
+            {state.data.map((h) => (
+              <li key={h.id} className="space-y-1 py-3 text-sm">
+                <p className="flex flex-wrap items-center gap-2">
+                  <strong>{h.studentName}</strong>
+                  <span className="rounded-full bg-accent-300/40 px-2 py-0.5 text-xs text-ink dark:bg-accent-500/20 dark:text-accent-300">
+                    {HANDOFF_LABEL[h.category]}
+                  </span>
+                  <span className="text-xs text-slate-500">{formatDate(h.createdAt)}</span>
+                </p>
+                <p className="text-slate-600 dark:text-slate-400">
+                  {h.targetKind === 'EXERCISE' ? 'Mashq' : 'Topshiriq'}:{' '}
+                  <Link
+                    href={`${base}/manage/${h.targetKind === 'EXERCISE' ? 'exercises' : 'assignments'}/${h.targetId}`}
+                    className="underline"
+                  >
+                    {h.targetTitle}
+                  </Link>
+                </p>
+                {h.note && <p className="whitespace-pre-wrap">{h.note}</p>}
+              </li>
+            ))}
+          </ul>
+        ))}
+    </Section>
+  );
+}
 
 const th = 'py-2 pr-3 text-left font-semibold';
 const td = 'py-2 pr-3 align-top';
@@ -109,6 +163,8 @@ export default function CourseAnalyticsPage() {
                 </ul>
               )}
             </Section>
+
+            <Handoffs base={base} />
 
             <div className="grid gap-8 lg:grid-cols-2">
               <Section

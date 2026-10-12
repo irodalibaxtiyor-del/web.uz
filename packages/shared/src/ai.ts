@@ -35,7 +35,12 @@ export const TUTOR_RUN_ERROR_CHARS = 300;
  */
 export const runSummarySchema = z.object({
   errors: z
-    .array(z.string().max(TUTOR_RUN_ERROR_CHARS * 4).transform((s) => s.slice(0, TUTOR_RUN_ERROR_CHARS)))
+    .array(
+      z
+        .string()
+        .max(TUTOR_RUN_ERROR_CHARS * 4)
+        .transform((s) => s.slice(0, TUTOR_RUN_ERROR_CHARS)),
+    )
     .max(TUTOR_RUN_ERRORS_MAX),
 });
 export type RunSummary = z.infer<typeof runSummarySchema>;

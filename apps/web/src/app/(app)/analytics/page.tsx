@@ -60,10 +60,26 @@ export default function MyAnalyticsPage() {
                 ))}
               </>
             )}
-            <Section title="AI yordamchidan foydalanish">
-              <Empty>
-                AI yordamchi hali ishga tushirilmagan, shuning uchun bu bo‘limda ma’lumot yo‘q.
-              </Empty>
+            <Section
+              title="AI yordamchidan foydalanish"
+              description="AI yordamchi baho qo‘ymaydi; bu raqamlar faqat sizga ko‘rinadi."
+            >
+              {data.aiUsage.requests === 0 ? (
+                <Empty>
+                  Hali AI yordamchidan foydalanmagansiz. Uni mashq yoki topshiriq sahifasida
+                  topasiz.
+                </Empty>
+              ) : (
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                  <StatTile label="So‘rovlar" value={data.aiUsage.requests} />
+                  <StatTile label="Olingan maslahatlar" value={data.aiUsage.hintsUsed} />
+                  <StatTile label="O‘qituvchiga murojaat" value={data.aiUsage.handoffs} />
+                  <StatTile
+                    label="Foydali deb belgilangan"
+                    value={`${data.aiUsage.helpful} / ${data.aiUsage.helpful + data.aiUsage.notHelpful}`}
+                  />
+                </div>
+              )}
             </Section>
           </div>
         </>

@@ -1,6 +1,6 @@
 'use client';
 
-import type { ProjectFile } from '@webdizayn/shared';
+import { TUTOR_RUN_ERROR_CHARS, type ProjectFile } from '@webdizayn/shared';
 import { useEffect, useState, type ReactNode } from 'react';
 import { SANDBOX_URL } from '@/lib/sandbox';
 import { CodeEditor } from './code-editor';
@@ -51,7 +51,9 @@ export function Playground({
 
   useEffect(() => {
     if (!onRunErrors) return;
-    const errors = lines.filter((l) => l.level === 'error').map((l) => l.text);
+    const errors = lines
+      .filter((l) => l.level === 'error')
+      .map((l) => l.text.slice(0, TUTOR_RUN_ERROR_CHARS));
     if (status === 'timeout')
       errors.push('RUN vaqti tugadi: kod juda uzoq ishladi (cheksiz sikl?)');
     onRunErrors(errors.slice(-5));
