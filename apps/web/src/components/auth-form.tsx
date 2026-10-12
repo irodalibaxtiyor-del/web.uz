@@ -43,7 +43,9 @@ export function AuthForm({ mode }: { mode: Mode }) {
   }
 
   return (
-    <form onSubmit={onSubmit} noValidate className="mx-auto max-w-sm space-y-5">
+    // method="post": if the script has not loaded yet, a native submit must never put the
+    // password into the URL (browser history, server and proxy logs).
+    <form method="post" onSubmit={onSubmit} noValidate className="mx-auto max-w-sm space-y-5">
       <div className="space-y-2">
         <h1 className="text-3xl font-bold">
           {isRegister ? "Ro'yxatdan o'tish" : 'Xush kelibsiz!'}

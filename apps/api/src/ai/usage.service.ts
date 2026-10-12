@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { and, eq, gte, sql } from 'drizzle-orm';
 import type { TutorQuota } from '@webdizayn/shared';
 import { APP_CONFIG, type AppConfig } from '../config';
+import type { Db } from '../db/client';
 import { DbService } from '../db/db.module';
 import { aiInteractions, aiUsage } from '../db/schema';
 
@@ -14,14 +15,10 @@ const RATE_LIMITED = {
   code: 'AI_RATE_LIMITED',
 };
 
-export interface UsageRecord {
-  userId: string;
-  organizationId: string;
+export interface UsageResult {
   interactionId: string | null;
-  provider: string;
   model: string;
   status: 'OK' | 'ERROR' | 'BLOCKED';
-  promptChars: number;
   completionChars: number;
   attempts: number;
 }
@@ -30,7 +27,11 @@ function startOfUtcDay(now: Date): Date {
   return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
 }
 
-/** Per-student daily quota (requests and prompt characters), burst limit and cost ledger. */
+/**
+ * Per-student daily quota (requests and prompt characters), burst limit and cost ledger.
+ * A provider call first reserves its slot in a transaction holding a per-user advisory lock,
+ * so parallel requests cannot all pass the check before any of them is recorded.
+ */
 @Injectable()
 export class AiUsageService {
   constructor(
@@ -38,8 +39,8 @@ export class AiUsageService {
     @Inject(APP_CONFIG) private readonly config: AppConfig,
   ) {}
 
-  async quota(userId: string, now = new Date()): Promise<TutorQuota> {
-    const [row] = await this.dbs.db
+  async quota(userId: string, now = new Date(), db: Db = this.dbs.db): Promise<TutorQuota> {
+    const [row] = await db
       .select({
         requests: sql<number>`count(*)::int`,
         chars: sql<number>`coalesce(sum(${aiUsage.promptChars}), 0)::int`,
@@ -54,34 +55,86 @@ export class AiUsageService {
     };
   }
 
-  /** Throws 429 before any provider call when the student is over a limit. */
-  async assertAllowed(userId: string, promptChars = 0, now = new Date()): Promise<void> {
-    const [burst] = await this.dbs.db
-      .select({ n: sql<number>`count(*)::int` })
-      .from(aiInteractions)
-      .where(
-        and(
-          eq(aiInteractions.userId, userId),
-          gte(aiInteractions.createdAt, new Date(now.getTime() - 60_000)),
+  /** Provider calls (reserved or done) plus answers given without a provider, last minute. */
+  private async burst(db: Db, userId: string, now: Date): Promise<number> {
+    const since = new Date(now.getTime() - 60_000);
+    const [calls, local] = await Promise.all([
+      db
+        .select({ n: sql<number>`count(*)::int` })
+        .from(aiUsage)
+        .where(and(eq(aiUsage.userId, userId), gte(aiUsage.createdAt, since))),
+      db
+        .select({ n: sql<number>`count(*)::int` })
+        .from(aiInteractions)
+        .where(
+          and(
+            eq(aiInteractions.userId, userId),
+            eq(aiInteractions.provider, 'none'),
+            gte(aiInteractions.createdAt, since),
+          ),
         ),
-      );
-    if ((burst?.n ?? 0) >= this.config.AI_RATE_PER_MINUTE) {
+    ]);
+    return (calls[0]?.n ?? 0) + (local[0]?.n ?? 0);
+  }
+
+  private async check(db: Db, userId: string, promptChars: number, now: Date) {
+    if ((await this.burst(db, userId, now)) >= this.config.AI_RATE_PER_MINUTE) {
       throw new HttpException(RATE_LIMITED, HttpStatus.TOO_MANY_REQUESTS);
     }
-    const q = await this.quota(userId, now);
+    const q = await this.quota(userId, now, db);
     if (q.requestsUsed >= q.requestsLimit || q.charsUsed + promptChars > q.charsLimit) {
       throw new HttpException(QUOTA_EXCEEDED, HttpStatus.TOO_MANY_REQUESTS);
     }
   }
 
-  estimateCost(chars: number): number {
-    return Math.round((chars / 1000) * this.config.AI_COST_PER_1K_CHARS_MICROUSD);
+  /** Early, non-reserving check (also used for answers that never reach a provider). */
+  async assertAllowed(userId: string, now = new Date()): Promise<void> {
+    await this.check(this.dbs.db, userId, 0, now);
   }
 
-  async record(r: UsageRecord): Promise<void> {
-    await this.dbs.db.insert(aiUsage).values({
-      ...r,
-      estimatedCostMicroUsd: this.estimateCost(r.promptChars + r.completionChars),
+  /** Atomically checks the limits and reserves a usage row for one provider call. */
+  async reserve(
+    userId: string,
+    organizationId: string,
+    promptChars: number,
+    provider: string,
+    model: string,
+    now = new Date(),
+  ): Promise<string> {
+    return this.dbs.db.transaction(async (tx) => {
+      await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${`ai-usage:${userId}`}))`);
+      await this.check(tx, userId, promptChars, now);
+      const [row] = await tx
+        .insert(aiUsage)
+        .values({
+          userId,
+          organizationId,
+          provider,
+          model,
+          status: 'PENDING',
+          promptChars,
+          estimatedCostMicroUsd: this.estimateCost(promptChars),
+        })
+        .returning({ id: aiUsage.id });
+      return row!.id;
     });
+  }
+
+  async finish(usageId: string, r: UsageResult): Promise<void> {
+    const [row] = await this.dbs.db
+      .select({ promptChars: aiUsage.promptChars })
+      .from(aiUsage)
+      .where(eq(aiUsage.id, usageId));
+    await this.dbs.db
+      .update(aiUsage)
+      .set({
+        ...r,
+        estimatedCostMicroUsd: this.estimateCost((row?.promptChars ?? 0) + r.completionChars),
+      })
+      .where(eq(aiUsage.id, usageId));
+  }
+
+  estimateCost(chars: number): number {
+    return Math.round((chars / 1000) * this.config.AI_COST_PER_1K_CHARS_MICROUSD);
   }
 }

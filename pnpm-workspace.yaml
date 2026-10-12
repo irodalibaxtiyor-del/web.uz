@@ -7,3 +7,7 @@ allowBuilds:
   esbuild: true
   unrs-resolver: true
   sharp: true
+
+# Security: Monaco's bundled DOMPurify <=3.4.15 has two low-severity advisories (GHSA-6688-9rhm-gjv2).
+overrides:
+  dompurify: '>=3.4.16'

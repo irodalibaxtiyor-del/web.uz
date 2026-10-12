@@ -1,4 +1,17 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Inject,
+  Param,
+  Patch,
+  Post,
+  Put,
+  Req,
+} from '@nestjs/common';
+import type { Request } from 'express';
 import {
   addPortfolioItemSchema,
   updatePortfolioItemSchema,
@@ -10,13 +23,19 @@ import {
 import { CurrentAuth, Public } from '../common/decorators';
 import { Id } from '../common/params';
 import type { AuthContext } from '../common/types';
+import { RateLimiter } from '../common/rate-limiter';
 import { ZodPipe } from '../common/zod.pipe';
+import { APP_CONFIG, type AppConfig } from '../config';
 import { PortfolioService } from './portfolio.service';
 
 /** The owner is always the session user; no user id is ever taken from the request. */
 @Controller('portfolio')
 export class PortfolioController {
-  constructor(private readonly portfolio: PortfolioService) {}
+  constructor(
+    private readonly portfolio: PortfolioService,
+    private readonly limiter: RateLimiter,
+    @Inject(APP_CONFIG) private readonly config: AppConfig,
+  ) {}
 
   @Get('me')
   mine(@CurrentAuth() auth: AuthContext) {
@@ -73,13 +92,29 @@ export class PortfolioController {
 
   @Public()
   @Get('public/:slug')
-  publicView(@Param('slug') slug: string) {
+  publicView(@Param('slug') slug: string, @Req() req: Request) {
+    this.limitPublic(req);
     return this.portfolio.publicView(slug);
   }
 
   @Public()
   @Get('public/:slug/items/:itemId')
-  publicItem(@Param('slug') slug: string, @Param('itemId', Id) itemId: string) {
+  publicItem(
+    @Param('slug') slug: string,
+    @Param('itemId', Id) itemId: string,
+    @Req() req: Request,
+  ) {
+    this.limitPublic(req);
     return this.portfolio.publicItem(slug, itemId);
+  }
+
+  /** Anonymous endpoints: slow down scraping and slug enumeration per client IP. */
+  private limitPublic(req: Request) {
+    this.limiter.consume(
+      `public:${req.ip ?? 'unknown'}`,
+      this.config.PUBLIC_RATE_PER_MINUTE,
+      60_000,
+      'PUBLIC_RATE_LIMITED',
+    );
   }
 }

@@ -26,6 +26,7 @@ import { CheckQueue } from './checks/check-queue';
 import { ChecksController } from './checks/checks.controller';
 import { ChecksService } from './checks/checks.service';
 import { originCheck } from './common/origin.middleware';
+import { RateLimiter } from './common/rate-limiter';
 import { APP_CONFIG, type AppConfig } from './config';
 import { CourseAccessService } from './courses/course-access.service';
 import { CoursesController } from './courses/courses.controller';
@@ -74,6 +75,7 @@ export class AppModule {
         PasswordService,
         SessionService,
         LoginRateLimiter,
+        RateLimiter,
         AuthService,
         CourseAccessService,
         CoursesService,
@@ -133,6 +135,8 @@ export async function createApp(
   // Student projects are capped at 500k chars by validation; 1 MB leaves room for JSON escaping.
   app.useBodyParser('json', { limit: '1mb' });
   app.disable('x-powered-by');
+  // req.ip must be the browser, not the Next.js proxy, or IP-based limits are shared by all.
+  app.set('trust proxy', config.trustProxy);
   app.use(helmet());
   app.use(cookieParser());
   app.use(originCheck(config.webOrigins));

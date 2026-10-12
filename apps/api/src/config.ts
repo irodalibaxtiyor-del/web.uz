@@ -16,6 +16,20 @@ const envSchema = z.object({
   DEFAULT_ORG_SLUG: z.string().min(1).default('webdizayn'),
   LOGIN_MAX_FAILURES: z.coerce.number().int().positive().default(5),
   LOGIN_WINDOW_MINUTES: z.coerce.number().int().positive().default(15),
+  /**
+   * Which proxies may set X-Forwarded-For (Express "trust proxy"): `false`, a hop count, or
+   * a comma-separated list of names/IPs/CIDRs such as `loopback, 10.0.0.0/8`. The browser
+   * reaches the API through the Next.js server, so without this every client shares one IP.
+   * The proxy in front of Next.js must overwrite (not append to) X-Forwarded-For.
+   */
+  TRUST_PROXY: z
+    .string()
+    .regex(/^[a-z0-9.,:/ ]{1,200}$/i)
+    .default('loopback'),
+  /** Accounts that may be created per client IP per hour. */
+  REGISTER_MAX_PER_HOUR: z.coerce.number().int().positive().default(10),
+  /** Requests per client IP per minute to public (no-login) endpoints. */
+  PUBLIC_RATE_PER_MINUTE: z.coerce.number().int().positive().default(120),
   /** `process`: Playwright in a child process. `disabled`: every CHECK reports ERROR (never PASS). */
   CHECK_ENGINE: z.enum(['process', 'disabled']).default('process'),
   /** Chrome/Chromium executable for CHECK. Empty: the installed Google Chrome. */
@@ -57,7 +71,19 @@ export type AppConfig = z.infer<typeof envSchema> & {
   cookieSecure: boolean;
   /** The provider actually used: `http` only when every precondition holds. */
   aiMode: 'mock' | 'http';
+  /** Value for Express "trust proxy". */
+  trustProxy: boolean | number | string[];
 };
+
+function parseTrustProxy(raw: string): boolean | number | string[] {
+  const v = raw.trim().toLowerCase();
+  if (v === 'false') return false;
+  if (/^\d+$/.test(v)) return Number(v);
+  return v
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
 
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   const parsed = envSchema.safeParse(env);
@@ -81,6 +107,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   return {
     ...cfg,
     aiMode: aiHttp ? 'http' : 'mock',
+    trustProxy: parseTrustProxy(cfg.TRUST_PROXY),
     webOrigins: cfg.WEB_ORIGINS.split(',')
       .map((o) => o.trim())
       .filter(Boolean),

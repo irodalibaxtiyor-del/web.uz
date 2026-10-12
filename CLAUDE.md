@@ -685,3 +685,27 @@ Har bir amal shu yerga qo'shib boriladi (eng yangisi pastda).
   - Intent va guard evristik (regex/so'z ro'yxati) — yagona himoya emas; asosiy himoya strukturaviy (kontekstga maxfiy ma'lumot qo'yilmaydi).
   - Kvota va daqiqalik limit DB orqali, lekin parallel so'rovlarda qat'iy atomik emas (bir nechta so'rov bir vaqtda o'tib ketishi mumkin).
   - Handoff'larni "hal qilindi" deb belgilash yo'q.
+
+### 14A — Security hardening
+
+- Roadmap ro'yxati bo'yicha audit. Mavjud testlar bilan tasdiqlangan (o'zgartirilmadi): sessiya muddati va faolsizlik, cookie flaglari, Argon2id, login rate limit, neytral auth xatolari, rol/`x-user-id` soxtalashtirish, cross-student/teacher/org, ownership, zod validatsiya, XSS (markdown, React escaping; `dangerouslySetInnerHTML`/`innerHTML` yo'q), injection (raw SQL yo'q, drizzle parametrlari), path traversal va fayl limitlari, AI prompt injection, kontekst izolyatsiyasi, yashirin CHECK sizishi, xavfsiz provayder xatolari, CSRF (Origin tekshiruvi + SameSite=Lax).
+- **Topilgan va tuzatilgan:**
+  1. **IP bo'yicha limitlar amalda umumiy edi.** Brauzer API'ga Next `/api` rewrite orqali kiradi, API `trust proxy`siz har bir so'rovni Next serveridan deb ko'rardi. Oqibat: 50 ta xato login barcha foydalanuvchilarni bloklardi va hujumchi istalgan emailga 5 ta xato bilan **qurbonni 15 daqiqaga bloklay olardi**. Tekshiruv: Next `X-Forwarded-For` ni o'zi qo'shmaydi, mijoznikini o'zgartirmay uzatadi. Tuzatish: `TRUST_PROXY` (Express "trust proxy", default `loopback`, qat'iy validatsiya). Production talabi: Next oldidagi proksi `X-Forwarded-For` ni haqiqiy IP bilan **almashtirishi** shart (`.env.example` va config izohida).
+  2. **Login formasi** JS yuklanmaganda native GET bilan parolni URL'ga qo'yishi mumkin edi (11-fazada brauzerda kuzatilgan). Tuzatish: `method="post"`.
+  3. **Ro'yxatdan o'tish** limitsiz edi (ommaviy akkaunt ochish, 409 orqali email tekshirish). Tuzatish: IP bo'yicha soatiga `REGISTER_MAX_PER_HOUR` (default 10), 429 `REGISTER_RATE_LIMITED`.
+  4. **Ochiq portfolio endpoint'lari** limitsiz edi (13B'dan qoldirilgan). Tuzatish: IP bo'yicha daqiqasiga `PUBLIC_RATE_PER_MINUTE` (default 120), 429 `PUBLIC_RATE_LIMITED`. Umumiy `common/rate-limiter.ts` (sliding window, xotira chegarasi bilan).
+  5. **AI kvotasi parallel so'rovlarda atomik emas edi.** Tuzatish: provayder chaqiruvidan oldin `ai_usage` qatori per-user `pg_advisory_xact_lock` ostidagi tranzaksiyada band qilinadi (`reserve` → `finish`); daqiqalik limit band qilingan chaqiruvlar + provayderga chiqmagan javoblardan hisoblanadi.
+  6. **Web ilovada CSP va HSTS yo'q edi.** Tuzatish (`next.config.ts`): CSP (`default-src 'self'`, `frame-src` faqat sandbox origin, `object-src 'none'`, `base-uri 'self'`, `form-action 'self'`, `frame-ancestors 'none'`, `worker-src 'self' blob:`, `connect-src 'self'`), `Permissions-Policy`, production'da HSTS. Brauzerda tekshirildi: Monaco, sandbox RUN, tutor, analitika sahifalari — CSP buzilishi 0.
+  7. **Bog'liqliklar:** `pnpm audit --prod` 2 ta past darajali DOMPurify (≤3.4.15, Monaco orqali) maslahatini ko'rsatdi. `overrides: dompurify >=3.4.16` qo'shildi, audit toza. Lekin Monaco `min` build'i 3.4.15 ni ichiga o'rab olgan — ishlovchi kod o'zgarmadi; zaiflik `IN_PLACE` rejimiga tegishli, u bundle'da faqat bir marta uchraydi (ehtimol konfiguratsiyani o'qiydigan kutubxona kodi). Monaco bu rejimni ishlatmasligini chaqiruv joylarini ko'rib tasdiqlamadim. Monaco yangilanganda qayta tekshirish kerak.
+- Sirlar skani (grep, gitleaks lokal yo'q): repoda kalit, token, parol yoki `.env` yo'q (faqat `.env.example`).
+- Testlar `test/security.test.ts` (6 ta): boshqa IP'dagi hujumchi qurbonni bloklay olmaydi; `TRUST_PROXY=false` da eski umumiy bucket xatti-harakati; `TRUST_PROXY` validatsiyasi; ro'yxatdan o'tish va ochiq portfolio IP limitlari (boshqa IP ta'sirlanmaydi); 6 ta parallel AI so'rovidan aynan kunlik limitcha (2 ta) o'tadi.
+- Regressiya: typecheck ✅, lint ✅, format ✅, build ✅, test ✅ (shared 38 + sandbox 15 + web 23 + check-engine 13 + api 229 = **318**), sandbox xavfsizlik E2E ✅ (ALL PASSED), `pnpm audit --prod` ✅.
+- **STATUS: READY_WITH_INFRASTRUCTURE_LIMITATIONS.**
+- Cheklovlar va ochiq masalalar:
+  - Barcha limiterlar (login, register, public) process ichida — bir nechta API instance uchun Redis kerak.
+  - To'g'ri mijoz IP'si production'dagi edge proksiga bog'liq (Next o'zi XFF qo'shmaydi). Proksisiz deploy qilinsa, `TRUST_PROXY=loopback` da mijoz XFF'ni soxtalashtira oladi — bunday holatda `TRUST_PROXY=false` qo'yish kerak (limitlar yana umumiy bo'ladi).
+  - CSP'da `script-src 'unsafe-inline'` (Next bootstrap) va `style-src 'unsafe-inline'` qoldi; nonce'ga o'tish keyingi qadam.
+  - Ro'yxatdan o'tishda 409 hali ham email band ekanini bildiradi (endi limit bilan); to'liq yechim — email tasdiqlash.
+  - Restart'da `PENDING` holatida qolgan `ai_usage` qatorlari shu kun kvotasiga kiradi.
+  - Kirish jurnallari (access log) va xavfsizlik monitoringi yo'q (14C production readiness).
+- Keyingi qadam: **14B — Sandbox security**.

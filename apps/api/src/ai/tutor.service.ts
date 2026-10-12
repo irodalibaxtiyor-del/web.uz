@@ -219,23 +219,24 @@ export class TutorService {
     };
     const prompt = buildPrompt(plan, this.canary);
     const promptChars = prompt.system.length + prompt.user.length;
-    await this.usage.assertAllowed(auth.userId, promptChars);
+    const usageId = await this.usage.reserve(
+      auth.userId,
+      m.organizationId,
+      promptChars,
+      this.provider.name,
+      this.provider.model,
+    );
 
     let result;
     try {
       result = await this.provider.complete({ ...prompt, plan });
     } catch (e) {
-      const attempts = e instanceof AiProviderError ? e.attempts : 1;
-      await this.usage.record({
-        userId: auth.userId,
-        organizationId: m.organizationId,
+      await this.usage.finish(usageId, {
         interactionId: null,
-        provider: this.provider.name,
         model: this.provider.model,
         status: 'ERROR',
-        promptChars,
         completionChars: 0,
-        attempts,
+        attempts: e instanceof AiProviderError ? e.attempts : 1,
       });
       throw new ServiceUnavailableException(UNAVAILABLE);
     }
@@ -282,14 +283,10 @@ export class TutorService {
         .returning();
       return inserted!;
     });
-    await this.usage.record({
-      userId: auth.userId,
-      organizationId: m.organizationId,
+    await this.usage.finish(usageId, {
       interactionId: row.id,
-      provider: this.provider.name,
       model: result.model,
       status: blocked ? 'BLOCKED' : 'OK',
-      promptChars,
       completionChars: result.text.length,
       attempts: result.attempts,
     });
