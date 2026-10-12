@@ -21,7 +21,10 @@ const register = (email: string, extra: Record<string, unknown> = {}) =>
 describe('health', () => {
   it('reports live and ready without a session', async () => {
     await ctx.http().get('/health').expect(200, { status: 'ok' });
-    await ctx.http().get('/health/ready').expect(200, { status: 'ready' });
+    await ctx
+      .http()
+      .get('/health/ready')
+      .expect(200, { status: 'ready', checks: { database: 'ok', checkWorker: 'not_used' } });
   });
 });
 

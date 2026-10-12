@@ -248,6 +248,8 @@ export const lessonProgress = pgTable(
   (t) => [
     uniqueIndex('lesson_progress_user_lesson_idx').on(t.userId, t.lessonId),
     index('lesson_progress_user_course_idx').on(t.userId, t.courseId),
+    // Course-wide reads (analytics, teacher views).
+    index('lesson_progress_course_idx').on(t.courseId),
   ],
 );
 
@@ -311,6 +313,7 @@ export const studentExercises = pgTable(
     uniqueIndex('student_exercises_user_exercise_idx').on(t.userId, t.exerciseId),
     index('student_exercises_exercise_idx').on(t.exerciseId),
     index('student_exercises_user_lesson_idx').on(t.userId, t.lessonId),
+    index('student_exercises_course_idx').on(t.courseId),
   ],
 );
 
@@ -345,6 +348,8 @@ export const checkRuns = pgTable(
     index('check_runs_user_exercise_idx').on(t.userId, t.exerciseId, t.createdAt),
     index('check_runs_user_created_idx').on(t.userId, t.createdAt),
     index('check_runs_status_idx').on(t.status),
+    // Course analytics: runs and common errors (status = FAILED) per course.
+    index('check_runs_course_status_idx').on(t.courseId, t.status, t.createdAt),
   ],
 );
 
@@ -410,6 +415,7 @@ export const submissions = pgTable(
   (t) => [
     uniqueIndex('submissions_assignment_user_idx').on(t.assignmentId, t.userId),
     index('submissions_user_idx').on(t.userId),
+    index('submissions_course_status_idx').on(t.courseId, t.status),
   ],
 );
 
@@ -434,6 +440,7 @@ export const submissionVersions = pgTable(
   },
   (t) => [
     uniqueIndex('submission_versions_submission_version_idx').on(t.submissionId, t.version),
+    index('submission_versions_assignment_idx').on(t.assignmentId, t.submittedAt),
     check('submission_versions_version_pos', sql`${t.version} >= 1`),
   ],
 );
@@ -479,7 +486,11 @@ export const submissionReviews = pgTable(
     scores: jsonb('scores').$type<RubricScore[]>(),
     createdAt: createdAt(),
   },
-  (t) => [index('submission_reviews_submission_idx').on(t.submissionId, t.createdAt)],
+  (t) => [
+    index('submission_reviews_submission_idx').on(t.submissionId, t.createdAt),
+    // Teacher activity per reviewer (organization analytics).
+    index('submission_reviews_reviewer_idx').on(t.reviewerId, t.createdAt),
+  ],
 );
 
 export const quizzes = pgTable(
@@ -535,6 +546,7 @@ export const quizAttempts = pgTable(
   (t) => [
     index('quiz_attempts_user_quiz_idx').on(t.userId, t.quizId, t.createdAt),
     index('quiz_attempts_quiz_idx').on(t.quizId),
+    index('quiz_attempts_course_idx').on(t.courseId, t.createdAt),
   ],
 );
 

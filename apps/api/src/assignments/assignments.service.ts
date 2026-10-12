@@ -5,9 +5,10 @@ import {
   Inject,
   Injectable,
   NotFoundException,
+  OnModuleDestroy,
   OnModuleInit,
 } from '@nestjs/common';
-import { and, asc, count, desc, eq, inArray, isNotNull, max, sql } from 'drizzle-orm';
+import { and, asc, count, desc, eq, inArray, isNotNull, lt, max, sql } from 'drizzle-orm';
 import {
   rubricMatchesPolicy,
   SUBMISSION_MAX_VERSIONS,
@@ -27,7 +28,9 @@ import { AuditService } from '../audit/audit.service';
 import { CHECK_EXECUTOR, runSafely, type CheckExecutor } from '../checks/check-executor';
 import { CheckQueue } from '../checks/check-queue';
 import { ChecksService, toView } from '../checks/checks.service';
+import { staleCutoff, startSweep } from '../checks/stale';
 import type { AuthContext, MembershipContext } from '../common/types';
+import { APP_CONFIG, type AppConfig } from '../config';
 import { CourseAccessService } from '../courses/course-access.service';
 import { LearningService, LOCKED } from '../courses/learning.service';
 import type { Db } from '../db/client';
@@ -80,7 +83,7 @@ const sameFiles = (a: ProjectFile[], b: ProjectFile[]) =>
   a.length === b.length && a.every((f, i) => f.path === b[i]!.path && f.content === b[i]!.content);
 
 @Injectable()
-export class AssignmentsService implements OnModuleInit {
+export class AssignmentsService implements OnModuleInit, OnModuleDestroy {
   constructor(
     private readonly dbs: DbService,
     private readonly access: CourseAccessService,
@@ -89,14 +92,36 @@ export class AssignmentsService implements OnModuleInit {
     private readonly queue: CheckQueue,
     private readonly audit: AuditService,
     @Inject(CHECK_EXECUTOR) private readonly executor: CheckExecutor,
+    @Inject(APP_CONFIG) private readonly config: AppConfig,
   ) {}
 
-  /** Submission CHECKs left over from a previous process are closed as ERROR. */
+  private stopSweep: (() => void) | null = null;
+
+  /** Closes abandoned submission CHECKs now and then every minute (see `stale.ts`). */
   async onModuleInit(): Promise<void> {
-    await this.dbs.db
+    await this.closeStale();
+    this.stopSweep = startSweep(() => this.closeStale());
+  }
+
+  onModuleDestroy(): void {
+    this.stopSweep?.();
+  }
+
+  async closeStale(now = new Date()): Promise<number> {
+    const rows = await this.dbs.db
       .update(submissionChecks)
-      .set({ status: 'ERROR', errorCode: 'ENGINE', finishedAt: new Date() })
-      .where(inArray(submissionChecks.status, ['QUEUED', 'RUNNING']));
+      .set({ status: 'ERROR', errorCode: 'ENGINE', finishedAt: now })
+      .where(
+        and(
+          inArray(submissionChecks.status, ['QUEUED', 'RUNNING']),
+          lt(
+            sql`coalesce(${submissionChecks.startedAt}, ${submissionChecks.createdAt})`,
+            staleCutoff(this.config, now),
+          ),
+        ),
+      )
+      .returning({ id: submissionChecks.id });
+    return rows.length;
   }
 
   // ---- Staff ------------------------------------------------------------

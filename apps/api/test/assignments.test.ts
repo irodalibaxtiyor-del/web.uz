@@ -421,13 +421,20 @@ describe('CHECK on submitted versions', () => {
     await req(student, 'post', `${A(id)}/checks/preview`, { files: files('x') }).expect(403);
   });
 
-  it('closes interrupted submission checks as ERROR on restart', async () => {
+  it('closes abandoned submission checks as ERROR, but not recent ones', async () => {
+    const service = ctx.app.get(AssignmentsService);
     const [chk] = await ctx.handle.db
       .update(submissionChecks)
-      .set({ status: 'RUNNING' })
+      .set({ status: 'RUNNING', startedAt: new Date() })
       .where(sql`true`)
       .returning();
-    await ctx.app.get(AssignmentsService).onModuleInit();
+    // Recently started: may still be running on another instance.
+    expect(await service.closeStale()).toBe(0);
+    await ctx.handle.db
+      .update(submissionChecks)
+      .set({ startedAt: new Date(Date.now() - 60 * 60_000) })
+      .where(eq(submissionChecks.id, chk!.id));
+    expect(await service.closeStale()).toBeGreaterThanOrEqual(1);
     const [after] = await ctx.handle.db
       .select()
       .from(submissionChecks)

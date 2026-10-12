@@ -16,7 +16,7 @@ async function main() {
   const password = process.env.SEED_PASSWORD;
   if (!password || password.length < 10) throw new Error('Set SEED_PASSWORD (min 10 chars)');
 
-  const handle = createDb(config.DATABASE_URL);
+  const handle = createDb(config.DATABASE_URL, { poolMax: config.DATABASE_POOL_MAX });
   await handle.migrate();
   await ensureDefaultOrg(handle.db, config);
   const db = handle.db;

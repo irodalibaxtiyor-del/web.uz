@@ -5,9 +5,10 @@ import {
   Inject,
   Injectable,
   NotFoundException,
+  OnModuleDestroy,
   OnModuleInit,
 } from '@nestjs/common';
-import { and, count, desc, eq, gte, inArray, sql } from 'drizzle-orm';
+import { and, count, desc, eq, gte, inArray, lt, sql } from 'drizzle-orm';
 import type {
   CheckEngineResult,
   CheckPreviewResult,
@@ -26,6 +27,7 @@ import { checkRuns, studentExercises } from '../db/schema';
 import { ExercisesService } from '../exercises/exercises.service';
 import { CHECK_EXECUTOR, runSafely, type CheckExecutor } from './check-executor';
 import { CheckQueue } from './check-queue';
+import { staleCutoff, startSweep } from './stale';
 
 export const NOT_CONFIGURED = {
   message: 'Bu mashq uchun avtomatik tekshiruv sozlanmagan',
@@ -41,7 +43,7 @@ const RATE_WINDOW_MS = 10 * 60_000;
 type RunRow = typeof checkRuns.$inferSelect;
 
 @Injectable()
-export class ChecksService implements OnModuleInit {
+export class ChecksService implements OnModuleInit, OnModuleDestroy {
   /** Staff dry-runs in flight, one per user. */
   private readonly previews = new Set<string>();
 
@@ -55,12 +57,34 @@ export class ChecksService implements OnModuleInit {
     @Inject(APP_CONFIG) private readonly config: AppConfig,
   ) {}
 
-  /** Runs left over from a previous process can never finish; close them honestly as ERROR. */
+  private stopSweep: (() => void) | null = null;
+
+  /** Closes abandoned runs now and then every minute (see `stale.ts`). */
   async onModuleInit(): Promise<void> {
-    await this.dbs.db
+    await this.closeStale();
+    this.stopSweep = startSweep(() => this.closeStale());
+  }
+
+  onModuleDestroy(): void {
+    this.stopSweep?.();
+  }
+
+  /** Runs whose process is gone can never finish; close them honestly as ERROR, never PASS. */
+  async closeStale(now = new Date()): Promise<number> {
+    const rows = await this.dbs.db
       .update(checkRuns)
-      .set({ status: 'ERROR', errorCode: 'ENGINE', finishedAt: new Date() })
-      .where(inArray(checkRuns.status, ['QUEUED', 'RUNNING']));
+      .set({ status: 'ERROR', errorCode: 'ENGINE', finishedAt: now })
+      .where(
+        and(
+          inArray(checkRuns.status, ['QUEUED', 'RUNNING']),
+          lt(
+            sql`coalesce(${checkRuns.startedAt}, ${checkRuns.createdAt})`,
+            staleCutoff(this.config, now),
+          ),
+        ),
+      )
+      .returning({ id: checkRuns.id });
+    return rows.length;
   }
 
   // ---- Student ----------------------------------------------------------

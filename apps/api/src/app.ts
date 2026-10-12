@@ -1,5 +1,5 @@
 import { Module, type DynamicModule } from '@nestjs/common';
-import { APP_GUARD, NestFactory } from '@nestjs/core';
+import { APP_GUARD, HttpAdapterHost, NestFactory } from '@nestjs/core';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
@@ -25,6 +25,14 @@ import { CHECK_EXECUTOR, createCheckExecutor, type CheckExecutor } from './check
 import { CheckQueue } from './checks/check-queue';
 import { ChecksController } from './checks/checks.controller';
 import { ChecksService } from './checks/checks.service';
+import {
+  AllExceptionsFilter,
+  AppLogger,
+  Metrics,
+  MetricsController,
+  NestLogAdapter,
+  requestObserver,
+} from './common/observability';
 import { originCheck } from './common/origin.middleware';
 import { RateLimiter } from './common/rate-limiter';
 import { APP_CONFIG, type AppConfig } from './config';
@@ -67,6 +75,7 @@ export class AppModule {
         QuizzesController,
         PortfolioController,
         AnalyticsController,
+        MetricsController,
         TutorController,
       ],
       providers: [
@@ -76,6 +85,7 @@ export class AppModule {
         SessionService,
         LoginRateLimiter,
         RateLimiter,
+        Metrics,
         AuthService,
         CourseAccessService,
         CoursesService,
@@ -121,14 +131,21 @@ export async function createApp(
   config: AppConfig,
   opts: CreateAppOptions = {},
 ): Promise<NestExpressApplication> {
-  const handle = opts.handle ?? createDb(config.DATABASE_URL);
+  const handle =
+    opts.handle ?? createDb(config.DATABASE_URL, { poolMax: config.DATABASE_POOL_MAX });
   if (opts.migrate ?? config.NODE_ENV !== 'production') await handle.migrate();
   await ensureDefaultOrg(handle.db, config);
 
+  const logger = new AppLogger(config);
   const app = await NestFactory.create<NestExpressApplication>(
     AppModule.forRoot(config, handle, opts.checkExecutor, opts.aiProvider),
     {
-      logger: config.NODE_ENV === 'test' ? false : ['error', 'warn', 'log'],
+      logger:
+        config.LOG_LEVEL === 'silent'
+          ? false
+          : config.LOG_FORMAT === 'json'
+            ? new NestLogAdapter(logger)
+            : ['error', 'warn', 'log'],
       bodyParser: false,
     },
   );
@@ -137,6 +154,8 @@ export async function createApp(
   app.disable('x-powered-by');
   // req.ip must be the browser, not the Next.js proxy, or IP-based limits are shared by all.
   app.set('trust proxy', config.trustProxy);
+  app.use(requestObserver(logger, app.get(Metrics)));
+  app.useGlobalFilters(new AllExceptionsFilter(logger, app.get(HttpAdapterHost).httpAdapter));
   app.use(helmet());
   app.use(cookieParser());
   app.use(originCheck(config.webOrigins));

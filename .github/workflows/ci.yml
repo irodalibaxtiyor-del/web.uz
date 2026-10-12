@@ -28,7 +28,32 @@ jobs:
       - run: pnpm build
         env:
           NEXT_TELEMETRY_DISABLED: '1'
+      # The schema and the committed migrations must not drift apart.
+      - name: Migration drift
+        run: |
+          pnpm --filter @webdizayn/api exec drizzle-kit generate --name ci_drift_probe
+          if [ -n "$(git status --porcelain apps/api/drizzle)" ]; then
+            git status --porcelain apps/api/drizzle
+            echo "Schema changed without a committed migration"; exit 1
+          fi
+      - name: Dependency audit
+        run: pnpm audit --prod
       - name: Secret scan
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Production images (deploy/Dockerfile). Not buildable on the development machine
+  # (no Docker there), so CI is where they are first verified.
+  images:
+    runs-on: ubuntu-latest
+    needs: check
+    strategy:
+      matrix:
+        target: [api, check-worker, web, sandbox]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build ${{ matrix.target }}
+        run: docker build -f deploy/Dockerfile --target ${{ matrix.target }} -t webdizayn-${{ matrix.target }} .
+      - name: Runs as non-root
+        run: test "$(docker run --rm --entrypoint id webdizayn-${{ matrix.target }} -u)" != "0"

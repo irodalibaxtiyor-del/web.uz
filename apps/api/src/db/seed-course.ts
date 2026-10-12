@@ -22,7 +22,7 @@ async function main() {
 
   const config = loadConfig();
   const email = (process.env.SEED_TEACHER_EMAIL ?? 'teacher@webdizayn.local').toLowerCase();
-  const handle = createDb(config.DATABASE_URL);
+  const handle = createDb(config.DATABASE_URL, { poolMax: config.DATABASE_POOL_MAX });
   try {
     await handle.migrate();
     await ensureDefaultOrg(handle.db, config);

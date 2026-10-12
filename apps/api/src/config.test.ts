@@ -9,9 +9,18 @@ describe('loadConfig', () => {
     expect(c.webOrigins).toEqual(['http://localhost:3000']);
   });
 
-  it('uses secure cookies in production', () => {
-    const c = loadConfig({ NODE_ENV: 'production', DATABASE_URL: 'postgres://u@h/db' });
-    expect(c.cookieSecure).toBe(true);
+  it('uses secure cookies, JSON logs and https origins in production', () => {
+    const prod = {
+      NODE_ENV: 'production',
+      DATABASE_URL: 'postgres://u@h/db',
+      WEB_ORIGINS: 'https://webdizayn.uz',
+    };
+    const c = loadConfig(prod);
+    expect(c).toMatchObject({ cookieSecure: true, LOG_FORMAT: 'json', LOG_LEVEL: 'info' });
+    expect(() => loadConfig({ ...prod, WEB_ORIGINS: 'http://webdizayn.uz' })).toThrow(
+      /WEB_ORIGINS/,
+    );
+    expect(loadConfig({ NODE_ENV: 'test' }).LOG_LEVEL).toBe('silent');
   });
 
   it('refuses PGlite in production', () => {

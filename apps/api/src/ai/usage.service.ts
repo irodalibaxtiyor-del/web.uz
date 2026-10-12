@@ -1,8 +1,16 @@
-import { HttpException, HttpStatus, Inject, Injectable, OnModuleInit } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  OnModuleDestroy,
+  OnModuleInit,
+} from '@nestjs/common';
 import { and, eq, gte, lt, sql } from 'drizzle-orm';
 import type { TutorQuota } from '@webdizayn/shared';
 import { APP_CONFIG, type AppConfig } from '../config';
 import type { Db } from '../db/client';
+import { startSweep } from '../checks/stale';
 import { DbService } from '../db/db.module';
 import { aiInteractions, aiUsage } from '../db/schema';
 
@@ -33,7 +41,7 @@ function startOfUtcDay(now: Date): Date {
  * so parallel requests cannot all pass the check before any of them is recorded.
  */
 @Injectable()
-export class AiUsageService implements OnModuleInit {
+export class AiUsageService implements OnModuleInit, OnModuleDestroy {
   constructor(
     private readonly dbs: DbService,
     @Inject(APP_CONFIG) private readonly config: AppConfig,
@@ -46,6 +54,13 @@ export class AiUsageService implements OnModuleInit {
    */
   async onModuleInit(): Promise<void> {
     await this.closeStale();
+    this.stopSweep = startSweep(() => this.closeStale());
+  }
+
+  private stopSweep: (() => void) | null = null;
+
+  onModuleDestroy(): void {
+    this.stopSweep?.();
   }
 
   async closeStale(now = new Date()): Promise<number> {

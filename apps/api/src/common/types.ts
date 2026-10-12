@@ -16,5 +16,7 @@ declare module 'express-serve-static-core' {
     auth?: AuthContext;
     /** Set only by OrgRoleGuard from the memberships table. */
     membership?: MembershipContext;
+    /** Set by the request observer; echoed in X-Request-Id and in 500 responses. */
+    requestId?: string;
   }
 }

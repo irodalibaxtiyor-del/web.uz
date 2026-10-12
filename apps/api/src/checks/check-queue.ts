@@ -26,6 +26,11 @@ export class CheckQueue implements OnModuleDestroy {
     });
   }
 
+  /** For monitoring (/metrics). */
+  stats(): { pending: number; active: number } {
+    return { pending: this.pending.length, active: this.active };
+  }
+
   /** Resolves once nothing is queued or running. */
   idle(): Promise<void> {
     if (this.active === 0 && this.pending.length === 0) return Promise.resolve();

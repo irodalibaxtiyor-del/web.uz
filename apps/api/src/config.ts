@@ -5,6 +5,8 @@ const envSchema = z.object({
   PORT: z.coerce.number().int().positive().default(4000),
   /** `pglite://memory`, `pglite://./.data/pg` (local dev/tests) or a `postgres://` URL. */
   DATABASE_URL: z.string().min(1).default('pglite://./.data/pg'),
+  /** Postgres connections per API instance (ignored for PGlite). */
+  DATABASE_POOL_MAX: z.coerce.number().int().min(1).max(100).default(10),
   /** Comma-separated list of browser origins allowed to call the API with credentials. */
   WEB_ORIGINS: z.string().default('http://localhost:3000'),
   SESSION_TTL_HOURS: z.coerce
@@ -71,15 +73,23 @@ const envSchema = z.object({
     .transform((v) => v === 'true'),
   /** Cost estimate in micro-USD per 1000 characters sent and received. */
   AI_COST_PER_1K_CHARS_MICROUSD: z.coerce.number().int().min(0).default(0),
+  /** Default: `info`, or `silent` when NODE_ENV=test. */
+  LOG_LEVEL: z.enum(['silent', 'error', 'warn', 'info', 'debug']).optional(),
+  /** Default: `json` in production (one object per line), `text` otherwise. */
+  LOG_FORMAT: z.enum(['json', 'text']).optional(),
+  /** Enables GET /metrics (Prometheus) for `Authorization: Bearer <token>`; >= 32 chars. */
+  METRICS_TOKEN: z.string().min(32).optional(),
 });
 
-export type AppConfig = z.infer<typeof envSchema> & {
+export type AppConfig = Omit<z.infer<typeof envSchema>, 'LOG_LEVEL' | 'LOG_FORMAT'> & {
   webOrigins: string[];
   cookieSecure: boolean;
   /** The provider actually used: `http` only when every precondition holds. */
   aiMode: 'mock' | 'http';
   /** Value for Express "trust proxy". */
   trustProxy: boolean | number | string[];
+  LOG_LEVEL: 'silent' | 'error' | 'warn' | 'info' | 'debug';
+  LOG_FORMAT: 'json' | 'text';
 };
 
 function parseTrustProxy(raw: string): boolean | number | string[] {
@@ -93,7 +103,9 @@ function parseTrustProxy(raw: string): boolean | number | string[] {
 }
 
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
-  const parsed = envSchema.safeParse(env);
+  // `KEY=` (as in .env.example) means "not set", not "set to an empty string".
+  const present = Object.fromEntries(Object.entries(env).filter(([, v]) => v !== ''));
+  const parsed = envSchema.safeParse(present);
   if (!parsed.success) {
     // Only report variable names, never values (they may be secrets).
     const keys = parsed.error.issues.map((i) => i.path.join('.')).join(', ');
@@ -114,13 +126,23 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   if (aiHttp && cfg.NODE_ENV === 'production' && !cfg.AI_PROVIDER_URL!.startsWith('https://')) {
     throw new Error('Invalid environment configuration: AI_PROVIDER_URL (https required)');
   }
+  const webOrigins = cfg.WEB_ORIGINS.split(',')
+    .map((o) => o.trim())
+    .filter(Boolean);
+  // Secure cookies and CORS credentials only make sense for https origins in production.
+  if (
+    cfg.NODE_ENV === 'production' &&
+    (webOrigins.length === 0 || webOrigins.some((o) => !o.startsWith('https://')))
+  ) {
+    throw new Error('Invalid environment configuration: WEB_ORIGINS (https required)');
+  }
   return {
     ...cfg,
     aiMode: aiHttp ? 'http' : 'mock',
+    LOG_LEVEL: cfg.LOG_LEVEL ?? (cfg.NODE_ENV === 'test' ? 'silent' : 'info'),
+    LOG_FORMAT: cfg.LOG_FORMAT ?? (cfg.NODE_ENV === 'production' ? 'json' : 'text'),
     trustProxy: parseTrustProxy(cfg.TRUST_PROXY),
-    webOrigins: cfg.WEB_ORIGINS.split(',')
-      .map((o) => o.trim())
-      .filter(Boolean),
+    webOrigins,
     cookieSecure: cfg.NODE_ENV === 'production',
   };
 }

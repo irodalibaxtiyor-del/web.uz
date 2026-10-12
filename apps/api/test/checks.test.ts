@@ -339,21 +339,26 @@ describe('CHECK isolation and limits', () => {
     expect(res.body.code).toBe('CHECK_RATE_LIMITED');
   });
 
-  it('closes runs interrupted by a restart as ERROR, never as PASSED', async () => {
-    const [row] = await ctx.handle.db
+  it('closes abandoned runs as ERROR, but not ones another instance may still run', async () => {
+    const values = {
+      userId: student.userId,
+      exerciseId: ex,
+      courseId,
+      status: 'RUNNING' as const,
+      files: [{ path: 'index.html', content: PASSING }],
+      rules: [],
+    };
+    const [old] = await ctx.handle.db
       .insert(checkRuns)
-      .values({
-        userId: student.userId,
-        exerciseId: ex,
-        courseId,
-        status: 'RUNNING',
-        files: [{ path: 'index.html', content: PASSING }],
-        rules: [],
-      })
+      .values({ ...values, createdAt: new Date(Date.now() - 60 * 60_000) })
       .returning();
-    await ctx.app.get(ChecksService).onModuleInit();
-    const [after] = await ctx.handle.db.select().from(checkRuns).where(eq(checkRuns.id, row!.id));
-    expect(after).toMatchObject({ status: 'ERROR', errorCode: 'ENGINE' });
+    const [fresh] = await ctx.handle.db.insert(checkRuns).values(values).returning();
+    expect(await ctx.app.get(ChecksService).closeStale()).toBe(1);
+    const [a] = await ctx.handle.db.select().from(checkRuns).where(eq(checkRuns.id, old!.id));
+    const [b] = await ctx.handle.db.select().from(checkRuns).where(eq(checkRuns.id, fresh!.id));
+    expect(a).toMatchObject({ status: 'ERROR', errorCode: 'ENGINE' });
+    expect(b!.status).toBe('RUNNING');
+    await ctx.handle.db.delete(checkRuns).where(eq(checkRuns.id, fresh!.id));
   });
 
   it('the disabled engine reports ERROR', async () => {

@@ -21,7 +21,10 @@ export interface DbHandle {
 
 const MIGRATIONS_FOLDER = join(__dirname, '..', '..', 'drizzle');
 
-export function createDb(url: string): DbHandle {
+/** Arbitrary constant key for the migration advisory lock. */
+const MIGRATION_LOCK = 7_272_021;
+
+export function createDb(url: string, opts: { poolMax?: number } = {}): DbHandle {
   if (url.startsWith('pglite://')) {
     const location = url.slice('pglite://'.length);
     let client: PGlite;
@@ -42,11 +45,22 @@ export function createDb(url: string): DbHandle {
     };
   }
 
-  const pool = new Pool({ connectionString: url, max: 10 });
+  const pool = new Pool({ connectionString: url, max: opts.poolMax ?? 10 });
   const db = drizzlePg(pool, { schema });
   return {
     db: db as unknown as Db,
-    migrate: () => migratePg(db, { migrationsFolder: MIGRATIONS_FOLDER }),
+    // Several instances or deploy jobs may start at once: serialize migrations with a
+    // session-level advisory lock held on one dedicated connection.
+    migrate: async () => {
+      const conn = await pool.connect();
+      try {
+        await conn.query('select pg_advisory_lock($1)', [MIGRATION_LOCK]);
+        await migratePg(drizzlePg(conn, { schema }), { migrationsFolder: MIGRATIONS_FOLDER });
+      } finally {
+        await conn.query('select pg_advisory_unlock($1)', [MIGRATION_LOCK]).catch(() => {});
+        conn.release();
+      }
+    },
     ping: async () => {
       await db.execute(sql`select 1`);
     },
