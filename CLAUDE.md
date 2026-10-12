@@ -632,3 +632,27 @@ Har bir amal shu yerga qo'shib boriladi (eng yangisi pastda).
 - Regressiya: typecheck ✅, lint ✅, format ✅, build ✅, test ✅ (shared 32 + sandbox 15 + web 18 + check-engine 13 + api 170 = **248**).
 - Demo bazaga yuklandi (`db:seed:css`): "CSS: to'liq kurs" e'lon qilingan.
 - Cheklovlar: CHECK faqat hisoblangan uslublarni tekshiradi — ba'zi mashqlarda (masalan `@supports`, `@layer`, `!important`) yechim usuli emas, natija tekshiriladi. `prefers-reduced-motion`, `hover` media va print'ni engine emulyatsiya qilmaydi, shuning uchun ular faqat darsda. CHECK qoidalari va yechimlar public repoda ochiq (HTML kursidagidek).
+
+### 13C — Analytics
+
+- Qaror: yangi jadval yoki migratsiya yo'q. Analitika har so'rovda mavjud o'quv yozuvlaridan (lesson_progress, check_runs, student_exercises, quiz_attempts, submissions, submission_reviews) hisoblanadi, shuning uchun ular bilan hech qachon farq qilmaydi.
+- **Shared** (`analytics.ts`): `StudentAnalytics`, `CourseAnalytics`, `OrgAnalytics` tiplari; `rate()` (ma'lumot bo'lmasa `null`, soxta 0% emas), `weekStartOf`/`trendWeeks` (UTC dushanba, 8 hafta), `progressBucket`, `struggleReasons()` — har bir sabab tekshirsa bo'ladigan aniq fakt: INACTIVE (7 kun), BEHIND (o'rtachadan 25 punkt past), STUCK_ON_CHECK (o'tilmagan mashqda ≥3 FAILED), NEEDS_IMPROVEMENT, REVISION_REQUESTED, QUIZ_NOT_PASSED. Kursni tugatgan talaba belgilanmaydi. 6 ta test.
+- **API** (`src/analytics/`):
+  - `analytics-facts.ts`: `loadFacts()` — kurslar (va ixtiyoriy talabalar) to'plami uchun 10 ta agregat so'rov; `FactsIndex.stats(user, course)` — progress, frontier dars, mashqlar, CHECK (ERROR/TIMEOUT foizga kirmaydi, birinchi urinishda o'tish), testlar, topshiriqlar, zaif mavzular (faqat hozir hal qilinmaganlari), oxirgi faollik.
+  - `GET /analytics/me` — faqat sessiya egasi; faqat a'zo bo'lgan tashkilotlar kurslari, qoralama kurslar yo'q. Zaif mavzularda faqat dars/modul nomi — CHECK qoida nomlari, selektorlar va yashirin qoidalar chiqmaydi. `aiUsage: { available: false }` (AI Tutor, 11-faza, hali qurilmagan — soxta ma'lumot berilmaydi).
+  - `GET /orgs/:orgId/courses/:courseId/analytics` — TEACHER (faqat biriktirilgan kurs) va ORG_ADMIN: progress taqsimoti, tiqilib qolgan darslar, ko'p uchraydigan xatolar (xodim uchun yashirin qoida nomi `hidden` belgisi bilan), texnik natijalar (TIMEOUT/ERROR), topshiriqlar holati, qayta ishlash ulushi, yordam kerak bo'lishi mumkin bo'lgan talabalar (ism bilan, emailsiz), haftalik trend.
+  - `GET /orgs/:orgId/analytics` — faqat ORG_ADMIN: a'zolar, faol talabalar (7/30 kun), kursni tugatish ulushi, kurslar faolligi, o'qituvchilar faolligi (biriktirilgan kurslar, ko'rib chiqishlar, kutayotgan javoblar), haftalik faol talabalar.
+  - Testlar `test/analytics.test.ts` (10 ta): sessiyasiz 401; talabaning o'z raqamlari; zaif mavzular va yashirin qoidalar sizmasligi; boshqa talaba/tashkilot aralashmasligi va soxta `x-user-id`; kurs analitikasi RBAC (talaba 403, begona o'qituvchi 403, boshqa org 404, admin 200); progress, tiqilish, xatolar, topshiriqlar, qayta ishlash va qiynalayotgan talabalar; javoblarda email yo'q; org analitikasi faqat admin uchun va tashkilotlar ajratilgan.
+- **Web**:
+  - `components/analytics-ui.tsx`: `StatTile`, `Section`, `RateMeter`, `ColumnChart` (bitta seriya, legendasiz, ustun ≤24px, 4px yumaloq uch, faqat oxirgi ustunda qiymat; har ustun fokuslanadi va hover/fokusda tooltip; "Jadval ko'rinishi"). Grafik rangi `--color-chart` — yorug'da `#0071dc`, qorong'ida `#3b8eea` (dataviz validatori bilan tekshirildi). 3 ta test.
+  - Sahifalar: `/analytics` (talaba, kabinetda "Natijalarim"), `/orgs/[orgId]/courses/[courseId]/manage/analytics` (kurs boshqaruvida "Analitika"), `/orgs/[orgId]/analytics` (admin uchun kabinetda "Tashkilot analitikasi").
+- Regressiya: typecheck ✅, lint ✅, format ✅, build ✅, test ✅ (shared 38 + sandbox 15 + web 21 + check-engine 13 + api 180 = **267**).
+- Brauzerda bosib tekshirildi (`ui-13c.cjs`, demo baza) **10/10**: talaba, o'qituvchi va admin sahifalari; fokusdagi tooltip; talabaga org analitikasi 403; mobil (390px) va dark rejimda gorizontal aylanish yo'q. Konsol xatolari 0. Raqamlar uch ko'rinishda bir-biriga mos.
+- **STATUS: READY_WITH_INFRASTRUCTURE_LIMITATIONS** (avvalgi cheklovlar saqlanib qolgan).
+- Cheklovlar:
+  - AI usage hozircha yo'q (11-faza bajarilmagan — fazalar tartibida 12E dan keyin 11 turishi kerak edi, lekin 13A/13B oldin qilingan).
+  - Faollikka CHECK, dars progressi, test urinishlari va topshirishlar kiradi; workspace'ni saqlash kirmaydi (`student_exercises.updated_at` ni o'qituvchi status qo'yganda ham o'zgartiradi).
+  - Hisob har so'rovda bajariladi; katta tashkilotlar uchun kesh yoki materialized view kerak bo'ladi. Ko'p uchraydigan xatolar oxirgi 5000 ta FAILED run bo'yicha.
+  - Haftalar UTC bo'yicha (Toshkent vaqti bilan dushanba 00:00–05:00 orasidagi faollik oldingi haftaga tushadi).
+  - Sana oralig'ini tanlash filtri yo'q (doim 8 hafta / 7 va 30 kun).
+- Keyingi qadam: roadmap tartibida **11 — AI Tutor** (o'tkazib yuborilgan), keyin **14A — Security hardening**.

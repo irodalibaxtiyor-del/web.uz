@@ -28,12 +28,21 @@
   --color-surface: #f5faff;
   --color-ink: #0e1133;
 
+  /* Single-series chart mark; re-stepped for dark surfaces (validated against both). */
+  --color-chart: #0071dc;
+
   --shadow-card: 0 10px 30px -12px rgb(14 17 51 / 0.18);
   --shadow-card-hover: 0 20px 40px -14px rgb(0 113 220 / 0.35);
 }
 
 :root {
   color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-chart: #3b8eea;
+  }
 }
 
 /* Base styles live in the base layer so utilities (e.g. text-white on a heading) win. */

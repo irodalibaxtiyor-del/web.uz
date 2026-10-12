@@ -3,6 +3,8 @@ import { APP_GUARD, NestFactory } from '@nestjs/core';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
+import { AnalyticsController } from './analytics/analytics.controller';
+import { AnalyticsService } from './analytics/analytics.service';
 import { AssignmentsController } from './assignments/assignments.controller';
 import { AssignmentsService } from './assignments/assignments.service';
 import { ReviewsController } from './assignments/reviews.controller';
@@ -58,6 +60,7 @@ export class AppModule {
         ReviewsController,
         QuizzesController,
         PortfolioController,
+        AnalyticsController,
       ],
       providers: [
         { provide: APP_CONFIG, useValue: config },
@@ -77,6 +80,7 @@ export class AppModule {
         ReviewsService,
         QuizzesService,
         PortfolioService,
+        AnalyticsService,
         // Order matters: authenticate first, then resolve org role.
         { provide: APP_GUARD, useClass: AuthGuard },
         { provide: APP_GUARD, useClass: OrgRoleGuard },

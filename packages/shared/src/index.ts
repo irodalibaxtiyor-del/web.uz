@@ -8,3 +8,4 @@ export * from './assignments';
 export * from './reviews';
 export * from './quizzes';
 export * from './portfolio';
+export * from './analytics';

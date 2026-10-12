@@ -39,7 +39,10 @@ export default function ManageCoursePage() {
                   modul · {lessonCount} dars
                 </p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
+                <Link href={`${base}/manage/analytics`} className="btn btn-outline">
+                  Analitika
+                </Link>
                 {s.course.status !== 'PUBLISHED' && (
                   <Button onClick={() => setStatus('PUBLISHED')} disabled={lessonCount === 0}>
                     E&apos;lon qilish

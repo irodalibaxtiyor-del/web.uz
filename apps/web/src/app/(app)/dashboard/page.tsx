@@ -34,6 +34,9 @@ export default function DashboardPage() {
             subtitle="O'qishni davom ettiring yoki yangi kursni tanlang."
             actions={
               <>
+                <Link href="/analytics" className="btn btn-accent">
+                  Natijalarim
+                </Link>
                 <Link href="/portfolio" className="btn btn-accent">
                   Portfolio
                 </Link>
@@ -53,6 +56,14 @@ export default function DashboardPage() {
                 <div className="flex flex-wrap items-baseline gap-3">
                   <h2 className="text-2xl font-bold">{m.organizationName}</h2>
                   <span className="section-eyebrow">{ROLE_LABEL[m.role]}</span>
+                  {m.role === 'ORG_ADMIN' && (
+                    <Link
+                      href={`/orgs/${m.organizationId}/analytics`}
+                      className="text-sm font-semibold text-brand-600 underline dark:text-brand-300"
+                    >
+                      Tashkilot analitikasi
+                    </Link>
+                  )}
                 </div>
                 <CourseList orgId={m.organizationId} role={m.role} />
               </section>
