@@ -35,6 +35,7 @@ export const CHECK_PSEUDO_ELEMENTS = [
   '::marker',
   '::placeholder',
 ] as const;
+export type CheckPseudoElement = (typeof CHECK_PSEUDO_ELEMENTS)[number];
 
 export const checkAssertionSchema = z.discriminatedUnion('type', [
   /** Number of matching elements is within [min, max]. `max: 0` asserts absence. */

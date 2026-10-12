@@ -1,4 +1,10 @@
-import type { CheckAction, CheckRuleInput, Difficulty, ProjectFile } from '@webdizayn/shared';
+import type {
+  CheckAction,
+  CheckPseudoElement,
+  CheckRuleInput,
+  Difficulty,
+  ProjectFile,
+} from '@webdizayn/shared';
 
 /** Authoring helpers for the bundled course manifests (`content/<course>/manifest.ts`). */
 
@@ -159,14 +165,14 @@ export function style(
   selector: string,
   property: string,
   value: string,
-  opts: RuleOpts = {},
+  opts: RuleOpts & { pseudo?: CheckPseudoElement } = {},
 ): CheckRuleInput {
   return {
     id,
     title,
     hint: opts.hint,
     hidden: opts.hidden,
-    assert: { type: 'style', selector, property, value },
+    assert: { type: 'style', selector, property, value, pseudo: opts.pseudo },
   };
 }
 

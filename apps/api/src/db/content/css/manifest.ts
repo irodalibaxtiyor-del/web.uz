@@ -2,6 +2,9 @@ import type { CourseMeta, ModuleDef } from '../helpers';
 import { m01 } from './modules/01-intro';
 import { m02 } from './modules/02-colors';
 import { m03 } from './modules/03-box';
+import { m04 } from './modules/04-text';
+import { m05 } from './modules/05-lists-tables';
+import { m06 } from './modules/06-layout';
 
 /**
  * Original Uzbek CSS course. Only the topic order follows the usual CSS curriculum; every
@@ -18,4 +21,4 @@ export const CSS_COURSE: CourseMeta = {
     'joylashuv, Flexbox, Grid, animatsiyalar va moslashuvchan dizayn. Har darsda amaliy mashq.',
 };
 
-export const CSS_MODULES: ModuleDef[] = [m01, m02, m03];
+export const CSS_MODULES: ModuleDef[] = [m01, m02, m03, m04, m05, m06];
