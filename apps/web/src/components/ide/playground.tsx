@@ -1,7 +1,7 @@
 'use client';
 
 import type { ProjectFile } from '@webdizayn/shared';
-import { useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { SANDBOX_URL } from '@/lib/sandbox';
 import { CodeEditor } from './code-editor';
 import { FileTree } from './file-tree';
@@ -31,9 +31,12 @@ export function Playground({
   toolbar,
   namespace = '',
   readOnly = false,
+  onRunErrors,
 }: {
   files: ProjectFile[];
   onChange: (files: ProjectFile[]) => void;
+  /** Error lines of the latest RUN (and a timeout), e.g. for the AI tutor. */
+  onRunErrors?: (errors: string[]) => void;
   /** Extra actions (save, reset) rendered next to RUN. */
   toolbar?: ReactNode;
   /** Prefix for editor models, needed when two playgrounds are on one page. */
@@ -45,6 +48,14 @@ export function Playground({
   const current = files.find((f) => f.path === active) ?? files[0];
   const { frameRef, frameKey, status, lines, run, clearConsole } = useRunner();
   const doRun = () => run(files);
+
+  useEffect(() => {
+    if (!onRunErrors) return;
+    const errors = lines.filter((l) => l.level === 'error').map((l) => l.text);
+    if (status === 'timeout')
+      errors.push('RUN vaqti tugadi: kod juda uzoq ishladi (cheksiz sikl?)');
+    onRunErrors(errors.slice(-5));
+  }, [lines, status, onRunErrors]);
 
   return (
     <div className="overflow-hidden rounded-2xl border border-slate-800 bg-[#1e1e1e] text-slate-200 shadow-card">

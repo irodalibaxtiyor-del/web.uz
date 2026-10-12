@@ -7,6 +7,7 @@ import { useCallback, useState } from 'react';
 import { CheckResultPanel, useCheckRun } from '@/components/check-result';
 import { Playground } from '@/components/ide/playground';
 import { Markdown } from '@/components/markdown';
+import { TutorPanel } from '@/components/tutor-panel';
 import {
   Button,
   DIFFICULTY_LABEL,
@@ -49,6 +50,7 @@ export default function ExercisePage() {
 function Workspace({ initial, courseBase }: { initial: ExerciseView; courseBase: string }) {
   const [ex, setEx] = useState(initial);
   const [files, setFiles] = useState<ProjectFile[]>(initial.files);
+  const [runErrors, setRunErrors] = useState<string[]>([]);
   const [dirty, setDirty] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
@@ -155,6 +157,7 @@ function Workspace({ initial, courseBase }: { initial: ExerciseView; courseBase:
       <section aria-label="Kod muharriri" className="space-y-3">
         <Playground
           files={files}
+          onRunErrors={setRunErrors}
           onChange={(f) => {
             setFiles(f);
             setDirty(true);
@@ -206,6 +209,12 @@ function Workspace({ initial, courseBase }: { initial: ExerciseView; courseBase:
         </p>
       </section>
       {check.run && <CheckResultPanel run={check.run} />}
+      <TutorPanel
+        courseBase={courseBase}
+        targetKind="EXERCISE"
+        targetId={ex.id}
+        runErrors={runErrors}
+      />
     </article>
   );
 }

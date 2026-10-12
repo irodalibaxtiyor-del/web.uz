@@ -12,6 +12,7 @@ import {
 import { CheckResultPanel } from '@/components/check-result';
 import { Playground } from '@/components/ide/playground';
 import { Markdown } from '@/components/markdown';
+import { TutorPanel } from '@/components/tutor-panel';
 import { Button, ErrorText, LoadState } from '@/components/ui';
 import { api, send } from '@/lib/api';
 import { formatDateTime } from '@/lib/dates';
@@ -261,6 +262,7 @@ function Workspace({ initial, courseBase }: { initial: AssignmentView; courseBas
         )}
       </section>
 
+      <TutorPanel courseBase={courseBase} targetKind="ASSIGNMENT" targetId={a.id} />
       <Versions view={a} url={url} />
     </article>
   );
