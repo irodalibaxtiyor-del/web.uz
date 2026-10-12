@@ -138,7 +138,6 @@ export const m05: ModuleDef = {
           style('collapse', 'Chegaralar birlashgan', 'table', 'border-collapse', 'collapse'),
           at(800, 600, style('width', 'Jadval to‘liq kenglikda', 'table', 'width', '800px')),
           style('th-align', 'Sarlavhalar chapda', 'th', 'text-align', 'left'),
-          style('pad', 'Katakda 12px yon bo‘shliq', 'td', 'padding-left', '12px'),
           style('th-border', 'Sarlavha ostida 2px chiziq', 'th', 'border-bottom-width', '2px'),
           style('num', 'Raqamlar o‘ngda', 'td.raqam', 'text-align', 'right'),
         ],

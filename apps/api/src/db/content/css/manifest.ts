@@ -13,6 +13,7 @@ import { m11 } from './modules/11-motion';
 import { m12 } from './modules/12-ui';
 import { m13 } from './modules/13-flexbox';
 import { m14 } from './modules/14-grid';
+import { m15 } from './modules/15-responsive';
 
 /**
  * Original Uzbek CSS course. Only the topic order follows the usual CSS curriculum; every
@@ -44,4 +45,5 @@ export const CSS_MODULES: ModuleDef[] = [
   m12,
   m13,
   m14,
+  m15,
 ];

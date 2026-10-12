@@ -1,4 +1,4 @@
-import { after, md, q, quiz, site, style, TODO, type ModuleDef } from '../shared';
+import { md, q, quiz, site, style, TODO, type ModuleDef } from '../shared';
 
 const KEEP_HTML = '`index.html` ni o‘zgartirmang — faqat selektorlar bilan ishlang.';
 

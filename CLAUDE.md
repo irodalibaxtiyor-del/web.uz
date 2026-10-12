@@ -618,3 +618,17 @@ Har bir amal shu yerga qo'shib boriladi (eng yangisi pastda).
 - Regressiya: typecheck ✅, lint ✅, format ✅, api test **170/170** ✅, check-engine **13/13** ✅.
 - Demo bazaga CSS kursi hali **yuklanmagan** (kurs tugagandan keyin `db:seed:css`).
 - To'liq holat, qolgan 12 modul va mashq yozish qoidalari: [CSS_KURS_HOLATI.md](CSS_KURS_HOLATI.md).
+
+## 2026-10-12
+
+### CSS kursi — yakunlandi
+
+- [CSS_KURS_HOLATI.md](CSS_KURS_HOLATI.md) bo'yicha davom ettirildi. Qolgan 12 modul (4–15) yozildi: matn va shriftlar, havola/ro'yxat/jadval, joylashuv, selektorlar va kaskad, amaliy komponentlar, birliklar va funksiyalar, bezak effektlari, transformatsiya va animatsiya, rasmlar va interfeys, Flexbox, Grid, moslashuvchan dizayn.
+- Jami: **15 modul, 101 dars, 101 mashq (har biri CHECK qoidalari bilan), 15 modul testi**. Matnlar, misollar va mashqlar original o'zbekcha (W3Schools'dan faqat mavzular tartibi).
+- `helpers.ts`: `style()` ga `pseudo` opsiyasi qo'shildi; `@webdizayn/shared` dan `CheckPseudoElement` tipi eksport qilinadi.
+- Modul fayllari markup'ni (`BODYNN`) va boshlang'ich CSS'ni eksport qiladi, yechimlar ularni qayta ishlatadi (dublikat yo'q). Tashqi rasmlar o'rniga `data:` SVG (`pic()` 08-modulda).
+- Haqiqiy Chrome tekshiruvi (`content:verify css`): **101/101** — har yechim PASSED, boshlang'ich kod o'tmaydi.
+- Topilgan va tuzatilgan holatlar (qoidalar CSS_KURS_HOLATI.md ga yozildi): ko'p qatlamli fonda computed qiymat har qatlam uchun takrorlanadi; `grid-row: span 2` `grid-row-start` ga yoziladi; `has(..., {max: 0})` uchun `min: 0` kerak; content-box'da `margin: auto` padding'ni hisobga oladi; transition'li holatlarda `wait` kerak.
+- Regressiya: typecheck ✅, lint ✅, format ✅, build ✅, test ✅ (shared 32 + sandbox 15 + web 18 + check-engine 13 + api 170 = **248**).
+- Demo bazaga yuklandi (`db:seed:css`): "CSS: to'liq kurs" e'lon qilingan.
+- Cheklovlar: CHECK faqat hisoblangan uslublarni tekshiradi — ba'zi mashqlarda (masalan `@supports`, `@layer`, `!important`) yechim usuli emas, natija tekshiriladi. `prefers-reduced-motion`, `hover` media va print'ni engine emulyatsiya qilmaydi, shuning uchun ular faqat darsda. CHECK qoidalari va yechimlar public repoda ochiq (HTML kursidagidek).
