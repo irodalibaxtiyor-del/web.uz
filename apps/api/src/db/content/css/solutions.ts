@@ -9,6 +9,8 @@ import { s07 } from './solutions/07-selectors';
 import { s08 } from './solutions/08-components';
 import { s09 } from './solutions/09-units';
 import { s10 } from './solutions/10-effects';
+import { s11 } from './solutions/11-motion';
+import { s12 } from './solutions/12-ui';
 
 /**
  * Reference solutions, keyed by lesson slug. Used only to verify the CHECK rules in a real
@@ -25,4 +27,6 @@ export const CSS_SOLUTIONS: Record<string, ProjectFile[]> = {
   ...s08,
   ...s09,
   ...s10,
+  ...s11,
+  ...s12,
 };
