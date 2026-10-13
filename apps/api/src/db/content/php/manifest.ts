@@ -11,6 +11,7 @@ import { m09 } from './modules/09-advanced';
 import { m10 } from './modules/10-files';
 import { m11 } from './modules/11-state';
 import { m12 } from './modules/12-oop';
+import { m13 } from './modules/13-oop-advanced';
 
 /**
  * Original Uzbek PHP course. Only the topic order follows the usual PHP curriculum; every
@@ -44,4 +45,5 @@ export const PHP_MODULES: ModuleDef[] = [
   m10,
   m11,
   m12,
+  m13,
 ];
