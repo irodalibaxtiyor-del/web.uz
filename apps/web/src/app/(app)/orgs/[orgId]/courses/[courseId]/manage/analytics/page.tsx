@@ -18,7 +18,7 @@ import {
   STRUGGLE_LABEL,
   weekColumns,
 } from '@/components/analytics-ui';
-import { LoadState, PageHeader } from '@/components/ui';
+import { LoadState, PageHeader, TableScroll } from '@/components/ui';
 import { formatDate } from '@/lib/dates';
 import { useApi } from '@/lib/use-api';
 
@@ -60,7 +60,9 @@ function Handoffs({ base }: { base: string }) {
                   <span className="rounded-full bg-accent-300/40 px-2 py-0.5 text-xs text-ink dark:bg-accent-500/20 dark:text-accent-300">
                     {HANDOFF_LABEL[h.category]}
                   </span>
-                  <span className="text-xs text-slate-500">{formatDate(h.createdAt)}</span>
+                  <span className="text-xs text-slate-500 dark:text-slate-400">
+                    {formatDate(h.createdAt)}
+                  </span>
                 </p>
                 <p className="text-slate-600 dark:text-slate-400">
                   {h.targetKind === 'EXERCISE' ? 'Mashq' : 'Topshiriq'}:{' '}
@@ -192,7 +194,9 @@ export default function CourseAnalyticsPage() {
                             >
                               {b.lessonTitle}
                             </Link>
-                            <span className="block text-xs text-slate-500">{b.moduleTitle}</span>
+                            <span className="block text-xs text-slate-500 dark:text-slate-400">
+                              {b.moduleTitle}
+                            </span>
                           </td>
                           <td className={`${td} text-right tabular-nums`}>{b.stuckStudents}</td>
                           <td className={`${td} text-right tabular-nums`}>
@@ -232,7 +236,7 @@ export default function CourseAnalyticsPage() {
                             )}
                             <Link
                               href={`${base}/manage/exercises/${e.exerciseId}`}
-                              className="block text-xs text-slate-500 underline"
+                              className="block text-xs text-slate-500 dark:text-slate-400 underline"
                             >
                               {e.exerciseTitle}
                             </Link>
@@ -257,7 +261,7 @@ export default function CourseAnalyticsPage() {
               {a.assignments.length === 0 ? (
                 <Empty>E’lon qilingan topshiriq yo‘q.</Empty>
               ) : (
-                <div className="overflow-x-auto">
+                <TableScroll label="Topshiriqlar holati jadvali">
                   <table className="w-full min-w-[640px] text-sm">
                     <thead>
                       <tr className={row}>
@@ -280,7 +284,7 @@ export default function CourseAnalyticsPage() {
                               {s.title}
                             </Link>
                             {s.deadline && (
-                              <span className="block text-xs text-slate-500">
+                              <span className="block text-xs text-slate-500 dark:text-slate-400">
                                 Muddat: {formatDate(s.deadline)}
                               </span>
                             )}
@@ -303,7 +307,7 @@ export default function CourseAnalyticsPage() {
                       ))}
                     </tbody>
                   </table>
-                </div>
+                </TableScroll>
               )}
             </Section>
 

@@ -38,7 +38,7 @@ export const ITEM_KIND_LABEL: Record<PortfolioItemKind, string> = {
 
 export function Achievements({ list }: { list: Achievement[] }) {
   if (list.length === 0) {
-    return <p className="text-sm text-slate-500">Hali yutuqlar yo‘q.</p>;
+    return <p className="text-sm text-slate-500 dark:text-slate-400">Hali yutuqlar yo‘q.</p>;
   }
   return (
     <ul className="grid gap-3">
@@ -65,7 +65,7 @@ export function Achievements({ list }: { list: Achievement[] }) {
 
 export function CompletedCourses({ list }: { list: CompletedCourse[] }) {
   if (list.length === 0) {
-    return <p className="text-sm text-slate-500">Hali tugatilgan kurs yo‘q.</p>;
+    return <p className="text-sm text-slate-500 dark:text-slate-400">Hali tugatilgan kurs yo‘q.</p>;
   }
   return (
     <ul className="space-y-2">
@@ -75,7 +75,9 @@ export function CompletedCourses({ list }: { list: CompletedCourse[] }) {
             <Icon name="check" className="size-4 text-emerald-600" aria-hidden="true" />
             {c.title}
           </span>
-          <span className="text-sm text-slate-500">{formatDate(c.completedAt)}</span>
+          <span className="text-sm text-slate-500 dark:text-slate-400">
+            {formatDate(c.completedAt)}
+          </span>
         </li>
       ))}
     </ul>

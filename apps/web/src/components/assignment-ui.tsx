@@ -39,7 +39,7 @@ const SUBMISSION: Record<SubmissionStatus, { label: string; icon: string; tone: 
 export function SubmissionStatusBadge({ status }: { status: SubmissionStatus | null }) {
   const s = status
     ? SUBMISSION[status]
-    : { label: 'Boshlanmagan', icon: '○', tone: 'text-slate-500' };
+    : { label: 'Boshlanmagan', icon: '○', tone: 'text-slate-500 dark:text-slate-400' };
   return (
     <span className={`text-sm ${s.tone}`}>
       <span aria-hidden="true">{s.icon}</span> {s.label}

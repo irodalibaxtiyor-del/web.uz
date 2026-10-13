@@ -89,7 +89,7 @@
   }
 
   .section-eyebrow {
-    @apply inline-block rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold tracking-wide text-brand-600 uppercase dark:bg-brand-950 dark:text-brand-300;
+    @apply inline-block rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold tracking-wide text-brand-700 uppercase dark:bg-brand-950 dark:text-brand-300;
   }
 
   .field {

@@ -101,7 +101,7 @@ export function ChecksEditor({
           aria-invalid={!parsed.ok}
           className="field font-mono text-xs"
         />
-        <details className="text-xs text-slate-500">
+        <details className="text-xs text-slate-500 dark:text-slate-400">
           <summary className="cursor-pointer">Qoida turlari</summary>
           <ul className="mt-2 list-disc space-y-1 pl-5">
             <li>
@@ -135,7 +135,7 @@ export function ChecksEditor({
       <div id={`${id}-rules-status`}>
         {parsed.ok ? (
           parsed.rules.length === 0 ? (
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
               {purpose === 'exercise'
                 ? 'Qoida yo‘q: talaba "Tekshirish" tugmasini ko‘rmaydi, natijani siz belgilaysiz.'
                 : 'Qoida yo‘q: topshirilgan versiyalar avtomatik tekshirilmaydi.'}
@@ -151,11 +151,11 @@ export function ChecksEditor({
                     </span>
                   )}
                   {r.viewport && (
-                    <span className="text-xs text-slate-500">
+                    <span className="text-xs text-slate-500 dark:text-slate-400">
                       {r.viewport.width}×{r.viewport.height}
                     </span>
                   )}
-                  <code className="text-xs text-slate-500">
+                  <code className="text-xs text-slate-500 dark:text-slate-400">
                     {r.actions.length > 0 && `${r.actions.map((a) => a.type).join(' → ')} → `}
                     {describe(r.assert)}
                   </code>
@@ -206,7 +206,7 @@ export function ChecksEditor({
               <p className={`font-semibold ${CHECK_STATUS[preview.status].tone}`}>
                 <span aria-hidden="true">{CHECK_STATUS[preview.status].icon}</span>{' '}
                 {CHECK_STATUS[preview.status].label}{' '}
-                <span className="text-xs font-normal text-slate-500">
+                <span className="text-xs font-normal text-slate-500 dark:text-slate-400">
                   ({(preview.durationMs / 1000).toFixed(1)} s)
                 </span>
               </p>
@@ -219,7 +219,12 @@ export function ChecksEditor({
                     <span aria-hidden="true">{c.passed ? '✓' : '✗'}</span>{' '}
                     <span className="sr-only">{c.passed ? 'Bajarildi: ' : 'Bajarilmadi: '}</span>
                     {c.title}
-                    {c.hidden && <span className="text-xs text-slate-500"> (yashirin)</span>}
+                    {c.hidden && (
+                      <span className="text-xs text-slate-500 dark:text-slate-400">
+                        {' '}
+                        (yashirin)
+                      </span>
+                    )}
                   </li>
                 ))}
               </ul>

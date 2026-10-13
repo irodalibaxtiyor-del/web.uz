@@ -32,10 +32,13 @@ export class OrgRoleGuard implements CanActivate {
       ctx.getHandler(),
       ctx.getClass(),
     ]);
-    if (!roles) return true;
-
     const req = ctx.switchToHttp().getRequest<Request>();
     const orgId = req.params.orgId;
+    if (!roles) {
+      // Fail closed: an org-scoped route that forgot @OrgRoles must not skip the membership check.
+      if (orgId !== undefined) throw new ForbiddenException();
+      return true;
+    }
     if (!req.auth) throw new ForbiddenException();
     if (typeof orgId !== 'string' || !UUID_RE.test(orgId)) throw new NotFoundException();
 

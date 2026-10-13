@@ -12,7 +12,7 @@ import {
   weekColumns,
 } from '@/components/analytics-ui';
 import { STATUS_LABEL } from '@/components/course-list';
-import { LoadState, PageHeader } from '@/components/ui';
+import { LoadState, PageHeader, TableScroll } from '@/components/ui';
 import { formatDate } from '@/lib/dates';
 import { useApi } from '@/lib/use-api';
 
@@ -81,7 +81,7 @@ export default function OrgAnalyticsPage() {
               {a.courses.length === 0 ? (
                 <Empty>Tashkilotda hali kurs yo‘q.</Empty>
               ) : (
-                <div className="overflow-x-auto">
+                <TableScroll label="Kurslar faolligi jadvali">
                   <table className="w-full min-w-[640px] text-sm">
                     <thead>
                       <tr className={row}>
@@ -104,7 +104,7 @@ export default function OrgAnalyticsPage() {
                             >
                               {c.title}
                             </Link>
-                            <span className="block text-xs text-slate-500">
+                            <span className="block text-xs text-slate-500 dark:text-slate-400">
                               {STATUS_LABEL[c.status]}
                             </span>
                           </td>
@@ -118,7 +118,7 @@ export default function OrgAnalyticsPage() {
                       ))}
                     </tbody>
                   </table>
-                </div>
+                </TableScroll>
               )}
             </Section>
 
@@ -129,7 +129,7 @@ export default function OrgAnalyticsPage() {
               {a.teachers.length === 0 ? (
                 <Empty>O‘qituvchilar yo‘q.</Empty>
               ) : (
-                <div className="overflow-x-auto">
+                <TableScroll label="O‘qituvchilar faolligi jadvali">
                   <table className="w-full min-w-[640px] text-sm">
                     <thead>
                       <tr className={row}>
@@ -146,7 +146,7 @@ export default function OrgAnalyticsPage() {
                         <tr key={t.userId} className={row}>
                           <td className={td}>
                             {t.fullName}
-                            <span className="block text-xs text-slate-500">
+                            <span className="block text-xs text-slate-500 dark:text-slate-400">
                               {ROLE_LABEL[t.role]}
                             </span>
                           </td>
@@ -161,7 +161,7 @@ export default function OrgAnalyticsPage() {
                       ))}
                     </tbody>
                   </table>
-                </div>
+                </TableScroll>
               )}
             </Section>
           </div>

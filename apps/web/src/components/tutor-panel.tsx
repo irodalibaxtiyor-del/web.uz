@@ -105,7 +105,9 @@ export function TutorPanel({
           </span>
         )}
       </header>
-      {state.kind === 'loading' && <p className="text-sm text-slate-500">Yuklanmoqda…</p>}
+      {state.kind === 'loading' && (
+        <p className="text-sm text-slate-500 dark:text-slate-400">Yuklanmoqda…</p>
+      )}
       {state.kind === 'error' && (
         <p role="alert" className="text-sm text-red-700 dark:text-red-400">
           {state.status === 403 || state.status === 404
@@ -149,7 +151,7 @@ function Conversation({
   const [error, setError] = useState<string | null>(null);
   const [handoffOpen, setHandoffOpen] = useState(false);
   const [category, setCategory] = useState<HandoffCategory>('STUCK');
-  const endRef = useRef<HTMLDivElement>(null);
+  const endRef = useRef<HTMLLIElement>(null);
   const messageId = useId();
 
   useEffect(() => {
@@ -249,7 +251,7 @@ function Conversation({
               <ReplyCard exchange={x} targetKind={targetKind} onRate={rate} />
             </li>
           ))}
-          <div ref={endRef} />
+          <li ref={endRef} aria-hidden="true" />
         </ol>
       )}
 

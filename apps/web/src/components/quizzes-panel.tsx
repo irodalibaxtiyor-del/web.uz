@@ -33,7 +33,7 @@ export function QuizzesPanel({ base, lessonId }: { base: string; lessonId: strin
       <h2 id={`${id}-h`} className="text-xl font-semibold">
         Testlar
       </h2>
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-slate-500 dark:text-slate-400">
         Test server tomonida avtomatik tekshiriladi, to&apos;g&apos;ri javoblar talabaga
         yuborilmaydi. Faol test, xuddi mashq kabi, darsni tugatish sharti bo&apos;ladi. Yangi test
         faol emas holda yaratiladi.
@@ -41,7 +41,7 @@ export function QuizzesPanel({ base, lessonId }: { base: string; lessonId: strin
       <LoadState state={state}>
         {(list) =>
           list.length === 0 ? (
-            <p className="text-slate-500">Hali test yo&apos;q.</p>
+            <p className="text-slate-500 dark:text-slate-400">Hali test yo&apos;q.</p>
           ) : (
             <ul className="divide-y divide-slate-200 rounded-xl border border-slate-200 dark:divide-slate-800 dark:border-slate-800">
               {list.map((q) => (
@@ -50,10 +50,14 @@ export function QuizzesPanel({ base, lessonId }: { base: string; lessonId: strin
                   className="flex flex-wrap items-center justify-between gap-3 px-4 py-3"
                 >
                   <span className="flex flex-wrap items-center gap-2">
-                    <span className={q.isActive ? '' : 'text-slate-400 line-through'}>
+                    <span
+                      className={
+                        q.isActive ? '' : 'text-slate-500 line-through dark:text-slate-400'
+                      }
+                    >
                       {q.title}
                     </span>
-                    <span className="text-xs text-slate-500">
+                    <span className="text-xs text-slate-500 dark:text-slate-400">
                       {q.questions.length} ta savol · o&apos;tish {q.passingPercent}%
                       {!q.isActive && ' · faol emas'}
                       {' · '}

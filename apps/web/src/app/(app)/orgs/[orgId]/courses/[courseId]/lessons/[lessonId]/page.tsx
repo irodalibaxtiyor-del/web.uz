@@ -88,7 +88,7 @@ export default function LessonPage() {
                       >
                         {ex.title}
                       </Link>
-                      <span className="text-xs text-slate-500">
+                      <span className="text-xs text-slate-500 dark:text-slate-400">
                         {DIFFICULTY_LABEL[ex.difficulty]}
                       </span>
                     </div>
@@ -139,7 +139,7 @@ export default function LessonPage() {
                       >
                         {a.title}
                       </Link>
-                      <span className="text-xs text-slate-500">
+                      <span className="text-xs text-slate-500 dark:text-slate-400">
                         {a.status === 'CLOSED'
                           ? 'Yopilgan'
                           : a.deadline
@@ -180,7 +180,7 @@ export default function LessonPage() {
               )
             ) : lesson.exercises.some((ex) => ex.status !== 'PASSED') ||
               lesson.quizzes.some((q) => q.status !== 'PASSED') ? (
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-slate-500 dark:text-slate-400">
                 Keyingi darsga o&apos;tish uchun barcha mashq va testlardan o&apos;ting
               </p>
             ) : (

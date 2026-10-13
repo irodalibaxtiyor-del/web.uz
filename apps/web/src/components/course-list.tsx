@@ -69,7 +69,7 @@ export function CourseList({ orgId, role }: { orgId: string; role: Role }) {
       <LoadState state={state}>
         {(courses) =>
           courses.length === 0 ? (
-            <p className="text-slate-500">
+            <p className="text-slate-500 dark:text-slate-400">
               {isStaff ? "Hali kurs yo'q. Birinchisini yarating." : "Hozircha ochiq kurslar yo'q."}
             </p>
           ) : (
@@ -133,7 +133,9 @@ export function CourseList({ orgId, role }: { orgId: string; role: Role }) {
                             <Icon name="arrowRight" className="size-4" />
                           </Link>
                         ) : (
-                          <span className="text-sm text-slate-500">Sizga biriktirilmagan</span>
+                          <span className="text-sm text-slate-500 dark:text-slate-400">
+                            Sizga biriktirilmagan
+                          </span>
                         )}
                       </div>
                     </div>

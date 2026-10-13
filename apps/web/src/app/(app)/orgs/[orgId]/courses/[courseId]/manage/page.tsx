@@ -28,13 +28,16 @@ export default function ManageCoursePage() {
         const lessonCount = s.modules.reduce((n, m) => n + m.lessons.length, 0);
         return (
           <section className="card space-y-8 p-6 sm:p-10">
-            <Link href="/dashboard" className="text-sm text-slate-500 hover:underline">
+            <Link
+              href="/dashboard"
+              className="text-sm text-slate-500 dark:text-slate-400 hover:underline"
+            >
               ← Boshqaruv paneli
             </Link>
             <header className="flex flex-wrap items-start justify-between gap-4">
               <div className="space-y-1">
                 <h1 className="text-2xl font-bold">{s.course.title}</h1>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-slate-500 dark:text-slate-400">
                   Holati: <strong>{STATUS_LABEL[s.course.status]}</strong> · {s.modules.length}{' '}
                   modul · {lessonCount} dars
                 </p>
@@ -61,7 +64,7 @@ export default function ManageCoursePage() {
               </div>
             </header>
             {lessonCount === 0 && (
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-slate-500 dark:text-slate-400">
                 E&apos;lon qilish uchun kamida bitta dars qo&apos;shing.
               </p>
             )}

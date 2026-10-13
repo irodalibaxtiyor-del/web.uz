@@ -41,7 +41,7 @@ export default function ReviewPage() {
           <div className="card space-y-4 p-6 sm:p-10">
             <Link
               href={`${base}/manage/assignments/${assignmentId}`}
-              className="text-sm text-slate-500 hover:underline"
+              className="text-sm text-slate-500 dark:text-slate-400 hover:underline"
             >
               ← {view.assignment.title}
             </Link>
@@ -58,7 +58,9 @@ export default function ReviewPage() {
             </header>
           </div>
           {view.versions.length === 0 ? (
-            <p className="card p-6 text-slate-500">Talaba hali javob topshirmagan.</p>
+            <p className="card p-6 text-slate-500 dark:text-slate-400">
+              Talaba hali javob topshirmagan.
+            </p>
           ) : (
             <>
               <VersionViewer view={view} url={url} />
@@ -130,7 +132,7 @@ function VersionViewer({ view, url }: { view: SubmissionReviewView; url: string 
           onChange={() => {}}
         />
       ) : (
-        <p className="text-sm text-slate-500">Kod yuklanmoqda…</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Kod yuklanmoqda…</p>
       )}
       {v.check && (
         <div className="space-y-2 rounded-xl bg-surface p-4 dark:bg-slate-800/50">
@@ -145,11 +147,13 @@ function VersionViewer({ view, url }: { view: SubmissionReviewView; url: string 
                 <span aria-hidden="true">{c.passed ? '✓' : '✗'}</span>{' '}
                 <span className="sr-only">{c.passed ? 'Bajarildi: ' : 'Bajarilmadi: '}</span>
                 {c.title}
-                {c.hidden && <span className="text-xs text-slate-500"> (yashirin)</span>}
+                {c.hidden && (
+                  <span className="text-xs text-slate-500 dark:text-slate-400"> (yashirin)</span>
+                )}
               </li>
             ))}
           </ul>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-500 dark:text-slate-400">
             CHECK baho emas: u qaror qabul qilishingizga yordam beradi.
           </p>
         </div>
@@ -246,7 +250,11 @@ function ReviewActions({
                   <label htmlFor={`${id}-${r.id}`} className="font-medium">
                     {r.title}
                   </label>
-                  {r.description && <span className="block text-slate-500">{r.description}</span>}
+                  {r.description && (
+                    <span className="block text-slate-500 dark:text-slate-400">
+                      {r.description}
+                    </span>
+                  )}
                 </td>
                 <td className="w-40 py-2">
                   <div className="flex items-center gap-2">
@@ -259,7 +267,9 @@ function ReviewActions({
                       onChange={(e) => setPoints((p) => ({ ...p, [r.id]: Number(e.target.value) }))}
                       className={inputClass}
                     />
-                    <span className="whitespace-nowrap text-slate-500">/ {r.maxPoints}</span>
+                    <span className="whitespace-nowrap text-slate-500 dark:text-slate-400">
+                      / {r.maxPoints}
+                    </span>
                   </div>
                 </td>
               </tr>
@@ -280,7 +290,7 @@ function ReviewActions({
             onChange={(e) => setScore(Number(e.target.value))}
             className={`${inputClass} w-28`}
           />
-          <span className="text-slate-500">/ {gradingPolicy.maxScore}</span>
+          <span className="text-slate-500 dark:text-slate-400">/ {gradingPolicy.maxScore}</span>
         </div>
       )}
       <p role="status" className="text-sm">
@@ -351,7 +361,7 @@ function ReviewActions({
         )}
       </div>
       {view.status === 'GRADED' && (
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-slate-500 dark:text-slate-400">
           Baho talabaga ko&apos;rinadi, lekin yakunlanmaguncha o&apos;zgartirish mumkin.
         </p>
       )}
@@ -376,7 +386,7 @@ function History({ view }: { view: SubmissionReviewView }) {
               {ACTION_LABEL[r.action]} · {r.version}-versiya
               {r.score !== null && ` · ${r.score} ball`}
             </p>
-            <p className="text-slate-500">
+            <p className="text-slate-500 dark:text-slate-400">
               {formatDateTime(r.createdAt)} · {r.reviewerName ?? 'o‘chirilgan foydalanuvchi'}
             </p>
             {r.feedback && <p className="mt-2 whitespace-pre-wrap">{r.feedback}</p>}

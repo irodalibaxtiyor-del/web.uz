@@ -118,7 +118,9 @@ function Workspace({ initial, courseBase }: { initial: ExerciseView; courseBase:
         <header className="flex flex-wrap items-center justify-between gap-3">
           <div className="space-y-1">
             <h1 className="text-3xl font-bold">{ex.title}</h1>
-            <p className="text-sm text-slate-500">{DIFFICULTY_LABEL[ex.difficulty]}</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              {DIFFICULTY_LABEL[ex.difficulty]}
+            </p>
           </div>
           <ExerciseStatusBadge status={ex.status} />
         </header>
@@ -201,7 +203,7 @@ function Workspace({ initial, courseBase }: { initial: ExerciseView; courseBase:
             {notice}
           </p>
         )}
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-slate-500 dark:text-slate-400">
           &quot;Ishga tushirish&quot; natijani faqat sizga ko&apos;rsatadi va baho qo&apos;ymaydi.
           {ex.checkAvailable
             ? ' Rasmiy natija "Tekshirish" orqali serverda aniqlanadi: saqlangan kodingiz haqiqiy brauzerda tekshiriladi.'

@@ -96,7 +96,10 @@ export default function HomePage() {
         <ol className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {STEPS.map((s) => (
             <li key={s.n} className="card card-hover relative p-7">
-              <span className="font-display text-5xl font-bold text-brand-100 dark:text-brand-900">
+              <span
+                aria-hidden="true"
+                className="font-display text-5xl font-bold text-brand-500 dark:text-brand-400"
+              >
                 {s.n}
               </span>
               <h3 className="mt-2 text-xl font-semibold">{s.title}</h3>
@@ -130,7 +133,7 @@ export default function HomePage() {
                   <span className="block font-display text-lg font-semibold text-ink dark:text-white">
                     {d.title}
                   </span>
-                  <span className="text-sm text-slate-500">{d.text}</span>
+                  <span className="text-sm text-slate-500 dark:text-slate-400">{d.text}</span>
                 </span>
               </li>
             ))}
@@ -171,7 +174,7 @@ export default function HomePage() {
               <h2 className="text-3xl font-bold text-white sm:text-4xl">
                 Birinchi darsingizni bugun boshlang
               </h2>
-              <p className="mt-3 text-white/85">
+              <p className="mt-3 text-white">
                 Ro&apos;yxatdan o&apos;ting va HTML asoslaridan boshlab bosqichma-bosqich
                 o&apos;rganing.
               </p>
@@ -258,12 +261,12 @@ function HeroIllustration() {
           <span className="size-3 rounded-full bg-red-400" />
           <span className="size-3 rounded-full bg-accent-400" />
           <span className="size-3 rounded-full bg-emerald-400" />
-          <span className="ml-3 rounded-md bg-white px-3 py-0.5 font-mono text-xs text-slate-500 dark:bg-slate-900">
+          <span className="ml-3 rounded-md bg-white px-3 py-0.5 font-mono text-xs text-slate-500 dark:text-slate-400 dark:bg-slate-900">
             index.html
           </span>
         </div>
         <pre className="bg-ink p-5 font-mono text-[13px] leading-6 text-slate-300">
-          <span className="text-slate-500">{'<!-- Birinchi sahifam -->'}</span>
+          <span className="text-slate-400">{'<!-- Birinchi sahifam -->'}</span>
           {'\n'}
           <span className="text-pink-400">{'<h1'}</span>
           <span className="text-accent-300">{' class'}</span>=
@@ -299,11 +302,11 @@ function HeroIllustration() {
           <span className="block text-sm font-semibold text-ink dark:text-white">
             Tekshiruv o&apos;tdi
           </span>
-          <span className="text-xs text-slate-500">3 / 3 talab bajarildi</span>
+          <span className="text-xs text-slate-500 dark:text-slate-400">3 / 3 talab bajarildi</span>
         </span>
       </div>
       <div className="card absolute -top-6 -right-4 w-44 px-4 py-3 sm:-right-8">
-        <span className="text-xs text-slate-500">Kurs progressi</span>
+        <span className="text-xs text-slate-500 dark:text-slate-400">Kurs progressi</span>
         <span className="mt-1 block font-display text-xl font-bold text-ink dark:text-white">
           75%
         </span>

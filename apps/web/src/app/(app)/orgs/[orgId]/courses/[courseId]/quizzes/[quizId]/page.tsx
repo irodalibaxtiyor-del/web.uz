@@ -97,7 +97,7 @@ function Quiz({ initial, courseBase }: { initial: QuizView; courseBase: string }
         <QuizStatusBadge status={quiz.status} bestScore={quiz.bestScore} />
       </header>
       {quiz.description && <p>{quiz.description}</p>}
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-slate-500 dark:text-slate-400">
         {quiz.questions.length} ta savol · o&apos;tish uchun kamida {quiz.passingPercent}% ·
         urinishlar: {quiz.attempts}
       </p>
@@ -135,7 +135,7 @@ function Quiz({ initial, courseBase }: { initial: QuizView; courseBase: string }
                     {i + 1}. {q.prompt}
                   </legend>
                   {multiple && (
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
                       Bir nechta to&apos;g&apos;ri javob bo&apos;lishi mumkin
                     </p>
                   )}
@@ -162,7 +162,7 @@ function Quiz({ initial, courseBase }: { initial: QuizView; courseBase: string }
           <Button type="submit" disabled={pending}>
             {pending ? 'Tekshirilmoqda…' : 'Javoblarni yuborish'}
           </Button>
-          <span className="text-sm text-slate-500">
+          <span className="text-sm text-slate-500 dark:text-slate-400">
             {answered} / {quiz.questions.length} savolga javob berildi
           </span>
         </div>

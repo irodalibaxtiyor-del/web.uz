@@ -15,7 +15,7 @@ import { useId, useState, type FormEvent } from 'react';
 import { AssignmentStatusBadge, SubmissionStatusBadge } from '@/components/assignment-ui';
 import { ChecksEditor } from '@/components/checks-editor';
 import { Playground } from '@/components/ide/playground';
-import { Button, ErrorText, inputClass, LoadState } from '@/components/ui';
+import { Button, ErrorText, inputClass, LoadState, TableScroll } from '@/components/ui';
 import { send } from '@/lib/api';
 import { parseRules } from '@/lib/check-rules';
 import { formatDateTime, fromLocalInput, toLocalInput } from '@/lib/dates';
@@ -36,7 +36,7 @@ export default function ManageAssignmentPage() {
         <div className="card space-y-12 p-6 sm:p-10">
           <Link
             href={`${base}/manage/lessons/${a.lessonId}`}
-            className="text-sm text-slate-500 hover:underline"
+            className="text-sm text-slate-500 dark:text-slate-400 hover:underline"
           >
             ← Darsga qaytish
           </Link>
@@ -108,7 +108,7 @@ function StatusBar({
           )}
         </div>
       </div>
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-slate-500 dark:text-slate-400">
         Holat faqat oldinga o&apos;zgaradi: qoralama → e&apos;lon qilingan → yopilgan.
         {a.publishedAt && ` E’lon qilingan: ${formatDateTime(a.publishedAt)}.`}
         {a.closedAt && ` Yopilgan: ${formatDateTime(a.closedAt)}.`}
@@ -310,7 +310,7 @@ function AssignmentForm({ initial, base }: { initial: AssignmentAdmin; base: str
         <div className="space-y-2">
           <h3 className="text-base font-semibold">Rubrika</h3>
           {rubric.length === 0 ? (
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
               Rubrika yo&apos;q: ish umumiy ball bilan baholanadi.
             </p>
           ) : (
@@ -371,7 +371,7 @@ function AssignmentForm({ initial, base }: { initial: AssignmentAdmin; base: str
             </Button>
             {rubric.length > 0 && (
               <span
-                className={`text-sm ${rubricMismatch ? 'text-red-700 dark:text-red-400' : 'text-slate-500'}`}
+                className={`text-sm ${rubricMismatch ? 'text-red-700 dark:text-red-400' : 'text-slate-500 dark:text-slate-400'}`}
               >
                 Jami: {rubricTotal} / {policy.maxScore} ball
                 {rubricMismatch && ' — yig‘indi maksimal ballga teng bo‘lishi kerak'}
@@ -383,7 +383,7 @@ function AssignmentForm({ initial, base }: { initial: AssignmentAdmin; base: str
 
       <fieldset className="space-y-2">
         <legend className="text-lg font-semibold">Boshlang&apos;ich loyiha</legend>
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-slate-500 dark:text-slate-400">
           Talaba topshiriqni shu fayllardan boshlaydi. O&apos;zgarish faqat hali boshlamagan
           talabalarga ta&apos;sir qiladi.
         </p>
@@ -429,16 +429,16 @@ function Submissions({ base, assignmentId }: { base: string; assignmentId: strin
       <h2 id="subs" className="text-xl font-semibold">
         Talabalar javoblari
       </h2>
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-slate-500 dark:text-slate-400">
         &quot;Ko&apos;rib chiqish&quot; orqali kodni, CHECK natijasini ko&apos;rasiz, rubrika
         bo&apos;yicha baholaysiz yoki qayta ishlashni so&apos;raysiz.
       </p>
       <LoadState state={state}>
         {(rows) =>
           rows.length === 0 ? (
-            <p className="text-slate-500">Kursga hali talaba yozilmagan.</p>
+            <p className="text-slate-500 dark:text-slate-400">Kursga hali talaba yozilmagan.</p>
           ) : (
-            <div className="overflow-x-auto">
+            <TableScroll label="Talabalar javoblari jadvali">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-slate-200 text-left dark:border-slate-800">
@@ -494,7 +494,7 @@ function Submissions({ base, assignmentId }: { base: string; assignmentId: strin
                   ))}
                 </tbody>
               </table>
-            </div>
+            </TableScroll>
           )
         }
       </LoadState>

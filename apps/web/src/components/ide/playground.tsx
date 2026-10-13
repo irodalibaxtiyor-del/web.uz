@@ -65,7 +65,7 @@ export function Playground({
         <button
           type="button"
           onClick={doRun}
-          className="btn bg-emerald-500 px-4 py-2 text-white hover:bg-emerald-400"
+          className="btn bg-emerald-700 px-4 py-2 text-white hover:bg-emerald-600"
           title="Ctrl+Enter"
         >
           <span aria-hidden="true">▶</span> Ishga tushirish
@@ -73,7 +73,7 @@ export function Playground({
         <span role="status" className={`text-sm ${STATUS[status].tone}`}>
           {STATUS[status].label}
         </span>
-        <span className="hidden text-xs text-slate-500 md:inline">Ctrl+Enter</span>
+        <span className="hidden text-xs text-slate-400 md:inline">Ctrl+Enter</span>
         <div className="ml-auto flex flex-wrap gap-2">{toolbar}</div>
       </div>
 
@@ -136,7 +136,7 @@ export function Playground({
               className="max-h-48 flex-1 overflow-auto px-2 pb-2 font-mono text-[12.5px] lg:max-h-none"
             >
               {lines.length === 0 && (
-                <li className="px-1 py-1 text-slate-500">
+                <li className="px-1 py-1 text-slate-400">
                   console.log natijalari shu yerda chiqadi
                 </li>
               )}

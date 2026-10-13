@@ -16,7 +16,7 @@ const DOT: Record<LessonState, string> = {
   IN_PROGRESS: 'bg-brand-600 text-white ring-4 ring-brand-100 dark:ring-brand-900',
   AVAILABLE: 'bg-white text-brand-600 ring-2 ring-brand-600 dark:bg-slate-900',
   NEEDS_IMPROVEMENT: 'bg-amber-400 text-amber-950 ring-4 ring-amber-100 dark:ring-amber-900',
-  LOCKED: 'bg-slate-100 text-slate-400 dark:bg-slate-800',
+  LOCKED: 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400',
 };
 
 export default function CourseMapPage() {
@@ -82,7 +82,7 @@ export default function CourseMapPage() {
             <div className="grid gap-8 lg:grid-cols-[1fr_300px]">
               <div className="space-y-6">
                 {map.modules.length === 0 && (
-                  <p className="text-slate-500">Kursda hali dars yo&apos;q.</p>
+                  <p className="text-slate-500 dark:text-slate-400">Kursda hali dars yo&apos;q.</p>
                 )}
                 {map.modules.map((mod, mi) => (
                   <section key={mod.id} className="card overflow-hidden">
@@ -118,7 +118,7 @@ export default function CourseMapPage() {
                           </span>
                           <div className="min-w-0 flex-1">
                             {l.state === 'LOCKED' ? (
-                              <span className="text-slate-400">{l.title}</span>
+                              <span className="text-slate-500 dark:text-slate-400">{l.title}</span>
                             ) : (
                               <Link
                                 href={`${base}/lessons/${l.id}`}
@@ -144,13 +144,13 @@ export default function CourseMapPage() {
                 <ProgressBar percent={map.progressPercent} />
                 <dl className="grid grid-cols-2 gap-3 pt-2 text-sm">
                   <div className="rounded-xl bg-surface p-3 dark:bg-slate-800">
-                    <dt className="text-slate-500">Tugatilgan</dt>
+                    <dt className="text-slate-500 dark:text-slate-400">Tugatilgan</dt>
                     <dd className="font-display text-xl font-bold text-ink dark:text-white">
                       {map.completedLessons}
                     </dd>
                   </div>
                   <div className="rounded-xl bg-surface p-3 dark:bg-slate-800">
-                    <dt className="text-slate-500">Jami dars</dt>
+                    <dt className="text-slate-500 dark:text-slate-400">Jami dars</dt>
                     <dd className="font-display text-xl font-bold text-ink dark:text-white">
                       {map.totalLessons}
                     </dd>
@@ -167,7 +167,7 @@ export default function CourseMapPage() {
                     .filter(([, s]) => s.total > 0)
                     .map(([label, s]) => (
                       <div key={label} className="flex justify-between gap-3">
-                        <dt className="text-slate-500">{label}</dt>
+                        <dt className="text-slate-500 dark:text-slate-400">{label}</dt>
                         <dd className="font-semibold">
                           {s.done} / {s.total}
                         </dd>
@@ -234,7 +234,7 @@ function LessonItems({ lesson: l, base }: { lesson: CourseMapLesson; base: strin
           <li key={c.key}>
             {locked ? (
               <span
-                className={`inline-block rounded-full border px-2 py-0.5 opacity-60 ${tone.todo}`}
+                className={`inline-block rounded-full border border-dashed px-2 py-0.5 ${tone.todo}`}
               >
                 {body}
               </span>

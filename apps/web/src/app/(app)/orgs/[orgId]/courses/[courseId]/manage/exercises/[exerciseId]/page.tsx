@@ -20,6 +20,7 @@ import {
   ExerciseStatusBadge,
   inputClass,
   LoadState,
+  TableScroll,
 } from '@/components/ui';
 import { send } from '@/lib/api';
 import { parseRules } from '@/lib/check-rules';
@@ -40,7 +41,7 @@ export default function ManageExercisePage() {
         <div className="card space-y-12 p-6 sm:p-10">
           <Link
             href={`${base}/manage/lessons/${ex.lessonId}`}
-            className="text-sm text-slate-500 hover:underline"
+            className="text-sm text-slate-500 dark:text-slate-400 hover:underline"
           >
             ← Darsga qaytish
           </Link>
@@ -210,7 +211,7 @@ function StudentResults({ base, exerciseId }: { base: string; exerciseId: string
       <h2 id="results" className="text-xl font-semibold">
         Talabalar natijalari
       </h2>
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-slate-500 dark:text-slate-400">
         CHECK sozlangan bo&apos;lsa, natija talaba &quot;Tekshirish&quot; tugmasini bosganda
         avtomatik qo&apos;yiladi. Kerak bo&apos;lsa, shu yerda qo&apos;lda o&apos;zgartirishingiz
         mumkin.
@@ -219,9 +220,9 @@ function StudentResults({ base, exerciseId }: { base: string; exerciseId: string
       <LoadState state={state}>
         {(rows) =>
           rows.length === 0 ? (
-            <p className="text-slate-500">Kursga hali talaba yozilmagan.</p>
+            <p className="text-slate-500 dark:text-slate-400">Kursga hali talaba yozilmagan.</p>
           ) : (
-            <div className="overflow-x-auto">
+            <TableScroll label="Talabalar natijalari jadvali">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-slate-200 text-left dark:border-slate-800">
@@ -262,7 +263,7 @@ function StudentResults({ base, exerciseId }: { base: string; exerciseId: string
                   ))}
                 </tbody>
               </table>
-            </div>
+            </TableScroll>
           )
         }
       </LoadState>

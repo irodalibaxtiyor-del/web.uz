@@ -43,7 +43,7 @@ export default function ManageQuizPage() {
         <div className="card space-y-8 p-6 sm:p-10">
           <Link
             href={`${base}/manage/lessons/${q.lessonId}`}
-            className="text-sm text-slate-500 hover:underline"
+            className="text-sm text-slate-500 dark:text-slate-400 hover:underline"
           >
             ← Darsga qaytish
           </Link>
@@ -117,7 +117,7 @@ function QuizForm({ initial, base }: { initial: QuizAdmin; base: string }) {
     <form onSubmit={onSubmit} className="space-y-6">
       <header className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-bold">Testni tahrirlash</h1>
-        <span className="text-sm text-slate-500">
+        <span className="text-sm text-slate-500 dark:text-slate-400">
           {initial.passedBy} / {initial.attemptedBy} talaba o&apos;tgan
         </span>
       </header>
@@ -185,7 +185,7 @@ function QuizForm({ initial, base }: { initial: QuizAdmin; base: string }) {
         <h2 id={`${id}-qs`} className="text-lg font-semibold">
           Savollar ({questions.length})
         </h2>
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-slate-500 dark:text-slate-400">
           To&apos;g&apos;ri javoblar faqat serverda saqlanadi. Talaba faqat umumiy natijani
           ko&apos;radi, qaysi javob noto&apos;g&apos;ri ekanini emas.
         </p>
@@ -249,7 +249,7 @@ function QuizForm({ initial, base }: { initial: QuizAdmin; base: string }) {
                         })
                       }
                       aria-label={`${oi + 1}-variantni o'chirish`}
-                      className="rounded px-2 text-slate-400 hover:text-red-600 disabled:opacity-30"
+                      className="rounded px-2 text-slate-500 hover:text-red-600 disabled:opacity-30 dark:text-slate-400"
                     >
                       ×
                     </button>

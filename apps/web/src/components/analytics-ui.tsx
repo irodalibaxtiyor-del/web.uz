@@ -134,6 +134,7 @@ export function ColumnChart({
                 className="relative flex h-full items-end justify-center"
                 style={{ width: `${slot}%` }}
                 tabIndex={0}
+                role="img"
                 aria-label={`${d.title ?? d.label}: ${d.value} ${unit}`}
                 onPointerEnter={() => setActive(i)}
                 onFocus={() => setActive(i)}

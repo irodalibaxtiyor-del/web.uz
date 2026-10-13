@@ -28,7 +28,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               <h2 className="text-3xl leading-tight font-bold text-white">
                 Web dizayn olamiga xush kelibsiz
               </h2>
-              <p className="mt-4 text-white/85">
+              <p className="mt-4 text-white">
                 Bir akkaunt bilan barcha darslar, mashqlar va progressingiz bir joyda.
               </p>
               <ul className="mt-10 space-y-4">

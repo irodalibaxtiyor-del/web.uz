@@ -35,14 +35,14 @@ export function AssignmentsPanel({ base, lessonId }: { base: string; lessonId: s
       <h2 id={`${id}-h`} className="text-xl font-semibold">
         Topshiriqlar
       </h2>
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-slate-500 dark:text-slate-400">
         Topshiriq — talaba muddat ichida topshiradigan va siz baholaydigan katta ish. U darsning
         ketma-ket ochilishiga ta&apos;sir qilmaydi. Yangi topshiriq qoralama bo&apos;lib yaratiladi.
       </p>
       <LoadState state={state}>
         {(list) =>
           list.length === 0 ? (
-            <p className="text-slate-500">Hali topshiriq yo&apos;q.</p>
+            <p className="text-slate-500 dark:text-slate-400">Hali topshiriq yo&apos;q.</p>
           ) : (
             <ul className="divide-y divide-slate-200 rounded-xl border border-slate-200 dark:divide-slate-800 dark:border-slate-800">
               {list.map((a) => (
@@ -53,7 +53,7 @@ export function AssignmentsPanel({ base, lessonId }: { base: string; lessonId: s
                   <span className="flex flex-wrap items-center gap-2">
                     <span>{a.title}</span>
                     <AssignmentStatusBadge status={a.status} />
-                    <span className="text-xs text-slate-500">
+                    <span className="text-xs text-slate-500 dark:text-slate-400">
                       {a.deadline ? `Muddat: ${formatDateTime(a.deadline)}` : 'Muddatsiz'}
                       {' · '}
                       {a.submittedCount} ta talaba topshirgan

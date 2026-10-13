@@ -139,7 +139,7 @@ export function FileTree({
             id={`${id}-new`}
             name="path"
             placeholder="yangi.css"
-            className="w-full min-w-0 rounded-md border border-white/10 bg-white/5 px-2 py-1.5 font-mono text-[13px] text-white placeholder:text-slate-500 focus:border-brand-400 focus:outline-none"
+            className="w-full min-w-0 rounded-md border border-white/10 bg-white/5 px-2 py-1.5 font-mono text-[13px] text-white placeholder:text-slate-400 focus:border-brand-400 focus:outline-none"
           />
           <button
             type="submit"

@@ -148,6 +148,7 @@ export const courses = pgTable(
   (t) => [
     uniqueIndex('courses_org_slug_idx').on(t.organizationId, t.slug),
     index('courses_org_status_idx').on(t.organizationId, t.status),
+    index('courses_created_by_idx').on(t.createdBy),
   ],
 );
 
@@ -250,6 +251,7 @@ export const lessonProgress = pgTable(
     index('lesson_progress_user_course_idx').on(t.userId, t.courseId),
     // Course-wide reads (analytics, teacher views).
     index('lesson_progress_course_idx').on(t.courseId),
+    index('lesson_progress_lesson_idx').on(t.lessonId),
   ],
 );
 
@@ -314,6 +316,7 @@ export const studentExercises = pgTable(
     index('student_exercises_exercise_idx').on(t.exerciseId),
     index('student_exercises_user_lesson_idx').on(t.userId, t.lessonId),
     index('student_exercises_course_idx').on(t.courseId),
+    index('student_exercises_lesson_idx').on(t.lessonId),
   ],
 );
 
@@ -350,6 +353,7 @@ export const checkRuns = pgTable(
     index('check_runs_status_idx').on(t.status),
     // Course analytics: runs and common errors (status = FAILED) per course.
     index('check_runs_course_status_idx').on(t.courseId, t.status, t.createdAt),
+    index('check_runs_exercise_idx').on(t.exerciseId),
   ],
 );
 
@@ -385,6 +389,7 @@ export const assignments = pgTable(
   (t) => [
     index('assignments_lesson_pos_idx').on(t.lessonId, t.position),
     index('assignments_course_idx').on(t.courseId),
+    index('assignments_created_by_idx').on(t.createdBy),
     check('assignments_position_nonneg', sql`${t.position} >= 0`),
     check('assignments_attempts_range', sql`${t.maxAttempts} between 1 and 20`),
   ],
@@ -441,6 +446,7 @@ export const submissionVersions = pgTable(
   (t) => [
     uniqueIndex('submission_versions_submission_version_idx').on(t.submissionId, t.version),
     index('submission_versions_assignment_idx').on(t.assignmentId, t.submittedAt),
+    index('submission_versions_user_idx').on(t.userId),
     check('submission_versions_version_pos', sql`${t.version} >= 1`),
   ],
 );
@@ -490,6 +496,7 @@ export const submissionReviews = pgTable(
     index('submission_reviews_submission_idx').on(t.submissionId, t.createdAt),
     // Teacher activity per reviewer (organization analytics).
     index('submission_reviews_reviewer_idx').on(t.reviewerId, t.createdAt),
+    index('submission_reviews_version_idx').on(t.versionId),
   ],
 );
 
@@ -640,6 +647,7 @@ export const aiInteractions = pgTable(
   (t) => [
     index('ai_interactions_user_target_idx').on(t.userId, t.targetKind, t.targetId, t.createdAt),
     index('ai_interactions_course_idx').on(t.courseId),
+    index('ai_interactions_org_idx').on(t.organizationId),
   ],
 );
 
@@ -685,22 +693,30 @@ export const aiUsage = pgTable(
     estimatedCostMicroUsd: integer('estimated_cost_micro_usd').notNull().default(0),
     createdAt: createdAt(),
   },
-  (t) => [index('ai_usage_user_created_idx').on(t.userId, t.createdAt)],
+  (t) => [
+    index('ai_usage_user_created_idx').on(t.userId, t.createdAt),
+    index('ai_usage_org_idx').on(t.organizationId),
+    index('ai_usage_interaction_idx').on(t.interactionId),
+  ],
 );
 
 /** Helpful / not helpful. Never affects grades or progress. */
-export const aiFeedback = pgTable('ai_feedback', {
-  interactionId: uuid('interaction_id')
-    .primaryKey()
-    .references(() => aiInteractions.id, { onDelete: 'cascade' }),
-  userId: uuid('user_id')
-    .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
-  helpful: boolean('helpful').notNull(),
-  reason: text('reason'),
-  createdAt: createdAt(),
-  updatedAt: updatedAt(),
-});
+export const aiFeedback = pgTable(
+  'ai_feedback',
+  {
+    interactionId: uuid('interaction_id')
+      .primaryKey()
+      .references(() => aiInteractions.id, { onDelete: 'cascade' }),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    helpful: boolean('helpful').notNull(),
+    reason: text('reason'),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (t) => [index('ai_feedback_user_idx').on(t.userId)],
+);
 
 /** A student asked for a teacher. A record for staff only; grades and progress are untouched. */
 export const aiHandoffs = pgTable(
@@ -725,7 +741,12 @@ export const aiHandoffs = pgTable(
     note: text('note').notNull().default(''),
     createdAt: createdAt(),
   },
-  (t) => [index('ai_handoffs_course_idx').on(t.courseId, t.createdAt)],
+  (t) => [
+    index('ai_handoffs_course_idx').on(t.courseId, t.createdAt),
+    index('ai_handoffs_user_idx').on(t.userId),
+    index('ai_handoffs_org_idx').on(t.organizationId),
+    index('ai_handoffs_interaction_idx').on(t.interactionId),
+  ],
 );
 
 /**

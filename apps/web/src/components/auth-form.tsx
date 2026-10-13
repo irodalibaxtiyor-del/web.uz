@@ -50,7 +50,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
         <h1 className="text-3xl font-bold">
           {isRegister ? "Ro'yxatdan o'tish" : 'Xush kelibsiz!'}
         </h1>
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-slate-500 dark:text-slate-400">
           {isRegister
             ? 'Bir necha soniyada akkaunt yarating va birinchi darsni boshlang.'
             : 'Davom etish uchun akkauntingizga kiring.'}
@@ -107,7 +107,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
           className={inputClass}
         />
         {isRegister && (
-          <p id={`${id}-pw-hint`} className="text-xs text-slate-500">
+          <p id={`${id}-pw-hint`} className="text-xs text-slate-500 dark:text-slate-400">
             Kamida {PASSWORD_MIN_LENGTH} belgi
           </p>
         )}

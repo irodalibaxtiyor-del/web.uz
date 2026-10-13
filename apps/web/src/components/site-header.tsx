@@ -48,7 +48,7 @@ export function SiteHeader({ hasSession }: { hasSession: boolean }) {
               Bepul boshlash →
             </Link>
           </p>
-          <p className="hidden text-white/80 md:block">O&apos;zbek tilida · Ketma-ket darslar</p>
+          <p className="hidden text-white md:block">O&apos;zbek tilida · Ketma-ket darslar</p>
         </div>
       </div>
       <header

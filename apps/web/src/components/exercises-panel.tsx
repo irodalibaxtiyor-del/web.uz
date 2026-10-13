@@ -33,14 +33,14 @@ export function ExercisesPanel({ base, lessonId }: { base: string; lessonId: str
       <h2 id={`${id}-h`} className="text-xl font-semibold">
         Mashqlar
       </h2>
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-slate-500 dark:text-slate-400">
         Darsda faol mashq bo&apos;lsa, talaba barcha mashqlardan o&apos;tgandan keyingina keyingi
         dars ochiladi.
       </p>
       <LoadState state={state}>
         {(list) =>
           list.length === 0 ? (
-            <p className="text-slate-500">Hali mashq yo&apos;q.</p>
+            <p className="text-slate-500 dark:text-slate-400">Hali mashq yo&apos;q.</p>
           ) : (
             <ul className="divide-y divide-slate-200 rounded-xl border border-slate-200 dark:divide-slate-800 dark:border-slate-800">
               {list.map((ex) => (
@@ -49,10 +49,14 @@ export function ExercisesPanel({ base, lessonId }: { base: string; lessonId: str
                   className="flex flex-wrap items-center justify-between gap-3 px-4 py-3"
                 >
                   <span className="space-x-2">
-                    <span className={ex.isActive ? '' : 'text-slate-400 line-through'}>
+                    <span
+                      className={
+                        ex.isActive ? '' : 'text-slate-500 line-through dark:text-slate-400'
+                      }
+                    >
                       {ex.title}
                     </span>
-                    <span className="text-xs text-slate-500">
+                    <span className="text-xs text-slate-500 dark:text-slate-400">
                       {DIFFICULTY_LABEL[ex.difficulty]}
                       {!ex.isActive && ' · faol emas'}
                     </span>

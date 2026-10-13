@@ -71,7 +71,7 @@ function Editor({ data, reload }: { data: MyPortfolio; reload: () => void }) {
             </h2>
             <CompletedCourses list={data.completedCourses} />
           </section>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-slate-500 dark:text-slate-400">
             Yutuqlar va kurslar o‘qish natijalaridan avtomatik hisoblanadi.
           </p>
         </aside>
@@ -215,7 +215,7 @@ function ProfileForm({ profile, reload }: { profile: PortfolioProfile; reload: (
         <label className="space-y-1.5">
           <span className="text-sm font-medium">Ochiq manzil</span>
           <span className="flex items-center gap-1">
-            <span className="text-sm text-slate-500" aria-hidden="true">
+            <span className="text-sm text-slate-500 dark:text-slate-400" aria-hidden="true">
               /p/
             </span>
             <input
@@ -230,7 +230,7 @@ function ProfileForm({ profile, reload }: { profile: PortfolioProfile; reload: (
           </span>
           <span
             id="slug-help"
-            className={`block text-xs ${slugInvalid ? 'text-red-600' : 'text-slate-500'}`}
+            className={`block text-xs ${slugInvalid ? 'text-red-600' : 'text-slate-500 dark:text-slate-400'}`}
           >
             Kichik lotin harflari, raqamlar va chiziqcha; 3–40 belgi.
           </span>
@@ -310,13 +310,15 @@ function Items({ items, reload }: { items: PortfolioItemSummary[]; reload: () =>
     <section className="space-y-4" aria-labelledby="items-h">
       <h2 id="items-h" className="text-2xl font-bold">
         Ishlarim{' '}
-        <span className="text-base font-normal text-slate-500">
+        <span className="text-base font-normal text-slate-500 dark:text-slate-400">
           ({items.length}/{PORTFOLIO_MAX_ITEMS})
         </span>
       </h2>
       {error && <ErrorText>{error}</ErrorText>}
       {items.length === 0 && (
-        <p className="text-slate-500">Hali ishlar qo‘shilmagan. Pastdagi ro‘yxatdan tanlang.</p>
+        <p className="text-slate-500 dark:text-slate-400">
+          Hali ishlar qo‘shilmagan. Pastdagi ro‘yxatdan tanlang.
+        </p>
       )}
       {items.map((item, i) =>
         editing === item.id ? (
@@ -460,7 +462,7 @@ function Candidates({
       </div>
       {error && <ErrorText>{error}</ErrorText>}
       {list.length === 0 ? (
-        <p className="text-slate-500">Hozircha yangi tugatilgan ish yo‘q.</p>
+        <p className="text-slate-500 dark:text-slate-400">Hozircha yangi tugatilgan ish yo‘q.</p>
       ) : (
         <ul className="divide-y divide-slate-100 dark:divide-slate-800">
           {list.map((c) => (
@@ -470,7 +472,7 @@ function Candidates({
             >
               <span>
                 <span className="block font-semibold">{c.title}</span>
-                <span className="block text-sm text-slate-500">
+                <span className="block text-sm text-slate-500 dark:text-slate-400">
                   {ITEM_KIND_LABEL[c.kind]} · {c.courseTitle}
                   {c.finishedAt && <> · {formatDate(c.finishedAt)}</>}
                 </span>

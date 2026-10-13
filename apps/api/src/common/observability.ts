@@ -13,6 +13,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { BaseExceptionFilter } from '@nestjs/core';
+import { DrizzleQueryError } from 'drizzle-orm';
 import type { NextFunction, Request, Response } from 'express';
 import { randomUUID, timingSafeEqual } from 'node:crypto';
 import { CheckQueue } from '../checks/check-queue';
@@ -37,6 +38,7 @@ export class AppLogger {
       this.config.LOG_FORMAT === 'json'
         ? JSON.stringify({ ts: new Date().toISOString(), level, msg, ...fields })
         : `${level.toUpperCase()} ${msg} ${Object.entries(fields)
+            .filter(([, v]) => v !== undefined)
             .map(([k, v]) => `${k}=${String(v)}`)
             .join(' ')}`;
     (level === 'error' || level === 'warn' ? process.stderr : process.stdout).write(`${line}\n`);
@@ -137,6 +139,26 @@ export function requestObserver(logger: AppLogger, metrics: Metrics) {
 }
 
 /**
+ * What may be logged about an unexpected error. A failed query's message embeds its SQL
+ * parameters (emails, password and session hashes, student code), so for those only the
+ * driver's error name, SQLSTATE code and constraint name are kept.
+ */
+export function errorLogFields(err: unknown): Record<string, string | undefined> {
+  if (err instanceof DrizzleQueryError) {
+    const cause = err.cause as { name?: unknown; code?: unknown; constraint?: unknown } | undefined;
+    const str = (v: unknown) => (typeof v === 'string' ? v : undefined);
+    return {
+      error: 'DrizzleQueryError',
+      cause: str(cause?.name),
+      code: str(cause?.code),
+      constraint: str(cause?.constraint),
+    };
+  }
+  if (err instanceof Error) return { error: err.name, message: err.message.slice(0, 500) };
+  return { error: 'unknown' };
+}
+
+/**
  * HttpExceptions keep Nest's normal response. Anything else is logged with the request id and
  * answered with a generic 500 that carries only that id — no message, no stack.
  */
@@ -163,8 +185,7 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
     }
     this.logger.log('error', 'unhandled_error', {
       requestId: req.requestId,
-      error: exception instanceof Error ? exception.name : 'unknown',
-      message: exception instanceof Error ? exception.message.slice(0, 500) : undefined,
+      ...errorLogFields(exception),
     });
     res.status(500).json({
       statusCode: 500,

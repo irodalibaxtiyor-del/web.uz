@@ -786,3 +786,32 @@ Roadmap ro'yxati bo'yicha audit va tuzatishlar:
 - **STATUS: READY_WITH_INFRASTRUCTURE_LIMITATIONS** (avvalgi infratuzilma cheklovlari saqlanadi).
 - Cheklovlar: E2E portlari 3000/3100/4000 ga bog'liq (web build ularni o'z ichiga oladi); AI mock bilan; mobil va dark mode E2E'da emas (oldingi fazalarda alohida tekshirilgan); quiz va analitika sahifalari bu oqimda yo'q (13A/13C brauzer skriptlari bor).
 - Keyingi qadam: **15B — Regression audit**.
+
+## 2026-10-13
+
+### 15B — Regression audit
+
+- **Run (hammasi qayta ishga tushirildi):** lint ✅, typecheck ✅, build ✅, unit + integratsion test ✅ (shared 38 + sandbox 15 + web 26 + check-engine 21 + api 259 = **359**), to'liq E2E **34/34** ✅, sandbox xavfsizlik E2E **21/21** ✅, format ✅, secret skan (grep; gitleaks lokal yo'q) ✅, `pnpm audit --prod` ✅, schema↔migratsiya drift yo'q.
+- **Database** (toza bazada migratsiya + `pg_catalog` tahlili): 29 jadval, hammasida PK; 59 FK; 11 CHECK; 2 immutable trigger; migratsiya idempotent. Compiled `migrate.js` → `seed.js` → `seed-course.js html|css` toza bazada ishladi (HTML 60 dars/49 mashq/12 test, CSS 101/101/15); qayta seed exit 1 bilan rad etiladi.
+  - **Topildi va tuzatildi:** 14 ta FK ustunida indeks yo'q edi (masalan `check_runs.exercise_id`, `lesson_progress.lesson_id`, `submission_versions.user_id`, AI jadvallarining `organization_id`/`interaction_id`). Ota qator o'chirilganda `ON DELETE CASCADE/SET NULL` butun jadvalni skanerlardi. Migratsiya `0011_fk_indexes.sql`.
+  - Yangi `test/schema.test.ts` (4 ta): idempotentlik, har jadvalda PK, **har FK indeks bilan qoplangan**, immutable trigger'lar joyida. Tuzatishsiz yiqilishi tekshirildi.
+- **Frontend** (demo baza, `next start`, headless Chrome + axe-core 4.14 WCAG 2.1 A/AA; skript scratchpad'da): 3 rol × 23 sahifa × desktop/mobil × light/dark — gorizontal scroll, axe, konsol xatolari; holatlar: loading, 500, tarmoq uzilishi, empty (yangi talaba), locked, unauthorized (mehmon → /login, talaba → "Ruxsat yo'q"), klaviatura (skip-link, focus ring, faqat klaviatura bilan login, xaritadan Enter bilan dars, mobil menyu `aria-expanded`).
+  - Birinchi natija: **35/126**. Topildi va tuzatildi:
+    - Kontrast (WCAG AA): ko'k banner ustidagi yarim shaffof oq matn (`text-white/75…90`, 3.3–4.2:1) → `text-white`; banner dekor doirasi `bg-white/10` → `bg-brand-700/60` (ustidagi tugmalar ochroq fonga tushardi); `section-eyebrow` `brand-600` → `brand-700`; RUN tugmasi `bg-emerald-500` (2.5:1) → `emerald-700`; landing qadam raqamlari `brand-100` → `brand-500`; qulflangan elementlardagi `opacity-60` va `text-slate-400` (2.6:1) olib tashlandi (qulf belgisi — punktir chegara).
+    - Dark mode: **100 ta** `text-slate-500` dark variantisiz edi (qorong'i fonda 3.4–3.8:1) → loyiha uslubidagi `dark:text-slate-400` mexanik qo'shildi; har doim qorong'i yuzalarda (IDE, landing kod mockup'i) `text-slate-400`.
+    - ARIA: grafik ustunlari rolsiz `div`da `aria-label` → `role="img"`; tutor tarixida `<ol>` ichida `<div>` → `<li aria-hidden>`; gorizontal aylanadigan jadvallar fokuslanmasdi → yangi `TableScroll` (`role="region"`, nom, `tabIndex=0`), 5 ta jadvalda.
+    - Mobil: o'qituvchi topshiriq sahifasida 60px gorizontal scroll — jadvaldagi `sr-only` (absolute) scroll konteynerdan chiqib ketardi → `TableScroll` `relative`.
+  - Yakuniy natija: **124/124**. Mobil skrinshotlar ko'zdan kechirildi.
+- **Backend:**
+  - Validatsiya: har `@Body`/`@Query` `ZodPipe` orqali, ID parametrlar `Id`/`VersionPipe` orqali (slug — servisda). `@Public` faqat register, login, health, ochiq portfolio va token bilan himoyalangan `/metrics`.
+  - Avtorizatsiya: `:orgId` li har bir route (9 controller, 58 route) `@OrgRoles` bilan. **Mustahkamlandi:** `OrgRoleGuard` endi fail-closed — `:orgId` li route'da `@OrgRoles` unutilsa, a'zolik tekshiruvi jimgina o'tkazib yuborilmaydi, 403 qaytadi (`src/auth/org-role.guard.test.ts`, 2 ta).
+  - **Xavfsiz loglar — topildi va tuzatildi:** kutilmagan DB xatosida `unhandled_error` log'iga Drizzle xabari (`Failed query: … params: …`) to'liq yozilardi — ya'ni SQL parametrlari: sessiya token hash'i, email, Argon2 hash, talaba kodi. Testda takrorlandi (DB yopilganda `/auth/me` log'ida token hash). Endi `errorLogFields()`: DB xatolaridan faqat nom, SQLSTATE kodi va constraint nomi. Matn formatida `undefined` maydonlar chiqmaydi. `production.test.ts` endi log'da token hash va `params:` yo'qligini tekshiradi.
+  - Xavfsiz xatolar: klientga umumiy 500 + `requestId` (o'zgarmadi, testlar bor).
+- Boshqa: tsc paketlarida (`api`, `shared`, `check-engine`) build oldidan `dist` tozalanadi — lokal `dist` da manbasi o'chirilgan eski `seed-html-course.js` va `html-course/` qolib ketgan edi (Docker `dist`ni olmaydi, production'ga ta'siri yo'q edi). Bo'sh `src/db/html-course/` papkasi o'chirildi.
+- Demo bazaga `0011` migratsiyasi qo'llandi (faqat indekslar).
+- **STATUS: READY_WITH_INFRASTRUCTURE_LIMITATIONS** (avvalgi infratuzilma cheklovlari saqlanadi).
+- Cheklovlar:
+  - Frontend audit skripti demo bazadagi ID'larga bog'liq, repoga qo'shilmadi (CI'da a11y regressiyasi yo'q). Monaco ichki DOM'i va sandbox iframe'lari axe'dan chiqarilgan.
+  - Avtomatik tekshiruv WCAG'ning hammasini qamramaydi (screen reader bilan qo'lda sinov qilinmagan).
+  - Gitleaks lokal yo'q — faqat grep (CI'da gitleaks bor).
+- Keyingi qadam: **15C — Final release audit**.

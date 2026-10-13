@@ -45,7 +45,7 @@ function Portfolio({ p, base }: { p: PublicPortfolio; base: string }) {
       <header className="relative overflow-hidden rounded-3xl bg-brand-600 px-6 py-10 text-white sm:px-10">
         <div
           aria-hidden="true"
-          className="absolute -top-16 -right-10 size-56 rounded-full bg-white/10"
+          className="absolute -top-16 -right-10 size-56 rounded-full bg-brand-700/60"
         />
         <div className="relative flex flex-wrap items-center gap-6">
           <span
@@ -55,9 +55,9 @@ function Portfolio({ p, base }: { p: PublicPortfolio; base: string }) {
             {initials(p.displayName)}
           </span>
           <div className="space-y-2">
-            <p className="text-sm tracking-wide text-white/75 uppercase">Portfolio</p>
+            <p className="text-sm tracking-wide text-white uppercase">Portfolio</p>
             <h1 className="text-3xl font-bold text-white sm:text-4xl">{p.displayName}</h1>
-            {p.headline && <p className="text-lg text-white/90">{p.headline}</p>}
+            {p.headline && <p className="text-lg text-white">{p.headline}</p>}
           </div>
         </div>
       </header>
@@ -77,7 +77,7 @@ function Portfolio({ p, base }: { p: PublicPortfolio; base: string }) {
               Ishlarim
             </h2>
             {p.items.length === 0 ? (
-              <p className="text-slate-500">Hali ishlar qo‘shilmagan.</p>
+              <p className="text-slate-500 dark:text-slate-400">Hali ishlar qo‘shilmagan.</p>
             ) : (
               p.items.map((item) => (
                 <PortfolioItemCard
@@ -111,7 +111,7 @@ function Portfolio({ p, base }: { p: PublicPortfolio; base: string }) {
             </h2>
             <CompletedCourses list={p.completedCourses} />
           </section>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-slate-500 dark:text-slate-400">
             Yutuqlar va kurslar WEBDIZAYN.UZ tomonidan avtomatik tasdiqlangan.
           </p>
         </aside>

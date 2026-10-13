@@ -43,7 +43,7 @@ export default function DashboardPage() {
                 <Button
                   variant="secondary"
                   onClick={logout}
-                  className="border-white/40 bg-white/10 text-white hover:border-white hover:text-white dark:bg-white/10"
+                  className="border-white/60 bg-transparent text-white hover:border-white hover:text-white dark:bg-transparent"
                 >
                   Chiqish
                 </Button>

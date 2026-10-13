@@ -43,7 +43,7 @@ export function PageHeader({
     <header className="relative mb-8 overflow-hidden rounded-3xl bg-brand-600 px-6 py-9 text-white sm:px-10">
       <div
         aria-hidden="true"
-        className="absolute -top-16 -right-10 size-56 rounded-full bg-white/10"
+        className="absolute -top-16 -right-10 size-56 rounded-full bg-brand-700/60"
       />
       <div
         aria-hidden="true"
@@ -53,7 +53,7 @@ export function PageHeader({
         <div className="space-y-2">
           {crumbs.length > 0 && (
             <nav aria-label="Breadcrumb">
-              <ol className="flex flex-wrap items-center gap-1.5 text-sm text-white/75">
+              <ol className="flex flex-wrap items-center gap-1.5 text-sm text-white">
                 {crumbs.map((c) => (
                   <li key={c.href} className="flex items-center gap-1.5">
                     <Link href={c.href} className="hover:text-white hover:underline">
@@ -66,7 +66,7 @@ export function PageHeader({
             </nav>
           )}
           <h1 className="text-3xl font-bold text-white sm:text-4xl">{title}</h1>
-          {subtitle && <div className="max-w-2xl text-white/85">{subtitle}</div>}
+          {subtitle && <div className="max-w-2xl text-white">{subtitle}</div>}
         </div>
         {actions && <div className="flex flex-wrap gap-3">{actions}</div>}
       </div>
@@ -84,7 +84,10 @@ export function LoadState<T>({
 }) {
   if (state.kind === 'loading') {
     return (
-      <div role="status" className="flex items-center gap-3 py-10 text-slate-500">
+      <div
+        role="status"
+        className="flex items-center gap-3 py-10 text-slate-500 dark:text-slate-400"
+      >
         <span className="size-5 animate-spin rounded-full border-2 border-brand-200 border-t-brand-600" />
         Yuklanmoqda…
       </div>
@@ -94,6 +97,15 @@ export function LoadState<T>({
     return <ErrorText>{state.status === 404 ? 'Sahifa topilmadi' : state.message}</ErrorText>;
   }
   return <>{children(state.data)}</>;
+}
+
+/** Horizontally scrollable table wrapper; focusable so keyboard users can scroll it. */
+export function TableScroll({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div className="relative overflow-x-auto" role="region" aria-label={label} tabIndex={0}>
+      {children}
+    </div>
+  );
 }
 
 export function ProgressBar({ percent }: { percent: number }) {
@@ -135,7 +147,7 @@ export function StateBadge({ state }: { state: LessonState }) {
     state === 'COMPLETED'
       ? 'text-emerald-700 dark:text-emerald-400'
       : state === 'LOCKED'
-        ? 'text-slate-400'
+        ? 'text-slate-500 dark:text-slate-400'
         : state === 'NEEDS_IMPROVEMENT'
           ? 'text-amber-700 dark:text-amber-400'
           : 'text-brand-700 dark:text-brand-300';
@@ -153,7 +165,7 @@ export const DIFFICULTY_LABEL: Record<Difficulty, string> = {
 };
 
 const EXERCISE_STATUS: Record<ExerciseStatus, { label: string; icon: string; tone: string }> = {
-  NOT_STARTED: { label: 'Boshlanmagan', icon: '○', tone: 'text-slate-500' },
+  NOT_STARTED: { label: 'Boshlanmagan', icon: '○', tone: 'text-slate-500 dark:text-slate-400' },
   IN_PROGRESS: { label: 'Jarayonda', icon: '◐', tone: 'text-brand-700 dark:text-brand-300' },
   PASSED: { label: "O'tdi", icon: '✓', tone: 'text-emerald-700 dark:text-emerald-400' },
   NEEDS_IMPROVEMENT: {

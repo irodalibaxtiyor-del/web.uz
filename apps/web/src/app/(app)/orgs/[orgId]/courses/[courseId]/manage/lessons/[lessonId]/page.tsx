@@ -65,7 +65,10 @@ function Editor({ lesson, base }: { lesson: EditableLesson; base: string }) {
 
   return (
     <form onSubmit={onSubmit} className="space-y-5">
-      <Link href={`${base}/manage`} className="text-sm text-slate-500 hover:underline">
+      <Link
+        href={`${base}/manage`}
+        className="text-sm text-slate-500 dark:text-slate-400 hover:underline"
+      >
         ← Kurs tuzilmasi
       </Link>
       <div className="space-y-1">
@@ -102,7 +105,7 @@ function Editor({ lesson, base }: { lesson: EditableLesson; base: string }) {
             className={`${inputClass} font-mono text-sm`}
           />
         )}
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-slate-500 dark:text-slate-400">
           {content.length.toLocaleString()} / {LESSON_CONTENT_MAX.toLocaleString()} belgi
         </p>
       </div>

@@ -135,7 +135,7 @@ function Workspace({ initial, courseBase }: { initial: AssignmentView; courseBas
 
         <dl className="grid gap-4 rounded-xl bg-surface p-5 text-sm sm:grid-cols-3 dark:bg-slate-800/50">
           <div>
-            <dt className="text-slate-500">Muddat</dt>
+            <dt className="text-slate-500 dark:text-slate-400">Muddat</dt>
             <dd className="font-semibold">
               {a.deadline ? formatDateTime(a.deadline) : 'Muddatsiz'}
               {deadlinePassed && (
@@ -146,13 +146,13 @@ function Workspace({ initial, courseBase }: { initial: AssignmentView; courseBas
             </dd>
           </div>
           <div>
-            <dt className="text-slate-500">Urinishlar</dt>
+            <dt className="text-slate-500 dark:text-slate-400">Urinishlar</dt>
             <dd className="font-semibold">
               {sub.attemptsUsed} / {a.maxAttempts} ishlatildi
             </dd>
           </div>
           <div>
-            <dt className="text-slate-500">Baholash</dt>
+            <dt className="text-slate-500 dark:text-slate-400">Baholash</dt>
             <dd className="font-semibold">
               {a.gradingPolicy.maxScore} ball, o&apos;tish: {a.gradingPolicy.passingScore}
             </dd>
@@ -192,7 +192,9 @@ function Workspace({ initial, courseBase }: { initial: AssignmentView; courseBas
                       <td className="py-2 pr-3">
                         <span className="font-medium">{r.title}</span>
                         {r.description && (
-                          <span className="block text-slate-500">{r.description}</span>
+                          <span className="block text-slate-500 dark:text-slate-400">
+                            {r.description}
+                          </span>
                         )}
                       </td>
                       <td className="py-2 text-right font-semibold whitespace-nowrap">
@@ -252,7 +254,7 @@ function Workspace({ initial, courseBase }: { initial: AssignmentView; courseBas
             {BLOCKER_TEXT[sub.blockedBy]}
           </p>
         ) : (
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-500 dark:text-slate-400">
             Qoralama faqat sizga ko&apos;rinadi. &quot;Topshirish&quot; uning nusxasini
             o&apos;qituvchiga yuboradi (qolgan urinishlar: {left}).
             {sub.wouldBeLate && ' Muddat o‘tgan: javob kechikkan deb belgilanadi.'}
@@ -284,7 +286,9 @@ function Versions({ view, url }: { view: AssignmentView; url: string }) {
       <h2 id="versions" className="text-xl font-semibold">
         Topshirilgan versiyalar
       </h2>
-      <p className="text-sm text-slate-500">Har bir versiya o&apos;zgarmas holda saqlanadi.</p>
+      <p className="text-sm text-slate-500 dark:text-slate-400">
+        Har bir versiya o&apos;zgarmas holda saqlanadi.
+      </p>
       <ol className="space-y-4">
         {view.versions.map((v) => (
           <li
@@ -294,7 +298,9 @@ function Versions({ view, url }: { view: AssignmentView; url: string }) {
             <div className="flex flex-wrap items-center justify-between gap-2">
               <span>
                 <span className="font-semibold">{v.version}-versiya</span>{' '}
-                <span className="text-sm text-slate-500">{formatDateTime(v.submittedAt)}</span>
+                <span className="text-sm text-slate-500 dark:text-slate-400">
+                  {formatDateTime(v.submittedAt)}
+                </span>
                 {v.isLate && (
                   <span className="ml-2 text-xs font-semibold text-amber-700 dark:text-amber-400">
                     kechikkan
@@ -350,7 +356,7 @@ function ReviewPanel({ view }: { view: AssignmentView }) {
               ? 'O‘qituvchi qayta ishlashni so‘radi'
               : 'O‘qituvchining oldingi izohi'}
         </h2>
-        <span className="text-sm text-slate-500">
+        <span className="text-sm text-slate-500 dark:text-slate-400">
           {r.version}-versiya · {formatDateTime(r.createdAt)}
         </span>
       </header>
@@ -358,7 +364,10 @@ function ReviewPanel({ view }: { view: AssignmentView }) {
         <div className="flex flex-wrap items-baseline gap-3">
           <span className="text-3xl font-bold">
             {g.score}
-            <span className="text-lg font-normal text-slate-500"> / {g.maxScore}</span>
+            <span className="text-lg font-normal text-slate-500 dark:text-slate-400">
+              {' '}
+              / {g.maxScore}
+            </span>
           </span>
           <span
             className={`text-sm font-semibold ${
@@ -370,7 +379,7 @@ function ReviewPanel({ view }: { view: AssignmentView }) {
             {g.passed ? '✓ O‘tdi' : `! O‘tish bali: ${view.gradingPolicy.passingScore}`}
           </span>
           {!g.final && (
-            <span className="text-xs text-slate-500">
+            <span className="text-xs text-slate-500 dark:text-slate-400">
               Baho hali yakunlanmagan va o‘zgarishi mumkin.
             </span>
           )}

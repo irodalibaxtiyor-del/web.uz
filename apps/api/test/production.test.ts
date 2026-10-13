@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -88,7 +89,17 @@ describe('errors', () => {
       requestId: 'req-500-test',
     });
     const logged = lines.map((l) => JSON.parse(l)).find((l) => l.msg === 'unhandled_error');
-    expect(logged).toMatchObject({ level: 'error', requestId: 'req-500-test' });
+    expect(logged).toMatchObject({
+      level: 'error',
+      requestId: 'req-500-test',
+      error: 'DrizzleQueryError',
+    });
+    // A failed query's message carries its SQL parameters (here the session token hash).
+    const token = /wd_session=([^;]+)/.exec(s.cookie)![1]!;
+    const tokenHash = createHash('sha256').update(token).digest('hex');
+    const all = lines.join('\n');
+    expect(all).not.toContain(tokenHash);
+    expect(all).not.toContain('params:');
   });
 
   it('keeps client errors from middleware as 4xx', async () => {
