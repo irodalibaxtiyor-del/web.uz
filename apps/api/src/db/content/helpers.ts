@@ -236,6 +236,10 @@ export function at(width: number, height: number, rule: CheckRuleInput): CheckRu
 /**
  * Quiz question. `correct` holds 0-based indexes into `options`; more than one makes it
  * a MULTIPLE question.
+ *
+ * Authors tend to write the right answer first, so the options are shuffled — deterministically
+ * (seeded by id and prompt), so a re-seed produces the same order and nothing is random at
+ * runtime.
  */
 export function q(
   id: string,
@@ -243,14 +247,31 @@ export function q(
   options: string[],
   correct: number[],
 ): QuizDef['questions'][number] {
+  const order = shuffledIndexes(options.length, `${id}\u0000${prompt}`);
   const ids = options.map((_, i) => String.fromCharCode(97 + i));
   return {
     id,
     prompt,
     kind: correct.length > 1 ? 'MULTIPLE' : 'SINGLE',
-    options: options.map((t, i) => ({ id: ids[i]!, text: t })),
-    correct: correct.map((i) => ids[i]!),
+    options: order.map((from, i) => ({ id: ids[i]!, text: options[from]! })),
+    correct: correct.map((c) => ids[order.indexOf(c)]!).sort(),
   };
+}
+
+/** Fisher–Yates over `0..n-1` driven by a small PRNG seeded from `seed` (FNV-1a). */
+function shuffledIndexes(n: number, seed: string): number[] {
+  let h = 2166136261;
+  for (let i = 0; i < seed.length; i++) h = Math.imul(h ^ seed.charCodeAt(i), 16777619) >>> 0;
+  const next = () => {
+    h = (Math.imul(h, 1664525) + 1013904223) >>> 0;
+    return h / 2 ** 32;
+  };
+  const order = Array.from({ length: n }, (_, i) => i);
+  for (let i = n - 1; i > 0; i--) {
+    const j = Math.floor(next() * (i + 1));
+    [order[i], order[j]] = [order[j]!, order[i]!];
+  }
+  return order;
 }
 
 export function quiz(title: string, questions: QuizDef['questions']): QuizDef {

@@ -1,6 +1,7 @@
 import { readdirSync } from 'node:fs';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { CONTENT_COURSES, findContentCourse } from '../src/db/content/registry';
+import { q } from '../src/db/content/helpers';
 import { CourseExistsError, contentDirOf, prepareCourse, seedCourse } from '../src/db/content/seed';
 import { createMember, createOrg, setup, type TestContext } from './helpers';
 
@@ -43,6 +44,12 @@ describe.each(CONTENT_COURSES.map((c) => [c.slug, c] as const))('%s course manif
       .sort();
     const slugs = c.modules.flatMap((m) => m.lessons.map((l) => l.slug)).sort();
     expect(files).toEqual(slugs);
+  });
+
+  it('does not put the right answer first most of the time', () => {
+    const questions = c.modules.flatMap((m) => m.lessons.flatMap((l) => l.quiz?.questions ?? []));
+    const first = questions.filter((q) => q.correct.includes(q.options[0]!.id)).length;
+    expect(first / questions.length).toBeLessThan(0.5);
   });
 
   it('gives every module a quiz and every exercise a reference solution', () => {
@@ -189,5 +196,24 @@ describe('HTML course for a student', () => {
     const quiz = await get(student, `${course()}/quizzes/${lesson.body.quizzes[0].id}`).expect(200);
     expect(quiz.body.questions.length).toBeGreaterThanOrEqual(3);
     expect(JSON.stringify(quiz.body)).not.toContain('correct');
+  });
+});
+
+describe('quiz question helper', () => {
+  it('shuffles options deterministically and keeps the right answers', () => {
+    const a = q('savol', 'Qaysi biri?', ['to‘g‘ri', 'xato 1', 'xato 2', 'xato 3'], [0]);
+    expect(q('savol', 'Qaysi biri?', ['to‘g‘ri', 'xato 1', 'xato 2', 'xato 3'], [0])).toEqual(a);
+    const right = a.options.filter((o) => a.correct.includes(o.id)).map((o) => o.text);
+    expect(right).toEqual(['to‘g‘ri']);
+    expect(a.options.map((o) => o.id)).toEqual(['a', 'b', 'c', 'd']);
+
+    const m = q('kop', 'Qaysilari?', ['A', 'B', 'C', 'D', 'E'], [1, 3]);
+    expect(m.kind).toBe('MULTIPLE');
+    expect(
+      m.options
+        .filter((o) => m.correct.includes(o.id))
+        .map((o) => o.text)
+        .sort(),
+    ).toEqual(['B', 'D']);
   });
 });

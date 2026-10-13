@@ -2,6 +2,7 @@ import type { CourseMeta, ModuleDef } from '../helpers';
 import { m01 } from './modules/01-intro';
 import { m02 } from './modules/02-variables';
 import { m03 } from './modules/03-strings';
+import { m04 } from './modules/04-numbers';
 
 /**
  * Original Uzbek PHP course. Only the topic order follows the usual PHP curriculum; every
@@ -22,4 +23,4 @@ export const PHP_COURSE: CourseMeta = {
     'bajariladigan mustaqil mashq.',
 };
 
-export const PHP_MODULES: ModuleDef[] = [m01, m02, m03];
+export const PHP_MODULES: ModuleDef[] = [m01, m02, m03, m04];
