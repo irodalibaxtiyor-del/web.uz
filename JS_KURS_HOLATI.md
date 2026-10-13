@@ -1,6 +1,6 @@
 # JavaScript kursi — ish holati
 
-Oxirgi yangilanish: 2026-10-13. **Holat: jarayonda — 11/18 modul.**
+Oxirgi yangilanish: 2026-10-13. **Holat: jarayonda — 13/18 modul.**
 
 ## Topshiriq va huquqiy qaror
 
@@ -43,8 +43,8 @@ pnpm --filter @webdizayn/api db:seed:js                         # demo bazaga yu
 | 9   | Sikllar                           | ✅ loop-for, ✅ loop-for-in, ✅ loop-for-of, ✅ loop-while, ✅ break-continue, ✅ iterables                              |
 | 10  | To‘plamlar va turlar              | ✅ sets, ✅ maps, ✅ typeof, ✅ type-conversion, ✅ destructuring, ✅ regexp                                             |
 | 11  | Xatolar va sifatli kod            | ✅ errors, ✅ scope, ✅ hoisting, ✅ strict-mode, ✅ this, ✅ arrow-functions, ✅ debugging, ✅ style-guide, ✅ mistakes |
-| 12  | Klasslar, modullar, JSON          | classes, class-inheritance, class-static, modules 📖, json                                                               |
-| 13  | Obyekt va funksiyalar chuqurroq   | object-constructors, object-prototypes, object-accessors, object-protection, call-apply-bind, closures                   |
+| 12  | Klasslar, modullar, JSON          | ✅ classes, ✅ class-inheritance, ✅ class-static, modules 📖, ✅ json                                                   |
+| 13  | Obyekt va funksiyalar chuqurroq   | ✅ object-constructors, ✅ object-prototypes, ✅ object-accessors, ✅ object-protection, ✅ call-apply-bind, ✅ closures |
 | 14  | Asinxron JavaScript               | timing, callbacks, promises, async-await, fetch                                                                          |
 | 15  | HTML DOM                          | dom-intro, dom-methods, dom-elements, dom-html, dom-css, dom-forms, dom-animations                                       |
 | 16  | DOM hodisalari va tugunlar        | dom-events, dom-event-listener, dom-navigation, dom-nodes, dom-collections                                               |

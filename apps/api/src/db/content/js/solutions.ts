@@ -10,6 +10,8 @@ import { s08 } from './solutions/08-conditions';
 import { s09 } from './solutions/09-loops';
 import { s10 } from './solutions/10-types';
 import { s11 } from './solutions/11-quality';
+import { s12 } from './solutions/12-classes';
+import { s13 } from './solutions/13-advanced-objects';
 
 /**
  * Reference solutions, keyed by lesson slug. Used only to verify the CHECK rules in a real
@@ -27,4 +29,6 @@ export const JS_SOLUTIONS: Record<string, ProjectFile[]> = {
   ...s09,
   ...s10,
   ...s11,
+  ...s12,
+  ...s13,
 };

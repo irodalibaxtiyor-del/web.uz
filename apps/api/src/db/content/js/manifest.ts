@@ -10,6 +10,8 @@ import { m08 } from './modules/08-conditions';
 import { m09 } from './modules/09-loops';
 import { m10 } from './modules/10-types';
 import { m11 } from './modules/11-quality';
+import { m12 } from './modules/12-classes';
+import { m13 } from './modules/13-advanced-objects';
 
 /**
  * Original Uzbek JavaScript course. Only the topic order follows the usual JavaScript
@@ -27,4 +29,18 @@ export const JS_COURSE: CourseMeta = {
     'kurs oxirida to‘rtta mini-loyiha.',
 };
 
-export const JS_MODULES: ModuleDef[] = [m01, m02, m03, m04, m05, m06, m07, m08, m09, m10, m11];
+export const JS_MODULES: ModuleDef[] = [
+  m01,
+  m02,
+  m03,
+  m04,
+  m05,
+  m06,
+  m07,
+  m08,
+  m09,
+  m10,
+  m11,
+  m12,
+  m13,
+];
