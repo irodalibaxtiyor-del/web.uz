@@ -12,6 +12,7 @@ import { s10 } from './solutions/10-types';
 import { s11 } from './solutions/11-quality';
 import { s12 } from './solutions/12-classes';
 import { s13 } from './solutions/13-advanced-objects';
+import { s14 } from './solutions/14-async';
 
 /**
  * Reference solutions, keyed by lesson slug. Used only to verify the CHECK rules in a real
@@ -31,4 +32,5 @@ export const JS_SOLUTIONS: Record<string, ProjectFile[]> = {
   ...s11,
   ...s12,
   ...s13,
+  ...s14,
 };

@@ -12,6 +12,7 @@ import { m10 } from './modules/10-types';
 import { m11 } from './modules/11-quality';
 import { m12 } from './modules/12-classes';
 import { m13 } from './modules/13-advanced-objects';
+import { m14 } from './modules/14-async';
 
 /**
  * Original Uzbek JavaScript course. Only the topic order follows the usual JavaScript
@@ -43,4 +44,5 @@ export const JS_MODULES: ModuleDef[] = [
   m11,
   m12,
   m13,
+  m14,
 ];
