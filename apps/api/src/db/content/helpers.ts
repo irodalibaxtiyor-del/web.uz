@@ -107,6 +107,30 @@ export function site(
   ];
 }
 
+/**
+ * `index.html` that loads `script.js` at the end of the body (plus an optional `style.css`):
+ * the usual shape of a JavaScript exercise.
+ */
+export function app(
+  body: string,
+  js: string,
+  opts: { css?: string; title?: string } = {},
+): ProjectFile[] {
+  const head = opts.css === undefined ? undefined : '<link rel="stylesheet" href="style.css">';
+  const result: ProjectFile[] = [
+    {
+      path: 'index.html',
+      content: page(`${body.trim()}\n\n<script src="script.js"></script>`, {
+        title: opts.title,
+        head,
+      }),
+    },
+    { path: 'script.js', content: `${js.trim()}\n` },
+  ];
+  if (opts.css !== undefined) result.push({ path: 'style.css', content: `${opts.css.trim()}\n` });
+  return result;
+}
+
 export function files(map: Record<string, string>): ProjectFile[] {
   return Object.entries(map).map(([path, content]) => ({ path, content }));
 }

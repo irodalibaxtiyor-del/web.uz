@@ -8,7 +8,7 @@ import { organizations, users } from './schema';
 
 /**
  * Loads a bundled course into the default organization.
- * Usage: `pnpm --filter @webdizayn/api db:seed:course <html|css> [--replace]`.
+ * Usage: `pnpm --filter @webdizayn/api db:seed:course <html|css|js> [--replace]`.
  * The course owner is SEED_TEACHER_EMAIL (default teacher@webdizayn.local).
  */
 async function main() {
