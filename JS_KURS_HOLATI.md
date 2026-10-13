@@ -1,6 +1,6 @@
 # JavaScript kursi — ish holati
 
-Oxirgi yangilanish: 2026-10-13. **Holat: jarayonda — 10/18 modul.**
+Oxirgi yangilanish: 2026-10-13. **Holat: jarayonda — 11/18 modul.**
 
 ## Topshiriq va huquqiy qaror
 
@@ -30,26 +30,26 @@ pnpm --filter @webdizayn/api db:seed:js                         # demo bazaga yu
 
 ✅ — dars, mashq va yechim tayyor, Chrome’da tekshirilgan. 📖 — nazariy dars (mashqsiz).
 
-| #   | Modul                             | Darslar (slug)                                                                                         |
-| --- | --------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| 1   | JavaScript bilan tanishuv         | ✅ intro, ✅ where-to, ✅ output, ✅ statements, ✅ syntax, ✅ comments                                |
-| 2   | O‘zgaruvchilar va operatorlar     | ✅ variables, ✅ let, ✅ const, ✅ operators, ✅ arithmetic, ✅ assignment, ✅ data-types              |
-| 3   | Funksiyalar, obyektlar, hodisalar | ✅ functions, ✅ objects, ✅ object-properties, ✅ object-methods, ✅ events                           |
-| 4   | Satrlar                           | ✅ strings, ✅ string-methods, ✅ string-search, ✅ string-templates                                   |
-| 5   | Sonlar va Math                    | ✅ numbers, ✅ number-methods, ✅ math, ✅ random                                                      |
-| 6   | Massivlar                         | ✅ arrays, ✅ array-methods, ✅ array-search, ✅ array-sort, ✅ array-iteration                        |
-| 7   | Sana va vaqt                      | ✅ dates, ✅ date-formats, ✅ date-get, ✅ date-set                                                    |
-| 8   | Mantiq va shartlar                | ✅ booleans, ✅ comparisons, ✅ if-else, ✅ switch                                                     |
-| 9   | Sikllar                           | ✅ loop-for, ✅ loop-for-in, ✅ loop-for-of, ✅ loop-while, ✅ break-continue, ✅ iterables            |
-| 10  | To‘plamlar va turlar              | ✅ sets, ✅ maps, ✅ typeof, ✅ type-conversion, ✅ destructuring, ✅ regexp                           |
-| 11  | Xatolar va sifatli kod            | errors, scope, hoisting, strict-mode, this, arrow-functions, debugging, style-guide, mistakes          |
-| 12  | Klasslar, modullar, JSON          | classes, class-inheritance, class-static, modules 📖, json                                             |
-| 13  | Obyekt va funksiyalar chuqurroq   | object-constructors, object-prototypes, object-accessors, object-protection, call-apply-bind, closures |
-| 14  | Asinxron JavaScript               | timing, callbacks, promises, async-await, fetch                                                        |
-| 15  | HTML DOM                          | dom-intro, dom-methods, dom-elements, dom-html, dom-css, dom-forms, dom-animations                     |
-| 16  | DOM hodisalari va tugunlar        | dom-events, dom-event-listener, dom-navigation, dom-nodes, dom-collections                             |
-| 17  | Brauzer va Web API                | bom-window, bom-location, cookies, web-storage, web-apis                                               |
-| 18  | Amaliy loyihalar                  | project-todo, project-calculator, project-quiz, project-filter                                         |
+| #   | Modul                             | Darslar (slug)                                                                                                           |
+| --- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| 1   | JavaScript bilan tanishuv         | ✅ intro, ✅ where-to, ✅ output, ✅ statements, ✅ syntax, ✅ comments                                                  |
+| 2   | O‘zgaruvchilar va operatorlar     | ✅ variables, ✅ let, ✅ const, ✅ operators, ✅ arithmetic, ✅ assignment, ✅ data-types                                |
+| 3   | Funksiyalar, obyektlar, hodisalar | ✅ functions, ✅ objects, ✅ object-properties, ✅ object-methods, ✅ events                                             |
+| 4   | Satrlar                           | ✅ strings, ✅ string-methods, ✅ string-search, ✅ string-templates                                                     |
+| 5   | Sonlar va Math                    | ✅ numbers, ✅ number-methods, ✅ math, ✅ random                                                                        |
+| 6   | Massivlar                         | ✅ arrays, ✅ array-methods, ✅ array-search, ✅ array-sort, ✅ array-iteration                                          |
+| 7   | Sana va vaqt                      | ✅ dates, ✅ date-formats, ✅ date-get, ✅ date-set                                                                      |
+| 8   | Mantiq va shartlar                | ✅ booleans, ✅ comparisons, ✅ if-else, ✅ switch                                                                       |
+| 9   | Sikllar                           | ✅ loop-for, ✅ loop-for-in, ✅ loop-for-of, ✅ loop-while, ✅ break-continue, ✅ iterables                              |
+| 10  | To‘plamlar va turlar              | ✅ sets, ✅ maps, ✅ typeof, ✅ type-conversion, ✅ destructuring, ✅ regexp                                             |
+| 11  | Xatolar va sifatli kod            | ✅ errors, ✅ scope, ✅ hoisting, ✅ strict-mode, ✅ this, ✅ arrow-functions, ✅ debugging, ✅ style-guide, ✅ mistakes |
+| 12  | Klasslar, modullar, JSON          | classes, class-inheritance, class-static, modules 📖, json                                                               |
+| 13  | Obyekt va funksiyalar chuqurroq   | object-constructors, object-prototypes, object-accessors, object-protection, call-apply-bind, closures                   |
+| 14  | Asinxron JavaScript               | timing, callbacks, promises, async-await, fetch                                                                          |
+| 15  | HTML DOM                          | dom-intro, dom-methods, dom-elements, dom-html, dom-css, dom-forms, dom-animations                                       |
+| 16  | DOM hodisalari va tugunlar        | dom-events, dom-event-listener, dom-navigation, dom-nodes, dom-collections                                               |
+| 17  | Brauzer va Web API                | bom-window, bom-location, cookies, web-storage, web-apis                                                                 |
+| 18  | Amaliy loyihalar                  | project-todo, project-calculator, project-quiz, project-filter                                                           |
 
 Har modulning oxirgi darsida 4–5 savollik test bo‘ladi.
 
