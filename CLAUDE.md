@@ -844,7 +844,7 @@ Roadmap ro'yxati bo'yicha audit va tuzatishlar:
 
 - So‘rov: katalogda kurslar ketma-ketligi — HTML asoslari → HTML: to‘liq kurs → CSS → JavaScript → PHP.
 - `courses.position` (migratsiya `0012_course_position.sql`, default 1000, manfiy emas — CHECK). Ro‘yxat `position`, keyin nom bo‘yicha. `updateCourseSchema.position` (0..10000); tartibni faqat ORG_ADMIN o‘zgartiradi (TEACHER 403). Manifestlarda: html 20, css 30, js 40, php 50. Test: `courses.test.ts` 'catalogue order'.
-- Test sahifasi: savol va variantlar endi literal matn sifatida chiqadi (`QuestionText`/`OptionText`): ```` ``` ```` kod bloklari, `inline code` va **qalin** matn. Avvalgi markdown yondashuvi HTML kursidagi variantlarni (`<br>`, `/* */`, `#`) buzardi — tuzatildi. 7 ta web test.
+- Test sahifasi: savol va variantlar endi literal matn sifatida chiqadi (`QuestionText`/`OptionText`): ` ``` ` kod bloklari, `inline code` va **qalin** matn. Avvalgi markdown yondashuvi HTML kursidagi variantlarni (`<br>`, `/* */`, `#`) buzardi — tuzatildi. 7 ta web test.
 - **Topilgan xato va tuzatish:** barcha kontent kurslarida to‘g‘ri javob doim birinchi variant edi. `q()` endi variantlarni id+savol matnidan olingan deterministik seed bilan aralashtiradi; test har kurs bo‘yicha “birinchi variant to‘g‘ri” ulushi 0.5 dan kam ekanini tekshiradi. Demo bazadagi HTML/CSS/JS kurslari hali eski (aralashtirilmagan) variantlar bilan — `seed-course <slug> --replace` qilinsa yangilanadi, lekin shu kursdagi progress o‘chadi.
 
 ### PHP kursi (W3Schools tartibida) — yakunlandi
