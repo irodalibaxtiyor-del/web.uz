@@ -62,12 +62,12 @@ export function runChecksIsolated(
 ): Promise<CheckEngineResult> {
   const { killAfterMs, ...engine } = options;
   const budget = engine.budgetMs ?? 20_000;
-  const started = Date.now();
+  const started = performance.now();
   const failure = (status: 'ERROR' | 'TIMEOUT'): CheckEngineResult => ({
     status,
     errorCode: status === 'TIMEOUT' ? 'BUDGET' : 'ENGINE',
     results: rules.map((r) => ({ id: r.id, passed: false })),
-    durationMs: Date.now() - started,
+    durationMs: Math.round(performance.now() - started),
   });
 
   return new Promise((resolve) => {

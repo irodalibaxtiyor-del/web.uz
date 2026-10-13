@@ -1,6 +1,6 @@
 # JavaScript kursi — ish holati
 
-Oxirgi yangilanish: 2026-10-13. **Holat: jarayonda — 16/18 modul.**
+Oxirgi yangilanish: 2026-10-13. **Holat: yakunlandi — 18/18 modul, 97 dars, 96 mashq, 18 test.**
 
 ## Topshiriq va huquqiy qaror
 
@@ -43,13 +43,13 @@ pnpm --filter @webdizayn/api db:seed:js                         # demo bazaga yu
 | 9   | Sikllar                           | ✅ loop-for, ✅ loop-for-in, ✅ loop-for-of, ✅ loop-while, ✅ break-continue, ✅ iterables                              |
 | 10  | To‘plamlar va turlar              | ✅ sets, ✅ maps, ✅ typeof, ✅ type-conversion, ✅ destructuring, ✅ regexp                                             |
 | 11  | Xatolar va sifatli kod            | ✅ errors, ✅ scope, ✅ hoisting, ✅ strict-mode, ✅ this, ✅ arrow-functions, ✅ debugging, ✅ style-guide, ✅ mistakes |
-| 12  | Klasslar, modullar, JSON          | ✅ classes, ✅ class-inheritance, ✅ class-static, modules 📖, ✅ json                                                   |
+| 12  | Klasslar, modullar, JSON          | ✅ classes, ✅ class-inheritance, ✅ class-static, 📖 modules, ✅ json                                                   |
 | 13  | Obyekt va funksiyalar chuqurroq   | ✅ object-constructors, ✅ object-prototypes, ✅ object-accessors, ✅ object-protection, ✅ call-apply-bind, ✅ closures |
 | 14  | Asinxron JavaScript               | ✅ timing, ✅ callbacks, ✅ promises, ✅ async-await, ✅ fetch                                                           |
 | 15  | HTML DOM                          | ✅ dom-intro, ✅ dom-methods, ✅ dom-elements, ✅ dom-html, ✅ dom-css, ✅ dom-forms, ✅ dom-animations                  |
 | 16  | DOM hodisalari va tugunlar        | ✅ dom-events, ✅ dom-event-listener, ✅ dom-navigation, ✅ dom-nodes, ✅ dom-collections                                |
-| 17  | Brauzer va Web API                | bom-window, bom-location, cookies, web-storage, web-apis                                                                 |
-| 18  | Amaliy loyihalar                  | project-todo, project-calculator, project-quiz, project-filter                                                           |
+| 17  | Brauzer va Web API                | ✅ bom-window, ✅ bom-location, ✅ cookies, ✅ web-storage, ✅ web-apis                                                  |
+| 18  | Amaliy loyihalar                  | ✅ project-todo, ✅ project-calculator, ✅ project-quiz, ✅ project-filter                                               |
 
 Har modulning oxirgi darsida 4–5 savollik test bo‘ladi.
 
@@ -65,9 +65,16 @@ Har modulning oxirgi darsida 4–5 savollik test bo‘ladi.
 - CHECK’da ishlaydi: `localStorage`, cookie, `setTimeout` (`wait` ≤ 2000 ms), ES modul `import`. Tarmoq (`fetch`) va `Worker` bloklangan.
 - RUN preview (opaque origin)da `localStorage`/cookie xato beradi, fayllararo `import` ishlamaydi, `alert/confirm/prompt` konsolga yo‘naltiriladi (`confirm` → `false`, `prompt` → `null`). Darslarda shunga mos ko‘rsatma beriladi.
 - `<select>` tanlash amali yo‘q — tanlov uchun tugma yoki input ishlating.
-- Yechim faqat **shu darsgacha o‘rgatilgan** narsalarni ishlatsin (masalan, 8-modulgacha yo‘q). Tekshiruv talabaning oddiy yechimi ishlatadigan **barcha** maydonlarni to‘ldirsin — bo‘sh maydon tufayli yiqilmasin.
-- Katta-kichik harf muhim bo‘lsa: (standart holatda solishtirish registrga qaramaydi).
 - Sana mashqlari doim **qat’iy sana** bilan (`new Date(2026, 8, 1)`), joriy vaqtga bog‘liq bo‘lmasin.
+- Qoida ID’si `clean` band (`clean()` helper’i) — boshqa qoidaga bu nomni bermang.
+- Mavjud bo‘lmagan elementni bosish amali qadam limitigacha (2 s) kutadi. Loyiha mashqlarida boshlang‘ich kod 9–11 s da FAILED bo‘ladi — 20 s byudjetga yaqinlashtirmaslik uchun bunday amallar sonini oshirmang.
+- `app()` da `script.js` birinchi — IDE uni ochadi.
+
+## Tekshiruv natijasi
+
+- `content:verify js` — **96/96**: har yechim PASSED, boshlang‘ich kod o‘tmaydi.
+- Yechimlarning CHECK vaqti 1.5–7 s (eng sekinlari — asinxron mashqlar).
+- Demo bazaga yuklangan; brauzer va API orqali smoke: kurs ro‘yxatda, xarita (97 dars), dars matni (jadval, kod), IDE, boshlang‘ich kod FAILED, yechim PASSED → 1-dars tugadi, 2-dars ochildi; yashirin qoidalar sahifa va API javobida yo‘q.
 
 ## Ochiq savollar
 

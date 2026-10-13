@@ -109,7 +109,7 @@ export function site(
 
 /**
  * `index.html` that loads `script.js` at the end of the body (plus an optional `style.css`):
- * the usual shape of a JavaScript exercise.
+ * the usual shape of a JavaScript exercise. `script.js` comes first so the IDE opens it.
  */
 export function app(
   body: string,
@@ -118,6 +118,7 @@ export function app(
 ): ProjectFile[] {
   const head = opts.css === undefined ? undefined : '<link rel="stylesheet" href="style.css">';
   const result: ProjectFile[] = [
+    { path: 'script.js', content: `${js.trim()}\n` },
     {
       path: 'index.html',
       content: page(`${body.trim()}\n\n<script src="script.js"></script>`, {
@@ -125,7 +126,6 @@ export function app(
         head,
       }),
     },
-    { path: 'script.js', content: `${js.trim()}\n` },
   ];
   if (opts.css !== undefined) result.push({ path: 'style.css', content: `${opts.css.trim()}\n` });
   return result;

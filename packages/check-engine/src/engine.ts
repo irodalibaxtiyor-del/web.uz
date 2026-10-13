@@ -60,14 +60,15 @@ export async function runChecks(
   options: EngineOptions = {},
 ): Promise<CheckEngineResult> {
   const opts = { ...DEFAULTS, ...options };
-  const started = Date.now();
+  // Monotonic clock: a wall-clock jump (NTP, sleep) must not turn a run into a false TIMEOUT.
+  const started = performance.now();
   const deadline = started + opts.budgetMs;
   const results = rules.map((r) => ({ id: r.id, passed: false }));
   const done = (status: CheckEngineResult['status'], errorCode: CheckErrorCode | null) => ({
     status,
     errorCode,
     results,
-    durationMs: Date.now() - started,
+    durationMs: Math.round(performance.now() - started),
   });
 
   if (rules.length === 0) return done('ERROR', 'ENGINE');
@@ -101,7 +102,7 @@ export async function runChecks(
 
   try {
     for (const [i, rule] of rules.entries()) {
-      if (Date.now() >= deadline) return done('TIMEOUT', 'BUDGET');
+      if (performance.now() >= deadline) return done('TIMEOUT', 'BUDGET');
       const outcome = await runRule(browser, byPath, rule, opts, deadline);
       if ('abort' in outcome) {
         const status = outcome.abort === 'LOAD_TIMEOUT' || outcome.abort === 'BUDGET';
@@ -161,7 +162,7 @@ async function runRule(
     page.on('dialog', (d) => void d.dismiss().catch(() => {}));
     page.on('popup', (p) => void p.close().catch(() => {}));
 
-    const remaining = () => deadline - Date.now();
+    const remaining = () => deadline - performance.now();
     const step = () => Math.max(1, Math.min(opts.stepTimeoutMs, remaining()));
 
     try {

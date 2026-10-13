@@ -15,6 +15,8 @@ import { m13 } from './modules/13-advanced-objects';
 import { m14 } from './modules/14-async';
 import { m15 } from './modules/15-dom';
 import { m16 } from './modules/16-dom-events';
+import { m17 } from './modules/17-browser';
+import { m18 } from './modules/18-projects';
 
 /**
  * Original Uzbek JavaScript course. Only the topic order follows the usual JavaScript
@@ -49,4 +51,6 @@ export const JS_MODULES: ModuleDef[] = [
   m14,
   m15,
   m16,
+  m17,
+  m18,
 ];
