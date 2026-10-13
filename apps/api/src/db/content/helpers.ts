@@ -155,14 +155,20 @@ export function text(
   title: string,
   selector: string,
   value: string,
-  opts: RuleOpts & { equals?: boolean } = {},
+  opts: RuleOpts & { equals?: boolean; caseSensitive?: boolean } = {},
 ): CheckRuleInput {
   return {
     id,
     title,
     hint: opts.hint,
     hidden: opts.hidden,
-    assert: { type: 'text', selector, value, match: opts.equals ? 'equals' : 'contains' },
+    assert: {
+      type: 'text',
+      selector,
+      value,
+      match: opts.equals ? 'equals' : 'contains',
+      ...(opts.caseSensitive ? { caseSensitive: true } : {}),
+    },
   };
 }
 

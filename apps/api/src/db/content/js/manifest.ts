@@ -2,6 +2,9 @@ import type { CourseMeta, ModuleDef } from '../helpers';
 import { m01 } from './modules/01-intro';
 import { m02 } from './modules/02-variables';
 import { m03 } from './modules/03-functions';
+import { m04 } from './modules/04-strings';
+import { m05 } from './modules/05-numbers';
+import { m06 } from './modules/06-arrays';
 
 /**
  * Original Uzbek JavaScript course. Only the topic order follows the usual JavaScript
@@ -19,4 +22,4 @@ export const JS_COURSE: CourseMeta = {
     'kurs oxirida to‘rtta mini-loyiha.',
 };
 
-export const JS_MODULES: ModuleDef[] = [m01, m02, m03];
+export const JS_MODULES: ModuleDef[] = [m01, m02, m03, m04, m05, m06];

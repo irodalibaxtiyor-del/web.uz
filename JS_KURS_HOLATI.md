@@ -1,6 +1,6 @@
 # JavaScript kursi — ish holati
 
-Oxirgi yangilanish: 2026-10-13. **Holat: jarayonda — 3/18 modul.**
+Oxirgi yangilanish: 2026-10-13. **Holat: jarayonda — 6/18 modul.**
 
 ## Topshiriq va huquqiy qaror
 
@@ -35,9 +35,9 @@ pnpm --filter @webdizayn/api db:seed:js                         # demo bazaga yu
 | 1   | JavaScript bilan tanishuv         | ✅ intro, ✅ where-to, ✅ output, ✅ statements, ✅ syntax, ✅ comments                                |
 | 2   | O‘zgaruvchilar va operatorlar     | ✅ variables, ✅ let, ✅ const, ✅ operators, ✅ arithmetic, ✅ assignment, ✅ data-types              |
 | 3   | Funksiyalar, obyektlar, hodisalar | ✅ functions, ✅ objects, ✅ object-properties, ✅ object-methods, ✅ events                           |
-| 4   | Satrlar                           | strings, string-methods, string-search, string-templates                                               |
-| 5   | Sonlar va Math                    | numbers, number-methods, math, random                                                                  |
-| 6   | Massivlar                         | arrays, array-methods, array-search, array-sort, array-iteration                                       |
+| 4   | Satrlar                           | ✅ strings, ✅ string-methods, ✅ string-search, ✅ string-templates                                   |
+| 5   | Sonlar va Math                    | ✅ numbers, ✅ number-methods, ✅ math, ✅ random                                                      |
+| 6   | Massivlar                         | ✅ arrays, ✅ array-methods, ✅ array-search, ✅ array-sort, ✅ array-iteration                        |
 | 7   | Sana va vaqt                      | dates, date-formats, date-get, date-set                                                                |
 | 8   | Mantiq va shartlar                | booleans, comparisons, if-else, switch                                                                 |
 | 9   | Sikllar                           | loop-for, loop-for-in, loop-for-of, loop-while, break-continue, iterables                              |
@@ -59,10 +59,14 @@ Har modulning oxirgi darsida 4–5 savollik test bo‘ladi.
 - Natija **sahifaga** yoziladi (`textContent`): CHECK DOM’ni tekshiradi, `console.log` ni emas. `console.log` faqat RUN konsolida ko‘rinadi.
 - Qattiq yozib qo‘yilgan javobni ushlash uchun funksiyalar **turli kiritmalar** bilan tekshiriladi: `after([fill('#a', '7'), click('#hisobla')], text(...))`, ulardan biri yashirin (`hidden: true`).
 - Har mashqda `clean()` (konsolda xato yo‘q) — bitta qoida sifatida. Bir mashqda **5 tadan ko‘p qoida bo‘lmasin**.
-- Boshlang‘ich kod CHECK’dan o‘tmasligi kerak, lekin xato ham tashlamasin (sahifa ochilsin).
+- Boshlang‘ich kod CHECK’dan o‘tmasligi kerak, lekin xato ham tashlamasin (sahifa ochilsin). Istisno: xatoni tuzatish mashqlari (`where-to`, `syntax`, `comments`, `const`).
+- Yechim faqat **shu darsgacha o‘rgatilgan** narsalarni ishlatsin (masalan, 8-modulgacha `if` yo‘q). Tekshiruv talabaning oddiy yechimi o‘qiydigan **barcha** maydonlarni to‘ldirsin — bo‘sh maydon tufayli yiqilmasin.
+- Katta-kichik harf muhim bo‘lsa: `text(..., { caseSensitive: true })`. Standart holatda solishtirish registrga qaramaydi.
 - CHECK’da ishlaydi: `localStorage`, cookie, `setTimeout` (`wait` ≤ 2000 ms), ES modul `import`. Tarmoq (`fetch`) va `Worker` bloklangan.
 - RUN preview (opaque origin)da `localStorage`/cookie xato beradi, fayllararo `import` ishlamaydi, `alert/confirm/prompt` konsolga yo‘naltiriladi (`confirm` → `false`, `prompt` → `null`). Darslarda shunga mos ko‘rsatma beriladi.
 - `<select>` tanlash amali yo‘q — tanlov uchun tugma yoki input ishlating.
+- Yechim faqat **shu darsgacha o‘rgatilgan** narsalarni ishlatsin (masalan, 8-modulgacha yo‘q). Tekshiruv talabaning oddiy yechimi ishlatadigan **barcha** maydonlarni to‘ldirsin — bo‘sh maydon tufayli yiqilmasin.
+- Katta-kichik harf muhim bo‘lsa: (standart holatda solishtirish registrga qaramaydi).
 - Sana mashqlari doim **qat’iy sana** bilan (`new Date(2026, 8, 1)`), joriy vaqtga bog‘liq bo‘lmasin.
 
 ## Ochiq savollar
