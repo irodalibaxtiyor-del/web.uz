@@ -1,6 +1,6 @@
 # JavaScript kursi — ish holati
 
-Oxirgi yangilanish: 2026-10-13. **Holat: jarayonda — 14/18 modul.**
+Oxirgi yangilanish: 2026-10-13. **Holat: jarayonda — 15/18 modul.**
 
 ## Topshiriq va huquqiy qaror
 
@@ -46,7 +46,7 @@ pnpm --filter @webdizayn/api db:seed:js                         # demo bazaga yu
 | 12  | Klasslar, modullar, JSON          | ✅ classes, ✅ class-inheritance, ✅ class-static, modules 📖, ✅ json                                                   |
 | 13  | Obyekt va funksiyalar chuqurroq   | ✅ object-constructors, ✅ object-prototypes, ✅ object-accessors, ✅ object-protection, ✅ call-apply-bind, ✅ closures |
 | 14  | Asinxron JavaScript               | ✅ timing, ✅ callbacks, ✅ promises, ✅ async-await, ✅ fetch                                                           |
-| 15  | HTML DOM                          | dom-intro, dom-methods, dom-elements, dom-html, dom-css, dom-forms, dom-animations                                       |
+| 15  | HTML DOM                          | ✅ dom-intro, ✅ dom-methods, ✅ dom-elements, ✅ dom-html, ✅ dom-css, ✅ dom-forms, ✅ dom-animations                  |
 | 16  | DOM hodisalari va tugunlar        | dom-events, dom-event-listener, dom-navigation, dom-nodes, dom-collections                                               |
 | 17  | Brauzer va Web API                | bom-window, bom-location, cookies, web-storage, web-apis                                                                 |
 | 18  | Amaliy loyihalar                  | project-todo, project-calculator, project-quiz, project-filter                                                           |
