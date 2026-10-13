@@ -5,6 +5,8 @@ import { m03 } from './modules/03-strings';
 import { m04 } from './modules/04-numbers';
 import { m05 } from './modules/05-control';
 import { m06 } from './modules/06-functions';
+import { m07 } from './modules/07-arrays';
+import { m08 } from './modules/08-forms';
 
 /**
  * Original Uzbek PHP course. Only the topic order follows the usual PHP curriculum; every
@@ -25,4 +27,4 @@ export const PHP_COURSE: CourseMeta = {
     'bajariladigan mustaqil mashq.',
 };
 
-export const PHP_MODULES: ModuleDef[] = [m01, m02, m03, m04, m05, m06];
+export const PHP_MODULES: ModuleDef[] = [m01, m02, m03, m04, m05, m06, m07, m08];
