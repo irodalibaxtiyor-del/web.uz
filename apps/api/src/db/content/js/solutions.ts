@@ -5,6 +5,8 @@ import { s03 } from './solutions/03-functions';
 import { s04 } from './solutions/04-strings';
 import { s05 } from './solutions/05-numbers';
 import { s06 } from './solutions/06-arrays';
+import { s07 } from './solutions/07-dates';
+import { s08 } from './solutions/08-conditions';
 
 /**
  * Reference solutions, keyed by lesson slug. Used only to verify the CHECK rules in a real
@@ -17,4 +19,6 @@ export const JS_SOLUTIONS: Record<string, ProjectFile[]> = {
   ...s04,
   ...s05,
   ...s06,
+  ...s07,
+  ...s08,
 };
