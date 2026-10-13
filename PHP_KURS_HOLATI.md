@@ -1,6 +1,6 @@
 # PHP kursi — ish holati
 
-Oxirgi yangilanish: 2026-10-13. **Holat: boshlandi.**
+Oxirgi yangilanish: 2026-10-13. **Holat: yakunlandi** — 15 modul, 63 dars, 63 test, 221 ta natija savoli PHP 8.3 da tekshirilgan. Demo bazaga yuklangan.
 
 ## Topshiriq va qarorlar
 
@@ -35,7 +35,7 @@ node verify.mjs /tmp/php-outputs.json   # har snippet PHP 8.3 da bajariladi, chi
 
 ## Tuzilma (15 modul)
 
-✅ — dars va test tayyor, natijalar PHP 8.3 da tekshirilgan.
+Barcha modullar tayyor: dars, mustaqil mashq va test; natijalar PHP 8.3 da tekshirilgan.
 
 | #   | Modul                          | Darslar (slug)                                                                                            |
 | --- | ------------------------------ | --------------------------------------------------------------------------------------------------------- |
@@ -59,5 +59,13 @@ node verify.mjs /tmp/php-outputs.json   # har snippet PHP 8.3 da bajariladi, chi
 
 - Har dars: tushuntirish, misollar, **Mustaqil mashq** (topshiriq + kutilgan natija). Har dars `dars(...)` testi bilan tugaydi (4 savol, oxirgi darsda 5–6 — modul bo‘yicha).
 - Natija savollarida variantlar **bir qatorli** (yangi qatorsiz) bo‘lsin — chiqish `echo` bilan bo‘sh joy yoki vergul orqali yoziladi.
-- Snippetlar `<?php` bilan boshlanadi va `declare`, fayl, tarmoq, sessiya kabi tashqi holatga bog‘liq bo‘lmasin (tekshiruvda faqat CLI rejimi).
+- Snippetlar `<?php` bilan boshlanadi va `declare`, fayl, tarmoq, sessiya kabi tashqi holatga bog‘liq bo‘lmasin (tekshiruvda faqat CLI rejimi). Baza savollari `sqlite::memory:` bilan (php-wasm’da `pdo_sqlite` bor).
+- `var_dump` oxiriga yangi qator qo‘shadi — natija savollarida `echo`/`var_export(..., true)`/`gettype()` ishlatilsin.
 - Kurs PHP 8.3 ga mo‘ljallangan (`match`, `enum`, `readonly`, `fn`, nomlangan argumentlar).
+
+## Yakuniy tekshiruv (2026-10-13)
+
+- `vphp.sh`: **221/221** natija PHP 8.3 bilan mos; har darsning mustaqil mashq natijasi ham alohida bajarib ko‘rildi (13–14-modullar).
+- `content-courses.test.ts` 27/27 (har darsda test, mashq yo‘q, to‘g‘ri javob birinchi turgan ulushi < 0.5).
+- Demo baza: `node dist/db/seed-course.js php` → 15 modul, 63 dars, 63 test; katalog tartibi HTML asoslari → HTML → CSS → JavaScript → PHP.
+- Cheklovlar: 15-moduldagi loyihalar (mehmonlar kitobi, auth, CRUD) platformada bajarilmaydi — talaba kompyuterida `php -S` bilan; ularning kodi testlarda qism-qism (validatsiya, hash, IDOR) tekshirilgan.

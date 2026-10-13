@@ -1,4 +1,4 @@
-import { dars, natija, q, XATO, type ModuleDef } from '../shared';
+import { dars, natija, q, type ModuleDef } from '../shared';
 
 const TEKSHIR = `function tekshir(string $ism, string $matn): array
 {
