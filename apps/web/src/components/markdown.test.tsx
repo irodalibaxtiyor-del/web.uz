@@ -40,6 +40,16 @@ describe('QuestionText', () => {
   });
 });
 
+describe('bold in quiz text', () => {
+  it('renders **bold** and keeps single stars literal', () => {
+    const html = renderToStaticMarkup(
+      <QuestionText>{'Qaysi biri **noto‘g‘ri**? /* izoh */'}</QuestionText>,
+    );
+    expect(html).toContain('<strong>noto‘g‘ri</strong>');
+    expect(html).toContain('/* izoh */');
+  });
+});
+
 describe('OptionText', () => {
   it('renders inline code and leaves the rest literal', () => {
     expect(renderToStaticMarkup(<OptionText>{'`$x` va <br>'}</OptionText>)).toBe(

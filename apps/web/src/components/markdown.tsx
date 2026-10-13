@@ -14,17 +14,17 @@ export function Markdown({ children }: { children: string }) {
   );
 }
 
-/** `text` with `inline code` spans; everything else stays literal (React escapes it). */
+/** `text` with `inline code` and **bold** spans; everything else stays literal (React escapes it). */
 function inlineCode(text: string): ReactNode[] {
-  return text
-    .split(/(`[^`\n]+`)/)
-    .map((part, i) =>
-      part.length > 2 && part.startsWith('`') && part.endsWith('`') ? (
-        <code key={i}>{part.slice(1, -1)}</code>
-      ) : (
-        <Fragment key={i}>{part}</Fragment>
-      ),
-    );
+  return text.split(/(`[^`\n]+`|\*\*[^*\n]+\*\*)/).map((part, i) => {
+    if (part.length > 2 && part.startsWith('`') && part.endsWith('`')) {
+      return <code key={i}>{part.slice(1, -1)}</code>;
+    }
+    if (part.length > 4 && part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={i}>{part.slice(2, -2)}</strong>;
+    }
+    return <Fragment key={i}>{part}</Fragment>;
+  });
 }
 
 /**
