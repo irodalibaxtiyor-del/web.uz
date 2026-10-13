@@ -815,3 +815,12 @@ Roadmap ro'yxati bo'yicha audit va tuzatishlar:
   - Avtomatik tekshiruv WCAG'ning hammasini qamramaydi (screen reader bilan qo'lda sinov qilinmagan).
   - Gitleaks lokal yo'q — faqat grep (CI'da gitleaks bor).
 - Keyingi qadam: **15C — Final release audit**.
+
+### 15C — Final release audit
+
+- Yangi funksiya qo'shilmadi. Yakuniy hisobot: [FINAL_RELEASE_AUDIT.md](FINAL_RELEASE_AUDIT.md) (26 band, amalga oshirilgan funksiyalar, cheklovlar, migratsiyalar, testlar, E2E, xavfsizlik, production blocker'lar).
+- Tekshiruv `c141c87` da qayta ishga tushirildi: format ✅, typecheck ✅, lint ✅, build ✅, test **359/359** ✅ (shared 38 + sandbox 15 + web 26 + check-engine 21 + api 259), to'liq E2E **34/34** ✅, sandbox E2E **21/21** ✅, `pnpm audit --prod` ✅, drift yo'q ✅.
+- Qo'lda tekshirildi: web'da XSS sink'lari (`dangerouslySetInnerHTML`, `innerHTML`, `eval`) yo'q; API'da raw SQL yo'q; web'ga faqat `NEXT_PUBLIC_SANDBOX_URL` chiqadi; haqiqiy AI provayderi faqat `AI_PROVIDER=http` + `AI_ALLOW_REAL_STUDENT_DATA` + URL + kalit bo'lganda yoqiladi.
+- **Topildi:** GitHub'dagi `web.uz` repo hali bo'sh (`git ls-remote` hech narsa qaytarmadi) — birorta ham commit push qilinmagan, CI (Docker image'lar, gitleaks, Ubuntu E2E) hech qachon ishlamagan. Production blocker sifatida yozildi.
+- **FINAL_STATUS: READY_WITH_INFRASTRUCTURE_LIMITATIONS.** Kritik xavfsizlik, izolyatsiya, avtorizatsiya va asosiy o'quv oqimi testlari yiqilmagan. Production'ga chiqishdan oldin: CI'ni ishga tushirish, haqiqiy PostgreSQL, konteynerlar tekshiruvi, alohida sandbox domeni, edge proksi (`X-Forwarded-For`), backup/restore mashqi, sirlarni secret manager orqali berish va eski GitHub tokenini revoke qilish.
+- Roadmap'dagi barcha fazalar (F0–F2, 11–15C) yakunlandi.
