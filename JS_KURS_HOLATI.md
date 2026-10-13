@@ -1,6 +1,6 @@
 # JavaScript kursi — ish holati
 
-Oxirgi yangilanish: 2026-10-13. **Holat: jarayonda — 8/18 modul.**
+Oxirgi yangilanish: 2026-10-13. **Holat: jarayonda — 10/18 modul.**
 
 ## Topshiriq va huquqiy qaror
 
@@ -40,8 +40,8 @@ pnpm --filter @webdizayn/api db:seed:js                         # demo bazaga yu
 | 6   | Massivlar                         | ✅ arrays, ✅ array-methods, ✅ array-search, ✅ array-sort, ✅ array-iteration                        |
 | 7   | Sana va vaqt                      | ✅ dates, ✅ date-formats, ✅ date-get, ✅ date-set                                                    |
 | 8   | Mantiq va shartlar                | ✅ booleans, ✅ comparisons, ✅ if-else, ✅ switch                                                     |
-| 9   | Sikllar                           | loop-for, loop-for-in, loop-for-of, loop-while, break-continue, iterables                              |
-| 10  | To‘plamlar va turlar              | sets, maps, typeof, type-conversion, destructuring, regexp                                             |
+| 9   | Sikllar                           | ✅ loop-for, ✅ loop-for-in, ✅ loop-for-of, ✅ loop-while, ✅ break-continue, ✅ iterables            |
+| 10  | To‘plamlar va turlar              | ✅ sets, ✅ maps, ✅ typeof, ✅ type-conversion, ✅ destructuring, ✅ regexp                           |
 | 11  | Xatolar va sifatli kod            | errors, scope, hoisting, strict-mode, this, arrow-functions, debugging, style-guide, mistakes          |
 | 12  | Klasslar, modullar, JSON          | classes, class-inheritance, class-static, modules 📖, json                                             |
 | 13  | Obyekt va funksiyalar chuqurroq   | object-constructors, object-prototypes, object-accessors, object-protection, call-apply-bind, closures |
