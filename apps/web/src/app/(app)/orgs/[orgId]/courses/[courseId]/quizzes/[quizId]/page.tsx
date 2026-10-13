@@ -4,6 +4,7 @@ import type { QuizView } from '@webdizayn/shared';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useState, type FormEvent } from 'react';
+import { OptionText, QuestionText } from '@/components/markdown';
 import { QuizStatusBadge } from '@/components/quiz-ui';
 import { Button, ErrorText, LoadState } from '@/components/ui';
 import { send } from '@/lib/api';
@@ -130,10 +131,14 @@ function Quiz({ initial, courseBase }: { initial: QuizView; courseBase: string }
             const multiple = q.kind === 'MULTIPLE';
             return (
               <li key={q.id}>
-                <fieldset className="space-y-3 rounded-xl border border-slate-200 p-5 dark:border-slate-800">
-                  <legend className="px-1 font-semibold">
-                    {i + 1}. {q.prompt}
-                  </legend>
+                <fieldset
+                  aria-describedby={`savol-${q.id}`}
+                  className="space-y-3 rounded-xl border border-slate-200 p-5 dark:border-slate-800"
+                >
+                  <legend className="px-1 font-semibold">{i + 1}-savol</legend>
+                  <div id={`savol-${q.id}`}>
+                    <QuestionText>{q.prompt}</QuestionText>
+                  </div>
                   {multiple && (
                     <p className="text-xs text-slate-500 dark:text-slate-400">
                       Bir nechta to&apos;g&apos;ri javob bo&apos;lishi mumkin
@@ -149,7 +154,9 @@ function Quiz({ initial, courseBase }: { initial: QuizView; courseBase: string }
                         onChange={(e) => choose(q.id, o.id, multiple, e.target.checked)}
                         className="mt-1"
                       />
-                      <span>{o.text}</span>
+                      <span className="quiz-option">
+                        <OptionText>{o.text}</OptionText>
+                      </span>
                     </label>
                   ))}
                 </fieldset>

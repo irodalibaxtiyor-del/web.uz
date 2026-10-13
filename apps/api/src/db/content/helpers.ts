@@ -50,6 +50,13 @@ export interface CourseMeta {
   description: string;
   /** Folder under `apps/api/content/` with one `<lesson slug>.md` per lesson. */
   contentDir: string;
+  /** Catalogue order in the organization; lower comes first. */
+  position: number;
+  /**
+   * How lessons are practised. `check` (default): exercises verified by the CHECK engine.
+   * `quiz`: no runnable exercises (e.g. server-side PHP); every lesson ends with a quiz.
+   */
+  practice?: 'check' | 'quiz';
 }
 
 export interface CourseDef extends CourseMeta {

@@ -42,6 +42,8 @@ export const updateCourseSchema = z
     title: title.optional(),
     description: z.string().trim().max(2000).optional(),
     status: z.enum(COURSE_STATUSES).optional(),
+    /** Catalogue order; only ORG_ADMIN may change it. */
+    position: z.number().int().min(0).max(10_000).optional(),
   })
   .refine((v) => Object.keys(v).length > 0, { message: 'empty' });
 export type UpdateCourseInput = z.infer<typeof updateCourseSchema>;

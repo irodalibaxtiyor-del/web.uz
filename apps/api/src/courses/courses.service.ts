@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable } from '@nestjs/common';
 import { and, asc, count, eq, inArray, max, sql } from 'drizzle-orm';
 import {
   progressPercent,
@@ -47,7 +47,7 @@ export class CoursesService {
         .select(base)
         .from(courses)
         .where(and(eq(courses.organizationId, m.organizationId), eq(courses.status, 'PUBLISHED')))
-        .orderBy(asc(courses.title));
+        .orderBy(asc(courses.position), asc(courses.title));
       if (!rows.length) return [];
       const ids = rows.map((r) => r.id);
       const enrolled = new Set(
@@ -93,7 +93,7 @@ export class CoursesService {
       .select(base)
       .from(courses)
       .where(eq(courses.organizationId, m.organizationId))
-      .orderBy(asc(courses.title));
+      .orderBy(asc(courses.position), asc(courses.title));
     if (m.role === 'ORG_ADMIN') return rows.map((r) => ({ ...r, canManage: true }));
     const mine = new Set(
       (
@@ -135,6 +135,10 @@ export class CoursesService {
     input: UpdateCourseInput,
   ) {
     const before = await this.access.manageableCourse(auth, m, courseId);
+    // The catalogue order is organization-wide: a teacher must not push their course first.
+    if (input.position !== undefined && m.role !== 'ORG_ADMIN') {
+      throw new ForbiddenException('Kurslar tartibini faqat administrator o‘zgartiradi');
+    }
     await this.dbs.db
       .update(courses)
       .set({ ...input, updatedAt: new Date() })

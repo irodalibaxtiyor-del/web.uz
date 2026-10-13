@@ -141,6 +141,8 @@ export const courses = pgTable(
     title: text('title').notNull(),
     description: text('description').notNull().default(''),
     status: courseStatusEnum('status').notNull().default('DRAFT'),
+    /** Catalogue order inside the organization (ascending); new courses go last. */
+    position: integer('position').notNull().default(1000),
     createdBy: uuid('created_by').references(() => users.id, { onDelete: 'set null' }),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
@@ -149,6 +151,7 @@ export const courses = pgTable(
     uniqueIndex('courses_org_slug_idx').on(t.organizationId, t.slug),
     index('courses_org_status_idx').on(t.organizationId, t.status),
     index('courses_created_by_idx').on(t.createdBy),
+    check('courses_position_nonneg', sql`${t.position} >= 0`),
   ],
 );
 

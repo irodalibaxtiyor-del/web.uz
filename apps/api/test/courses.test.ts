@@ -236,3 +236,32 @@ describe('sequential learning', () => {
     await get(student, `${base()}/${courseId}/map`).expect(404);
   });
 });
+
+describe('catalogue order', () => {
+  it('lists courses by position, then title; only an admin may reorder', async () => {
+    const org = await createOrg(ctx, 'org-order');
+    const a = await createMember(ctx, 'admin@order.uz', org, 'ORG_ADMIN');
+    const t = await createMember(ctx, 'teacher@order.uz', org, 'TEACHER');
+    const make = async (title: string, slug: string) =>
+      (await post(t, base(org), { title, slug }).expect(201)).body.course.id as string;
+    const css = await make('CSS', 'css');
+    const html = await make('HTML', 'html');
+    const js = await make('JavaScript', 'js');
+    const titles = async () =>
+      ((await get(a, base(org)).expect(200)).body as { title: string }[]).map((c) => c.title);
+
+    // New courses share the default position, so the title decides.
+    expect(await titles()).toEqual(['CSS', 'HTML', 'JavaScript']);
+
+    // The order is organization-wide: the course's own teacher may not change it.
+    await patch(t, `${base(org)}/${css}`, { position: 1 }).expect(403);
+    await patch(t, `${base(org)}/${css}`, { title: 'CSS asoslari' }).expect(200);
+
+    await patch(a, `${base(org)}/${html}`, { position: 10 }).expect(200);
+    await patch(a, `${base(org)}/${js}`, { position: 20 }).expect(200);
+    await patch(a, `${base(org)}/${css}`, { position: 30 }).expect(200);
+    expect(await titles()).toEqual(['HTML', 'JavaScript', 'CSS asoslari']);
+
+    await patch(a, `${base(org)}/${css}`, { position: -1 }).expect(400);
+  });
+});

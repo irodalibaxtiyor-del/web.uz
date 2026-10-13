@@ -27,6 +27,7 @@ import { m18 } from './modules/18-projects';
 export const JS_COURSE: CourseMeta = {
   slug: 'js',
   contentDir: 'js-course',
+  position: 40,
   title: 'JavaScript: to‘liq kurs',
   description:
     'Sahifalarga jon bering: o‘zgaruvchilar, funksiyalar, massivlar, obyektlar, DOM, hodisalar, ' +

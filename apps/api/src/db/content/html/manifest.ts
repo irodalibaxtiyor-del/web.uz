@@ -24,6 +24,7 @@ import {
 export const HTML_COURSE: CourseMeta = {
   slug: 'html',
   contentDir: 'html-course',
+  position: 20,
   title: 'HTML: to‘liq kurs',
   description:
     'HTML’ni noldan o‘rganing: matn, havolalar, rasmlar, jadvallar, formalar, semantika, ' +

@@ -149,6 +149,7 @@ export async function seedCourse(
         title: course.title,
         description: course.description,
         status: 'PUBLISHED',
+        position: course.position,
         createdBy: opts.teacherId,
       })
       .returning({ id: courses.id });

@@ -46,6 +46,14 @@ describe.each(CONTENT_COURSES.map((c) => [c.slug, c] as const))('%s course manif
   });
 
   it('gives every module a quiz and every exercise a reference solution', () => {
+    if (c.practice === 'quiz') {
+      // Quiz-practice courses: no runnable exercises, a quiz closes every lesson.
+      const lessons = c.modules.flatMap((m) => m.lessons);
+      expect(lessons.filter((l) => !l.quiz).map((l) => l.slug)).toEqual([]);
+      expect(lessons.filter((l) => l.exercise)).toHaveLength(0);
+      expect(Object.keys(c.solutions)).toHaveLength(0);
+      return;
+    }
     for (const m of c.modules) {
       expect(
         m.lessons.filter((l) => l.quiz),
