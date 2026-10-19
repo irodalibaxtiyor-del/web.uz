@@ -66,6 +66,9 @@ CMD ["node", "node_modules/next/dist/bin/next", "start", "-p", "3000"]
 
 # ---------------------------------------------------------------- sandbox (RUN preview origin)
 FROM runtime AS sandbox
+# Hosted front-end libraries (Bootstrap, jQuery…) come from @webdizayn/libs.
+COPY --from=build --chown=root:root /src/node_modules ./node_modules
+COPY --from=build --chown=root:root /src/packages ./packages
 COPY --from=build --chown=root:root /src/apps/sandbox ./apps/sandbox
 WORKDIR /app/apps/sandbox
 ENV SANDBOX_HOST=0.0.0.0 SANDBOX_PORT=3100

@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { readLibraryPath } from '@webdizayn/libs';
 
 const PUBLIC = join(dirname(fileURLToPath(import.meta.url)), '..', 'public');
 
@@ -14,6 +15,9 @@ const FILES = {
   '/build.js': 'text/javascript; charset=utf-8',
   '/protocol.js': 'text/javascript; charset=utf-8',
 };
+
+/** Hosted libraries (Bootstrap, jQuery…): `/lib/<id>/<file>`, only listed files. */
+const LIB_PREFIX = '/lib/';
 
 const ORIGIN_RE = /^https?:\/\/[A-Za-z0-9.-]+(?::\d{1,5})?$/;
 
@@ -36,9 +40,10 @@ export function securityHeaders(parents) {
       "default-src 'none'",
       // 'unsafe-inline' is required for the bridge and students' inline <script>/<style>.
       "script-src 'self' 'unsafe-inline'",
-      "style-src 'unsafe-inline'",
+      "style-src 'self' 'unsafe-inline'",
       'img-src data: blob:',
-      'font-src data:',
+      // 'self': hosted library fonts (Glyphicons, Bootstrap Icons) under /lib/.
+      "font-src 'self' data:",
       'media-src data: blob:',
       // No network from student code: no fetch/XHR/WebSocket/EventSource/beacon.
       "connect-src 'none'",
@@ -72,6 +77,25 @@ export function createSandboxServer({ parents }) {
     const path = url.pathname === '/' ? '/runner.html' : url.pathname;
     if (req.method !== 'GET' && req.method !== 'HEAD') {
       res.writeHead(405, { ...headers, Allow: 'GET, HEAD' }).end();
+      return;
+    }
+    if (path.startsWith(LIB_PREFIX)) {
+      const lib = readLibraryPath(decodeURIComponent(path.slice(LIB_PREFIX.length)));
+      if (!lib) {
+        res
+          .writeHead(404, { ...headers, 'Content-Type': 'text/plain; charset=utf-8' })
+          .end('Not found');
+        return;
+      }
+      res.writeHead(200, {
+        ...headers,
+        'Content-Type': lib.contentType,
+        // Loaded by the opaque-origin preview; versioned public files, safe to cache.
+        'Access-Control-Allow-Origin': '*',
+        'Cross-Origin-Resource-Policy': 'cross-origin',
+        'Cache-Control': 'public, max-age=86400',
+      });
+      res.end(req.method === 'HEAD' ? undefined : lib.body);
       return;
     }
     const type = Object.hasOwn(FILES, path)

@@ -1,0 +1,28 @@
+{
+  "name": "@webdizayn/libs",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Front-end libraries the platform hosts for RUN and CHECK (no CDN at runtime).",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "build": "echo libs has no build step",
+    "typecheck": "tsc -p tsconfig.json",
+    "lint": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@webdizayn/shared": "workspace:*",
+    "bootstrap-icons": "1.13.1",
+    "bootstrap3": "npm:bootstrap@3.4.1",
+    "bootstrap4": "npm:bootstrap@4.6.2",
+    "bootstrap5": "npm:bootstrap@5.3.8",
+    "jquery": "3.7.1",
+    "popper.js": "1.16.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "5.9.3",
+    "vitest": "^4.0.0"
+  }
+}

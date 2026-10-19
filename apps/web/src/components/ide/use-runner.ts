@@ -8,6 +8,7 @@ import {
   RUN_TIMEOUT_MS,
   type ConsoleLine,
   type RunMessage,
+  withHostedLibraries,
 } from '@/lib/sandbox';
 
 export type RunStatus = 'idle' | 'running' | 'ok' | 'timeout';
@@ -73,7 +74,7 @@ export function useRunner() {
       runIdRef.current = runId;
       setLines([]);
       setStatus('running');
-      const msg: RunMessage = { type: 'wd:run', runId, files };
+      const msg: RunMessage = { type: 'wd:run', runId, files: withHostedLibraries(files) };
       if (readyRef.current) post(msg);
       else pendingRef.current = msg;
 

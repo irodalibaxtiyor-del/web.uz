@@ -1,4 +1,4 @@
-import type { ProjectFile } from '@webdizayn/shared';
+import { rewriteLibraryUrls, type ProjectFile } from '@webdizayn/shared';
 
 /**
  * Sandbox runner URL. Must be a different *site* from the web app (in production a separate
@@ -43,4 +43,16 @@ export function parseRunnerMessage(data: unknown): RunnerMessage | null {
     };
   }
   return null;
+}
+
+/**
+ * Points known library CDN URLs (Bootstrap, jQuery…) in HTML/CSS at the sandbox's own copy.
+ * The sandbox CSP still blocks every other network request.
+ */
+export function withHostedLibraries(files: ProjectFile[]): ProjectFile[] {
+  return files.map((f) =>
+    /\.(html|css)$/i.test(f.path)
+      ? { ...f, content: rewriteLibraryUrls(f.content, `${SANDBOX_URL}/lib/`) }
+      : f,
+  );
 }

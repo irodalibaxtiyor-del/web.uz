@@ -859,3 +859,58 @@ Roadmap ro'yxati bo'yicha audit va tuzatishlar:
   - PHP kodi platformada bajarilmaydi — amaliy ko‘nikma faqat mustaqil mashqlar orqali, tekshiruvsiz.
   - Testlar va javoblar public repoda ochiq (boshqa kurslardagidek).
   - Namespaces/Composer va loyiha darslari talabadan lokal muhit (PHP 8.3, Composer, `pdo_sqlite`) talab qiladi.
+
+## 2026-10-17
+
+### Lokal demo qayta ishga tushirildi
+
+- `shared`, `check-engine` va `api` qayta build qilindi, demo bazaga migratsiyalar qo'llandi (`0012` gacha).
+- API (`pglite://./.data/pg`, port 4000), sandbox (3100) va web (`next dev`, 3000) ishga tushirildi; `/health/ready`, `/api/health` proxy, `/` va `/login` 200.
+
+### Bootstrap kurslari (B3, B4, B5) — boshlandi
+
+- So'rov: w3schools.com/bootstrap (B3), /bootstrap4, /bootstrap5 darsliklarini o'zbek tilida, saytga qo'shish. Avvalgi kurslardagi huquqiy qaror saqlanadi: faqat mavzular tartibi olinadi, matn, misol, mashq va testlar **original o'zbekcha**. Reference/Editor/Quiz/Certificate/Interview sahifalari alohida dars qilinmaydi.
+- W3Schools tartibi: B3 — 34 asosiy + 6 grid + 4 tema; B4 — 37 + 8 grid; B5 — 33 + 7 forma + 9 grid.
+- **Muammo:** Bootstrap CDN'dan yuklanadi, lekin RUN sandbox (CSP) va CHECK engine (route interception) barcha tashqi so'rovlarni bloklaydi.
+- **Qaror — platformadagi kutubxonalar (vendored, MIT):** Bootstrap 3.4.1 / 4.6.2 / 5.3.8, jQuery 3.7.1, Popper 1.16.1, Bootstrap Icons npm orqali o'rnatiladi va platformaning o'zidan beriladi. Talaba W3Schools'dagi odatiy CDN havolani yozadi; ma'lum CDN URL'lari (aniq oq ro'yxat: host + versiya + fayl) platformadagi nusxaga almashtiriladi. Boshqa har qanday tashqi so'rov avvalgidek bloklanadi.
+  - RUN: web IDE fayllarni sandbox'ga yuborishdan oldin URL'larni `<sandbox>/lib/<id>/<fayl>` ga almashtiradi; sandbox server faqat oq ro'yxatdagi kutubxona fayllarini beradi; CSP `style-src`/`font-src` ga `'self'` qo'shiladi (`connect-src 'none'` o'zgarmaydi).
+  - CHECK: engine HTML/CSS'dagi URL'larni `http://check.invalid/__lib/...` ga almashtiradi va fayllarni xotiradan beradi.
+- **Infratuzilma bajarildi:**
+  - `packages/shared/src/libraries.ts`: `LIBRARIES` katalogi (id, fayllar, CDN prefikslari, aniq URL'lar), `resolveLibraryUrl`, `rewriteLibraryUrls`, `isLibraryFile`. Faqat aniq host + versiya + fayl tanilad (boshqa versiya, `..`, begona host — yo'q). 3 ta test.
+  - Yangi paket `packages/libs` (`@webdizayn/libs`): npm alias'lar (`bootstrap3`, `bootstrap4`, `bootstrap5`, `jquery`, `popper.js`, `bootstrap-icons@1.13.1`), `readLibraryFile`/`readLibraryPath` — faqat katalogdagi fayllar o'qiladi, xotirada keshlanadi. 3 ta test (har bir fayl npm paketida bor, versiya to'g'ri, ro'yxatdan tashqari yo'l rad etiladi).
+  - CHECK engine: `/__lib/` dan kutubxona fayllari, HTML/CSS fayllarda CDN URL'lari almashtiriladi; boshqa origin hali ham abort. 2 ta test (B5 CSS + collapse JS + icons, B4 + jQuery; begona versiya va traversal ishlamaydi).
+  - Sandbox: `/lib/<id>/<fayl>` (CORP cross-origin, ACAO *), CSP `style-src 'self' 'unsafe-inline'`, `font-src 'self' data:`; `connect-src 'none'` o'zgarmadi. 1 ta server testi (begona fayl, `.map`, traversal, `%2e%2e`, boshqa versiya — 404).
+  - Web: `withHostedLibraries()` (`lib/sandbox.ts`) RUN'dan oldin HTML/CSS'dagi URL'larni sandbox `/lib/` ga almashtiradi. 1 ta test.
+  - `deploy/Dockerfile` sandbox image'iga `node_modules` va `packages` qo'shildi (tekshirilmagan — lokal Docker yo'q).
+  - Sandbox xavfsizlik E2E: **24/24** (yangi: CDN havoladan Bootstrap CSS, JS va ikonka shrifti RUN'da ishlaydi; barcha izolyatsiya/exfiltration testlari o'tdi).
+  - Eslatma: Windows'da `python` — Microsoft Store shim'i (hech narsa qilmaydi, faqat "Python" chiqaradi). Skriptlar uchun `py -3` ishlatilsin.
+  - Qabul qilingan risk: student kodi sandbox origin'ining o'ziga (`/lib/`) uslub/shrift so'rovi yubora oladi — bu statik server, hech narsa loglamaydi va boshqa origin'ga chiqmaydi.
+- **Kontent infratuzilmasi:** `apps/api/src/db/content/bootstrap/shared.ts` — `bs3()`/`bs4()`/`bs5()` (CDN havolali sahifa), `slots()`/`cls()` (bitta shablondan boshlang'ich kod va yechim), `pic()` (`data:` SVG rasm), `RGB` (Bootstrap ranglari). Har modul fayli darslar bilan birga yechimlarni (`sNN`) ham eksport qiladi. Holat va qoidalar: [BOOTSTRAP_KURS_HOLATI.md](BOOTSTRAP_KURS_HOLATI.md).
+- **Bootstrap 3:** 1–4-modullar tayyor (22 dars, 21 mashq, 4 test), `content:verify bootstrap3` — 21/21.
+- **Bootstrap 3 — yakunlandi:** 8 modul, 44 dars, 43 mashq (CHECK qoidalari bilan), 8 test. JS plaginlari ham haqiqiy brauzerda tekshiriladi (alert yopish, dropdown, collapse, tab, carousel, modal, tooltip, popover, scrollspy, affix, jQuery filtr). W3Schools temalari o'rniga original loyihalar (shaxsiy sahifa, IT-kompaniya, musiqa guruhi). `content:verify bootstrap3` **43/43**, `content-courses.test.ts` 31/31.
+- Demo bazaga yuklandi (`db:seed:course bootstrap3`: 8 modul, 44 dars, 43 mashq, 8 test). API smoke (Aziza): katalogda, yozilish, 44 dars, boshlang'ich kod FAILED → yechim PASSED → dars tugaydi, yashirin selektorlar javobda yo'q.
+- **Bootstrap 4 — boshlandi.**
+- Bootstrap 4: 1–4-modullar tayyor (22 dars, 21 mashq, 4 test), har biri `content:verify` da o'tdi. Tajriba: B4 tab plagini `aria-selected` ni faqat `role="tab"` bo'lgan havolada yangilaydi; `.badge-pill` padding'i `em` da (radius 10rem = 160px tekshiriladi).
+- **Bootstrap 4 — yakunlandi:** 8 modul, 45 dars, 44 mashq, 8 test (Flex setka, card, utilitalar, toast, custom forms, Bootstrap Icons). `content:verify bootstrap4` **44/44**, `content-courses.test.ts` 35/35.
+- Bootstrap 4 demo bazaga yuklandi (`db:seed:course bootstrap4`: 8 modul, 45 dars, 44 mashq, 8 test).
+- **Bootstrap 5 — boshlandi** (5.3.8, jQuery'siz, `data-bs-*`, `xxl`, offcanvas, dark mode, floating labels).
+- Bootstrap 5: 1–3-modullar tayyor (15 dars, 14 mashq, 3 test). Tajriba: B5 da `g-*` gutter qator kengligini o'zgartiradi (`g-3` da `col-lg-3` = 283px, standart gutter'da 285px) — kengliklar probe bilan o'lchanadi.
+- Bootstrap 5: 1–7-modullar tayyor (40 dars, 39 mashq, 7 test). Tajriba: range uchun `fill` ishlamaydi — `press` (ArrowRight/End) bilan sinaladi; floating label `transform` — `matrix(0.85, 0, 0, 0.85, 2.04, -6.8)`; tooltip/popover joylashuvi `data-popper-placement` atributida.
+- **Bootstrap 5 — yakunlandi:** 8 modul, 49 dars, 48 mashq, 8 test (jQuery'siz plaginlar, offcanvas, accordion, dark mode, floating labels, `.btn-check`, `xxl` setka). `content:verify bootstrap5` **48/48**. Demo bazaga yuklandi.
+
+### Bootstrap kurslari — yakuniy tekshiruv
+
+- Jami: **3 kurs, 24 modul, 138 dars, 135 mashq (CHECK qoidalari bilan), 24 test.** Katalog tartibi: … PHP (50) → Bootstrap 3 (60) → Bootstrap 4 (70) → Bootstrap 5 (80).
+- `content:verify`: bootstrap3 **43/43**, bootstrap4 **44/44**, bootstrap5 **48/48** — har yechim haqiqiy Chrome'da PASSED, boshlang'ich kod o'tmaydi.
+- Regressiya: format ✅, typecheck ✅, lint ✅ (3 ta ishlatilmagan import/parametr topilib tuzatildi), build ✅, test ✅ (shared 41 + libs 3 + sandbox 16 + web 31 + check-engine 23 + api 283 = **397**), sandbox xavfsizlik E2E **24/24**.
+- API smoke (Aziza, haqiqiy CHECK): B3/B4/B5 da kurs katalogda, boshlang'ich kod FAILED → yechim PASSED → dars COMPLETED, keyingisi ochiladi; yashirin selektorlar javobda yo'q.
+- Brauzer smoke (Playwright, haqiqiy web IDE): B5 dars sahifasi (jadval, kod bloklari) va mashq sahifasida RUN — preview'da Bootstrap CSS va JS (`bootstrap` obyekti) yuklandi, holat “Tayyor”, sahifa xatolari 0.
+- Topilgan operatsion holat: `pnpm -r build` paytida `shared/dist` vaqtincha o'chirilganda `node --watch` dagi sandbox dev server qayta ishga tushib yiqildi va keyin o'zi tiklanmadi (RUN'da “Vaqt tugadi”). Build'dan keyin sandbox dev serverni qayta ishga tushirish kerak. Kodda xato emas.
+- Cheklovlar:
+  - Bootstrap 3/4 eskirgan (npm'da “deprecated”) — kurslar eski loyihalarni qo'llab-quvvatlash uchun; yangi loyihalar uchun B5 tavsiya etiladi (kurs tavsiflarida aytilgan).
+  - CHECK talabaning JS'i ichida ishlaydi — DOM'ni almashtirib aldash nazariy jihatdan mumkin (avvalgi kurslardagidek).
+  - Mashqlar yechimlari va CHECK qoidalari public repoda ochiq (avvalgi kurslardagidek).
+  - Bir nechta mashqda kenglik tekshiruvi Chrome'ning aniq yaxlitlash qiymatiga bog'liq (`295.984px`) — Chrome versiyasi o'zgarsa qayta tekshirish kerak.
+  - Docker image'lar (sandbox endi `packages` va `node_modules` ni ham oladi) lokal tekshirilmagan.
+  - O'zgarishlar hali commit qilinmagan.
+

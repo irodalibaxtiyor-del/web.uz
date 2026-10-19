@@ -324,6 +324,113 @@ describe('check engine (real Chrome)', () => {
     });
   });
 
+  it('serves hosted libraries for their public CDN URLs (Bootstrap 5, 4 with jQuery, icons)', async () => {
+    const bs5 = `<!doctype html><html><head>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="style.css"></head><body>
+<button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#demo">Ochish</button>
+<div id="demo" class="collapse">Matn</div><i class="bi bi-house"></i>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body></html>`;
+    const icons =
+      '@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css");';
+    const res = await runChecks(
+      project(bs5, [{ path: 'style.css', content: icons }]),
+      rules([
+        {
+          id: 'css',
+          title: 'Bootstrap CSS',
+          assert: {
+            type: 'style',
+            selector: '.btn-primary',
+            property: 'background-color',
+            value: 'rgb(13, 110, 253)',
+          },
+        },
+        {
+          id: 'js',
+          title: 'Bootstrap JS',
+          actions: [
+            { type: 'click', selector: '.btn' },
+            { type: 'wait', ms: 600 },
+          ],
+          assert: { type: 'count', selector: '#demo.show' },
+        },
+        {
+          id: 'icons',
+          title: 'Icons font',
+          assert: {
+            type: 'style',
+            selector: '.bi',
+            property: 'font-family',
+            value: 'bootstrap-icons',
+            pseudo: '::before',
+          },
+        },
+        { id: 'clean', title: 'xato yo‘q', assert: { type: 'noConsoleErrors' } },
+      ]),
+      opts,
+    );
+    expect(passedIds(res)).toEqual({ css: true, js: true, icons: true, clean: true });
+
+    const bs4 = `<!doctype html><html><head>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"></head><body>
+<button class="btn btn-success" data-toggle="collapse" data-target="#d">Ochish</button><div id="d" class="collapse">x</div>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+</body></html>`;
+    const res4 = await runChecks(
+      project(bs4),
+      rules([
+        {
+          id: 'css',
+          title: 'BS4 CSS',
+          assert: {
+            type: 'style',
+            selector: '.btn-success',
+            property: 'background-color',
+            value: 'rgb(40, 167, 69)',
+          },
+        },
+        {
+          id: 'js',
+          title: 'BS4 JS',
+          actions: [
+            { type: 'click', selector: '.btn' },
+            { type: 'wait', ms: 600 },
+          ],
+          assert: { type: 'count', selector: '#d.show' },
+        },
+      ]),
+      opts,
+    );
+    expect(res4.status).toBe('PASSED');
+  });
+
+  it('does not host other versions or files of a library', async () => {
+    const page = `<!doctype html><html><head>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="/__lib/bootstrap@5.3.8/css/../../../index.html"></head>
+<body><button class="btn btn-primary">x</button></body></html>`;
+    const res = await runChecks(
+      project(page),
+      rules([
+        {
+          id: 'css',
+          title: 'no bootstrap',
+          assert: {
+            type: 'style',
+            selector: '.btn',
+            property: 'background-color',
+            value: 'rgb(13, 110, 253)',
+          },
+        },
+      ]),
+      opts,
+    );
+    expect(res.status).toBe('FAILED');
+  });
+
   it('reports ERROR when the browser cannot start (never a fake PASS)', async () => {
     const res = await runChecks(
       project('<h1>x</h1>'),

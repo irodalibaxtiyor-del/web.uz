@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseRunnerMessage } from './sandbox';
+import { parseRunnerMessage, SANDBOX_URL, withHostedLibraries } from './sandbox';
 
 describe('parseRunnerMessage', () => {
   it('accepts the three runner message types', () => {
@@ -35,5 +35,21 @@ describe('parseRunnerMessage', () => {
       text: 'x'.repeat(10_000),
     });
     expect(msg && 'text' in msg && msg.text.length).toBe(2001);
+  });
+});
+
+describe('withHostedLibraries', () => {
+  it('points known CDN URLs in HTML/CSS at the sandbox copy and leaves JS alone', () => {
+    const cdn = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css';
+    const out = withHostedLibraries([
+      { path: 'index.html', content: `<link href="${cdn}" rel="stylesheet">` },
+      { path: 'css/a.css', content: `@import url(${cdn});` },
+      { path: 'script.js', content: `const u = "${cdn}";` },
+    ]);
+    expect(out[0]!.content).toBe(
+      `<link href="${SANDBOX_URL}/lib/bootstrap@5.3.8/css/bootstrap.min.css" rel="stylesheet">`,
+    );
+    expect(out[1]!.content).toContain(`${SANDBOX_URL}/lib/bootstrap@5.3.8/`);
+    expect(out[2]!.content).toContain(cdn);
   });
 });

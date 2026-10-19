@@ -97,6 +97,33 @@ check(
 );
 check((await statusText()).includes('Tayyor'), 'normal run: status becomes Tayyor');
 
+// ---- 1b. Hosted libraries: known CDN URLs work, anything else stays blocked ---
+await loadProject([
+  {
+    path: 'index.html',
+    content: `<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap-grid.min.css" rel="stylesheet">
+<button class="btn btn-primary">B</button><i class="bi bi-house"></i><div class="other">x</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script src="app.js"></script>`,
+  },
+  {
+    path: 'app.js',
+    content: `addEventListener('load', async () => {
+  const bg = getComputedStyle(document.querySelector('.btn')).backgroundColor;
+  await document.fonts.ready;
+  console.log('BS_CSS ' + bg, 'BS_JS ' + typeof bootstrap.Collapse, 'ICONS ' + document.fonts.check('16px bootstrap-icons'));
+});`,
+  },
+]);
+await clickRun();
+await sleep(3000);
+const libOut = await consoleText();
+check(libOut.includes('BS_CSS rgb(13, 110, 253)'), 'hosted Bootstrap CSS loads from its CDN URL');
+check(libOut.includes('BS_JS function'), 'hosted Bootstrap JS loads from its CDN URL');
+check(libOut.includes('ICONS true'), 'hosted icon font loads');
+
 // ---- 2. Escape attempts ------------------------------------------------------
 const attack = `
 const log = (k) => console.log(k);

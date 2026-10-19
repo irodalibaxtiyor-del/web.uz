@@ -1,15 +1,23 @@
-import { chromium, type Browser, type Page } from 'playwright-core';
-import type {
-  CheckAction,
-  CheckAssertion,
-  CheckEngineResult,
-  CheckErrorCode,
-  CheckRule,
-  ProjectFile,
+import { readLibraryPath } from '@webdizayn/libs';
+import {
+  rewriteLibraryUrls,
+  type CheckAction,
+  type CheckAssertion,
+  type CheckEngineResult,
+  type CheckErrorCode,
+  type CheckRule,
+  type ProjectFile,
 } from '@webdizayn/shared';
+import { chromium, type Browser, type Page } from 'playwright-core';
 
 /** Fake origin the project is served from. Every other request is aborted. */
 export const CHECK_ORIGIN = 'http://check.invalid';
+
+/**
+ * Hosted libraries (Bootstrap, jQuery…) are served from the project origin under this path;
+ * their public CDN URLs in HTML/CSS are rewritten to it before the browser sees them.
+ */
+const LIB_PREFIX = '/__lib/';
 
 export interface EngineOptions {
   /** Chrome/Chromium executable. Defaults to the installed Google Chrome (`channel: 'chrome'`). */
@@ -133,12 +141,28 @@ async function runRule(
   try {
     await context.route('**/*', async (route) => {
       const url = new URL(route.request().url());
-      const file =
-        url.origin === CHECK_ORIGIN
-          ? files.get(decodeURIComponent(url.pathname).replace(/^\/+/, '').toLowerCase())
-          : undefined;
+      if (url.origin !== CHECK_ORIGIN) return route.abort('blockedbyclient');
+      if (url.pathname.startsWith(LIB_PREFIX)) {
+        const lib = readLibraryPath(url.pathname.slice(LIB_PREFIX.length));
+        if (!lib) return route.abort('blockedbyclient');
+        return route.fulfill({
+          status: 200,
+          headers: {
+            'content-type': lib.contentType,
+            // Allows <link crossorigin integrity=…> copied from library docs.
+            'access-control-allow-origin': '*',
+            'cache-control': 'no-store',
+          },
+          body: lib.body,
+        });
+      }
+      const file = files.get(decodeURIComponent(url.pathname).replace(/^\/+/, '').toLowerCase());
       if (!file) return route.abort('blockedbyclient');
       const ext = file.path.slice(file.path.lastIndexOf('.') + 1);
+      const body =
+        ext === 'html' || ext === 'css'
+          ? rewriteLibraryUrls(file.content, LIB_PREFIX)
+          : file.content;
       return route.fulfill({
         status: 200,
         headers: {
@@ -146,7 +170,7 @@ async function runRule(
           'content-security-policy': CSP,
           'cache-control': 'no-store',
         },
-        body: file.content,
+        body,
       });
     });
     await context.routeWebSocket(/.*/, (ws) => ws.close());

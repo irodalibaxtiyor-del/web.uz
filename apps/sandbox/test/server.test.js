@@ -37,6 +37,30 @@ describe('sandbox server', () => {
     }
   });
 
+  it('serves hosted library files, and only listed ones', async () => {
+    const res = await fetch(`${base}/lib/bootstrap@5.3.8/css/bootstrap.min.css`);
+    expect(res.status).toBe(200);
+    expect(res.headers.get('content-type')).toContain('text/css');
+    expect(res.headers.get('cross-origin-resource-policy')).toBe('cross-origin');
+    expect(await res.text()).toContain('v5.3.8');
+    const font = await fetch(
+      `${base}/lib/bootstrap@3.4.1/fonts/glyphicons-halflings-regular.woff2`,
+    );
+    expect(font.headers.get('content-type')).toBe('font/woff2');
+    for (const p of [
+      '/lib/bootstrap@5.3.8/package.json',
+      '/lib/bootstrap@5.3.8/css/bootstrap.min.css.map',
+      '/lib/bootstrap@5.3.8/../../src/server.js',
+      '/lib/bootstrap@5.3.8/%2e%2e/%2e%2e/package.json',
+      '/lib/bootstrap@9.9.9/css/bootstrap.min.css',
+    ]) {
+      expect((await fetch(`${base}${p}`)).status, p).toBe(404);
+    }
+    const csp = res.headers.get('content-security-policy');
+    expect(csp).toContain("style-src 'self' 'unsafe-inline'");
+    expect(csp).toContain("connect-src 'none'");
+  });
+
   it('serves nothing outside the allow-list (no traversal)', async () => {
     for (const p of [
       '/package.json',

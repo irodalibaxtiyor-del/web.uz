@@ -14,7 +14,8 @@
   },
   "dependencies": {
     "@webdizayn/shared": "workspace:*",
-    "playwright-core": "1.64.0"
+    "playwright-core": "1.64.0",
+    "@webdizayn/libs": "workspace:*"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.0",
