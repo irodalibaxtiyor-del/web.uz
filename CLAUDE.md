@@ -1040,3 +1040,15 @@ Roadmap ro'yxati bo'yicha audit va tuzatishlar:
 - Regressiya: typecheck ✅, lint ✅, format ✅, build ✅, test ✅ (shared 50 + libs 3 + sandbox 16 + web 36 + check-engine 23 + api 334 = **462**).
 - Demo bazaga `0014` qo'llandi.
 - Qolgan (infratuzilma yoki foydalanuvchi qarori): GitHub push (yangi token + public/private qarori), Docker image'lar, haqiqiy Postgres, alohida sandbox domeni, edge proksi, backup mashqi, email tasdiqlash / "parolni unutdim" (SMTP kerak), demo talabalarga parol berish (admin amali).
+
+### Joriy holat va keyingi qadamlar (2026-10-19 oxiri)
+
+- Oxirgi commit'lar: `cb42da6` (E2E guruhlar senariysi), `df757a8` (kurs o'qituvchilari, guruhni kursga yozish, parallel baholash himoyasi, AI murojaatlarini yopish, Toshkent haftalari). Ishchi daraxt toza.
+- Holat: testlar **462/462**, to'liq E2E **50/50**, sandbox E2E 24/24 (oxirgi marta Bootstrap bosqichida). Demo baza migratsiyasi `0014` gacha.
+- Roadmap fazalari (F0–15C) va kurslar (HTML, CSS, JS, PHP, Bootstrap 3/4/5) yakunlangan.
+- **Foydalanuvchi qarori kerak:**
+  - GitHub push: `Contents: write` ruxsatli yangi token; repo public qoladimi (CHECK qoidalari va yechimlar ochiq bo'ladi). Remote hali bo'sh, CI hech qachon ishlamagan.
+  - Eski (chatda ochilgan) GitHub tokenini revoke qilish.
+- **Infratuzilma kerak:** Docker image'lar va `deploy/README.md` tekshiruv ro'yxati, haqiqiy PostgreSQL, alohida registrable sandbox domeni, edge proksi (`X-Forwarded-For`), backup/restore mashqi, haqiqiy AI provayder (DPA), email tasdiqlash va "parolni unutdim" (SMTP).
+- **Admin amali (kod emas):** demo bazadagi 74 talabaga parol berish (`/orgs/<org>/admin/groups/<guruh>` → "Parol berilmaganlarga — Excel"), guruhlarga o'qituvchi va kurs biriktirish.
+- Kodda qolgan kichik cheklovlar (ixtiyoriy): portfolio uchun server skrinshoti va SEO meta, analitikada sana oralig'i filtri, testni faqat yechganda dars `IN_PROGRESS` ga o'tmasligi, kurs/modul/dars/topshiriqni o'chirish yo'qligi, demo bazadagi HTML/CSS/JS test variantlari aralashtirilmagan (`--replace` progressni o'chiradi).
