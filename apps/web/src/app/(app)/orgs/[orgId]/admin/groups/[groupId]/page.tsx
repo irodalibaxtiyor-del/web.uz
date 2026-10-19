@@ -2,13 +2,15 @@
 
 import type {
   AccountState,
+  CourseSummary,
+  GroupEnrollResult,
   GroupStudentRow,
   GroupSummary,
   TemporaryCredential,
 } from '@webdizayn/shared';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { AdminNav } from '@/components/admin-nav';
 import {
   AccountStatus,
@@ -205,6 +207,7 @@ function GroupView({
           )}
           {error && <ErrorText>{error}</ErrorText>}
         </Section>
+        <EnrollGroup orgId={orgId} group={group} />
         <Section title="Talabalar">
           <SearchBox
             label="Qidirish"
@@ -291,5 +294,86 @@ function GroupView({
         </Section>
       </div>
     </>
+  );
+}
+
+function EnrollGroup({ orgId, group }: { orgId: string; group: GroupSummary }) {
+  const id = useId();
+  const { state } = useApi<CourseSummary[]>(`/orgs/${orgId}/courses`);
+  const [courseId, setCourseId] = useState('');
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+
+  async function enroll(course: CourseSummary) {
+    if (
+      !window.confirm(
+        `${group.name} guruhining barcha faol talabalari “${course.title}” kursiga yoziladi. Davom etasizmi?`,
+      )
+    )
+      return;
+    setPending(true);
+    setError(null);
+    setNotice(null);
+    const res = await send<GroupEnrollResult>(
+      'POST',
+      `/orgs/${orgId}/admin/groups/${group.id}/enroll`,
+      { courseId: course.id },
+    );
+    setPending(false);
+    if (!res.ok) return setError(res.message);
+    const r = res.data;
+    setNotice(
+      `“${course.title}”: ${r.enrolled} ta talaba yozildi, ${r.alreadyEnrolled} tasi avval yozilgan edi` +
+        (r.skippedDisabled ? `, ${r.skippedDisabled} ta faolsiz hisob o‘tkazib yuborildi.` : '.'),
+    );
+  }
+
+  return (
+    <Section
+      title="Kursga yozish"
+      description="Guruhning barcha faol talabalari tanlangan kursga yoziladi. Avval yozilganlar takrorlanmaydi; keyin qo‘shilgan talabalarni yozish uchun amalni qayta bajaring."
+    >
+      <LoadState state={state}>
+        {(courses) => {
+          const published = courses.filter((c) => c.status === 'PUBLISHED');
+          const chosen = published.find((c) => c.id === courseId);
+          return published.length === 0 ? (
+            <Empty>E’lon qilingan kurs yo‘q.</Empty>
+          ) : (
+            <div className="flex flex-wrap items-end gap-3">
+              <div className="min-w-0 flex-1 space-y-1.5">
+                <label htmlFor={id} className="text-sm font-semibold">
+                  Kurs
+                </label>
+                <select
+                  id={id}
+                  value={courseId}
+                  onChange={(e) => {
+                    setCourseId(e.target.value);
+                    setNotice(null);
+                  }}
+                  className="field"
+                >
+                  <option value="">Kursni tanlang</option>
+                  {published.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <Button onClick={() => chosen && enroll(chosen)} disabled={pending || !chosen}>
+                {pending ? 'Yozilmoqda…' : 'Guruhni kursga yozish'}
+              </Button>
+            </div>
+          );
+        }}
+      </LoadState>
+      <div aria-live="polite" className="space-y-2">
+        {notice && <Notice>{notice}</Notice>}
+        {error && <ErrorText>{error}</ErrorText>}
+      </div>
+    </Section>
   );
 }

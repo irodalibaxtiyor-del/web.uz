@@ -6,6 +6,7 @@ import {
   rate,
   SUBMISSION_STATUSES,
   struggleReasons,
+  ANALYTICS_UTC_OFFSET_HOURS,
   trendWeeks,
   type AssignmentAnalytics,
   type CheckRule,
@@ -666,7 +667,8 @@ export class AnalyticsService {
   }
 }
 
-/** Monday of the row's week in UTC, matching `weekStartOf` in the shared package. */
-function weekOf(col: AnyColumn): SQL<string> {
-  return sql<string>`to_char(date_trunc('week', ${col} at time zone 'UTC'), 'YYYY-MM-DD')`;
+/** Monday of the row's week in Tashkent time, matching `weekStartOf` in the shared package. */
+export function weekOf(col: AnyColumn | SQL): SQL<string> {
+  const offset = sql.raw(`interval '${ANALYTICS_UTC_OFFSET_HOURS} hours'`);
+  return sql<string>`to_char(date_trunc('week', (${col} at time zone 'UTC') + ${offset}), 'YYYY-MM-DD')`;
 }

@@ -1022,3 +1022,21 @@ Roadmap ro'yxati bo'yicha audit va tuzatishlar:
   - admin talabani faolsizlantiradi → mavjud sessiya darhol 401, qayta kirish rad etiladi.
 - Natija: **47/47**, ikki marta ketma-ket. format ✅, lint ✅, `pnpm -r build` ✅.
 - CI'dagi `e2e` job ham shu skriptni ishlatadi (Ubuntu'da hali ishga tushirilmagan — repo GitHub'ga push qilinmagan).
+
+### Kamchiliklar tuzatildi: kurs o'qituvchilari, guruhni kursga yozish, parallel baholash, AI murojaatlari, Toshkent haftalari
+
+- Foydalanuvchi: "kamchiliklarni bartaraf etib davom et". Infratuzilmaga bog'liq bo'lmagan (kod orqali tuzatsa bo'ladigan) bandlar tanlandi.
+- **1. O'qituvchini kursga biriktirish** (F2'dan beri yo'q edi; admin yaratgan o'qituvchi hech bir kursni boshqara va baholay olmasdi):
+  - `PUT /orgs/:orgId/admin/teachers/:userId/courses` (faqat ORG_ADMIN): shu tashkilot kurslari to'plamini almashtiradi, boshqa tashkilotdagi biriktirishlarga tegmaydi; begona kurs 404, talaba/admin/o'zi — mavjud `managed()` qoidalari; audit `teacher.courses_set`.
+  - `TeacherRow.courses`. Web: o'qituvchi kartasida "O'qitadigan kurslari" (qoralama/arxiv belgisi bilan) va "Kurslarni saqlash"; guruhlar tanlovi bilan umumiy `ChoiceSet` komponenti.
+- **2. Guruhni kursga yozish** (B bosqichida qaror qilingan, lekin qilinmagan edi):
+  - `POST /orgs/:orgId/admin/groups/:groupId/enroll { courseId }`: faqat e'lon qilingan kurs (409 `COURSE_NOT_PUBLISHED`), faqat faol talabalar, takrorlanmaydi; javob `enrolled / alreadyEnrolled / skippedDisabled`; audit `group.enroll` (ismlarsiz).
+  - Web: admin guruh sahifasida "Kursga yozish" (tanlov + tasdiq + natija).
+- **3. Parallel baholash** (12E cheklovi — ikkinchi o'qituvchi birinchisining bahosini jimgina ustiga yozardi): review amallariga ixtiyoriy `basedOn` (o'qituvchi ko'rgan review tarixi uzunligi). Qulf ostida sanaladi; farq qilsa 409 `REVIEW_CHANGED`. Web review sahifasi doim yuboradi. Ixtiyoriy — eski klientlar buzilmaydi.
+- **4. AI murojaatlari** (11 cheklovi): migratsiya `0014_ai_handoff_resolve.sql` (`resolved_at`, `resolved_by` FK + indeks). `PUT …/tutor/handoffs/:id/resolved { resolved }` (kurs xodimi; begona kurs/org 404), audit `ai.handoff_resolve/reopen`. Ro'yxatda ochiqlari avval, "Hal qilindi · sana · kim". Web: kurs analitikasida "Hal qilindi" / "Qayta ochish" va ochiqlar soni.
+- **5. Analitika haftalari Toshkent vaqtida** (13C cheklovi): `weekStartOf` va SQL `weekOf` qat'iy UTC+5 siljish bilan (O'zbekistonda yozgi vaqt yo'q, tz bazasi kerak emas). Chegaralarda SQL va JS mosligi testi.
+- Testlar: `test/course-staffing.test.ts` 5 ta (RBAC 401/403/404, soxta header'lar, biriktirish → boshqarish/analitika ochiladi, olib tashlash → 403, begona kurs 404, dublikat 400; guruh: qoralama 409, begona guruh/kurs 404, faolsiz o'tkazib yuboriladi, idempotent, audit ismsiz); `reviews.test.ts` +1; `tutor.test.ts` kengaytirildi; `test/analytics-weeks.test.ts` 1; shared hafta testlari yangilandi.
+- To'liq E2E kengaytirildi: admin UI orqali o'qituvchiga kurs biriktiradi va guruhni kursga yozadi; talaba o'zi yozilmasdan kursda; guruh o'qituvchisi kurs analitikasi va javoblarni ochadi. **50/50**.
+- Regressiya: typecheck ✅, lint ✅, format ✅, build ✅, test ✅ (shared 50 + libs 3 + sandbox 16 + web 36 + check-engine 23 + api 334 = **462**).
+- Demo bazaga `0014` qo'llandi.
+- Qolgan (infratuzilma yoki foydalanuvchi qarori): GitHub push (yangi token + public/private qarori), Docker image'lar, haqiqiy Postgres, alohida sandbox domeni, edge proksi, backup mashqi, email tasdiqlash / "parolni unutdim" (SMTP kerak), demo talabalarga parol berish (admin amali).

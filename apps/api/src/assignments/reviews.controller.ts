@@ -53,7 +53,7 @@ export class ReviewsController {
     @Param('studentId', Id) studentId: string,
     @Body(new ZodPipe(reviewVersionSchema)) body: ReviewVersionInput,
   ) {
-    return this.reviews.startReview(auth, m, courseId, assignmentId, studentId, body.version);
+    return this.reviews.startReview(auth, m, courseId, assignmentId, studentId, body);
   }
 
   @Post('request-revision')
@@ -92,6 +92,6 @@ export class ReviewsController {
     @Param('studentId', Id) studentId: string,
     @Body(new ZodPipe(reviewVersionSchema)) body: ReviewVersionInput,
   ) {
-    return this.reviews.finalize(auth, m, courseId, assignmentId, studentId, body.version);
+    return this.reviews.finalize(auth, m, courseId, assignmentId, studentId, body);
   }
 }

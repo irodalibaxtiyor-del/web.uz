@@ -200,13 +200,14 @@ function ReviewActions({
     setPending(true);
     const res = await send<SubmissionReviewView>('POST', `${url}/${action}`, {
       version: latest,
+      // The history this page shows: if another teacher acted meanwhile, the server refuses.
+      basedOn: view.reviews.length,
       ...body,
     });
     setPending(false);
     if (!res.ok) {
-      return setError(
-        res.code === 'STALE_VERSION' ? `${res.message} (sahifani yangilang)` : res.message,
-      );
+      // STALE_VERSION and REVIEW_CHANGED already tell the teacher to reload.
+      return setError(res.message);
     }
     onDone(res.data);
   }

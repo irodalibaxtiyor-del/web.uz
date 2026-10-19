@@ -4,11 +4,15 @@ import { eq } from 'drizzle-orm';
 import {
   createTeacherSchema,
   credentialsResetSchema,
+  groupEnrollSchema,
   studentGroupSchema,
+  teacherCoursesSchema,
   teacherGroupsSchema,
   updateTeacherSchema,
   type CreateTeacherInput,
+  type GroupEnrollInput,
   type StudentGroupInput,
+  type TeacherCoursesInput,
   type TeacherGroupsInput,
   type UpdateTeacherInput,
 } from '@webdizayn/shared';
@@ -86,6 +90,29 @@ export class AdminAccountsController {
     @Body(new ZodPipe(teacherGroupsSchema)) body: TeacherGroupsInput,
   ) {
     return this.accounts.setTeacherGroups(auth, m, userId, body.groupIds);
+  }
+
+  @Put('teachers/:userId/courses')
+  @OrgRoles('ORG_ADMIN')
+  teacherCourses(
+    @CurrentAuth() auth: AuthContext,
+    @CurrentMembership() m: MembershipContext,
+    @Param('userId', Id) userId: string,
+    @Body(new ZodPipe(teacherCoursesSchema)) body: TeacherCoursesInput,
+  ) {
+    return this.accounts.setTeacherCourses(auth, m, userId, body.courseIds);
+  }
+
+  @Post('groups/:groupId/enroll')
+  @HttpCode(200)
+  @OrgRoles('ORG_ADMIN')
+  enrollGroup(
+    @CurrentAuth() auth: AuthContext,
+    @CurrentMembership() m: MembershipContext,
+    @Param('groupId', Id) groupId: string,
+    @Body(new ZodPipe(groupEnrollSchema)) body: GroupEnrollInput,
+  ) {
+    return this.accounts.enrollGroup(auth, m, groupId, body.courseId);
   }
 
   @Get('students')

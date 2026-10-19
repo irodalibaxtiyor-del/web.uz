@@ -347,4 +347,20 @@ describe('grading without a rubric', () => {
       expect.objectContaining({ action: 'GRADED', score: 7, reviewerName: null }),
     ]);
   });
+
+  it('refuses to overwrite a grade another teacher gave meanwhile', async () => {
+    const url = S(plainAssignment, student2);
+    // Two pages (two teachers) opened with the same history; the first one grades.
+    const seen = (await req(owner, 'get', url).expect(200)).body.reviews.length as number;
+    await req(owner, 'post', `${url}/grade`, { version: 1, basedOn: seen, score: 8 }).expect(200);
+    const late = await req(owner, 'post', `${url}/grade`, {
+      version: 1,
+      basedOn: seen,
+      score: 5,
+    }).expect(409);
+    expect(late.body.code).toBe('REVIEW_CHANGED');
+    expect((await req(owner, 'get', url).expect(200)).body.score).toBe(8);
+    await req(owner, 'post', `${url}/finalize`, { version: 1, basedOn: seen }).expect(409);
+    await req(owner, 'post', `${url}/finalize`, { version: 1, basedOn: seen + 1 }).expect(200);
+  });
 });

@@ -3,6 +3,7 @@
 import {
   createTeacherSchema,
   type AccountState,
+  type CourseSummary,
   type CreatedTeacher,
   type GroupSummary,
   type TeacherRow,
@@ -21,6 +22,7 @@ export default function AdminTeachersPage() {
   const { orgId } = useParams<{ orgId: string }>();
   const teachers = useApi<TeacherRow[]>(`/orgs/${orgId}/admin/teachers`);
   const groups = useApi<GroupSummary[]>(`/orgs/${orgId}/admin/groups`);
+  const courses = useApi<CourseSummary[]>(`/orgs/${orgId}/courses`);
   const [credential, setCredential] = useState<TemporaryCredential | null>(null);
 
   const put = (list: TeacherRow[], row: Partial<TeacherRow> & { userId: string }) =>
@@ -47,22 +49,27 @@ export default function AdminTeachersPage() {
           {(list) => (
             <LoadState state={groups.state}>
               {(gs) => (
-                <>
-                  <CreateTeacher
-                    orgId={orgId}
-                    onCreated={(c) => {
-                      put(list, c.teacher);
-                      setCredential(c.credential);
-                    }}
-                  />
-                  <TeacherList
-                    orgId={orgId}
-                    teachers={list}
-                    groups={gs}
-                    onRow={(r) => put(list, r)}
-                    onCredential={setCredential}
-                  />
-                </>
+                <LoadState state={courses.state}>
+                  {(cs) => (
+                    <>
+                      <CreateTeacher
+                        orgId={orgId}
+                        onCreated={(c) => {
+                          put(list, c.teacher);
+                          setCredential(c.credential);
+                        }}
+                      />
+                      <TeacherList
+                        orgId={orgId}
+                        teachers={list}
+                        groups={gs}
+                        courses={cs}
+                        onRow={(r) => put(list, r)}
+                        onCredential={setCredential}
+                      />
+                    </>
+                  )}
+                </LoadState>
               )}
             </LoadState>
           )}
@@ -155,12 +162,14 @@ function TeacherList({
   orgId,
   teachers,
   groups,
+  courses,
   onRow,
   onCredential,
 }: {
   orgId: string;
   teachers: TeacherRow[];
   groups: GroupSummary[];
+  courses: CourseSummary[];
   onRow: (r: Partial<TeacherRow> & { userId: string }) => void;
   onCredential: (c: TemporaryCredential) => void;
 }) {
@@ -188,6 +197,7 @@ function TeacherList({
               orgId={orgId}
               t={t}
               groups={groups}
+              courses={courses}
               onRow={onRow}
               onCredential={onCredential}
             />
@@ -202,22 +212,22 @@ function TeacherCard({
   orgId,
   t,
   groups,
+  courses,
   onRow,
   onCredential,
 }: {
   orgId: string;
   t: TeacherRow;
   groups: GroupSummary[];
+  courses: CourseSummary[];
   onRow: (r: Partial<TeacherRow> & { userId: string }) => void;
   onCredential: (c: TemporaryCredential) => void;
 }) {
   const id = useId();
   const [editing, setEditing] = useState(false);
-  const [selected, setSelected] = useState<Set<string>>(new Set(t.groups.map((g) => g.id)));
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const dirty = selected.size !== t.groups.length || t.groups.some((g) => !selected.has(g.id));
 
   async function run<T>(
     fn: () => Promise<{ ok: true; data: T } | { ok: false; message: string }>,
@@ -232,15 +242,25 @@ function TeacherCard({
     done(res.data);
   }
 
-  const saveGroups = () =>
+  const saveGroups = (groupIds: string[]) =>
     run(
       () =>
-        send<TeacherRow>('PUT', `/orgs/${orgId}/admin/teachers/${t.userId}/groups`, {
-          groupIds: [...selected],
-        }),
+        send<TeacherRow>('PUT', `/orgs/${orgId}/admin/teachers/${t.userId}/groups`, { groupIds }),
       (row) => {
         onRow(row);
         setNotice('Guruhlar saqlandi.');
+      },
+    );
+
+  const saveCourses = (courseIds: string[]) =>
+    run(
+      () =>
+        send<TeacherRow>('PUT', `/orgs/${orgId}/admin/teachers/${t.userId}/courses`, {
+          courseIds,
+        }),
+      (row) => {
+        onRow(row);
+        setNotice('Kurslar saqlandi.');
       },
     );
 
@@ -360,42 +380,97 @@ function TeacherCard({
           </div>
         </form>
       )}
-      <fieldset className="mt-4 space-y-2">
-        <legend className="text-sm font-semibold">Ruxsat etilgan guruhlar</legend>
-        {groups.length === 0 ? (
-          <Empty>Hali guruh yo‘q.</Empty>
-        ) : (
-          <div className="flex flex-wrap gap-3">
-            {groups.map((g) => (
-              <label key={g.id} className="flex items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  checked={selected.has(g.id)}
-                  onChange={(e) => {
-                    const next = new Set(selected);
-                    if (e.target.checked) next.add(g.id);
-                    else next.delete(g.id);
-                    setSelected(next);
-                  }}
-                />
-                {g.name}
-              </label>
-            ))}
-          </div>
-        )}
-        <Button
-          variant="secondary"
-          className="px-3 py-1.5 text-xs"
-          onClick={saveGroups}
-          disabled={busy || !dirty}
-        >
-          Guruhlarni saqlash
-        </Button>
-      </fieldset>
+      <ChoiceSet
+        legend="Ruxsat etilgan guruhlar"
+        hint="Guruh panelida natijalarni ko‘radi va eksport qiladi."
+        empty="Hali guruh yo‘q."
+        options={groups.map((g) => ({ id: g.id, label: g.name }))}
+        initial={t.groups.map((g) => g.id)}
+        saveLabel="Guruhlarni saqlash"
+        busy={busy}
+        onSave={saveGroups}
+      />
+      <ChoiceSet
+        legend="O‘qitadigan kurslari"
+        hint="Kursni tahrirlaydi, javoblarni ko‘rib chiqadi va baholaydi."
+        empty="Hali kurs yo‘q."
+        options={courses.map((c) => ({
+          id: c.id,
+          label: c.status === 'PUBLISHED' ? c.title : `${c.title} (${STATUS_LABEL[c.status]})`,
+        }))}
+        initial={t.courses.map((c) => c.id)}
+        saveLabel="Kurslarni saqlash"
+        busy={busy}
+        onSave={saveCourses}
+      />
       <div className="mt-3 space-y-2" aria-live="polite">
         {notice && <Notice>{notice}</Notice>}
         {error && <ErrorText>{error}</ErrorText>}
       </div>
     </li>
+  );
+}
+
+const STATUS_LABEL: Record<CourseSummary['status'], string> = {
+  DRAFT: 'qoralama',
+  PUBLISHED: 'e’lon qilingan',
+  ARCHIVED: 'arxiv',
+};
+
+function ChoiceSet({
+  legend,
+  hint,
+  empty,
+  options,
+  initial,
+  saveLabel,
+  busy,
+  onSave,
+}: {
+  legend: string;
+  hint: string;
+  empty: string;
+  options: { id: string; label: string }[];
+  initial: string[];
+  saveLabel: string;
+  busy: boolean;
+  onSave: (ids: string[]) => void;
+}) {
+  const [selected, setSelected] = useState<Set<string>>(new Set(initial));
+  const dirty = selected.size !== initial.length || initial.some((x) => !selected.has(x));
+  return (
+    <fieldset className="mt-4 space-y-2">
+      <legend className="text-sm font-semibold">{legend}</legend>
+      <p className="text-xs text-slate-600 dark:text-slate-400">{hint}</p>
+      {options.length === 0 ? (
+        <Empty>{empty}</Empty>
+      ) : (
+        <div className="flex flex-wrap gap-3">
+          {options.map((o) => (
+            <label key={o.id} className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={selected.has(o.id)}
+                onChange={(e) => {
+                  const next = new Set(selected);
+                  if (e.target.checked) next.add(o.id);
+                  else next.delete(o.id);
+                  setSelected(next);
+                }}
+              />
+              {o.label}
+            </label>
+          ))}
+        </div>
+      )}
+      <Button
+        variant="secondary"
+        className="px-3 py-1.5 text-xs"
+        onClick={() => onSave([...selected])}
+        disabled={busy || !dirty}
+      >
+        {saveLabel}
+      </Button>
+    </fieldset>
   );
 }

@@ -8,6 +8,7 @@ import type {
 } from '@webdizayn/shared';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { useState } from 'react';
 import {
   BUCKET_LABEL,
   ColumnChart,
@@ -18,7 +19,8 @@ import {
   STRUGGLE_LABEL,
   weekColumns,
 } from '@/components/analytics-ui';
-import { LoadState, PageHeader, TableScroll } from '@/components/ui';
+import { Button, ErrorText, LoadState, PageHeader, TableScroll } from '@/components/ui';
+import { send } from '@/lib/api';
 import { formatDate } from '@/lib/dates';
 import { useApi } from '@/lib/use-api';
 
@@ -38,14 +40,32 @@ const HANDOFF_LABEL: Record<HandoffCategory, string> = {
   OTHER: 'Boshqa',
 };
 
-/** Students who asked the AI tutor to bring in a teacher. Read-only; no grades involved. */
+/** Students who asked the AI tutor to bring in a teacher. No grades involved. */
 function Handoffs({ base }: { base: string }) {
-  const { state } = useApi<TutorHandoffView[]>(`${base}/tutor/handoffs`);
+  const { state, setState } = useApi<TutorHandoffView[]>(`${base}/tutor/handoffs`);
+  const [busy, setBusy] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const open = state.kind === 'ready' ? state.data.filter((h) => !h.resolvedAt).length : 0;
+
+  async function mark(h: TutorHandoffView, resolved: boolean) {
+    if (state.kind !== 'ready') return;
+    const list = state.data;
+    setBusy(h.id);
+    setError(null);
+    const res = await send<TutorHandoffView>('PUT', `${base}/tutor/handoffs/${h.id}/resolved`, {
+      resolved,
+    });
+    setBusy(null);
+    if (!res.ok) return setError(res.message);
+    setState({ kind: 'ready', data: list.map((x) => (x.id === h.id ? res.data : x)) });
+  }
+
   return (
     <Section
-      title="O‘qituvchiga murojaatlar"
-      description="Talabalar AI yordamchi orqali yuborgan so‘rovlar (oxirgi 100 ta)."
+      title={`O‘qituvchiga murojaatlar${open ? ` · ${open} ta ochiq` : ''}`}
+      description="Talabalar AI yordamchi orqali yuborgan so‘rovlar (oxirgi 100 ta, ochiqlari avval). Talaba bilan gaplashgach, “Hal qilindi” deb belgilang."
     >
+      {error && <ErrorText>{error}</ErrorText>}
       {state.kind === 'loading' && <Empty>Yuklanmoqda…</Empty>}
       {state.kind === 'error' && <Empty>{state.message}</Empty>}
       {state.kind === 'ready' &&
@@ -54,7 +74,10 @@ function Handoffs({ base }: { base: string }) {
         ) : (
           <ul className="divide-y divide-slate-100 dark:divide-slate-800">
             {state.data.map((h) => (
-              <li key={h.id} className="space-y-1 py-3 text-sm">
+              <li
+                key={h.id}
+                className={`space-y-1 py-3 text-sm ${h.resolvedAt ? 'text-slate-600 dark:text-slate-400' : ''}`}
+              >
                 <p className="flex flex-wrap items-center gap-2">
                   <strong>{h.studentName}</strong>
                   <span className="rounded-full bg-accent-300/40 px-2 py-0.5 text-xs text-ink dark:bg-accent-500/20 dark:text-accent-300">
@@ -74,6 +97,27 @@ function Handoffs({ base }: { base: string }) {
                   </Link>
                 </p>
                 {h.note && <p className="whitespace-pre-wrap">{h.note}</p>}
+                <div className="flex flex-wrap items-center gap-3 pt-1">
+                  {h.resolvedAt ? (
+                    <span className="text-xs text-emerald-800 dark:text-emerald-300">
+                      ✓ Hal qilindi · {formatDate(h.resolvedAt)}
+                      {h.resolvedByName ? ` · ${h.resolvedByName}` : ''}
+                    </span>
+                  ) : (
+                    <span className="text-xs font-semibold text-amber-800 dark:text-amber-300">
+                      ● Ochiq
+                    </span>
+                  )}
+                  <Button
+                    variant="secondary"
+                    className="px-3 py-1 text-xs"
+                    disabled={busy !== null}
+                    onClick={() => mark(h, !h.resolvedAt)}
+                    aria-label={`${h.studentName}, ${h.targetTitle}: ${h.resolvedAt ? 'qayta ochish' : 'hal qilindi deb belgilash'}`}
+                  >
+                    {h.resolvedAt ? 'Qayta ochish' : 'Hal qilindi'}
+                  </Button>
+                </div>
               </li>
             ))}
           </ul>

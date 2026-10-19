@@ -36,6 +36,29 @@ export const teacherGroupsSchema = z.object({
 });
 export type TeacherGroupsInput = z.infer<typeof teacherGroupsSchema>;
 
+/** Courses a teacher may manage (author, review, grade) in this organization. */
+export const teacherCoursesSchema = z.object({
+  courseIds: z
+    .array(z.uuid())
+    .max(200)
+    .refine((ids) => new Set(ids).size === ids.length, { message: 'Kurs takrorlangan' }),
+});
+export type TeacherCoursesInput = z.infer<typeof teacherCoursesSchema>;
+
+/** Enrols every active student of a group in one published course. */
+export const groupEnrollSchema = z.object({ courseId: z.uuid() });
+export type GroupEnrollInput = z.infer<typeof groupEnrollSchema>;
+
+export interface GroupEnrollResult {
+  courseId: string;
+  /** Newly enrolled now. */
+  enrolled: number;
+  /** Were already enrolled. */
+  alreadyEnrolled: number;
+  /** Disabled accounts are left out. */
+  skippedDisabled: number;
+}
+
 export const studentGroupSchema = z.object({ groupId: z.uuid().nullable() });
 export type StudentGroupInput = z.infer<typeof studentGroupSchema>;
 
@@ -70,6 +93,7 @@ export interface TeacherRow extends AccountState {
   login: string | null;
   email: string | null;
   groups: { id: string; name: string }[];
+  courses: { id: string; title: string }[];
   createdAt: string;
 }
 

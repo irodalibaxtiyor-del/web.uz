@@ -546,12 +546,19 @@ async function run() {
   await row.getByLabel('1-26 E2E').check();
   await row.getByRole('button', { name: 'Guruhlarni saqlash' }).click();
   await waitText(ap, 'Guruhlar saqlandi.');
-  record(true, 'admin creates a teacher (one-time password) and assigns one group');
+  await row.getByLabel('E2E HTML').check();
+  await row.getByRole('button', { name: 'Kurslarni saqlash' }).click();
+  await waitText(ap, 'Kurslar saqlandi.');
+  record(true, 'admin creates a teacher (one-time password), assigns one group and one course');
 
   // admin: temporary password for a student
   await ap.goto(`${WEB}/orgs/${mainOrg}/admin/groups/${g1.id}`);
   await ap.getByRole('button', { name: 'QODIROVA NODIRA: parolni tiklash' }).click();
   const nodiraTemp = await shownPassword(ap, 'QODIROVA NODIRA');
+  await ap.getByLabel('Kurs', { exact: true }).selectOption({ label: 'E2E HTML' });
+  await ap.getByRole('button', { name: 'Guruhni kursga yozish' }).click();
+  await waitText(ap, '2 ta talaba yozildi');
+  record(true, 'admin enrols the whole group in the course');
   expect(
     nodiraTemp.startsWith('1-26e2e-'),
     'admin issues a temporary student password with the group prefix',
@@ -570,7 +577,10 @@ async function run() {
   await changePassword(gs.page, nodiraTemp);
   record(true, 'student signs in with the login and sets an own password');
   const GS = (m, p, b) => api(gs.ctx, m, p, b);
-  await GS('POST', `${base}/enroll`);
+  expect(
+    (await GS('GET', `${base}/map`)).status === 200,
+    'group enrolment: the student is in the course without enrolling',
+  );
   await GS('PUT', `${base}/exercises/${ex.id}/workspace`, {
     files: [{ path: 'index.html', content: '<p>hali tayyor emas</p>' }],
   });
@@ -615,8 +625,14 @@ async function run() {
       (await GT('GET', `/orgs/${mainOrg}/groups/${g1.id}/students/${sardor.userId}`)).status ===
         404 &&
       (await GT('GET', `/orgs/${mainOrg}/groups/export.xlsx?groupId=${g2.id}`)).status === 404 &&
-      (await GT('GET', `/orgs/${mainOrg}/admin/teachers`)).status === 403,
+      (await GT('GET', `/orgs/${mainOrg}/admin/teachers`)).status === 403 &&
+      (await GT('GET', `/orgs/${otherOrg}/groups`)).status === 404,
     'cross-group: other groups, their students and admin pages are closed to the teacher',
+  );
+  expect(
+    (await GT('GET', `${base}/analytics`)).status === 200 &&
+      (await GT('GET', `${base}/assignments/${asg.id}/submissions/${studentId}`)).status === 200,
+    'course assigned by the admin: the teacher can open its analytics and reviews',
   );
   const xlsx = await gt.ctx.request.fetch(
     `${WEB}/api/orgs/${mainOrg}/groups/export.xlsx?groupId=${g1.id}`,

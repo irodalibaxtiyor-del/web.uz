@@ -1,6 +1,7 @@
-import { Body, Controller, Get, HttpCode, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Param, Post, Put, Query } from '@nestjs/common';
 import {
   TUTOR_TARGET_KINDS,
+  handoffResolveSchema,
   tutorAskSchema,
   tutorFeedbackSchema,
   type TutorAsk,
@@ -70,5 +71,17 @@ export class TutorController {
     @Param('courseId', Id) courseId: string,
   ) {
     return this.tutor.handoffs(auth, m, courseId);
+  }
+
+  @Put('handoffs/:handoffId/resolved')
+  @OrgRoles('TEACHER', 'ORG_ADMIN')
+  resolveHandoff(
+    @CurrentAuth() auth: AuthContext,
+    @CurrentMembership() m: MembershipContext,
+    @Param('courseId', Id) courseId: string,
+    @Param('handoffId', Id) handoffId: string,
+    @Body(new ZodPipe(handoffResolveSchema)) body: z.infer<typeof handoffResolveSchema>,
+  ) {
+    return this.tutor.resolveHandoff(auth, m, courseId, handoffId, body.resolved);
   }
 }

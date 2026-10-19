@@ -10,9 +10,15 @@ export type ReviewAction = (typeof REVIEW_ACTIONS)[number];
 const feedback = z.string().trim().max(5000);
 /** The version the teacher looked at; a newer one makes the action stale (409). */
 const version = z.number().int().min(1);
+/**
+ * How many review entries the teacher saw. If another teacher acted meanwhile the count differs
+ * and the action is refused (409 REVIEW_CHANGED) instead of silently overwriting their work.
+ */
+const basedOn = z.number().int().min(0).max(10_000).optional();
 
 export const requestRevisionSchema = z.object({
   version,
+  basedOn,
   feedback: feedback.min(1),
 });
 export type RequestRevisionInput = z.infer<typeof requestRevisionSchema>;
@@ -27,6 +33,7 @@ export type RubricScore = z.infer<typeof rubricScoreSchema>;
 export const gradeSubmissionSchema = z
   .object({
     version,
+    basedOn,
     scores: z.array(rubricScoreSchema).max(20).optional(),
     score: z.number().int().min(0).max(1000).optional(),
     feedback: feedback.default(''),
@@ -36,7 +43,7 @@ export const gradeSubmissionSchema = z
   });
 export type GradeSubmissionInput = z.infer<typeof gradeSubmissionSchema>;
 
-export const reviewVersionSchema = z.object({ version });
+export const reviewVersionSchema = z.object({ version, basedOn });
 export type ReviewVersionInput = z.infer<typeof reviewVersionSchema>;
 
 /**

@@ -8,6 +8,7 @@ import {
   type CreatedTeacher,
   type CreateTeacherInput,
   type CredentialsResetInput,
+  type GroupEnrollResult,
   type Role,
   type TeacherRow,
   type TemporaryCredential,
@@ -20,6 +21,9 @@ import type { Db } from '../db/client';
 import { DbService } from '../db/db.module';
 import {
   auditEvents,
+  courses,
+  courseTeachers,
+  enrollments,
   groups,
   groupStudents,
   groupTeachers,
@@ -162,10 +166,29 @@ export class AccountsService {
           )
           .orderBy(asc(groups.name))
       : [];
+    const teaching = rows.length
+      ? await db
+          .select({ userId: courseTeachers.userId, id: courses.id, title: courses.title })
+          .from(courseTeachers)
+          .innerJoin(courses, eq(courses.id, courseTeachers.courseId))
+          .where(
+            and(
+              eq(courses.organizationId, m.organizationId),
+              inArray(
+                courseTeachers.userId,
+                rows.map((r) => r.userId),
+              ),
+            ),
+          )
+          .orderBy(asc(courses.position), asc(courses.title))
+      : [];
     return rows.map(({ passwordHash, disabledAt, createdAt, ...r }) => ({
       ...r,
       ...state(r.userId, disabledAt, r.mustChangePassword, passwordHash),
       groups: assigned.filter((a) => a.userId === r.userId).map(({ id, name }) => ({ id, name })),
+      courses: teaching
+        .filter((a) => a.userId === r.userId)
+        .map(({ id, title }) => ({ id, title })),
       createdAt: createdAt.toISOString(),
     }));
   }
@@ -291,7 +314,109 @@ export class AccountsService {
     return this.teacherRow(m, userId);
   }
 
+  /**
+   * Replaces the courses (of this organization) the teacher manages. Assignments in other
+   * organizations are untouched. Grading history keeps the reviewer even after removal.
+   */
+  async setTeacherCourses(
+    auth: AuthContext,
+    m: MembershipContext,
+    userId: string,
+    courseIds: string[],
+  ): Promise<TeacherRow> {
+    await this.dbs.db.transaction(async (tx) => {
+      const [target] = await this.managed(tx, m.organizationId, auth.userId, [userId]);
+      if (target!.role !== 'TEACHER') throw new NotFoundException('O‘qituvchi topilmadi');
+      if (courseIds.length > 0) {
+        const found = await tx
+          .select({ id: courses.id })
+          .from(courses)
+          .where(and(eq(courses.organizationId, m.organizationId), inArray(courses.id, courseIds)));
+        if (found.length !== courseIds.length) throw new NotFoundException('Kurs topilmadi');
+      }
+      const orgCourses = tx
+        .select({ id: courses.id })
+        .from(courses)
+        .where(eq(courses.organizationId, m.organizationId));
+      await tx
+        .delete(courseTeachers)
+        .where(
+          and(eq(courseTeachers.userId, userId), inArray(courseTeachers.courseId, orgCourses)),
+        );
+      if (courseIds.length > 0) {
+        await tx.insert(courseTeachers).values(courseIds.map((courseId) => ({ courseId, userId })));
+      }
+      await this.audit(tx, auth.userId, m.organizationId, 'teacher.courses_set', userId, {
+        courseIds,
+      });
+    });
+    return this.teacherRow(m, userId);
+  }
+
   // ---------- Students ----------
+
+  /** Enrols every active student of the group in a published course of this organization. */
+  async enrollGroup(
+    auth: AuthContext,
+    m: MembershipContext,
+    groupId: string,
+    courseId: string,
+  ): Promise<GroupEnrollResult> {
+    return this.dbs.db.transaction(async (tx) => {
+      const [group] = await tx
+        .select({ id: groups.id })
+        .from(groups)
+        .where(and(eq(groups.id, groupId), eq(groups.organizationId, m.organizationId)));
+      if (!group) throw new NotFoundException('Guruh topilmadi');
+      const [course] = await tx
+        .select({ status: courses.status })
+        .from(courses)
+        .where(and(eq(courses.id, courseId), eq(courses.organizationId, m.organizationId)));
+      if (!course) throw new NotFoundException('Kurs topilmadi');
+      if (course.status !== 'PUBLISHED') {
+        throw new ConflictException({
+          code: 'COURSE_NOT_PUBLISHED',
+          message: 'Faqat e’lon qilingan kursga yozish mumkin',
+        });
+      }
+      const members = await tx
+        .select({ userId: groupStudents.userId, disabledAt: users.disabledAt })
+        .from(groupStudents)
+        .innerJoin(users, eq(users.id, groupStudents.userId))
+        .innerJoin(
+          memberships,
+          and(
+            eq(memberships.userId, groupStudents.userId),
+            eq(memberships.organizationId, m.organizationId),
+            eq(memberships.role, 'STUDENT'),
+          ),
+        )
+        .where(eq(groupStudents.groupId, groupId));
+      const active = members.filter((s) => s.disabledAt === null).map((s) => s.userId);
+      const inserted = active.length
+        ? await tx
+            .insert(enrollments)
+            .values(active.map((userId) => ({ userId, courseId })))
+            .onConflictDoNothing()
+            .returning({ id: enrollments.id })
+        : [];
+      const result: GroupEnrollResult = {
+        courseId,
+        enrolled: inserted.length,
+        alreadyEnrolled: active.length - inserted.length,
+        skippedDisabled: members.length - active.length,
+      };
+      await tx.insert(auditEvents).values({
+        actorUserId: auth.userId,
+        organizationId: m.organizationId,
+        action: 'group.enroll',
+        targetType: 'group',
+        targetId: groupId,
+        metadata: { ...result },
+      });
+      return result;
+    });
+  }
 
   async listStudents(m: MembershipContext): Promise<AdminStudentRow[]> {
     const rows = await this.dbs.db

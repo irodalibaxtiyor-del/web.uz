@@ -756,12 +756,16 @@ export const aiHandoffs = pgTable(
     category: handoffCategoryEnum('category').notNull(),
     note: text('note').notNull().default(''),
     createdAt: createdAt(),
+    /** Set when course staff mark the request handled; cleared when reopened. */
+    resolvedAt: timestamp('resolved_at', { withTimezone: true }),
+    resolvedBy: uuid('resolved_by').references(() => users.id, { onDelete: 'set null' }),
   },
   (t) => [
     index('ai_handoffs_course_idx').on(t.courseId, t.createdAt),
     index('ai_handoffs_user_idx').on(t.userId),
     index('ai_handoffs_org_idx').on(t.organizationId),
     index('ai_handoffs_interaction_idx').on(t.interactionId),
+    index('ai_handoffs_resolved_by_idx').on(t.resolvedBy),
   ],
 );
 

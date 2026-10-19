@@ -4,7 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { and, asc, desc, eq } from 'drizzle-orm';
+import { and, asc, desc, eq, sql } from 'drizzle-orm';
 import {
   scoreTotal,
   type GradeSubmissionInput,
@@ -31,6 +31,8 @@ import {
 
 type AssignmentRow = typeof assignments.$inferSelect;
 type SubmissionRow = typeof submissions.$inferSelect;
+/** What the teacher looked at: the latest version and (optionally) the review history length. */
+type Seen = { version: number; basedOn?: number };
 
 const conflict = (code: string, message: string) => new ConflictException({ code, message });
 
@@ -177,9 +179,9 @@ export class ReviewsService {
     courseId: string,
     assignmentId: string,
     studentId: string,
-    version: number,
+    seen: Seen,
   ) {
-    return this.act(auth, m, courseId, assignmentId, studentId, version, 'start', async () => ({
+    return this.act(auth, m, courseId, assignmentId, studentId, seen, 'start', async () => ({
       status: 'IN_REVIEW',
       score: null,
       review: null,
@@ -200,7 +202,7 @@ export class ReviewsService {
       courseId,
       assignmentId,
       studentId,
-      input.version,
+      input,
       'REVISION_REQUESTED',
       async () => ({
         status: 'REVISION_REQUESTED',
@@ -218,24 +220,15 @@ export class ReviewsService {
     studentId: string,
     input: GradeSubmissionInput,
   ) {
-    return this.act(
-      auth,
-      m,
-      courseId,
-      assignmentId,
-      studentId,
-      input.version,
-      'GRADED',
-      async (a) => {
-        const total = scoreTotal(a.rubric, a.gradingPolicy, input);
-        if (!total.ok) throw new BadRequestException(`Ball noto‘g‘ri: ${total.error}`);
-        return {
-          status: 'GRADED',
-          score: total.total,
-          review: { feedback: input.feedback, score: total.total, scores: input.scores ?? null },
-        };
-      },
-    );
+    return this.act(auth, m, courseId, assignmentId, studentId, input, 'GRADED', async (a) => {
+      const total = scoreTotal(a.rubric, a.gradingPolicy, input);
+      if (!total.ok) throw new BadRequestException(`Ball noto‘g‘ri: ${total.error}`);
+      return {
+        status: 'GRADED',
+        score: total.total,
+        review: { feedback: input.feedback, score: total.total, scores: input.scores ?? null },
+      };
+    });
   }
 
   /** GRADED → FINALIZED. Carries the last grade forward; nothing can change afterwards. */
@@ -245,7 +238,7 @@ export class ReviewsService {
     courseId: string,
     assignmentId: string,
     studentId: string,
-    version: number,
+    seen: Seen,
   ) {
     return this.act(
       auth,
@@ -253,7 +246,7 @@ export class ReviewsService {
       courseId,
       assignmentId,
       studentId,
-      version,
+      seen,
       'FINALIZED',
       async (_a, sub, db) => {
         const [graded] = await db
@@ -285,7 +278,7 @@ export class ReviewsService {
     courseId: string,
     assignmentId: string,
     studentId: string,
-    version: number,
+    seen: Seen,
     action: 'start' | ReviewAction,
     decide: (
       a: AssignmentRow,
@@ -314,8 +307,21 @@ export class ReviewsService {
         .limit(1);
       if (!latest) throw conflict('INVALID_TRANSITION', 'Topshirilgan versiya yo‘q');
       // The teacher must be acting on what they actually looked at.
-      if (latest.version !== version) {
+      if (latest.version !== seen.version) {
         throw conflict('STALE_VERSION', 'Talaba yangi versiya topshirgan. Sahifani yangilang');
+      }
+      // ...and on the review history they saw (no silent overwrite by a second teacher).
+      if (seen.basedOn !== undefined) {
+        const [counted] = await db
+          .select({ n: sql<number>`count(*)::int` })
+          .from(submissionReviews)
+          .where(eq(submissionReviews.submissionId, sub.id));
+        if ((counted?.n ?? 0) !== seen.basedOn) {
+          throw conflict(
+            'REVIEW_CHANGED',
+            'Bu javobni boshqa o‘qituvchi hozirgina o‘zgartirdi. Sahifani yangilab, qayta ko‘rib chiqing',
+          );
+        }
       }
       const next = await decide(a, sub, db);
       score = next.score;
@@ -341,7 +347,7 @@ export class ReviewsService {
       organizationId: m.organizationId,
       targetType: 'assignment',
       targetId: assignmentId,
-      metadata: { studentId, version, ...(score !== null ? { score } : {}) },
+      metadata: { studentId, version: seen.version, ...(score !== null ? { score } : {}) },
     });
     return this.get(auth, m, courseId, assignmentId, studentId);
   }

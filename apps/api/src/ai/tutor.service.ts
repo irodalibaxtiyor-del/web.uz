@@ -5,7 +5,8 @@ import {
   NotFoundException,
   ServiceUnavailableException,
 } from '@nestjs/common';
-import { and, desc, eq, inArray } from 'drizzle-orm';
+import { and, desc, eq, inArray, sql } from 'drizzle-orm';
+import { alias } from 'drizzle-orm/pg-core';
 import { randomBytes } from 'node:crypto';
 import {
   MAX_HINTS,
@@ -344,12 +345,15 @@ export class TutorService {
     courseId: string,
   ): Promise<TutorHandoffView[]> {
     await this.access.manageableCourse(auth, m, courseId);
+    const resolver = alias(users, 'resolver');
     const rows = await this.dbs.db
-      .select({ h: aiHandoffs, name: users.fullName })
+      .select({ h: aiHandoffs, name: users.fullName, resolvedByName: resolver.fullName })
       .from(aiHandoffs)
       .innerJoin(users, eq(users.id, aiHandoffs.userId))
+      .leftJoin(resolver, eq(resolver.id, aiHandoffs.resolvedBy))
       .where(eq(aiHandoffs.courseId, courseId))
-      .orderBy(desc(aiHandoffs.createdAt))
+      // Open requests first, newest first within each.
+      .orderBy(sql`${aiHandoffs.resolvedAt} is not null`, desc(aiHandoffs.createdAt))
       .limit(100);
     const exIds = rows.filter((r) => r.h.targetKind === 'EXERCISE').map((r) => r.h.targetId);
     const asIds = rows.filter((r) => r.h.targetKind === 'ASSIGNMENT').map((r) => r.h.targetId);
@@ -380,7 +384,47 @@ export class TutorService {
       category: r.h.category,
       note: r.h.note,
       createdAt: r.h.createdAt.toISOString(),
+      resolvedAt: r.h.resolvedAt?.toISOString() ?? null,
+      resolvedByName: r.h.resolvedAt ? r.resolvedByName : null,
     }));
+  }
+
+  /** Marks a handoff of this course handled, or reopens it. Grades and progress are untouched. */
+  async resolveHandoff(
+    auth: AuthContext,
+    m: MembershipContext,
+    courseId: string,
+    handoffId: string,
+    resolved: boolean,
+  ): Promise<TutorHandoffView> {
+    await this.access.manageableCourse(auth, m, courseId);
+    const [row] = await this.dbs.db
+      .update(aiHandoffs)
+      .set(
+        resolved
+          ? { resolvedAt: new Date(), resolvedBy: auth.userId }
+          : { resolvedAt: null, resolvedBy: null },
+      )
+      .where(
+        and(
+          eq(aiHandoffs.id, handoffId),
+          eq(aiHandoffs.courseId, courseId),
+          eq(aiHandoffs.organizationId, m.organizationId),
+        ),
+      )
+      .returning({ id: aiHandoffs.id });
+    if (!row) throw new NotFoundException('Murojaat topilmadi');
+    await this.audit.record({
+      action: resolved ? 'ai.handoff_resolve' : 'ai.handoff_reopen',
+      actorUserId: auth.userId,
+      organizationId: m.organizationId,
+      targetType: 'ai_handoff',
+      targetId: handoffId,
+      metadata: {},
+    });
+    const view = (await this.handoffs(auth, m, courseId)).find((h) => h.id === handoffId);
+    if (!view) throw new NotFoundException('Murojaat topilmadi');
+    return view;
   }
 
   // ---------------------------------------------------------------- context

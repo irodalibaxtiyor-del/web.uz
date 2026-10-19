@@ -380,6 +380,32 @@ describe('feedback and handoff', () => {
       .from(studentExercises)
       .where(and(eq(studentExercises.userId, s1.userId), eq(studentExercises.exerciseId, e1)));
     expect(after).toEqual(before);
+
+    // Staff mark it handled (and can reopen); nobody else can.
+    const h = `${course()}/tutor/handoffs/${r.body.handoffId}/resolved`;
+    await req(s1, 'put', h, { resolved: true }).expect(403);
+    await req(otherTeacher, 'put', h, { resolved: true }).expect(403);
+    await req(
+      foreignTeacher,
+      'put',
+      `${course(orgB)}/tutor/handoffs/${r.body.handoffId}/resolved`,
+      {
+        resolved: true,
+      },
+    ).expect(404);
+    await req(owner, 'put', `${course()}/tutor/handoffs/${courseId}/resolved`, {
+      resolved: true,
+    }).expect(404);
+    const done = await req(owner, 'put', h, { resolved: true }).expect(200);
+    expect(done.body).toMatchObject({ resolvedByName: expect.any(String) });
+    expect(done.body.resolvedAt).not.toBeNull();
+    const reopened = await req(owner, 'put', h, { resolved: false }).expect(200);
+    expect(reopened.body).toMatchObject({ resolvedAt: null, resolvedByName: null });
+    const audits = await ctx.handle.db
+      .select({ action: auditEvents.action })
+      .from(auditEvents)
+      .where(eq(auditEvents.targetId, r.body.handoffId));
+    expect(audits.map((a) => a.action).sort()).toEqual(['ai.handoff_reopen', 'ai.handoff_resolve']);
   });
 
   it('shows the student’s AI usage in their analytics', async () => {

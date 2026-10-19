@@ -63,6 +63,10 @@ export const tutorFeedbackSchema = z.object({
 });
 export type TutorFeedbackInput = z.infer<typeof tutorFeedbackSchema>;
 
+/** Course staff mark a "teacher help" request handled (or reopen it). */
+export const handoffResolveSchema = z.object({ resolved: z.boolean() });
+export type HandoffResolveInput = z.infer<typeof handoffResolveSchema>;
+
 export type TutorRefusal = 'FULL_SOLUTION' | 'OUT_OF_SCOPE';
 
 export interface TutorQuota {
@@ -113,6 +117,9 @@ export interface TutorHandoffView {
   category: HandoffCategory;
   note: string;
   createdAt: string;
+  resolvedAt: string | null;
+  /** Staff name; null when unresolved or the account was deleted. */
+  resolvedByName: string | null;
 }
 
 export interface StudentAiUsage {

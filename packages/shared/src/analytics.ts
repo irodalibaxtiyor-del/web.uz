@@ -190,10 +190,19 @@ export function rate(part: number, whole: number): Rate {
   return whole > 0 ? part / whole : null;
 }
 
-/** Monday (UTC) of the week containing `d`, as `YYYY-MM-DD`. */
+/**
+ * Weeks are counted in Tashkent time. Uzbekistan has no daylight saving time, so a fixed
+ * offset is exact and keeps JS and SQL (see the API's `weekOf`) in agreement without tz data.
+ */
+export const ANALYTICS_UTC_OFFSET_HOURS = 5;
+
+/** Monday (Tashkent time) of the week containing `d`, as `YYYY-MM-DD`. */
 export function weekStartOf(d: Date): string {
-  const day = (d.getUTCDay() + 6) % 7; // Monday = 0
-  const monday = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() - day));
+  const local = new Date(d.getTime() + ANALYTICS_UTC_OFFSET_HOURS * 3_600_000);
+  const day = (local.getUTCDay() + 6) % 7; // Monday = 0
+  const monday = new Date(
+    Date.UTC(local.getUTCFullYear(), local.getUTCMonth(), local.getUTCDate() - day),
+  );
   return monday.toISOString().slice(0, 10);
 }
 

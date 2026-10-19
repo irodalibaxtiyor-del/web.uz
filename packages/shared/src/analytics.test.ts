@@ -33,8 +33,10 @@ describe('analytics helpers', () => {
 
   it('weeks start on Monday (UTC) and the trend ends with the current week', () => {
     expect(weekStartOf(now)).toBe('2026-10-12');
-    expect(weekStartOf(new Date('2026-10-12T00:00:00Z'))).toBe('2026-10-12');
-    expect(weekStartOf(new Date('2026-10-11T23:59:59Z'))).toBe('2026-10-05');
+    // Tashkent (UTC+5): Monday 00:00 local is Sunday 19:00 UTC.
+    expect(weekStartOf(new Date('2026-10-11T19:00:00Z'))).toBe('2026-10-12');
+    expect(weekStartOf(new Date('2026-10-11T18:59:59Z'))).toBe('2026-10-05');
+    expect(weekStartOf(new Date('2026-10-12T03:00:00Z'))).toBe('2026-10-12');
     const weeks = trendWeeks(now, 3);
     expect(weeks).toEqual(['2026-09-28', '2026-10-05', '2026-10-12']);
   });
