@@ -105,12 +105,32 @@ async function api(ctx, method, path, body) {
   return { status: res.status(), body: json };
 }
 
-async function login(page, email) {
+async function login(page, identifier, password = PASSWORD, landing = '**/dashboard') {
   await page.goto(`${WEB}/login`);
-  await page.locator('input[name="email"]').fill(email);
-  await page.locator('input[name="password"]').fill(PASSWORD);
+  await page.locator('input[name="login"]').fill(identifier);
+  await page.locator('input[name="password"]').fill(password);
   await page.getByRole('button', { name: 'Kirish', exact: true }).click();
+  await page.waitForURL(landing);
+}
+
+/** First sign-in with an admin-issued temporary password: the app forces a new one. */
+async function firstLogin(page, identifier, temporary) {
+  await login(page, identifier, temporary, '**/change-password');
+  await changePassword(page, temporary);
+}
+async function changePassword(page, temporary) {
+  await page.getByLabel(/Joriy \(vaqtinchalik\) parol/).fill(temporary);
+  await page.getByLabel('Yangi parol', { exact: true }).fill(PASSWORD);
+  await page.getByLabel('Yangi parolni takrorlang').fill(PASSWORD);
+  await page.getByRole('button', { name: 'Parolni saqlash' }).click();
   await page.waitForURL('**/dashboard');
+}
+
+/** Reads the one-time password shown by the admin UI (CredentialNotice). */
+async function shownPassword(page, fullName) {
+  const notice = page.getByRole('alert').filter({ hasText: `${fullName}: vaqtinchalik parol` });
+  await notice.waitFor({ timeout: 20_000 });
+  return (await notice.locator('dd').nth(1).innerText()).trim();
 }
 
 /** Replaces the content of the active Monaco model (like a student selecting all and typing). */
@@ -475,6 +495,155 @@ async function run() {
     (s) => s.includes(HIDDEN_TITLE) || s.includes(HIDDEN_SELECTOR),
   );
   expect(!leaks, 'hidden CHECK rules never reach the student (API, run view, page)');
+
+  // ---------------------------------------------------------------- groups and accounts
+  // Fictional names only: the repository is public.
+  const admin = await newPage('admin');
+  const ap = admin.page;
+  await login(ap, 'admin@e2e.uz');
+  const A = (m, p, b) => api(admin.ctx, m, p, b);
+  await ap.goto(`${WEB}/orgs/${mainOrg}/admin/groups`);
+  await ap
+    .getByLabel('Ro‘yxat matni')
+    .fill(
+      [
+        '### 1-26 E2E — 2 nafar talaba',
+        '1. QODIROVA NODIRA',
+        '2. TOSHMATOV BOBUR',
+        '### 2-26 E2E — 1 nafar talaba',
+        '1. YUSUPOV SARDOR',
+      ].join('\n'),
+    );
+  await ap.getByRole('button', { name: 'Ko‘rib chiqish' }).click();
+  await waitText(ap, 'Jami 3 ta qator: 3 yangi');
+  await ap.getByRole('button', { name: 'Import qilish' }).click();
+  await waitText(ap, 'Import tugadi: 3 ta yangi hisob');
+  const groupList = (await A('GET', `/orgs/${mainOrg}/admin/groups`)).body;
+  const g1 = groupList.find((g) => g.name === '1-26 E2E');
+  const g2 = groupList.find((g) => g.name === '2-26 E2E');
+  const g1Students = (await A('GET', `/orgs/${mainOrg}/admin/groups/${g1.id}/students`)).body
+    .students;
+  const g2Students = (await A('GET', `/orgs/${mainOrg}/admin/groups/${g2.id}/students`)).body
+    .students;
+  const nodira = g1Students.find((s) => s.fullName === 'QODIROVA NODIRA');
+  const sardor = g2Students[0];
+  expect(
+    g1Students.length === 2 &&
+      g2Students.length === 1 &&
+      nodira?.login === 'qodirova.nodira' &&
+      !nodira.hasPassword &&
+      !JSON.stringify(g1Students).includes('passwordHash'),
+    'admin imports a roster through the UI: 2 groups, familiya.ism logins, no passwords yet',
+  );
+
+  // admin: teacher account bound to one group
+  await ap.goto(`${WEB}/orgs/${mainOrg}/admin/teachers`);
+  await ap.getByLabel('F.I.Sh.').first().fill('Guruh Ustozi');
+  await ap.getByLabel('Login').first().fill('ustoz.guruh');
+  await ap.getByRole('button', { name: 'O‘qituvchi yaratish' }).click();
+  const teacherTemp = await shownPassword(ap, 'Guruh Ustozi');
+  const row = ap.locator('li').filter({ hasText: 'ustoz.guruh' });
+  await row.getByLabel('1-26 E2E').check();
+  await row.getByRole('button', { name: 'Guruhlarni saqlash' }).click();
+  await waitText(ap, 'Guruhlar saqlandi.');
+  record(true, 'admin creates a teacher (one-time password) and assigns one group');
+
+  // admin: temporary password for a student
+  await ap.goto(`${WEB}/orgs/${mainOrg}/admin/groups/${g1.id}`);
+  await ap.getByRole('button', { name: 'QODIROVA NODIRA: parolni tiklash' }).click();
+  const nodiraTemp = await shownPassword(ap, 'QODIROVA NODIRA');
+  expect(
+    nodiraTemp.startsWith('1-26e2e-'),
+    'admin issues a temporary student password with the group prefix',
+    nodiraTemp.slice(0, 8),
+  );
+
+  // student: forced password change, then learning activity
+  const gs = await newPage('group-student');
+  await login(gs.page, 'qodirova.nodira', nodiraTemp, '**/change-password');
+  const blocked = await api(gs.ctx, 'GET', `/orgs/${mainOrg}/courses`);
+  expect(
+    blocked.status === 403 && blocked.body?.code === 'PASSWORD_CHANGE_REQUIRED',
+    'temporary password: everything but the password change is refused',
+    String(blocked.status),
+  );
+  await changePassword(gs.page, nodiraTemp);
+  record(true, 'student signs in with the login and sets an own password');
+  const GS = (m, p, b) => api(gs.ctx, m, p, b);
+  await GS('POST', `${base}/enroll`);
+  await GS('PUT', `${base}/exercises/${ex.id}/workspace`, {
+    files: [{ path: 'index.html', content: '<p>hali tayyor emas</p>' }],
+  });
+  await GS('POST', `${base}/exercises/${ex.id}/checks`);
+  let groupRun = null;
+  for (
+    let i = 0;
+    i < 120 && !['PASSED', 'FAILED', 'ERROR', 'TIMEOUT'].includes(groupRun?.status);
+    i++
+  ) {
+    await new Promise((r) => setTimeout(r, 500));
+    groupRun = (await GS('GET', `${base}/exercises/${ex.id}/checks/latest`)).body.run;
+  }
+  expect(groupRun?.status === 'FAILED', 'group student runs a CHECK (FAILED)', groupRun?.status);
+  expect(
+    (await GS('GET', `/orgs/${mainOrg}/groups/${g1.id}`)).status === 403 &&
+      (await GS('GET', `/orgs/${mainOrg}/admin/groups`)).status === 403,
+    'a student cannot open group panels or admin pages',
+  );
+
+  // group teacher: forced password change, sees only the assigned group
+  const gt = await newPage('group-teacher');
+  const tg = gt.page;
+  await firstLogin(tg, 'ustoz.guruh', teacherTemp);
+  await tg.goto(`${WEB}/orgs/${mainOrg}/groups`);
+  await waitText(tg, '1-26 E2E');
+  expect(!(await tg.getByText('2-26 E2E').count()), 'group teacher sees only the assigned group');
+  await tg
+    .getByRole('link', { name: /1-26 E2E/ })
+    .first()
+    .click();
+  await tg.waitForURL(`**/groups/${g1.id}`);
+  await waitText(tg, 'TOSHMATOV BOBUR');
+  await waitText(tg, 'Ma’lumot yetarli emas');
+  await tg.getByRole('link', { name: 'QODIROVA NODIRA' }).click();
+  await tg.waitForURL(`**/students/${nodira.userId}`);
+  await waitText(tg, 'O‘tmadi');
+  record(true, 'group panel: results table, no-data state and the student CHECK history');
+  const GT = (m, p) => api(gt.ctx, m, p);
+  expect(
+    (await GT('GET', `/orgs/${mainOrg}/groups/${g2.id}`)).status === 404 &&
+      (await GT('GET', `/orgs/${mainOrg}/groups/${g1.id}/students/${sardor.userId}`)).status ===
+        404 &&
+      (await GT('GET', `/orgs/${mainOrg}/groups/export.xlsx?groupId=${g2.id}`)).status === 404 &&
+      (await GT('GET', `/orgs/${mainOrg}/admin/teachers`)).status === 403,
+    'cross-group: other groups, their students and admin pages are closed to the teacher',
+  );
+  const xlsx = await gt.ctx.request.fetch(
+    `${WEB}/api/orgs/${mainOrg}/groups/export.xlsx?groupId=${g1.id}`,
+  );
+  const xlsxBody = await xlsx.body();
+  expect(
+    xlsx.status() === 200 &&
+      /spreadsheetml/.test(xlsx.headers()['content-type'] ?? '') &&
+      xlsxBody.subarray(0, 2).toString() === 'PK',
+    'group teacher exports the results as .xlsx',
+    String(xlsx.status()),
+  );
+
+  // admin disables the student: the live session ends at once
+  await ap.goto(`${WEB}/orgs/${mainOrg}/admin/groups/${g1.id}`);
+  await ap.getByRole('button', { name: 'QODIROVA NODIRA: faolsizlantirish' }).click();
+  await waitText(ap, 'Faollashtirish');
+  expect(
+    (await GS('GET', '/auth/me')).status === 401,
+    'disabled account: the existing session is revoked',
+  );
+  await gs.page.goto(`${WEB}/login`);
+  await gs.page.locator('input[name="login"]').fill('qodirova.nodira');
+  await gs.page.locator('input[name="password"]').fill(PASSWORD);
+  await gs.page.getByRole('button', { name: 'Kirish', exact: true }).click();
+  await gs.page.getByRole('alert').first().waitFor();
+  expect(gs.page.url().includes('/login'), 'disabled account cannot sign in');
 
   expect(
     consoleErrors.length === 0,

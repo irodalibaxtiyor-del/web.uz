@@ -1007,3 +1007,18 @@ Roadmap ro'yxati bo'yicha audit va tuzatishlar:
   - Excel'dagi "Progress" eksport vaqtidagi holat; sana oralig'i faqat CHECK va baholash sanalariga qo'llanadi. Modul/dars filtri topshiriqlarni chiqarmaydi (topshiriq kursga tegishli).
   - Guruh senariysi to'liq E2E (`e2e/full-flow`) ga qo'shilmadi; brauzer smoke scratchpad'da va demo bazani talab qiladi.
   - Email tasdiqlash va "parolni unutdim" yo'q — parolni faqat admin tiklaydi.
+
+### To'liq E2E — guruhlar senariysi qo'shildi
+
+- Davom ettirish: 2026-10-19 dagi cheklovlardan biri — guruh senariysi `e2e/full-flow` da yo'q edi.
+- **Topilgan regressiya:** guruhlar bosqichidan keyin login formasi maydoni `name="login"` bo'ldi, E2E esa `input[name="email"]` ni qidirardi. Ya'ni to'liq E2E guruhlar bosqichidan keyin ishga tushirilmagan va buzilgan edi. `login()` helper tuzatildi (login yoki email, ixtiyoriy parol va kutilgan sahifa).
+- Yangi qadamlar (13 ta, soxta ismlar bilan — repo public), asosiy qismi UI orqali:
+  - admin ro'yxatni import qiladi (2 guruh, 3 talaba): ko'rib chiqish → import, `familiya.ism` loginlari, parol hali yo'q, javobda hash yo'q;
+  - admin o'qituvchi yaratadi (vaqtinchalik parol bir marta ko'rsatiladi) va unga faqat bitta guruhni biriktiradi;
+  - admin talabaga guruh prefiksli vaqtinchalik parol beradi (`1-26e2e-…`);
+  - talaba login bilan kiradi: parolni almashtirmaguncha boshqa API 403 `PASSWORD_CHANGE_REQUIRED`; parolni almashtiradi, kursga yoziladi, CHECK (FAILED); guruh paneli va admin sahifalari unga 403;
+  - guruh o'qituvchisi birinchi kirishda parolni almashtiradi, faqat o'z guruhini ko'radi, jadvalda "Ma'lumot yetarli emas" holati, talaba sahifasida CHECK tarixi ("O'tmadi");
+  - cross-group: boshqa guruh, uning talabasi va eksporti 404, admin sahifalari 403; o'z guruhi `.xlsx` eksporti 200 (spreadsheetml, `PK` imzosi);
+  - admin talabani faolsizlantiradi → mavjud sessiya darhol 401, qayta kirish rad etiladi.
+- Natija: **47/47**, ikki marta ketma-ket. format ✅, lint ✅, `pnpm -r build` ✅.
+- CI'dagi `e2e` job ham shu skriptni ishlatadi (Ubuntu'da hali ishga tushirilmagan — repo GitHub'ga push qilinmagan).
