@@ -50,6 +50,24 @@ docker compose -f deploy/docker-compose.prod.yml run --rm api node dist/db/migra
 - Migrations are additive; CI fails when `schema.ts` and `drizzle/` drift apart.
 - Back up the database (below) before applying a release with migrations.
 
+## First administrator
+
+The seed (`db:seed`) is development-only. In production create the first organization
+administrator once, with the password passed from the secret manager (never a file in the repo):
+
+```bash
+BOOTSTRAP_ADMIN_LOGIN=admin@example.uz BOOTSTRAP_ADMIN_NAME="Ism Familiya" \
+BOOTSTRAP_ADMIN_PASSWORD="$(secret-tool …)" \
+docker compose -f deploy/docker-compose.prod.yml run --rm -e BOOTSTRAP_ADMIN_LOGIN \
+  -e BOOTSTRAP_ADMIN_NAME -e BOOTSTRAP_ADMIN_PASSWORD api node dist/db/bootstrap-admin.js
+```
+
+- Does nothing if the organization already has an administrator (safe to re-run).
+- The password (12+ characters) is stored as an Argon2id hash, never logged, and must be changed
+  on the first sign-in.
+- Teachers and students are then created from the admin panel; their temporary passwords are
+  shown once (or downloaded once as .xlsx) and are not stored in plain text.
+
 ## Backups and restore
 
 Strategy (status: **documented, not exercised** on real infrastructure):

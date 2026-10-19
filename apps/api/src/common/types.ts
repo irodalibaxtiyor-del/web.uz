@@ -3,6 +3,8 @@ import type { Role } from '@webdizayn/shared';
 export interface AuthContext {
   userId: string;
   sessionId: string;
+  /** An admin issued a temporary password: only the password change routes are open. */
+  mustChangePassword: boolean;
 }
 
 export interface MembershipContext {

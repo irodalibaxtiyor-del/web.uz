@@ -914,3 +914,96 @@ Roadmap ro'yxati bo'yicha audit va tuzatishlar:
   - Docker image'lar (sandbox endi `packages` va `node_modules` ni ham oladi) lokal tekshirilmagan.
   - O'zgarishlar hali commit qilinmagan.
 
+### Guruhlar, o'qituvchilar va talabalar boshqaruvi — A bosqichi (audit va reja)
+
+- So'rov: admin o'qituvchi va talaba loginlarini boshqaradi, 3 ta guruh (8-24 ATT, 9-24 ATT, 10-24 KI) va ularning 74 talabasi, o'qituvchi guruh paneli, ballar va `.xlsx` eksport. Bosqichlar A–H, har biri tasdiqdan keyin boshlanadi.
+- Audit natijasi: guruh tushunchasi, username login, majburiy parol almashtirish, hisobni faolsizlantirish, admin foydalanuvchi boshqaruvi va Excel eksport hozircha yo'q. RBAC (STUDENT/TEACHER/ORG_ADMIN, `OrgRoleGuard`), Argon2id, login limiti, audit, progress/CHECK/review ma'lumotlari va `FactsIndex.stats()` bor, ular qayta ishlatiladi.
+- Muhim cheklov: repo public, shuning uchun talabalar ro'yxati (shaxsiy ma'lumot) repoga yozilmaydi. Import admin UI orqali yoki gitignore qilingan lokal fayldan bo'ladi.
+- Kod o'zgartirilmadi. Ochiq qarorlar foydalanuvchiga berildi.
+
+### Guruhlar va talabalar importi — B bosqichi (davom etmoqda, to'xtatildi)
+
+- Foydalanuvchi qarorlari (A bosqichi savollariga javob):
+  - Talaba logini `familiya.ism`, lotin harflarida, apostrofsiz (`aliyev.vali`); bir xil chiqsa `…2`, `…3`.
+  - Parol `8-24att-01` tartibida (F bosqichida). Taklif: oldindan taxmin qilinmasligi uchun qolipga tasodifiy qism qo'shish (`8-24att-01-k7m4q2`). Bu masala hali hal qilinmagan.
+  - Ball faqat o'qituvchi baholagan topshiriqlardan hisoblanadi. RUN natijalari serverda saqlanmaydi ("saqlanmaydi" deb ko'rsatiladi).
+  - Guruh o'qituvchisi o'z guruhining barcha kurslardagi natijalarini faqat ko'radi va eksport qiladi; baholash kurs o'qituvchisida qoladi. Kurs analitikasini guruh bo'yicha cheklash "vaziyatga qarab" (D bosqichida hal qilinadi).
+  - Admin guruhlarni kursga yoza oladi; o'zi ro'yxatdan o'tish ochiq qoladi (bunday foydalanuvchilar "Guruhsiz").
+- **Shared** `packages/shared/src/groups.ts`:
+  - `rosterKey()` (apostrof variantlari birlashtiriladi, bo'sh joylar qisqartiriladi, katta harf);
+  - `loginBase()`, `groupCode()` ("8-24 ATT" → "8-24att"), `LOGIN_RE`;
+  - `parseRosterText()` ("### 8-24 ATT — 23 nafar talaba" sarlavhalari va "1. ISM" qatorlari);
+  - `rosterImportSchema` (ixtiyoriy `resolutions`: `CREATE` yoki `LINK` + `userId`);
+  - tiplar `RosterPreview`, `RosterImportResult`, `GroupSummary`, `GroupStudentRow`. 7 ta test.
+  - `MeResponse.email` endi `string | null`.
+- Migratsiya `0013_groups_accounts.sql`:
+  - `users.email` ixtiyoriy; yangi ustunlar `login` (`lower` bo'yicha unique), `must_change_password`, `disabled_at`, `password_changed_at`; CHECK: email yoki login bo'lishi shart;
+  - `groups` (org + code unique);
+  - `group_students` (PK guruh + talaba; composite FK `(group_id, organization_id)` → `groups`; talaba tashkilotda faqat bitta guruhda; guruh ichida `roster_key` unique);
+  - `group_teachers` (C bosqichi uchun).
+  - Generatsiya qilingan SQL qo'lda tartiblandi: `groups_id_org_idx` composite FK'dan oldin yaratilishi kerak.
+- `UNUSABLE_PASSWORD_HASH` (`password.service.ts`): import qilingan hisoblarda parol yo'q. `verify()` buni mavjud bo'lmagan foydalanuvchi kabi ko'radi (dummy hash, vaqt bo'yicha farq yo'q).
+- `src/groups/roster-import.ts`:
+  - `previewRoster()` hech narsa yozmaydi. Statuslar: NEW, ALREADY_IMPORTED, DUPLICATE_IN_INPUT, IN_OTHER_GROUP, NAME_MATCH (guruhsiz talaba bilan bir xil ism — admin bog'lashni yoki yangi hisob ochishni tanlaydi);
+  - quyidagi muammolar importni to'xtatadi va yashirincha tuzatilmaydi: ro'yxat ichidagi dublikat, boshqa guruhdagi ism, "N nafar" soni mos kelmasligi, bitta guruh ikki marta berilgani, hal qilinmagan NAME_MATCH.
+  - `importRoster()` bitta tranzaksiyada `pg_advisory_xact_lock('account-logins')` ostida, preview'ni tranzaksiya ichida qayta hisoblab bajaradi. Yangi hisob: login, emailsiz, parolsiz, `must_change_password`, STUDENT a'zoligi. Qayta import hech narsa yaratmaydi. Audit `roster.import` faqat sonlar bilan (ismlarsiz).
+- API (faqat ORG_ADMIN): `GET /orgs/:orgId/admin/groups`, `GET …/admin/groups/:groupId/students` (hash qaytarilmaydi, faqat `hasPassword`), `POST …/admin/roster/preview`, `POST …/admin/roster/import` (409 `ROSTER_INVALID`). `GroupsService` va `AdminGroupsController` `app.ts` ga ulandi.
+- CLI `db:import:roster <fayl> [--apply]` (`src/db/import-roster.ts`). `--apply`siz faqat sinov rejimi. Ro'yxat fayli repodan tashqarida, gitignore qilingan `.data/` da saqlanishi kerak.
+- Testlar `test/groups.test.ts` **15/15** (soxta ismlar bilan):
+  - RBAC: 401, TEACHER va STUDENT 403, boshqa org 404, soxta header'lar;
+  - preview hech narsa yozmaydi, `familiya.ism` loginlari va bir xil loginda `…2`;
+  - ism aynan saqlanadi, email yo'q, parol yo'q, majburiy parol almashtirish, audit'da ism yo'q;
+  - qayta import 0 ta yangi yozuv; ro'yxatlarda hash yo'q, begona org'dan guruhga kirish 404;
+  - dublikat (apostrof variantlari bilan), boshqa guruhdagi ism, son mos kelmasligi, bitta guruh ikki marta, noto'g'ri formatdagi kiritma;
+  - NAME_MATCH: begona `userId` qabul qilinmaydi, LINK dublikatsiz bog'laydi;
+  - parallel ikki importda har bir hisob bir marta yaratiladi.
+  - `schema.test.ts` (har bir FK indeks bilan qoplangan) o'tdi. API typecheck toza.
+- **Qolgan ishlar (B bosqichi):**
+  - web admin sahifalari: `/orgs/[orgId]/admin/groups` (ro'yxat, import formasi, preview jadvali, NAME_MATCH tanlovi) va `/orgs/[orgId]/admin/groups/[groupId]`; kabinetda admin uchun "Guruhlar" havolasi;
+  - to'liq regressiya (format, lint, typecheck, test, build);
+  - demo bazaga 74 talabani import qilish (ro'yxat `apps/api/.data/` ga, sinov rejimi → `--apply`) va 23 + 28 + 23 sonini tekshirish;
+  - hisobot.
+- STATUS: NOT_READY (B bosqichi tugallanmagan).
+
+## 2026-10-19
+
+### Guruhlar, o'qituvchilar va natijalar — B–H bosqichlari (yakunlandi)
+
+- Foydalanuvchi: "hammasini tartib bo'yicha davom et". Ro'yxat oldingi suhbatdan olinib, gitignore qilingan `apps/api/.data/roster.txt` ga yozildi (repoga kirmaydi).
+- **Ochiq savol hal qilindi (parol qolipi):** vaqtinchalik parol `<guruh kodi>-xxxx-xxxx` (masalan `8-24att-k7m4-q2x9`). Prefiks faqat qog'ozlarni ajratish uchun, 8 ta tasodifiy belgi (CSPRNG, ~40 bit, chalkash belgilarsiz) taxmin qilinmaslikni ta'minlaydi. O'qituvchilarda prefiks `wd`.
+- **B — import va admin UI:**
+  - demo bazaga import: sinov rejimi muammosiz, `--apply` → **74 ta yangi hisob, 3 ta guruh: 8-24 ATT 23, 9-24 ATT 28, 10-24 KI 23**. Qayta ishga tushirish: 0 yangi, 74 o'tkazib yuborildi. Takror yoki import qilinmagan yozuv yo'q. Login to'qnashuvi yo'q (`…2` kerak bo'lmadi), ismlar aynan saqlandi (har xil apostroflar ham);
+  - `/orgs/[orgId]/admin/groups`: guruhlar jadvali (jami bilan), ro'yxatni joylab ko'rib chiqish, holatlar (yangi / allaqachon bor / takror / boshqa guruhda / ismdosh), NAME_MATCH uchun "bog'lash" yoki "yangi hisob" tanlovi, tasdiq bilan import, "Loginlar (Excel)";
+  - `/orgs/[orgId]/admin/groups/[groupId]`: talabalar (qidiruv, saralash, sahifalash), parolni tiklash, faolsizlantirish, "Parol berilmaganlarga — Excel" va "Hammaga yangi parol — Excel".
+- **C — o'qituvchi hisoblari va login oqimi:**
+  - `loginSchema`: `login` yoki `email` (eski klientlar uchun), `@` bo'yicha ajratiladi. Login limiti endi identifikator bo'yicha.
+  - Faolsiz hisob: login noto'g'ri parol bilan bir xil xabar va bir xil hash ishi bilan rad etiladi; sessiyalar o'chiriladi va `SessionService.validate` faolsizni qabul qilmaydi.
+  - Majburiy parol almashtirish: `AuthGuard` `mustChangePassword` bo'lsa faqat `@AllowPendingPasswordChange()` route'larni (`GET /auth/me`, `POST /auth/password`, `POST /auth/logout`) ochadi, qolgani 403 `PASSWORD_CHANGE_REQUIRED`. `POST /auth/password`: joriy parol tekshiriladi (xato urinishlar limitga kiradi), boshqa sessiyalar yopiladi, audit `auth.password_change`.
+  - `MeResponse` ga `login`, `mustChangePassword`. Web: login formasi "Login yoki email", `/change-password` sahifasi, `useApi` 403 `PASSWORD_CHANGE_REQUIRED` da shu sahifaga yo'naltiradi.
+  - `AccountsService` + `AdminAccountsController` (faqat ORG_ADMIN, `/orgs/:orgId/admin`): `GET/POST teachers`, `PATCH teachers/:id`, `PUT teachers/:id/groups`, `GET students`, `PUT students/:id/group`, `POST accounts/:id/disable|enable|reset-password`, `POST credentials/reset.xlsx`, `GET logins.xlsx`.
+  - Boshqariladigan hisob: shu tashkilotning STUDENT/TEACHER'i, faqat shu tashkilotga a'zo (aks holda 409 `ACCOUNT_SHARED`), o'zi emas (409 `SELF_ACCOUNT`); boshqa adminlar va begona org — 404. Login/email registrga qaramay unique (409 `LOGIN_TAKEN`/`EMAIL_TAKEN`), `account-logins` advisory lock ostida.
+  - Audit: `teacher.create`, `teacher.update`, `teacher.groups_set`, `student.group_set`, `account.disable/enable`, `account.password_reset`, `credentials.export`, `logins.export` — parollarsiz.
+  - **Boshlang'ich admin:** dev seed endi admin'ni `mustChangePassword` bilan yaratadi. Production: `db:bootstrap:admin(:prod)` (`BOOTSTRAP_ADMIN_LOGIN/NAME/PASSWORD` env'dan, 12+ belgi, admin bo'lsa hech narsa qilmaydi, parol loglanmaydi, birinchi kirishda almashtiriladi; `deploy/README.md`). Topshiriqdagi dev paroli kodga yozilmadi; mavjud demo admin o'zgartirilmadi.
+  - `/orgs/[orgId]/admin/teachers`: yaratish (vaqtinchalik parol bir marta ko'rsatiladi, nusxa olish), tahrirlash, guruhlar (checkbox), parolni tiklash, faolsizlantirish. `/orgs/[orgId]/admin/students`: barcha talabalar, guruh va holat filtri, guruhni almashtirish.
+- **D/E — o'qituvchi guruh paneli:** `MonitoringService` + `GroupsController` (`/orgs/:orgId/groups`, TEACHER va ORG_ADMIN):
+  - kirish: ORG_ADMIN hamma guruhni, TEACHER faqat `group_teachers` dagilarini ko'radi; boshqa guruh, boshqa guruhning talabasi, begona org — **404** (URL/ID/body o'zgartirish yordam bermaydi). Kursni o'qitish guruhni ochmaydi.
+  - `GET /` kartalar; `GET /:groupId` jadval: progress, joriy dars, mashqlar, CHECK (o'tdi/jami), testlar, ball/maks, oxirgi faollik, holat; kurslar tuzilmasi (eksport filtri uchun);
+  - `GET /:groupId/students/:studentId`: darslar bo'yicha mashq holati, CHECK urinishlari (o'tdi/o'tmadi/texnik), oxirgi CHECK, **bajarilmagan talablar** (oxirgi FAILED run'dan; yashirinlari belgilangan — faqat xodimga), testlar (urinish, eng yaxshi %), topshiriqlar (ball/maks, versiyalar, baholangan sana, baholagan o'qituvchi, izoh, yakuniy).
+  - Ma'lumot `analytics-facts` (`loadFacts`/`FactsIndex`) va mavjud jadvallardan; yangi progress tizimi yo'q. Ball faqat GRADED/FINALIZED javoblardan, manba — oxirgi GRADED/FINALIZED review (`submission_reviews` append-only). Bitta javob — bitta joriy ball, qayta baholash qo'shmaydi (testda).
+  - Qiynalish: faqat aniq faktlar — o'tilmagan mashqda ≥3 FAILED CHECK, NEEDS_IMPROVEMENT, o'tilmagan test, REVISION_REQUESTED. Hech qanday CHECK/test/topshiriq bo'lmasa — **"Ma'lumot yetarli emas"** (`INSUFFICIENT_DATA`), "yaxshi" deb ko'rsatilmaydi. RUN natijalari serverda saqlanmaydi — UI va Excel'da shunday yozilgan.
+  - Web: `/orgs/[orgId]/groups` (kartalar), `/groups/[groupId]` (statistika, qidiruv, holat filtri, saralash, sahifalash, eksport formasi), `/groups/[groupId]/students/[studentId]`.
+- **F/G — Excel:** `common/xlsx.ts` — bog'liqliksiz `.xlsx` yozuvchi (Node `zlib.deflateRaw` + `crc32`). Hech qachon `<f>` (formula) yozilmaydi; `= + - @`, tab yoki CR bilan boshlanuvchi matnlar `quotePrefix` uslubida (tahrirlanganda ham matn). XML'ga sig'maydigan belgilar olib tashlanadi, sana Toshkent vaqtida, sarlavha qatori qotirilgan. openpyxl bilan tekshirildi.
+  - Admin: `credentials/reset.xlsx` (guruh yoki tanlangan hisoblar, ixtiyoriy "faqat parol berilmaganlarga"; parollar faqat shu javobda, `Cache-Control: no-store`) va `logins.xlsx` (talabalar + o'qituvchilar, holat; parol/hash yo'q).
+  - O'qituvchi: `GET /orgs/:orgId/groups/export.xlsx?groupId&studentId&courseId&moduleId&lessonId&from&to` — "Umumiy", "Topshiriqlar", "Mashqlar", "Izoh" varaqlari; har filtr ruxsat bo'yicha tekshiriladi (begona guruh/talaba/kurs 404, noto'g'ri kombinatsiya 400); audit `group.export`.
+- **H — tekshiruv:**
+  - Testlar: `test/accounts.test.ts` 16, `test/group-monitoring.test.ts` 9, `src/common/xlsx.test.ts` 4, shared auth +2, web `admin-ui.test.tsx` 5. Qamrov: 401/403/404 har endpoint, soxta `x-user-id`/`x-role`, cross-org, cross-group, cross-teacher, o'z hisobi/boshqa admin/umumiy hisob, majburiy parol almashtirish, faolsiz hisob, parollar DB va auditda ochiq yo'qligi, Argon2id, formula injection, sana oralig'i, ball takrorlanmasligi, bootstrap idempotentligi.
+  - Regressiya: typecheck ✅, lint ✅, format ✅, build ✅, test ✅ (shared 50 + libs 3 + sandbox 16 + web 36 + check-engine 23 + api 327 = **455**).
+  - Brauzer smoke (demo bazaning **nusxasida**, `next start` + compiled API, scratchpad'dagi `ui-groups.cjs`) **23/23**: admin 3 guruh / 74 talaba; qayta import "Allaqachon bor"; takror + son mos kelmasa import o'chiq; guruh paroli Excel'i (23 ta, hammasi qolipda, takrorsiz); o'qituvchi yaratish va 2 guruh biriktirish; o'qituvchi vaqtinchalik parol bilan kirib, boshqa sahifalardan `/change-password` ga qaytariladi, parolni almashtiradi; faqat 2 guruhni ko'radi; 23 qatorli jadval; ball Excel'i (4 varaq, formula yo'q); talaba sahifasi; biriktirilmagan guruh URL/API orqali 404; admin API 403; mobil (390px) + dark gorizontal scroll yo'q; klaviatura (skip-link, Enter bilan saralash). Kutilmagan konsol xatosi 0. Nusxa va parolli fayl keyin o'chirildi — demo bazada faqat import bor (parollar berilmagan).
+  - Maxfiylik: repoda ro'yxatdagi to'liq ism-familiya yo'qligi tekshirildi; oldingi sessiyada testlar/izohlarga tushgan haqiqiy ismlar soxtalariga almashtirildi.
+- **STATUS: READY_WITH_INFRASTRUCTURE_LIMITATIONS** (avvalgi infratuzilma cheklovlari saqlanadi).
+- Cheklovlar:
+  - Demo bazadagi 74 talabaga hali parol berilmagan — admin `/admin/groups/<guruh>` da "Parol berilmaganlarga — Excel" ni bosadi. Demo bazada guruhlarga o'qituvchi biriktirilmagan.
+  - Guruh paneli qidiruv/saralash/sahifalashni klientda qiladi (server guruhning hamma talabasini qaytaradi; bir guruh ≤200).
+  - Excel'dagi "Progress" eksport vaqtidagi holat; sana oralig'i faqat CHECK va baholash sanalariga qo'llanadi. Modul/dars filtri topshiriqlarni chiqarmaydi (topshiriq kursga tegishli).
+  - Guruh senariysi to'liq E2E (`e2e/full-flow`) ga qo'shilmadi; brauzer smoke scratchpad'da va demo bazani talab qiladi.
+  - Email tasdiqlash va "parolni unutdim" yo'q — parolni faqat admin tiklaydi.

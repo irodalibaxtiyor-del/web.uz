@@ -27,18 +27,22 @@ export function AuthForm({ mode }: { mode: Mode }) {
       setError(
         isRegister
           ? `Ma'lumotlarni tekshiring: parol kamida ${PASSWORD_MIN_LENGTH} belgidan iborat bo'lsin`
-          : "Email va parolni to'g'ri kiriting",
+          : "Login (yoki email) va parolni to'g'ri kiriting",
       );
       return;
     }
     setPending(true);
-    const res = await api(`/auth/${mode}`, { method: 'POST', body: JSON.stringify(parsed.data) });
+    const body = isRegister ? parsed.data : { login: form.login, password: form.password };
+    const res = await api<{ mustChangePassword?: boolean }>(`/auth/${mode}`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    });
     setPending(false);
     if (!res.ok) {
       setError(res.message);
       return;
     }
-    router.push('/dashboard');
+    router.push(res.data.mustChangePassword ? '/change-password' : '/dashboard');
     router.refresh();
   }
 
@@ -78,16 +82,24 @@ export function AuthForm({ mode }: { mode: Mode }) {
           htmlFor={`${id}-email`}
           className="text-sm font-semibold text-ink dark:text-slate-200"
         >
-          Email
+          {isRegister ? 'Email' : 'Login yoki email'}
         </label>
         <input
           id={`${id}-email`}
-          name="email"
-          type="email"
-          autoComplete="email"
+          name={isRegister ? 'email' : 'login'}
+          type={isRegister ? 'email' : 'text'}
+          autoComplete={isRegister ? 'email' : 'username'}
+          autoCapitalize="none"
+          spellCheck={false}
           required
+          aria-describedby={isRegister ? undefined : `${id}-login-hint`}
           className={inputClass}
         />
+        {!isRegister && (
+          <p id={`${id}-login-hint`} className="text-xs text-slate-500 dark:text-slate-400">
+            Masalan: familiya.ism — loginni administrator yoki o&apos;qituvchingiz beradi
+          </p>
+        )}
       </div>
       <div className="space-y-1.5">
         <label

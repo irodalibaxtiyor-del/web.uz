@@ -2,6 +2,7 @@ import { sql } from 'drizzle-orm';
 import {
   boolean,
   check,
+  foreignKey,
   index,
   integer,
   jsonb,
@@ -65,12 +66,24 @@ export const users = pgTable(
   'users',
   {
     id: uuid('id').primaryKey().defaultRandom(),
-    email: text('email').notNull(),
+    /** Null for accounts an admin created without an email (they sign in with `login`). */
+    email: text('email'),
+    /** Admin-issued sign-in name, e.g. `aliyev.vali` (LOGIN_RE). */
+    login: text('login'),
+    /** Argon2id hash, or UNUSABLE_PASSWORD_HASH until an admin issues a password. */
     passwordHash: text('password_hash').notNull(),
     fullName: text('full_name').notNull(),
+    /** Set when an admin issues a temporary password; cleared by the user changing it. */
+    mustChangePassword: boolean('must_change_password').notNull().default(false),
+    disabledAt: timestamp('disabled_at', { withTimezone: true }),
+    passwordChangedAt: timestamp('password_changed_at', { withTimezone: true }),
     createdAt: createdAt(),
   },
-  (t) => [uniqueIndex('users_email_lower_idx').on(sql`lower(${t.email})`)],
+  (t) => [
+    uniqueIndex('users_email_lower_idx').on(sql`lower(${t.email})`),
+    uniqueIndex('users_login_lower_idx').on(sql`lower(${t.login})`),
+    check('users_has_identifier', sql`${t.email} is not null or ${t.login} is not null`),
+  ],
 );
 
 export const memberships = pgTable(
@@ -764,4 +777,71 @@ export const rateLimitEvents = pgTable(
     createdAt: createdAt(),
   },
   (t) => [index('rate_limit_events_key_idx').on(t.keyHash, t.createdAt)],
+);
+
+/** Student group within an organization, e.g. "8-24 ATT". */
+export const groups = pgTable(
+  'groups',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    organizationId: uuid('organization_id')
+      .notNull()
+      .references(() => organizations.id, { onDelete: 'cascade' }),
+    name: text('name').notNull(),
+    /** groupCode(name): unique per organization, so "8-24 ATT" and "8-24 att" cannot coexist. */
+    code: text('code').notNull(),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    uniqueIndex('groups_org_code_idx').on(t.organizationId, t.code),
+    // Target of the composite FK that pins a group membership to the group's organization.
+    uniqueIndex('groups_id_org_idx').on(t.id, t.organizationId),
+  ],
+);
+
+/** A student is in at most one group per organization. */
+export const groupStudents = pgTable(
+  'group_students',
+  {
+    groupId: uuid('group_id').notNull(),
+    organizationId: uuid('organization_id').notNull(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    /** rosterKey(full name) at import time: detects re-imports and duplicates. */
+    rosterKey: text('roster_key').notNull(),
+    addedBy: uuid('added_by').references(() => users.id, { onDelete: 'set null' }),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.groupId, t.userId] }),
+    foreignKey({
+      name: 'group_students_group_org_fk',
+      columns: [t.groupId, t.organizationId],
+      foreignColumns: [groups.id, groups.organizationId],
+    }).onDelete('cascade'),
+    uniqueIndex('group_students_user_org_idx').on(t.userId, t.organizationId),
+    uniqueIndex('group_students_group_org_key_idx').on(t.groupId, t.organizationId, t.rosterKey),
+    index('group_students_added_by_idx').on(t.addedBy),
+  ],
+);
+
+/** Groups an admin allowed a teacher to see. */
+export const groupTeachers = pgTable(
+  'group_teachers',
+  {
+    groupId: uuid('group_id')
+      .notNull()
+      .references(() => groups.id, { onDelete: 'cascade' }),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    assignedBy: uuid('assigned_by').references(() => users.id, { onDelete: 'set null' }),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.groupId, t.userId] }),
+    index('group_teachers_user_idx').on(t.userId),
+    index('group_teachers_assigned_by_idx').on(t.assignedBy),
+  ],
 );

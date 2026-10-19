@@ -1,12 +1,14 @@
 import { Body, Controller, Get, HttpCode, Inject, Post, Req, Res } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import {
+  changePasswordSchema,
   loginSchema,
   registerSchema,
+  type ChangePasswordInput,
   type LoginInput,
   type RegisterInput,
 } from '@webdizayn/shared';
-import { CurrentAuth, Public } from '../common/decorators';
+import { AllowPendingPasswordChange, CurrentAuth, Public } from '../common/decorators';
 import type { AuthContext } from '../common/types';
 import { RateLimiter } from '../common/rate-limiter';
 import { ZodPipe } from '../common/zod.pipe';
@@ -64,14 +66,27 @@ export class AuthController {
     return this.auth.me(userId);
   }
 
+  @Post('password')
+  @HttpCode(204)
+  @AllowPendingPasswordChange()
+  async changePassword(
+    @CurrentAuth() auth: AuthContext,
+    @Body(new ZodPipe(changePasswordSchema)) body: ChangePasswordInput,
+    @Req() req: Request,
+  ) {
+    await this.auth.changePassword(auth.userId, auth.sessionId, body, req.ip ?? 'unknown');
+  }
+
   @Post('logout')
   @HttpCode(204)
+  @AllowPendingPasswordChange()
   async logout(@CurrentAuth() auth: AuthContext, @Res({ passthrough: true }) res: Response) {
     await this.auth.logout(auth.sessionId, auth.userId);
     res.clearCookie(SESSION_COOKIE, { path: '/' });
   }
 
   @Get('me')
+  @AllowPendingPasswordChange()
   me(@CurrentAuth() auth: AuthContext) {
     return this.auth.me(auth.userId);
   }

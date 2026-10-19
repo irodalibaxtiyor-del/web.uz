@@ -14,6 +14,8 @@ const ROLE_LABEL: Record<Role, string> = {
   ORG_ADMIN: 'Administrator',
 };
 
+const linkClass = 'text-sm font-semibold text-brand-700 underline dark:text-brand-300';
+
 export default function DashboardPage() {
   const router = useRouter();
   const { state } = useApi<MeResponse>('/auth/me');
@@ -57,11 +59,21 @@ export default function DashboardPage() {
                   <h2 className="text-2xl font-bold">{m.organizationName}</h2>
                   <span className="section-eyebrow">{ROLE_LABEL[m.role]}</span>
                   {m.role === 'ORG_ADMIN' && (
-                    <Link
-                      href={`/orgs/${m.organizationId}/analytics`}
-                      className="text-sm font-semibold text-brand-600 underline dark:text-brand-300"
-                    >
-                      Tashkilot analitikasi
+                    <>
+                      <Link href={`/orgs/${m.organizationId}/analytics`} className={linkClass}>
+                        Tashkilot analitikasi
+                      </Link>
+                      <Link href={`/orgs/${m.organizationId}/admin/groups`} className={linkClass}>
+                        Guruhlar va talabalar
+                      </Link>
+                      <Link href={`/orgs/${m.organizationId}/admin/teachers`} className={linkClass}>
+                        O‘qituvchilar
+                      </Link>
+                    </>
+                  )}
+                  {(m.role === 'TEACHER' || m.role === 'ORG_ADMIN') && (
+                    <Link href={`/orgs/${m.organizationId}/groups`} className={linkClass}>
+                      Guruh paneli
                     </Link>
                   )}
                 </div>

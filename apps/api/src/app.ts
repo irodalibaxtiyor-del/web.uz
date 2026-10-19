@@ -6,6 +6,12 @@ import helmet from 'helmet';
 import { AI_PROVIDER, createAiProvider, type AiProvider } from './ai/provider';
 import { TutorController } from './ai/tutor.controller';
 import { TutorService } from './ai/tutor.service';
+import { AdminAccountsController } from './accounts/admin-accounts.controller';
+import { AccountsService } from './accounts/accounts.service';
+import { AdminGroupsController } from './groups/admin-groups.controller';
+import { GroupsController } from './groups/groups.controller';
+import { MonitoringService } from './groups/monitoring.service';
+import { GroupsService } from './groups/groups.service';
 import { AiUsageService } from './ai/usage.service';
 import { AnalyticsController } from './analytics/analytics.controller';
 import { AnalyticsService } from './analytics/analytics.service';
@@ -77,6 +83,9 @@ export class AppModule {
         AnalyticsController,
         MetricsController,
         TutorController,
+        AdminGroupsController,
+        AdminAccountsController,
+        GroupsController,
       ],
       providers: [
         { provide: APP_CONFIG, useValue: config },
@@ -102,6 +111,9 @@ export class AppModule {
         { provide: AI_PROVIDER, useValue: aiProvider },
         AiUsageService,
         TutorService,
+        GroupsService,
+        AccountsService,
+        MonitoringService,
         // Order matters: authenticate first, then resolve org role.
         { provide: APP_GUARD, useClass: AuthGuard },
         { provide: APP_GUARD, useClass: OrgRoleGuard },

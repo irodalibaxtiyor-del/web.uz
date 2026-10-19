@@ -27,14 +27,25 @@ async function main() {
   if (!org) throw new Error('Default organization missing');
 
   const passwordHash = await new PasswordService().hash(password);
-  const people: { email: string; fullName: string; role: Role }[] = [
-    { email: 'teacher@webdizayn.local', fullName: "O'qituvchi Demo", role: 'TEACHER' },
-    { email: 'admin@webdizayn.local', fullName: 'Admin Demo', role: 'ORG_ADMIN' },
+  // The administrator's seed password is temporary: it must be changed on first sign-in.
+  const people: { email: string; fullName: string; role: Role; mustChange: boolean }[] = [
+    {
+      email: 'teacher@webdizayn.local',
+      fullName: "O'qituvchi Demo",
+      role: 'TEACHER',
+      mustChange: false,
+    },
+    { email: 'admin@webdizayn.local', fullName: 'Admin Demo', role: 'ORG_ADMIN', mustChange: true },
   ];
   for (const p of people) {
     const [u] = await db
       .insert(users)
-      .values({ email: p.email, fullName: p.fullName, passwordHash })
+      .values({
+        email: p.email,
+        fullName: p.fullName,
+        passwordHash,
+        mustChangePassword: p.mustChange,
+      })
       .onConflictDoNothing()
       .returning({ id: users.id });
     if (u) {

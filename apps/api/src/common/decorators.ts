@@ -7,6 +7,10 @@ export const IS_PUBLIC = 'isPublic';
 /** Marks a route as reachable without a session. Everything else requires one. */
 export const Public = () => SetMetadata(IS_PUBLIC, true);
 
+export const ALLOW_PENDING_PASSWORD = 'allowPendingPassword';
+/** Routes still reachable while the user must replace a temporary password. */
+export const AllowPendingPasswordChange = () => SetMetadata(ALLOW_PENDING_PASSWORD, true);
+
 export const ORG_ROLES = 'orgRoles';
 /**
  * Requires membership in the organization from the `:orgId` route param with one of the roles.

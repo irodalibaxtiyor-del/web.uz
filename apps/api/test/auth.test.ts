@@ -34,7 +34,11 @@ describe('register', () => {
     expect(res.body.email).toBe('talaba1@example.uz');
     expect(res.body.memberships).toHaveLength(1);
     expect(res.body.memberships[0].role).toBe('STUDENT');
-    expect(JSON.stringify(res.body)).not.toMatch(/password|hash|token/i);
+    // The only password-related field is the boolean flag; no hash or token value appears.
+    expect(res.body.mustChangePassword).toBe(false);
+    const rest = { ...(res.body as Record<string, unknown>) };
+    delete rest.mustChangePassword;
+    expect(JSON.stringify(rest)).not.toMatch(/password|hash|token|argon/i);
 
     const cookie = (res.headers['set-cookie'] as unknown as string[]).join(';');
     expect(cookie).toMatch(/HttpOnly/i);
