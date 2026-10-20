@@ -10,12 +10,14 @@ import { JS_COURSE, JS_MODULES } from './js/manifest';
 import { JS_SOLUTIONS } from './js/solutions';
 import { PHP_COURSE, PHP_MODULES } from './php/manifest';
 import { RWD_COURSE, RWD_MODULES, RWD_SOLUTIONS } from './rwd/manifest';
+import { UI_COURSE, UI_MODULES, UI_SOLUTIONS } from './ui/manifest';
 
 /** Bundled original courses, in the order they are meant to be taken. */
 export const CONTENT_COURSES: CourseDef[] = [
   { ...HTML_COURSE, modules: HTML_MODULES, solutions: HTML_SOLUTIONS },
   { ...CSS_COURSE, modules: CSS_MODULES, solutions: CSS_SOLUTIONS },
   { ...RWD_COURSE, modules: RWD_MODULES, solutions: RWD_SOLUTIONS },
+  { ...UI_COURSE, modules: UI_MODULES, solutions: UI_SOLUTIONS },
   { ...JS_COURSE, modules: JS_MODULES, solutions: JS_SOLUTIONS },
   { ...PHP_COURSE, modules: PHP_MODULES, solutions: {} },
   { ...BS3_COURSE, modules: BS3_MODULES, solutions: BS3_SOLUTIONS },

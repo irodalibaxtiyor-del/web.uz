@@ -84,12 +84,13 @@ resurs yo‘q, transition’da `wait`, element yo‘qligi `{ min: 0, max: 0 }`).
 - `data:` SVG manzilida bo‘sh joylar `%20` bo‘lishi shart (`svgData()` shunday qiladi): `srcset` URL’ni birinchi bo‘sh joyda kesadi.
 - `srcset` tanlovi brauzer ixtiyorida (keshdagi kattaroq nomzodni olishi mumkin) — tekshiruv atributlar bo‘yicha.
 - `<dialog>` va burger kabi interaktiv mashqlar `after([{ type: 'click', selector }], …)` bilan.
-- Engine parallel yuklama ostida (vitest bilan bir vaqtda) BUDGET berishi mumkin — `content:verify` ni yolg‘iz ishga tushiring.
+- Engine parallel yuklama ostida (vitest bilan bir vaqtda) BUDGET, uzoq ketma-ket ishda esa ba’zan LOAD_TIMEOUT berishi mumkin — `content:verify` ni yolg‘iz ishga tushiring va yiqilganini alohida qayta tekshiring.
+- Boshlang‘ich CSS’dagi selektorlar talaba yozadigan qoidadan kuchliroq bo‘lmasin (masalan, `.mahsulot p` (0,1,1) talabaning `.nomi` (0,1,0) qoidasini yengib qo‘yadi).
 
 ## Holat
 
 - **Moslashuvchan dizayn — tayyor:** 6 modul, 28 dars, 28 mashq (CHECK bilan), 6 test. `content:verify` 28/28.
-- UI asoslari — keyingi.
-- Figma’dan kodga — rejada.
+- **UI asoslari — tayyor:** 6 modul, 29 dars, 29 mashq, 6 test. `content:verify` 29/29 (alohida qayta ishga tushirilganda; uzoq ketma-ket ishda bir marta `yakuniy` boshlang‘ich kodi LOAD_TIMEOUT berdi, qayta 3/3 o‘tdi).
+- Figma’dan kodga — keyingi.
 - Portfolio — rejada.
 - Demo bazaga hali yuklanmagan (to‘rttasi tayyor bo‘lgach).
