@@ -35,7 +35,7 @@ export default function GroupsPage() {
             subtitle="Sizga biriktirilgan guruhlar. Guruhni tanlab, talabalarning o‘quv natijalarini ko‘ring."
             actions={
               groups.length > 0 && (
-                <Button variant="accent" onClick={exportAll} disabled={busy}>
+                <Button variant="primary" onClick={exportAll} disabled={busy}>
                   {busy ? 'Tayyorlanmoqda…' : 'Barcha guruhlar — Excel'}
                 </Button>
               )

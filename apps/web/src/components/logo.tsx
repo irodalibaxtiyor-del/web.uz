@@ -9,7 +9,7 @@ export function Logo({ className = '' }: { className?: string }) {
     >
       <span
         aria-hidden="true"
-        className="grid size-9 place-items-center rounded-xl bg-brand-600 font-mono text-sm text-white shadow-[0_6px_16px_-6px_rgb(0_113_220/0.7)]"
+        className="grid size-9 place-items-center rounded-control bg-brand-600 font-mono text-sm text-white"
       >
         &lt;/&gt;
       </span>

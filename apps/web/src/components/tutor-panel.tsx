@@ -17,6 +17,7 @@ import { Markdown } from '@/components/markdown';
 import { send } from '@/lib/api';
 import { formatDateTime } from '@/lib/dates';
 import { useApi } from '@/lib/use-api';
+import { Icon } from '@/components/icons';
 
 export const MODE_LABEL: Record<TutorRequestMode, string> = {
   HINT: 'Maslahat',
@@ -93,7 +94,7 @@ export function TutorPanel({
       <header className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <h2 id={headingId} className="text-lg font-bold">
-            <span aria-hidden="true">🤖 </span>AI yordamchi
+            AI yordamchi
           </h2>
           <p className="text-sm text-slate-500 dark:text-slate-400">
             Maslahat beradi va tushuntiradi. Tayyor yechim bermaydi va baho qo‘ymaydi.
@@ -340,7 +341,7 @@ function Conversation({
               type="button"
               onClick={() => ask('TEACHER_HANDOFF')}
               disabled={pending !== null}
-              className="btn btn-accent py-2 text-sm"
+              className="btn btn-primary py-2 text-sm"
             >
               Yuborish
             </button>
@@ -389,14 +390,14 @@ function ReplyCard({
         )}
         {r.mode === 'TEACHER_HANDOFF' && (
           <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-emerald-900 dark:bg-emerald-900/40 dark:text-emerald-200">
-            ✓ O‘qituvchiga yuborildi
+            O‘qituvchiga yuborildi
           </span>
         )}
         <time dateTime={r.createdAt}>{formatDateTime(r.createdAt)}</time>
       </div>
       {r.blocked || hiddenSolution ? (
         <p role="note" className="text-amber-800 dark:text-amber-300">
-          ⚠{' '}
+          <Icon name="alert" className="inline size-4 align-[-0.2em] mr-1" />
           {hiddenSolution
             ? 'Bu javobda tayyor yechim bor edi, shuning uchun u ko‘rsatilmaydi.'
             : r.message}
@@ -423,17 +424,19 @@ function ReplyCard({
             type="button"
             aria-pressed={r.feedback?.helpful === true}
             onClick={() => onRate(r.interactionId, true)}
-            className={`rounded-full border px-2 py-0.5 ${r.feedback?.helpful === true ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950' : 'border-slate-300 dark:border-slate-600'}`}
+            className={`inline-flex min-h-9 items-center gap-1 rounded-full border px-3 py-1 ${r.feedback?.helpful === true ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950' : 'border-slate-300 dark:border-slate-600'}`}
           >
-            👍 Ha
+            <Icon name="thumbUp" className="size-4" />
+            Ha
           </button>
           <button
             type="button"
             aria-pressed={r.feedback?.helpful === false}
             onClick={() => onRate(r.interactionId, false)}
-            className={`rounded-full border px-2 py-0.5 ${r.feedback?.helpful === false ? 'border-red-400 bg-red-50 dark:bg-red-950' : 'border-slate-300 dark:border-slate-600'}`}
+            className={`inline-flex min-h-9 items-center gap-1 rounded-full border px-3 py-1 ${r.feedback?.helpful === false ? 'border-red-400 bg-red-50 dark:bg-red-950' : 'border-slate-300 dark:border-slate-600'}`}
           >
-            👎 Yo‘q
+            <Icon name="thumbDown" className="size-4" />
+            Yo‘q
           </button>
         </div>
       )}

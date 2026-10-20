@@ -1,12 +1,11 @@
 'use client';
 
 import type { QuizView } from '@webdizayn/shared';
-import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useState, type FormEvent } from 'react';
 import { OptionText, QuestionText } from '@/components/markdown';
 import { QuizStatusBadge } from '@/components/quiz-ui';
-import { Button, ErrorText, LoadState } from '@/components/ui';
+import { BackLink, Button, ErrorText, LoadState } from '@/components/ui';
 import { send } from '@/lib/api';
 import { useApi } from '@/lib/use-api';
 
@@ -86,12 +85,7 @@ function Quiz({ initial, courseBase }: { initial: QuizView; courseBase: string }
   return (
     <article className="card space-y-6 p-6 sm:p-10">
       <nav className="text-sm">
-        <Link
-          href={`${courseBase}/lessons/${quiz.lessonId}`}
-          className="font-semibold text-brand-600 hover:underline dark:text-brand-300"
-        >
-          ← Darsga qaytish
-        </Link>
+        <BackLink href={`${courseBase}/lessons/${quiz.lessonId}`}>Darsga qaytish</BackLink>
       </nav>
       <header className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-3xl font-bold">{quiz.title}</h1>

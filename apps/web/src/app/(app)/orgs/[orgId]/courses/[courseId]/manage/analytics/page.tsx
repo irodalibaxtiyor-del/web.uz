@@ -23,6 +23,7 @@ import { Button, ErrorText, LoadState, PageHeader, TableScroll } from '@/compone
 import { send } from '@/lib/api';
 import { formatDate } from '@/lib/dates';
 import { useApi } from '@/lib/use-api';
+import { Icon } from '@/components/icons';
 
 const SUBMISSION_LABEL: Record<SubmissionStatus, string> = {
   DRAFT: 'Qoralama',
@@ -100,12 +101,13 @@ function Handoffs({ base }: { base: string }) {
                 <div className="flex flex-wrap items-center gap-3 pt-1">
                   {h.resolvedAt ? (
                     <span className="text-xs text-emerald-800 dark:text-emerald-300">
-                      ✓ Hal qilindi · {formatDate(h.resolvedAt)}
+                      <Icon name="checkCircle" className="inline size-4 align-[-0.2em]" /> Hal
+                      qilindi · {formatDate(h.resolvedAt)}
                       {h.resolvedByName ? ` · ${h.resolvedByName}` : ''}
                     </span>
                   ) : (
                     <span className="text-xs font-semibold text-amber-800 dark:text-amber-300">
-                      ● Ochiq
+                      <Icon name="circleDashed" className="inline size-4 align-[-0.2em]" /> Ochiq
                     </span>
                   )}
                   <Button
@@ -193,7 +195,8 @@ export default function CourseAnalyticsPage() {
                               key={r}
                               className="rounded-full bg-accent-300/40 px-2 py-0.5 text-xs text-ink dark:bg-accent-500/20 dark:text-accent-300"
                             >
-                              ⚠ {STRUGGLE_LABEL[r]}
+                              <Icon name="alertCircle" className="inline size-4 align-[-0.2em]" />{' '}
+                              {STRUGGLE_LABEL[r]}
                             </li>
                           ))}
                         </ul>

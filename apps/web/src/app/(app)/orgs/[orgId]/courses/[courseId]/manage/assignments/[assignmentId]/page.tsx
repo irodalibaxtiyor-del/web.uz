@@ -15,11 +15,12 @@ import { useId, useState, type FormEvent } from 'react';
 import { AssignmentStatusBadge, SubmissionStatusBadge } from '@/components/assignment-ui';
 import { ChecksEditor } from '@/components/checks-editor';
 import { Playground } from '@/components/ide/playground';
-import { Button, ErrorText, inputClass, LoadState, TableScroll } from '@/components/ui';
+import { BackLink, Button, ErrorText, inputClass, LoadState, TableScroll } from '@/components/ui';
 import { send } from '@/lib/api';
 import { parseRules } from '@/lib/check-rules';
 import { formatDateTime, fromLocalInput, toLocalInput } from '@/lib/dates';
 import { useApi } from '@/lib/use-api';
+import { Icon } from '@/components/icons';
 
 export default function ManageAssignmentPage() {
   const { orgId, courseId, assignmentId } = useParams<{
@@ -34,12 +35,7 @@ export default function ManageAssignmentPage() {
     <LoadState state={state}>
       {(a) => (
         <div className="card space-y-12 p-6 sm:p-10">
-          <Link
-            href={`${base}/manage/lessons/${a.lessonId}`}
-            className="text-sm text-slate-500 dark:text-slate-400 hover:underline"
-          >
-            ← Darsga qaytish
-          </Link>
+          <BackLink href={`${base}/manage/lessons/${a.lessonId}`}>Darsga qaytish</BackLink>
           <StatusBar assignment={a} base={base} onChange={reload} />
           <AssignmentForm key={`${a.id}-${a.submittedCount}`} initial={a} base={base} />
           <Submissions base={base} assignmentId={a.id} />
@@ -367,7 +363,8 @@ function AssignmentForm({ initial, base }: { initial: AssignmentAdmin; base: str
                 touch();
               }}
             >
-              + Mezon
+              <Icon name="plus" className="size-4" />
+              Mezon
             </Button>
             {rubric.length > 0 && (
               <span

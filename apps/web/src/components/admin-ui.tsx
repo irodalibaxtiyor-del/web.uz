@@ -3,6 +3,7 @@
 import type { AccountState, TemporaryCredential } from '@webdizayn/shared';
 import { useId, useMemo, useState, type ReactNode } from 'react';
 import { Button } from './ui';
+import { Icon, type IconName } from './icons';
 
 export const th = 'py-2 pr-3 text-left font-semibold';
 export const td = 'py-2 pr-3 align-top';
@@ -90,9 +91,10 @@ export function SortHeader<K extends string>({
         className="inline-flex items-center gap-1 font-semibold hover:underline"
       >
         {label}
-        <span aria-hidden="true" className="text-xs">
-          {active ? (sort.dir === 'asc' ? '▲' : '▼') : '↕'}
-        </span>
+        <Icon
+          name={active ? (sort.dir === 'asc' ? 'chevronUp' : 'chevronDown') : 'selector'}
+          className="size-4"
+        />
       </button>
     </th>
   );
@@ -182,13 +184,15 @@ export function Pager({
       {pages > 1 && (
         <div className="flex items-center gap-2">
           <Button variant="secondary" disabled={page === 0} onClick={() => onPage(page - 1)}>
-            ← Oldingi
+            <Icon name="chevronLeft" className="size-4" />
+            Oldingi
           </Button>
           <span>
             {page + 1} / {pages}
           </span>
           <Button variant="secondary" disabled={page >= pages - 1} onClick={() => onPage(page + 1)}>
-            Keyingi →
+            Keyingi
+            <Icon name="chevronRight" className="size-4" />
           </Button>
         </div>
       )}
@@ -197,16 +201,24 @@ export function Pager({
 }
 
 export function AccountStatus({ a }: { a: AccountState }) {
-  const s = a.disabled
-    ? { icon: '⦸', label: 'Faolsiz', tone: 'text-red-700 dark:text-red-400' }
+  const s: { icon: IconName; label: string; tone: string } = a.disabled
+    ? { icon: 'ban', label: 'Faolsiz', tone: 'text-red-700 dark:text-red-400' }
     : !a.hasPassword
-      ? { icon: '○', label: 'Parol berilmagan', tone: 'text-slate-600 dark:text-slate-400' }
+      ? {
+          icon: 'circleDashed',
+          label: 'Parol berilmagan',
+          tone: 'text-slate-600 dark:text-slate-400',
+        }
       : a.mustChangePassword
-        ? { icon: '◐', label: 'Vaqtinchalik parol', tone: 'text-amber-700 dark:text-amber-400' }
-        : { icon: '✓', label: 'Faol', tone: 'text-emerald-700 dark:text-emerald-400' };
+        ? {
+            icon: 'circleHalf',
+            label: 'Vaqtinchalik parol',
+            tone: 'text-amber-700 dark:text-amber-400',
+          }
+        : { icon: 'checkCircle', label: 'Faol', tone: 'text-emerald-700 dark:text-emerald-400' };
   return (
     <span className={`text-sm whitespace-nowrap ${s.tone}`}>
-      <span aria-hidden="true">{s.icon}</span> {s.label}
+      <Icon name={s.icon} className="inline size-4 align-[-0.2em]" /> {s.label}
     </span>
   );
 }
@@ -263,7 +275,8 @@ export function CredentialNotice({
       </p>
       <div className="flex flex-wrap gap-2">
         <Button variant="secondary" onClick={copy}>
-          {copied ? 'Nusxa olindi ✓' : 'Nusxa olish'}
+          <Icon name={copied ? 'check' : 'copy'} className="size-4" />
+          {copied ? 'Nusxa olindi' : 'Nusxa olish'}
         </Button>
         <Button variant="secondary" onClick={onClose}>
           Yopish

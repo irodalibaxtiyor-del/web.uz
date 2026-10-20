@@ -6,16 +6,16 @@ import {
   type StaffVersionView,
   type SubmissionReviewView,
 } from '@webdizayn/shared';
-import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useId, useState } from 'react';
 import { SubmissionStatusBadge } from '@/components/assignment-ui';
 import { CHECK_ERROR_TEXT, CHECK_STATUS } from '@/components/check-result';
 import { Playground } from '@/components/ide/playground';
-import { Button, ErrorText, inputClass, LoadState } from '@/components/ui';
+import { BackLink, Button, ErrorText, inputClass, LoadState } from '@/components/ui';
 import { api, send } from '@/lib/api';
 import { formatDateTime } from '@/lib/dates';
 import { useApi } from '@/lib/use-api';
+import { Icon } from '@/components/icons';
 
 const ACTION_LABEL: Record<ReviewAction, string> = {
   REVISION_REQUESTED: 'Qayta ishlash so‘raldi',
@@ -39,12 +39,9 @@ export default function ReviewPage() {
       {(view) => (
         <div className="space-y-6">
           <div className="card space-y-4 p-6 sm:p-10">
-            <Link
-              href={`${base}/manage/assignments/${assignmentId}`}
-              className="text-sm text-slate-500 dark:text-slate-400 hover:underline"
-            >
-              ← {view.assignment.title}
-            </Link>
+            <BackLink href={`${base}/manage/assignments/${assignmentId}`}>
+              {view.assignment.title}
+            </BackLink>
             <header className="flex flex-wrap items-center justify-between gap-3">
               <h1 className="text-2xl font-bold">{view.student.fullName}: javob</h1>
               <div className="flex items-center gap-4">
@@ -137,14 +134,20 @@ function VersionViewer({ view, url }: { view: SubmissionReviewView; url: string 
       {v.check && (
         <div className="space-y-2 rounded-xl bg-surface p-4 dark:bg-slate-800/50">
           <p className={`font-semibold ${CHECK_STATUS[v.check.status].tone}`}>
-            <span aria-hidden="true">{CHECK_STATUS[v.check.status].icon}</span> CHECK:{' '}
-            {CHECK_STATUS[v.check.status].label}
+            <Icon
+              name={CHECK_STATUS[v.check.status].icon}
+              className="inline size-4 align-[-0.2em]"
+            />{' '}
+            CHECK: {CHECK_STATUS[v.check.status].label}
           </p>
           {v.check.errorCode && <p className="text-sm">{CHECK_ERROR_TEXT[v.check.errorCode]}</p>}
           <ul className="space-y-1 text-sm">
             {v.check.checks.map((c) => (
               <li key={c.id}>
-                <span aria-hidden="true">{c.passed ? '✓' : '✗'}</span>{' '}
+                <Icon
+                  name={c.passed ? 'checkCircle' : 'circleX'}
+                  className={`inline size-4 align-[-0.2em] ${c.passed ? 'text-emerald-700 dark:text-emerald-400' : 'text-red-700 dark:text-red-400'}`}
+                />{' '}
                 <span className="sr-only">{c.passed ? 'Bajarildi: ' : 'Bajarilmadi: '}</span>
                 {c.title}
                 {c.hidden && (
@@ -347,7 +350,7 @@ function ReviewActions({
         </Button>
         {view.status === 'GRADED' && (
           <Button
-            variant="accent"
+            variant="primary"
             disabled={pending}
             onClick={() =>
               act(

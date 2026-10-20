@@ -6,6 +6,7 @@ import { SANDBOX_URL } from '@/lib/sandbox';
 import { CodeEditor } from './code-editor';
 import { FileTree } from './file-tree';
 import { useRunner, type RunStatus } from './use-runner';
+import { Icon } from '../icons';
 
 const STATUS: Record<RunStatus, { label: string; tone: string }> = {
   idle: { label: 'Ishga tushirilmagan', tone: 'text-slate-400' },
@@ -68,7 +69,7 @@ export function Playground({
           className="btn bg-emerald-700 px-4 py-2 text-white hover:bg-emerald-600"
           title="Ctrl+Enter"
         >
-          <span aria-hidden="true">▶</span> Ishga tushirish
+          <Icon name="play" className="size-4" /> Ishga tushirish
         </button>
         <span role="status" className={`text-sm ${STATUS[status].tone}`}>
           {STATUS[status].label}

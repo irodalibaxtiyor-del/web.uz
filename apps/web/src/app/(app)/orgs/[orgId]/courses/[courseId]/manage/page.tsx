@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useId, useState, type FormEvent } from 'react';
 import { STATUS_LABEL } from '@/components/course-list';
-import { Button, ErrorText, inputClass, LoadState } from '@/components/ui';
+import { BackLink, Button, ErrorText, inputClass, LoadState } from '@/components/ui';
 import { send } from '@/lib/api';
 import { useApi } from '@/lib/use-api';
 
@@ -28,12 +28,7 @@ export default function ManageCoursePage() {
         const lessonCount = s.modules.reduce((n, m) => n + m.lessons.length, 0);
         return (
           <section className="card space-y-8 p-6 sm:p-10">
-            <Link
-              href="/dashboard"
-              className="text-sm text-slate-500 dark:text-slate-400 hover:underline"
-            >
-              ← Boshqaruv paneli
-            </Link>
+            <BackLink href="/dashboard">Boshqaruv paneli</BackLink>
             <header className="flex flex-wrap items-start justify-between gap-4">
               <div className="space-y-1">
                 <h1 className="text-2xl font-bold">{s.course.title}</h1>
@@ -101,7 +96,7 @@ export default function ManageCoursePage() {
                   )}
                   <InlineCreate
                     label="Yangi dars nomi"
-                    button="+ Dars"
+                    button="Dars qo‘shish"
                     onCreate={(title) =>
                       send('POST', `${base}/modules/${mod.id}/lessons`, { title })
                     }
@@ -112,7 +107,7 @@ export default function ManageCoursePage() {
             </ol>
             <InlineCreate
               label="Yangi modul nomi"
-              button="+ Modul"
+              button="Modul qo‘shish"
               onCreate={(title) => send('POST', `${base}/modules`, { title })}
               onDone={reload}
             />

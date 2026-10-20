@@ -40,22 +40,9 @@ export function SiteHeader({ hasSession }: { hasSession: boolean }) {
 
   return (
     <>
-      <div className="bg-brand-600 text-white">
-        <div className="container-page flex flex-wrap items-center justify-between gap-2 py-2 text-sm">
-          <p>
-            Web dizaynni amalda o&apos;rganing: har bir dars mashq va tekshiruv bilan.{' '}
-            <Link href="/register" className="font-semibold underline-offset-4 hover:underline">
-              Bepul boshlash →
-            </Link>
-          </p>
-          <p className="hidden text-white md:block">O&apos;zbek tilida · Ketma-ket darslar</p>
-        </div>
-      </div>
       <header
-        className={`sticky top-0 z-40 border-b bg-white/90 backdrop-blur transition-shadow dark:bg-slate-950/90 ${
-          scrolled
-            ? 'border-slate-200 shadow-[0_6px_20px_-12px_rgb(14_17_51/0.25)] dark:border-slate-800'
-            : 'border-transparent'
+        className={`sticky top-0 z-40 border-b bg-panel/95 backdrop-blur transition-colors ${
+          scrolled ? 'border-line' : 'border-transparent'
         }`}
       >
         <nav

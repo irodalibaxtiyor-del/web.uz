@@ -21,6 +21,7 @@ import { Button, ErrorText, LoadState, PageHeader, TableScroll } from '@/compone
 import { download } from '@/lib/api';
 import { formatDate } from '@/lib/dates';
 import { useApi } from '@/lib/use-api';
+import { Icon } from '@/components/icons';
 
 const time = (d: string | null) => (d ? Date.parse(d) : 0);
 const SORTERS = {
@@ -228,7 +229,8 @@ function Panel({ orgId, o }: { orgId: string; o: GroupOverview }) {
                         </td>
                         <td className={td}>
                           <span className={st.tone}>
-                            <span aria-hidden="true">{st.icon}</span> {st.label}
+                            <Icon name={st.icon} className="inline size-4 align-[-0.2em]" />{' '}
+                            {st.label}
                             {s.struggleCount > 0 && ` (${s.struggleCount})`}
                           </span>
                         </td>

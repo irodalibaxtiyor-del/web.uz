@@ -42,22 +42,18 @@ export default function PublicPortfolioPage() {
 function Portfolio({ p, base }: { p: PublicPortfolio; base: string }) {
   return (
     <div className="space-y-8">
-      <header className="relative overflow-hidden rounded-3xl bg-brand-600 px-6 py-10 text-white sm:px-10">
-        <div
-          aria-hidden="true"
-          className="absolute -top-16 -right-10 size-56 rounded-full bg-brand-700/60"
-        />
-        <div className="relative flex flex-wrap items-center gap-6">
+      <header className="border-b border-line pb-8">
+        <div className="flex flex-wrap items-center gap-6">
           <span
             aria-hidden="true"
-            className="grid size-20 place-items-center rounded-full bg-accent-400 font-display text-3xl font-bold text-ink"
+            className="grid size-20 place-items-center rounded-full border border-line bg-subtle font-display text-2xl font-bold text-ink dark:text-white"
           >
             {initials(p.displayName)}
           </span>
-          <div className="space-y-2">
-            <p className="text-sm tracking-wide text-white uppercase">Portfolio</p>
-            <h1 className="text-3xl font-bold text-white sm:text-4xl">{p.displayName}</h1>
-            {p.headline && <p className="text-lg text-white">{p.headline}</p>}
+          <div className="min-w-0 space-y-1">
+            <p className="section-eyebrow">Portfolio</p>
+            <h1 className="text-title font-bold break-words">{p.displayName}</h1>
+            {p.headline && <p className="text-lg text-muted">{p.headline}</p>}
           </div>
         </div>
       </header>

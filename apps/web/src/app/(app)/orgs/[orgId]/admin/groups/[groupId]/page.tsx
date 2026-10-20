@@ -182,7 +182,7 @@ function GroupView({
         title={group.name}
         subtitle={`${group.students} nafar talaba · ${group.teachers} ta o‘qituvchi biriktirilgan`}
         actions={
-          <Link href={`/orgs/${orgId}/groups/${group.id}`} className="btn btn-accent">
+          <Link href={`/orgs/${orgId}/groups/${group.id}`} className="btn btn-primary">
             O‘quv natijalari
           </Link>
         }

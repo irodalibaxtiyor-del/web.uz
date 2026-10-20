@@ -44,9 +44,9 @@ const SUBMISSION_LABEL: Record<ScoreEntry['status'], string> = {
 };
 
 const LESSON_STATE: Record<LessonProgressDetail['state'], string> = {
-  COMPLETED: '✓ Tugatilgan',
-  IN_PROGRESS: '◐ Jarayonda',
-  NOT_STARTED: '○ Boshlanmagan',
+  COMPLETED: 'Tugatilgan',
+  IN_PROGRESS: 'Jarayonda',
+  NOT_STARTED: 'Boshlanmagan',
 };
 
 export default function StudentDetailPage() {
@@ -89,7 +89,7 @@ export default function StudentDetailPage() {
               </>
             }
             actions={
-              <Button variant="accent" onClick={() => exportOne(d)} disabled={busy}>
+              <Button variant="primary" onClick={() => exportOne(d)} disabled={busy}>
                 {busy ? 'Tayyorlanmoqda…' : 'Excel'}
               </Button>
             }
@@ -278,11 +278,7 @@ export default function StudentDetailPage() {
                               <td className={td}>{LESSON_STATE[l.state]}</td>
                               <td className={td}>Test: {q.title}</td>
                               <td className={td}>
-                                {q.passed
-                                  ? '✓ O‘tdi'
-                                  : q.attempts
-                                    ? '! O‘tilmadi'
-                                    : '○ Urinilmagan'}
+                                {q.passed ? 'O‘tdi' : q.attempts ? '! O‘tilmadi' : 'Urinilmagan'}
                                 {q.bestPercent !== null && ` · eng yaxshi ${q.bestPercent}%`}
                               </td>
                               <td className={`${td} text-right tabular-nums`}>{q.attempts}</td>

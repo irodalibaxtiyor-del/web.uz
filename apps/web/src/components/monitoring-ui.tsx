@@ -1,11 +1,20 @@
 import type { StruggleKind, StruggleStatus } from '@webdizayn/shared';
+import { Icon, type IconName } from './icons';
 
-export const STRUGGLE: Record<StruggleStatus, { label: string; icon: string; tone: string }> = {
-  OK: { label: 'Muammo aniqlanmagan', icon: '✓', tone: 'text-emerald-700 dark:text-emerald-400' },
-  STRUGGLING: { label: 'Qiynalmoqda', icon: '!', tone: 'text-amber-700 dark:text-amber-400' },
+export const STRUGGLE: Record<StruggleStatus, { label: string; icon: IconName; tone: string }> = {
+  OK: {
+    label: 'Muammo aniqlanmagan',
+    icon: 'checkCircle',
+    tone: 'text-emerald-700 dark:text-emerald-400',
+  },
+  STRUGGLING: {
+    label: 'Qiynalmoqda',
+    icon: 'alertCircle',
+    tone: 'text-amber-700 dark:text-amber-400',
+  },
   INSUFFICIENT_DATA: {
     label: 'Ma’lumot yetarli emas',
-    icon: '…',
+    icon: 'clock',
     tone: 'text-slate-600 dark:text-slate-400',
   },
 };
@@ -21,7 +30,7 @@ export function StruggleBadge({ status, count }: { status: StruggleStatus; count
   const st = STRUGGLE[status];
   return (
     <span className={st.tone}>
-      <span aria-hidden="true">{st.icon}</span> {st.label}
+      <Icon name={st.icon} className="inline size-4 align-[-0.2em]" /> {st.label}
       {count ? ` (${count})` : ''}
     </span>
   );

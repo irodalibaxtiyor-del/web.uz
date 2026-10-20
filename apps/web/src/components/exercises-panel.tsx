@@ -6,6 +6,7 @@ import { useId, useState, type FormEvent } from 'react';
 import { send } from '@/lib/api';
 import { useApi } from '@/lib/use-api';
 import { Button, DIFFICULTY_LABEL, ErrorText, inputClass, LoadState } from './ui';
+import { Icon } from './icons';
 
 /** Lesson editor section listing a lesson's exercises for course staff. */
 export function ExercisesPanel({ base, lessonId }: { base: string; lessonId: string }) {
@@ -85,7 +86,8 @@ export function ExercisesPanel({ base, lessonId }: { base: string; lessonId: str
             className={inputClass}
           />
           <Button type="submit" variant="secondary" disabled={pending} className="shrink-0">
-            + Mashq
+            <Icon name="plus" className="size-4" />
+            Mashq
           </Button>
         </div>
         {error && <ErrorText>{error}</ErrorText>}

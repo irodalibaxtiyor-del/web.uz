@@ -1052,3 +1052,44 @@ Roadmap ro'yxati bo'yicha audit va tuzatishlar:
 - **Infratuzilma kerak:** Docker image'lar va `deploy/README.md` tekshiruv ro'yxati, haqiqiy PostgreSQL, alohida registrable sandbox domeni, edge proksi (`X-Forwarded-For`), backup/restore mashqi, haqiqiy AI provayder (DPA), email tasdiqlash va "parolni unutdim" (SMTP).
 - **Admin amali (kod emas):** demo bazadagi 74 talabaga parol berish (`/orgs/<org>/admin/groups/<guruh>` → "Parol berilmaganlarga — Excel"), guruhlarga o'qituvchi va kurs biriktirish.
 - Kodda qolgan kichik cheklovlar (ixtiyoriy): portfolio uchun server skrinshoti va SEO meta, analitikada sana oralig'i filtri, testni faqat yechganda dars `IN_PROGRESS` ga o'tmasligi, kurs/modul/dars/topshiriqni o'chirish yo'qligi, demo bazadagi HTML/CSS/JS test variantlari aralashtirilmagan (`--replace` progressni o'chiradi).
+
+## 2026-10-20
+
+### Lokal demo qayta ishga tushirildi
+
+- `shared`, `check-engine`, `api` qayta build qilindi; migratsiyalar yangi emas (`0014`). API 4000, sandbox 3100, web (`next dev`) 3000 — hammasi 200.
+
+### Platformani mukammallashtirish (8 band) — tahlil va reja
+
+- So'rov: `platforma-prompt.md` (dizayn, responsivlik, app-shell, kabinet submenyusi, yo'nalish sahifalari, avtomatik slug, elektron darslik — flipbook, chatbot). Tartib: 1 → 2 → 7 → 4 → 5 → 3 → 6 → 8.
+- Audit natijasi:
+  - ikonka: o'zimizning 17 ta `fill` SVG (`icons.tsx`); emoji 5 ta (🤖 👍 👎 🔒 ⚠), holat belgilari sifatida Unicode (✓ ○ ◐ ✗ ● ★ ▲▼ ← →) ~30 faylda; landing'da 8 ta "rangli kvadrat ichida ikonka" va 4 ta "doira ichida ikonka" — shablon ko'rinishi;
+  - gradientlar: kurs muqovalari, progress bar; rangli soya ("glow"): `btn-primary`, `card-hover`;
+  - tokenlar `@theme` da ranglar va soyalar uchun bor, oraliq/radius/shrift o'lchamlari uchun yo'q;
+  - modallar yo'q, 19 joyda `window.confirm()`; burger menyu bor (`< lg`), lekin Esc va tashqariga bosish bilan yopilmaydi;
+  - `(app)` layout oddiy sahifa scroll'i, yon menyu yo'q; kabinetda "Chiqish" faqat dashboard sahifasida;
+  - yo'nalishlar landing'da qattiq yozilgan, bosilmaydi, DB'da yo'nalish tushunchasi yo'q; kurs katalogi faqat tashkilot a'zolariga ochiq;
+  - slug qo'lda kiritiladi, server faqat regex tekshiradi, band bo'lsa 409; slug tahrirlanmaydi va URL'larda ishlatilmaydi (URL'lar ID bilan);
+  - PDF/fayl yuklash infratuzilmasi yo'q (multipart, storage, rasterizatsiya); `sharp` o'rnatilgan, `pdftoppm`/`mutool` yo'q;
+  - AI Tutor (mashq/topshiriq ichida, mock provider) bor, umumiy platforma chatboti yo'q.
+- Brauzerlar: Chrome, Edge, Firefox o'rnatilgan; Safari (Windows) yo'q — tekshirib bo'lmaydi.
+- Kod o'zgartirilmadi. Reja va ochiq savollar foydalanuvchiga berildi.
+- **Foydalanuvchi qarorlari:**
+  - kursi yo'q yo'nalishlar (Figma'dan kodga, UI asoslari, Portfolio, Moslashuvchan dizayn) uchun ham kurslar yoziladi (W3Schools tartibi, original o'zbekcha, CHECK'li mashqlar; Figma darsligi W3Schools'da yo'q — original);
+  - yo'nalish va kurs sahifalari mehmonlarga ochiq, mashq uchun login kerak;
+  - elektron darslik tizimga kirgan barcha foydalanuvchilarga ochiq;
+  - chatbot mehmonlarga ham ochiq; "admin bilan bog'lanish" keyinroq Telegram bot orqali (hozircha DB + admin panel, Telegram uchun ulanish nuqtasi).
+
+### 1-band — Dizayn (yakunlandi)
+
+- **Ikonkalar:** `@tabler/icons-react@3.45.0` — yagona to'plam. `components/icons.tsx` Tabler'ni nom bo'yicha o'raydi (`<Icon name="…" />`, stroke 1.75, o'lcham `className` bilan, doim `aria-hidden`).
+- **Olib tashlandi:**
+  - emojilar (🤖 👍 👎 🔒 ⚠) va Unicode holat belgilari (✓ ○ ◐ ✗ ● ★ ▲▼ ↕ ⏱ ⦸ ✎ ▶ ×, "← Orqaga", "+ Qo'shish") — ikonka + matn bilan almashtirildi;
+  - landing'dagi 8 ta "rangli kvadrat ichida ikonka", 4 ta "doira ichida ikonka", nuqtali naqshlar, dekor doira/halqalar, to'lqinli chiziq, yashil doiradagi belgilar, yuqoridagi ko'k reklama paneli;
+  - kurs muqovalaridagi gradient + bosh harflar (muqova butunlay olib tashlandi — nomni takrorlardi), progress bar gradienti, `btn-primary`/`card-hover`/logodagi rangli "glow" soyalar;
+  - kurs xaritasidagi rangli to'ldirilgan holat doiralari va modul raqami kvadrati (holat `StateBadge` da allaqachon bor edi) — o'rniga "1.2" raqami va "1-modul" yorlig'i;
+  - yutuqlardagi sariq doira ichidagi ikonkalar.
+- **Dizayn tokenlari** (`globals.css` `@theme`): semantik ranglar `canvas/panel/subtle/line/line-strong/fg/muted/ink` (dark mode'da qayta aniqlanadi), radiuslar `control/card/panel`, neytral soyalar `card/card-hover/overlay`, suyuq sarlavha o'lchamlari `text-display/title/heading` (`clamp()`), `shimmer` animatsiyasi. `.btn` (min 44px mobilda), `.btn-ghost`, `.btn-danger`, `.field`, `.card`, `.skeleton` tokenlardan foydalanadi.
+- **`ui.tsx`:** `PageHeader` endi ko'k banner emas — breadcrumb (chevron), sarlavha, izoh, amallar, pastki chiziq. Yangi: `BackLink`, `Skeleton`, `EmptyState`, `ErrorState` (403/404/tarmoq/5xx uchun alohida matn; tarmoq va 5xx'da "Qayta urinish"), `StatusLabel` (ikonka + matn + ton). `LoadState` yuklanishda skeleton ko'rsatadi. Barcha holat xaritalari (`STATE_STYLE`, mashq, test, topshiriq, CHECK, monitoring, hisob holati, import holati) `IconName` bilan.
+- Kurs kartasi to'liq bosiladi (stretched link, ichida ikkinchi havola yo'q).
+- Tekshiruv: typecheck ✅, lint ✅, format ✅, web test 36/36 ✅. Brauzer (demo baza, faqat avval ochilgan dars/mashqlar — yangi progress yozilmaydi): landing, login, kabinet, kurs xaritasi, dars, mashq, natijalar, portfolio, playground × 390/1440 px × light/dark — gorizontal scroll 0, konsol xatolari 0, skrinshotlar ko'zdan kechirildi.

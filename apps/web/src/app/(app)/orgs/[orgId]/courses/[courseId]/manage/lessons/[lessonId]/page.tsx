@@ -1,14 +1,13 @@
 'use client';
 
 import { LESSON_CONTENT_MAX } from '@webdizayn/shared';
-import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useId, useState, type FormEvent } from 'react';
 import { AssignmentsPanel } from '@/components/assignments-panel';
 import { ExercisesPanel } from '@/components/exercises-panel';
 import { Markdown } from '@/components/markdown';
 import { QuizzesPanel } from '@/components/quizzes-panel';
-import { Button, ErrorText, inputClass, LoadState } from '@/components/ui';
+import { BackLink, Button, ErrorText, inputClass, LoadState } from '@/components/ui';
 import { send } from '@/lib/api';
 import { useApi } from '@/lib/use-api';
 
@@ -65,12 +64,7 @@ function Editor({ lesson, base }: { lesson: EditableLesson; base: string }) {
 
   return (
     <form onSubmit={onSubmit} className="space-y-5">
-      <Link
-        href={`${base}/manage`}
-        className="text-sm text-slate-500 dark:text-slate-400 hover:underline"
-      >
-        ← Kurs tuzilmasi
-      </Link>
+      <BackLink href={`${base}/manage`}>Kurs tuzilmasi</BackLink>
       <div className="space-y-1">
         <label htmlFor={`${id}-title`} className="text-sm font-medium">
           Dars nomi

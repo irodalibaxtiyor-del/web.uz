@@ -4,6 +4,7 @@ import type { MeResponse, Role } from '@webdizayn/shared';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { CourseList } from '@/components/course-list';
+import { Icon } from '@/components/icons';
 import { Button, LoadState, PageHeader } from '@/components/ui';
 import { api } from '@/lib/api';
 import { useApi } from '@/lib/use-api';
@@ -36,17 +37,14 @@ export default function DashboardPage() {
             subtitle="O'qishni davom ettiring yoki yangi kursni tanlang."
             actions={
               <>
-                <Link href="/analytics" className="btn btn-accent">
+                <Link href="/analytics" className="btn btn-outline">
                   Natijalarim
                 </Link>
-                <Link href="/portfolio" className="btn btn-accent">
+                <Link href="/portfolio" className="btn btn-outline">
                   Portfolio
                 </Link>
-                <Button
-                  variant="secondary"
-                  onClick={logout}
-                  className="border-white/60 bg-transparent text-white hover:border-white hover:text-white dark:bg-transparent"
-                >
+                <Button variant="ghost" onClick={logout}>
+                  <Icon name="logout" className="size-4" />
                   Chiqish
                 </Button>
               </>
@@ -57,7 +55,9 @@ export default function DashboardPage() {
               <section key={m.organizationId} className="space-y-5">
                 <div className="flex flex-wrap items-baseline gap-3">
                   <h2 className="text-2xl font-bold">{m.organizationName}</h2>
-                  <span className="section-eyebrow">{ROLE_LABEL[m.role]}</span>
+                  <span className="rounded-full border border-line px-2.5 py-0.5 text-xs font-semibold text-muted">
+                    {ROLE_LABEL[m.role]}
+                  </span>
                   {m.role === 'ORG_ADMIN' && (
                     <>
                       <Link href={`/orgs/${m.organizationId}/analytics`} className={linkClass}>

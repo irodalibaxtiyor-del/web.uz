@@ -1,8 +1,12 @@
 @import 'tailwindcss';
 
 /*
- * Design tokens. Visual language: bright education blue, warm yellow accent,
- * soft blue-tinted section backgrounds, rounded cards with soft shadows.
+ * Design tokens. Every colour, radius, shadow and type size used by the shared component
+ * classes below comes from here. Semantic colours (canvas, panel, line, muted, fg) are
+ * re-defined for dark mode, so components do not need `dark:` variants for them.
+ *
+ * Visual language: neutral surfaces, one brand blue for actions and active state, a yellow
+ * accent used sparingly, thin borders instead of heavy or coloured shadows.
  */
 @theme {
   --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
@@ -24,15 +28,47 @@
   --color-accent-400: #fec400;
   --color-accent-500: #e5ae00;
 
-  /* Light section background and deep heading ink */
-  --color-surface: #f5faff;
+  /* Semantic surfaces and text (overridden for dark mode below). */
+  --color-canvas: #f6f8fb;
+  --color-panel: #ffffff;
+  --color-subtle: #f1f4f8;
+  --color-line: #e3e8ef;
+  --color-line-strong: #cbd5e1;
+  --color-fg: #334155;
+  --color-muted: #5b6577;
   --color-ink: #0e1133;
+  /* Kept for existing call sites: light section background. */
+  --color-surface: #f5faff;
 
   /* Single-series chart mark; re-stepped for dark surfaces (validated against both). */
   --color-chart: #0071dc;
 
-  --shadow-card: 0 10px 30px -12px rgb(14 17 51 / 0.18);
-  --shadow-card-hover: 0 20px 40px -14px rgb(0 113 220 / 0.35);
+  --radius-control: 0.5rem;
+  --radius-card: 0.75rem;
+  --radius-panel: 1rem;
+
+  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.05), 0 1px 3px rgb(15 23 42 / 0.04);
+  --shadow-card-hover: 0 6px 16px -6px rgb(15 23 42 / 0.14);
+  --shadow-overlay: 0 16px 40px -12px rgb(15 23 42 / 0.28);
+
+  /* Fluid type scale for headings (min at 320px, max at 1440px). */
+  --text-display: clamp(2rem, 1.45rem + 2.75vw, 3.5rem);
+  --text-display--line-height: 1.1;
+  --text-title: clamp(1.625rem, 1.35rem + 1.4vw, 2.375rem);
+  --text-title--line-height: 1.2;
+  --text-heading: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem);
+  --text-heading--line-height: 1.3;
+
+  --animate-shimmer: shimmer 1.4s ease-in-out infinite;
+  @keyframes shimmer {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.45;
+    }
+  }
 }
 
 :root {
@@ -42,24 +78,47 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --color-chart: #3b8eea;
+    --color-canvas: #0b1120;
+    --color-panel: #111827;
+    --color-subtle: #172033;
+    --color-line: #233047;
+    --color-line-strong: #334155;
+    --color-fg: #cbd5e1;
+    --color-muted: #9aa5b8;
+    --shadow-card: 0 0 0 0 transparent;
+    --shadow-card-hover: 0 6px 16px -6px rgb(0 0 0 / 0.6);
+    --shadow-overlay: 0 16px 40px -12px rgb(0 0 0 / 0.7);
   }
 }
 
 /* Base styles live in the base layer so utilities (e.g. text-white on a heading) win. */
 @layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
   body {
-    @apply bg-white font-sans text-slate-700 antialiased dark:bg-slate-950 dark:text-slate-300;
+    @apply bg-panel font-sans text-fg antialiased;
   }
 
   h1,
   h2,
   h3,
   h4 {
-    @apply font-display text-ink dark:text-white;
+    @apply font-display text-ink text-balance dark:text-white;
   }
 
   :focus-visible {
     @apply outline-2 outline-offset-2 outline-brand-500;
+  }
+
+  /* Phones: at least 16px for inputs (prevents iOS zoom) and body copy. */
+  @media (max-width: 767px) {
+    input,
+    select,
+    textarea {
+      font-size: 1rem;
+    }
   }
 }
 
@@ -69,38 +128,42 @@
   }
 
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-200 disabled:pointer-events-none disabled:opacity-60;
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-control px-5 py-2.5 text-sm font-semibold transition-colors duration-150 disabled:pointer-events-none disabled:opacity-60 sm:min-h-10;
   }
   .btn-primary {
-    @apply bg-brand-600 text-white shadow-[0_8px_20px_-8px_rgb(0_113_220/0.6)] hover:-translate-y-0.5 hover:bg-brand-700;
+    @apply bg-brand-600 text-white hover:bg-brand-700 active:bg-brand-800;
   }
   .btn-accent {
-    @apply bg-accent-400 text-ink hover:-translate-y-0.5 hover:bg-accent-300;
+    @apply bg-accent-400 text-ink hover:bg-accent-300;
   }
   .btn-outline {
-    @apply border border-slate-300 bg-white text-ink hover:border-brand-600 hover:text-brand-600 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:hover:border-brand-400 dark:hover:text-brand-300;
+    @apply border border-line-strong bg-panel text-ink hover:border-brand-600 hover:text-brand-700 dark:text-white dark:hover:border-brand-400 dark:hover:text-brand-300;
+  }
+  .btn-ghost {
+    @apply text-ink hover:bg-subtle dark:text-slate-200;
+  }
+  .btn-danger {
+    @apply bg-red-700 text-white hover:bg-red-800;
   }
 
   .card {
-    @apply rounded-2xl border border-slate-100 bg-white shadow-card dark:border-slate-800 dark:bg-slate-900 dark:shadow-none;
+    @apply rounded-card border border-line bg-panel shadow-card;
   }
   .card-hover {
-    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover;
+    @apply transition-[border-color,box-shadow,translate] duration-200 hover:-translate-y-0.5 hover:border-line-strong hover:shadow-card-hover;
   }
 
   .section-eyebrow {
-    @apply inline-block rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold tracking-wide text-brand-700 uppercase dark:bg-brand-950 dark:text-brand-300;
+    @apply inline-block text-sm font-semibold tracking-wide text-brand-700 uppercase dark:text-brand-300;
   }
 
   .field {
-    @apply w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-ink transition placeholder:text-slate-400 focus:border-brand-500 focus:ring-4 focus:ring-brand-100 focus:outline-none dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:ring-brand-900;
+    @apply min-h-11 w-full rounded-control border border-line-strong bg-panel px-3.5 py-2.5 text-ink transition-colors placeholder:text-slate-500 focus:border-brand-500 focus:ring-4 focus:ring-brand-100 focus:outline-none sm:min-h-10 dark:text-white dark:placeholder:text-slate-400 dark:focus:ring-brand-900;
   }
-}
 
-/* Decorative dotted pattern used behind hero and banners */
-.dots-pattern {
-  background-image: radial-gradient(rgb(0 113 220 / 0.25) 1.5px, transparent 1.5px);
-  background-size: 18px 18px;
+  .skeleton {
+    @apply animate-shimmer rounded-control bg-subtle;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

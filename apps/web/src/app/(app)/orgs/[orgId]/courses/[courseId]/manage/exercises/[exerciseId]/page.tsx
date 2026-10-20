@@ -8,12 +8,12 @@ import {
   type ExerciseStudentProgress,
   type ProjectFile,
 } from '@webdizayn/shared';
-import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useId, useState, type FormEvent } from 'react';
 import { ChecksEditor } from '@/components/checks-editor';
 import { Playground } from '@/components/ide/playground';
 import {
+  BackLink,
   Button,
   DIFFICULTY_LABEL,
   ErrorText,
@@ -39,12 +39,7 @@ export default function ManageExercisePage() {
     <LoadState state={state}>
       {(ex) => (
         <div className="card space-y-12 p-6 sm:p-10">
-          <Link
-            href={`${base}/manage/lessons/${ex.lessonId}`}
-            className="text-sm text-slate-500 dark:text-slate-400 hover:underline"
-          >
-            ← Darsga qaytish
-          </Link>
+          <BackLink href={`${base}/manage/lessons/${ex.lessonId}`}>Darsga qaytish</BackLink>
           <ExerciseForm key={ex.id} initial={ex} base={base} />
           <StudentResults base={base} exerciseId={ex.id} />
         </div>

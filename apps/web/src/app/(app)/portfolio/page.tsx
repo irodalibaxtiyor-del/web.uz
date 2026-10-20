@@ -20,6 +20,7 @@ import { Button, ErrorText, LoadState, PageHeader } from '@/components/ui';
 import { send } from '@/lib/api';
 import { formatDate } from '@/lib/dates';
 import { useApi } from '@/lib/use-api';
+import { Icon } from '@/components/icons';
 
 export default function MyPortfolioPage() {
   const { state, reload } = useApi<MyPortfolio>('/portfolio/me');
@@ -38,7 +39,7 @@ function Editor({ data, reload }: { data: MyPortfolio; reload: () => void }) {
           profile.isPublished && profile.slug ? (
             <Link
               href={`/p/${profile.slug}`}
-              className="btn btn-accent"
+              className="btn btn-primary"
               target="_blank"
               rel="noopener"
             >
@@ -119,7 +120,10 @@ function PublishPanel({ profile, reload }: { profile: PortfolioProfile; reload: 
               : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'
           }`}
         >
-          <span aria-hidden="true">{profile.isPublished ? '● ' : '○ '}</span>
+          <Icon
+            name={profile.isPublished ? 'checkCircle' : 'circleDashed'}
+            className="inline size-4 align-[-0.2em] mr-1"
+          />
           {profile.isPublished ? 'E’lon qilingan' : 'Yashirin'}
         </span>
       </div>
@@ -483,7 +487,8 @@ function Candidates({
                 disabled={full || pending === c.sourceId}
                 aria-label={`${c.title}: portfolioga qo‘shish`}
               >
-                + Qo‘shish
+                <Icon name="plus" className="size-4" />
+                Qo‘shish
               </Button>
             </li>
           ))}

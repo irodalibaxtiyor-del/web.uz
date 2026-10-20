@@ -1,7 +1,6 @@
 'use client';
 
 import type { ExerciseView, ProjectFile } from '@webdizayn/shared';
-import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { CheckResultPanel, useCheckRun } from '@/components/check-result';
@@ -9,6 +8,7 @@ import { Playground } from '@/components/ide/playground';
 import { Markdown } from '@/components/markdown';
 import { TutorPanel } from '@/components/tutor-panel';
 import {
+  BackLink,
   Button,
   DIFFICULTY_LABEL,
   ErrorText,
@@ -17,6 +17,7 @@ import {
 } from '@/components/ui';
 import { api, send } from '@/lib/api';
 import { useApi } from '@/lib/use-api';
+import { Icon } from '@/components/icons';
 
 export default function ExercisePage() {
   const router = useRouter();
@@ -108,12 +109,7 @@ function Workspace({ initial, courseBase }: { initial: ExerciseView; courseBase:
     <article className="space-y-6">
       <div className="card space-y-6 p-6 sm:p-10">
         <nav className="text-sm">
-          <Link
-            href={`${courseBase}/lessons/${ex.lessonId}`}
-            className="font-semibold text-brand-600 hover:underline dark:text-brand-300"
-          >
-            ← Darsga qaytish
-          </Link>
+          <BackLink href={`${courseBase}/lessons/${ex.lessonId}`}>Darsga qaytish</BackLink>
         </nav>
         <header className="flex flex-wrap items-center justify-between gap-3">
           <div className="space-y-1">
@@ -182,7 +178,11 @@ function Workspace({ initial, courseBase }: { initial: ExerciseView; courseBase:
                   disabled={pending || check.busy}
                   className="btn btn-accent py-2"
                 >
-                  <span aria-hidden="true">✓</span> {check.busy ? 'Tekshirilmoqda…' : 'Tekshirish'}
+                  <Icon
+                    name={check.busy ? 'loader' : 'checkCircle'}
+                    className={`size-4 ${check.busy ? 'animate-spin' : ''}`}
+                  />
+                  {check.busy ? 'Tekshirilmoqda…' : 'Tekshirish'}
                 </button>
               )}
               <button

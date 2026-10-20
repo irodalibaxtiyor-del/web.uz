@@ -6,12 +6,12 @@ import {
   type QuizAdmin,
   type QuizQuestion,
 } from '@webdizayn/shared';
-import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useId, useState, type FormEvent } from 'react';
-import { Button, ErrorText, inputClass, LoadState } from '@/components/ui';
+import { BackLink, Button, ErrorText, inputClass, LoadState } from '@/components/ui';
 import { send } from '@/lib/api';
 import { useApi } from '@/lib/use-api';
+import { Icon } from '@/components/icons';
 
 const newId = (prefix: string) => `${prefix}-${Math.random().toString(36).slice(2, 10)}`;
 
@@ -41,12 +41,7 @@ export default function ManageQuizPage() {
     <LoadState state={state}>
       {(q) => (
         <div className="card space-y-8 p-6 sm:p-10">
-          <Link
-            href={`${base}/manage/lessons/${q.lessonId}`}
-            className="text-sm text-slate-500 dark:text-slate-400 hover:underline"
-          >
-            ← Darsga qaytish
-          </Link>
+          <BackLink href={`${base}/manage/lessons/${q.lessonId}`}>Darsga qaytish</BackLink>
           <QuizForm key={q.id} initial={q} base={base} />
         </div>
       )}
@@ -263,7 +258,8 @@ function QuizForm({ initial, base }: { initial: QuizAdmin; base: string }) {
                       updateQ(i, { options: [...q.options, { id: newId('o'), text: '' }] })
                     }
                   >
-                    + Variant
+                    <Icon name="plus" className="size-4" />
+                    Variant
                   </Button>
                   <Button
                     variant="secondary"
@@ -287,7 +283,8 @@ function QuizForm({ initial, base }: { initial: QuizAdmin; base: string }) {
             touch();
           }}
         >
-          + Savol
+          <Icon name="plus" className="size-4" />
+          Savol
         </Button>
       </section>
 

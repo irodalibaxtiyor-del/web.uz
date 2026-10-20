@@ -1,37 +1,139 @@
+import {
+  IconAlertCircle,
+  IconAlertTriangle,
+  IconArrowDown,
+  IconArrowLeft,
+  IconArrowRight,
+  IconArrowUp,
+  IconAward,
+  IconBan,
+  IconBook2,
+  IconBriefcase,
+  IconChartBar,
+  IconCheck,
+  IconChevronDown,
+  IconChevronLeft,
+  IconChevronRight,
+  IconChevronUp,
+  IconCircle,
+  IconCircleCheck,
+  IconCircleDashed,
+  IconCircleHalf2,
+  IconCircleX,
+  IconClock,
+  IconCode,
+  IconCopy,
+  IconExternalLink,
+  IconHelpCircle,
+  IconInfoCircle,
+  IconLayoutSidebarLeftCollapse,
+  IconLayoutSidebarLeftExpand,
+  IconLoader2,
+  IconLock,
+  IconLogout,
+  IconMaximize,
+  IconMenu2,
+  IconMessageCircle,
+  IconMinimize,
+  IconPencil,
+  IconPlayerPlay,
+  IconPlus,
+  IconSchool,
+  IconSearch,
+  IconSelector,
+  IconSend,
+  IconSettings,
+  IconStar,
+  IconThumbDown,
+  IconThumbUp,
+  IconTrash,
+  IconTrophy,
+  IconUpload,
+  IconUser,
+  IconUsers,
+  IconX,
+  type Icon as TablerIcon,
+} from '@tabler/icons-react';
 import type { SVGProps } from 'react';
 
-const PATHS = {
-  html: 'M4 3l1.6 17L12 22l6.4-2L20 3H4zm12.2 5.5H9.3l.2 2.5h6.5l-.6 6.3L12 18.3l-3.4-1-.2-2.6h2.4l.1 1.2 1.1.3 1.1-.3.2-2.1H8.3L7.8 6h8.6l-.2 2.5z',
-  css: 'M4 3l1.6 17L12 22l6.4-2L20 3H4zm12.6 5.5H9.4l.2 2.5h6.8l-.6 6.3L12 18.3l-3.4-1-.2-2.6h2.4l.1 1.2 1.1.3 1.1-.3.2-2.1H8.2L7.6 6h9.2l-.2 2.5z',
-  js: 'M8 3a3 3 0 00-3 3v3a2 2 0 01-2 2v2a2 2 0 012 2v3a3 3 0 003 3h1v-2H8a1 1 0 01-1-1v-3a3 3 0 00-1.4-2.5A3 3 0 007 10V6a1 1 0 011-1h1V3H8zm8 0h-1v2h1a1 1 0 011 1v4a3 3 0 001.4 2.5A3 3 0 0017 14.9V18a1 1 0 01-1 1h-1v2h1a3 3 0 003-3v-3a2 2 0 012-2v-2a2 2 0 01-2-2V6a3 3 0 00-3-3z',
-  grid: 'M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z',
-  phone:
-    'M7 2h10a2 2 0 012 2v16a2 2 0 01-2 2H7a2 2 0 01-2-2V4a2 2 0 012-2zm0 3v14h10V5H7zm4 15h2v-1h-2v1z',
-  palette:
-    'M12 2a10 10 0 000 20c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.3-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.3A5.7 5.7 0 0022 9.7C22 5.4 17.5 2 12 2zM6.5 13a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm3-4a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm5 0a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm3 4a1.5 1.5 0 110-3 1.5 1.5 0 010 3z',
-  figma:
-    'M8 2h4v6H8a3 3 0 010-6zm4 0h4a3 3 0 010 6h-4V2zM8 8h4v6H8a3 3 0 010-6zm8 0a3 3 0 110 6 3 3 0 010-6zM8 14h4v3a3 3 0 11-4-3z',
-  briefcase:
-    'M9 3h6a2 2 0 012 2v1h3a2 2 0 012 2v11a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h3V5a2 2 0 012-2zm0 3h6V5H9v1z',
-  check: 'M9 16.2l-3.5-3.5L4 14.2l5 5 11-11-1.4-1.4L9 16.2z',
-  book: 'M4 4a2 2 0 012-2h13v16H6a2 2 0 00-2 2V4zm2 16h13v2H6a2 2 0 010-4z',
-  code: 'M8.7 16.6L4.1 12l4.6-4.6L7.3 6 1.3 12l6 6 1.4-1.4zm6.6 0l4.6-4.6-4.6-4.6L16.7 6l6 6-6 6-1.4-1.4z',
-  play: 'M8 5v14l11-7L8 5z',
-  sparkles:
-    'M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8L12 2zm7 11l.9 2.6 2.6.9-2.6.9L19 20l-.9-2.6-2.6-.9 2.6-.9L19 13zM5 14l.7 1.8 1.8.7-1.8.7L5 19l-.7-1.8-1.8-.7 1.8-.7L5 14z',
-  users:
-    'M16 11a3 3 0 100-6 3 3 0 000 6zm-8 0a3 3 0 100-6 3 3 0 000 6zm0 2c-2.7 0-8 1.3-8 4v3h16v-3c0-2.7-5.3-4-8-4zm8 0c-.3 0-.7 0-1.1.1 1.3.9 2.1 2.2 2.1 3.9v3h7v-3c0-2.7-5.3-4-8-4z',
-  shield:
-    'M12 2l8 3v6c0 5-3.4 9.7-8 11-4.6-1.3-8-6-8-11V5l8-3zm-1 13.6l6-6-1.4-1.4-4.6 4.6-2.1-2.1L7.5 12l3.5 3.6z',
-  arrowRight: 'M13 5l7 7-7 7-1.4-1.4 4.6-4.6H4v-2h12.2l-4.6-4.6L13 5z',
-} as const;
+/**
+ * The single icon set of the app (Tabler, outline). Every icon renders with the same stroke
+ * width; size comes from `className` (`size-4`, `size-5`, ...). Icons are decorative by
+ * default — the text next to them carries the meaning.
+ */
+const ICONS = {
+  alert: IconAlertTriangle,
+  alertCircle: IconAlertCircle,
+  arrowDown: IconArrowDown,
+  arrowLeft: IconArrowLeft,
+  arrowRight: IconArrowRight,
+  arrowUp: IconArrowUp,
+  award: IconAward,
+  ban: IconBan,
+  book: IconBook2,
+  briefcase: IconBriefcase,
+  chart: IconChartBar,
+  check: IconCheck,
+  checkCircle: IconCircleCheck,
+  chevronDown: IconChevronDown,
+  chevronLeft: IconChevronLeft,
+  chevronRight: IconChevronRight,
+  chevronUp: IconChevronUp,
+  circle: IconCircle,
+  circleDashed: IconCircleDashed,
+  circleHalf: IconCircleHalf2,
+  circleX: IconCircleX,
+  clock: IconClock,
+  code: IconCode,
+  copy: IconCopy,
+  external: IconExternalLink,
+  help: IconHelpCircle,
+  info: IconInfoCircle,
+  loader: IconLoader2,
+  lock: IconLock,
+  logout: IconLogout,
+  maximize: IconMaximize,
+  menu: IconMenu2,
+  message: IconMessageCircle,
+  minimize: IconMinimize,
+  pencil: IconPencil,
+  play: IconPlayerPlay,
+  plus: IconPlus,
+  school: IconSchool,
+  search: IconSearch,
+  selector: IconSelector,
+  send: IconSend,
+  settings: IconSettings,
+  sidebarCollapse: IconLayoutSidebarLeftCollapse,
+  sidebarExpand: IconLayoutSidebarLeftExpand,
+  star: IconStar,
+  thumbDown: IconThumbDown,
+  thumbUp: IconThumbUp,
+  trash: IconTrash,
+  trophy: IconTrophy,
+  upload: IconUpload,
+  user: IconUser,
+  users: IconUsers,
+  x: IconX,
+} satisfies Record<string, TablerIcon>;
 
-export type IconName = keyof typeof PATHS;
+export type IconName = keyof typeof ICONS;
 
-export function Icon({ name, ...props }: { name: IconName } & SVGProps<SVGSVGElement>) {
+export const ICON_STROKE = 1.75;
+
+export function Icon({
+  name,
+  className = 'size-5',
+  ...props
+}: { name: IconName } & Omit<SVGProps<SVGSVGElement>, 'ref' | 'stroke'>) {
+  const Component = ICONS[name];
   return (
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" {...props}>
-      <path d={PATHS[name]} />
-    </svg>
+    <Component
+      aria-hidden="true"
+      focusable="false"
+      stroke={ICON_STROKE}
+      className={`shrink-0 ${className}`}
+      {...props}
+    />
   );
 }

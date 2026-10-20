@@ -2,6 +2,7 @@
 
 import { PROJECT_MAX_FILES, PROJECT_PATH_RE, type ProjectFile } from '@webdizayn/shared';
 import { useId, useState, type FormEvent } from 'react';
+import { Icon } from '../icons';
 
 const ICON_TONE: Record<string, string> = {
   html: 'text-orange-500',
@@ -113,17 +114,17 @@ export function FileTree({
                   type="button"
                   onClick={() => rename(f.path)}
                   aria-label={`${f.path}: nomini o'zgartirish`}
-                  className="rounded px-1.5 text-slate-400 hover:text-white"
+                  className="grid size-7 place-items-center rounded text-slate-400 hover:text-white"
                 >
-                  ✎
+                  <Icon name="pencil" className="size-4" />
                 </button>
                 <button
                   type="button"
                   onClick={() => remove(f.path)}
                   aria-label={`${f.path}: o'chirish`}
-                  className="rounded px-1.5 text-slate-400 hover:text-red-400"
+                  className="grid size-7 place-items-center rounded text-slate-400 hover:text-red-400"
                 >
-                  ×
+                  <Icon name="trash" className="size-4" />
                 </button>
               </span>
             </li>

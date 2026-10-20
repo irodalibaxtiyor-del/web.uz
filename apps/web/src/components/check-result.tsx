@@ -3,19 +3,33 @@
 import type { CheckErrorCode, CheckRunStatus, CheckRunView } from '@webdizayn/shared';
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { api, send } from '@/lib/api';
+import { Icon, type IconName } from './icons';
 
-export const CHECK_STATUS: Record<CheckRunStatus, { label: string; icon: string; tone: string }> = {
-  QUEUED: { label: 'Navbatda', icon: '…', tone: 'text-slate-600 dark:text-slate-300' },
-  RUNNING: { label: 'Tekshirilmoqda', icon: '◐', tone: 'text-brand-700 dark:text-brand-300' },
-  PASSED: {
-    label: "Tekshiruvdan o'tdi",
-    icon: '✓',
-    tone: 'text-emerald-700 dark:text-emerald-400',
-  },
-  FAILED: { label: "Tekshiruvdan o'tmadi", icon: '✗', tone: 'text-red-700 dark:text-red-400' },
-  ERROR: { label: 'Tekshiruvda xatolik', icon: '!', tone: 'text-amber-700 dark:text-amber-400' },
-  TIMEOUT: { label: 'Vaqt tugadi', icon: '⏱', tone: 'text-amber-700 dark:text-amber-400' },
-};
+export const CHECK_STATUS: Record<CheckRunStatus, { label: string; icon: IconName; tone: string }> =
+  {
+    QUEUED: { label: 'Navbatda', icon: 'clock', tone: 'text-slate-600 dark:text-slate-300' },
+    RUNNING: {
+      label: 'Tekshirilmoqda',
+      icon: 'circleHalf',
+      tone: 'text-brand-700 dark:text-brand-300',
+    },
+    PASSED: {
+      label: "Tekshiruvdan o'tdi",
+      icon: 'checkCircle',
+      tone: 'text-emerald-700 dark:text-emerald-400',
+    },
+    FAILED: {
+      label: "Tekshiruvdan o'tmadi",
+      icon: 'circleX',
+      tone: 'text-red-700 dark:text-red-400',
+    },
+    ERROR: {
+      label: 'Tekshiruvda xatolik',
+      icon: 'alertCircle',
+      tone: 'text-amber-700 dark:text-amber-400',
+    },
+    TIMEOUT: { label: 'Vaqt tugadi', icon: 'clock', tone: 'text-amber-700 dark:text-amber-400' },
+  };
 
 export const CHECK_ERROR_TEXT: Record<CheckErrorCode, string> = {
   NO_ENTRY: 'Loyihada index.html fayli yo‘q. Tekshiruv shu fayldan boshlanadi.',
@@ -98,7 +112,7 @@ export function CheckResultPanel({ run }: { run: CheckRunView }) {
     <section aria-labelledby={titleId} aria-live="polite" className="card space-y-4 p-5 sm:p-6">
       <header className="flex flex-wrap items-center justify-between gap-2">
         <h2 id={titleId} className={`text-lg font-semibold ${s.tone}`}>
-          <span aria-hidden="true">{s.icon}</span> {s.label}
+          <Icon name={s.icon} className="inline size-4 align-[-0.2em]" /> {s.label}
         </h2>
         {verdict && (
           <span className="text-sm text-slate-600 dark:text-slate-400">
@@ -122,12 +136,10 @@ export function CheckResultPanel({ run }: { run: CheckRunView }) {
         <ul className="space-y-2">
           {run.checks.map((c, i) => (
             <li key={i} className="flex gap-3 text-sm">
-              <span
-                aria-hidden="true"
-                className={c.passed ? 'text-emerald-600' : 'text-red-600 dark:text-red-400'}
-              >
-                {c.passed ? '✓' : '✗'}
-              </span>
+              <Icon
+                name={c.passed ? 'checkCircle' : 'circleX'}
+                className={`inline size-4 align-[-0.2em] ${c.passed ? 'text-emerald-700 dark:text-emerald-400' : 'text-red-700 dark:text-red-400'}`}
+              />
               <span>
                 <span className="sr-only">{c.passed ? 'Bajarildi: ' : 'Bajarilmadi: '}</span>
                 {c.title}

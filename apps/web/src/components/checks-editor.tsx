@@ -7,6 +7,7 @@ import { Playground } from '@/components/ide/playground';
 import { Button, ErrorText } from '@/components/ui';
 import { send } from '@/lib/api';
 import { EXAMPLE_RULES, parseRules } from '@/lib/check-rules';
+import { Icon } from './icons';
 
 function describe(a: CheckAssertion): string {
   switch (a.type) {
@@ -204,7 +205,10 @@ export function ChecksEditor({
           {preview && (
             <div role="status" className="space-y-2 rounded-xl bg-surface p-4 dark:bg-slate-800/50">
               <p className={`font-semibold ${CHECK_STATUS[preview.status].tone}`}>
-                <span aria-hidden="true">{CHECK_STATUS[preview.status].icon}</span>{' '}
+                <Icon
+                  name={CHECK_STATUS[preview.status].icon}
+                  className="inline size-4 align-[-0.2em]"
+                />{' '}
                 {CHECK_STATUS[preview.status].label}{' '}
                 <span className="text-xs font-normal text-slate-500 dark:text-slate-400">
                   ({(preview.durationMs / 1000).toFixed(1)} s)
@@ -216,7 +220,10 @@ export function ChecksEditor({
               <ul className="space-y-1 text-sm">
                 {preview.checks.map((c) => (
                   <li key={c.id}>
-                    <span aria-hidden="true">{c.passed ? '✓' : '✗'}</span>{' '}
+                    <Icon
+                      name={c.passed ? 'checkCircle' : 'circleX'}
+                      className={`inline size-4 align-[-0.2em] ${c.passed ? 'text-emerald-700 dark:text-emerald-400' : 'text-red-700 dark:text-red-400'}`}
+                    />{' '}
                     <span className="sr-only">{c.passed ? 'Bajarildi: ' : 'Bajarilmadi: '}</span>
                     {c.title}
                     {c.hidden && (

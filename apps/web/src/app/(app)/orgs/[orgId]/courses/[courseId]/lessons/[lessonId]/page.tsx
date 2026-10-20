@@ -8,6 +8,7 @@ import { SubmissionStatusBadge } from '@/components/assignment-ui';
 import { QuizStatusBadge } from '@/components/quiz-ui';
 import { Markdown } from '@/components/markdown';
 import {
+  BackLink,
   Button,
   DIFFICULTY_LABEL,
   ErrorText,
@@ -18,6 +19,7 @@ import {
 import { send } from '@/lib/api';
 import { formatDateTime } from '@/lib/dates';
 import { useApi } from '@/lib/use-api';
+import { Icon } from '@/components/icons';
 
 export default function LessonPage() {
   const router = useRouter();
@@ -57,12 +59,7 @@ export default function LessonPage() {
       {(lesson) => (
         <article className="card mx-auto max-w-4xl space-y-8 p-6 sm:p-10">
           <nav className="flex flex-wrap items-center justify-between gap-2 text-sm">
-            <Link
-              href={courseBase}
-              className="font-semibold text-brand-600 hover:underline dark:text-brand-300"
-            >
-              ← Kurs xaritasi
-            </Link>
+            <BackLink href={courseBase}>Kurs xaritasi</BackLink>
             <span className="section-eyebrow">{lesson.moduleTitle}</span>
           </nav>
           <header className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-6 dark:border-slate-800">
@@ -158,9 +155,10 @@ export default function LessonPage() {
             {lesson.prevLessonId ? (
               <Link
                 href={`${courseBase}/lessons/${lesson.prevLessonId}`}
-                className="hover:underline"
+                className="inline-flex items-center gap-1.5 hover:underline"
               >
-                ← Oldingi dars
+                <Icon name="arrowLeft" className="size-4" />
+                Oldingi dars
               </Link>
             ) : (
               <span />
@@ -171,7 +169,8 @@ export default function LessonPage() {
                   href={`${courseBase}/lessons/${lesson.nextLessonId}`}
                   className="btn btn-primary"
                 >
-                  Keyingi dars →
+                  Keyingi dars
+                  <Icon name="arrowRight" className="size-4" />
                 </Link>
               ) : (
                 <Link href={courseBase} className="font-medium hover:underline">

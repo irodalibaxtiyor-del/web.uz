@@ -1,55 +1,15 @@
 import Link from 'next/link';
-import { Icon, type IconName } from '@/components/icons';
+import { Icon } from '@/components/icons';
 
-const DIRECTIONS: { icon: IconName; title: string; text: string; tone: string }[] = [
-  {
-    icon: 'html',
-    title: 'HTML asoslari',
-    text: 'Sahifa tuzilishi va teglar',
-    tone: 'bg-orange-50 text-orange-600 dark:bg-orange-950 dark:text-orange-400',
-  },
-  {
-    icon: 'css',
-    title: 'CSS va bezash',
-    text: 'Rang, shrift, joylashuv',
-    tone: 'bg-brand-50 text-brand-600 dark:bg-brand-950 dark:text-brand-300',
-  },
-  {
-    icon: 'js',
-    title: 'JavaScript',
-    text: 'Interaktiv sahifalar',
-    tone: 'bg-yellow-50 text-yellow-600 dark:bg-yellow-950 dark:text-yellow-400',
-  },
-  {
-    icon: 'grid',
-    title: 'Flexbox va Grid',
-    text: 'Zamonaviy maketlar',
-    tone: 'bg-violet-50 text-violet-600 dark:bg-violet-950 dark:text-violet-400',
-  },
-  {
-    icon: 'phone',
-    title: 'Moslashuvchan dizayn',
-    text: 'Telefon va planshet uchun',
-    tone: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400',
-  },
-  {
-    icon: 'palette',
-    title: 'UI asoslari',
-    text: 'Rang va kompozitsiya',
-    tone: 'bg-pink-50 text-pink-600 dark:bg-pink-950 dark:text-pink-400',
-  },
-  {
-    icon: 'figma',
-    title: "Figma'dan kodga",
-    text: 'Maketni sahifaga aylantirish',
-    tone: 'bg-rose-50 text-rose-600 dark:bg-rose-950 dark:text-rose-400',
-  },
-  {
-    icon: 'briefcase',
-    title: 'Portfolio',
-    text: "Ishlaringizni ko'rsating",
-    tone: 'bg-cyan-50 text-cyan-600 dark:bg-cyan-950 dark:text-cyan-400',
-  },
+const DIRECTIONS: { title: string; text: string }[] = [
+  { title: 'HTML asoslari', text: 'Sahifa tuzilishi va teglar' },
+  { title: 'CSS va bezash', text: 'Rang, shrift, joylashuv' },
+  { title: 'JavaScript', text: 'Interaktiv sahifalar' },
+  { title: 'Flexbox va Grid', text: 'Zamonaviy maketlar' },
+  { title: 'Moslashuvchan dizayn', text: 'Telefon va planshet uchun' },
+  { title: 'UI asoslari', text: 'Rang va kompozitsiya' },
+  { title: "Figma'dan kodga", text: 'Maketni sahifaga aylantirish' },
+  { title: 'Portfolio', text: "Ishlaringizni ko'rsating" },
 ];
 
 const STEPS = [
@@ -59,27 +19,14 @@ const STEPS = [
   { n: '04', title: 'Fikr oling', text: "O'qituvchi ishingizni ko'rib, maslahat beradi." },
 ];
 
-const QUALITIES: { icon: IconName; title: string; text: string }[] = [
+const QUALITIES: { title: string; text: string }[] = [
+  { title: 'Loyiha asosida', text: "Nazariya emas, real sahifalar yasab o'rganasiz." },
   {
-    icon: 'code',
-    title: 'Loyiha asosida',
-    text: "Nazariya emas, real sahifalar yasab o'rganasiz.",
-  },
-  {
-    icon: 'book',
     title: 'Ketma-ket darslar',
     text: 'Har bir mavzu oldingisini mustahkamlagandan keyin ochiladi.',
   },
-  {
-    icon: 'users',
-    title: "O'qituvchi bilan",
-    text: 'Topshiriqlaringiz tekshiriladi va izoh bilan qaytariladi.',
-  },
-  {
-    icon: 'shield',
-    title: 'Xavfsiz muhit',
-    text: "Kodingiz faqat sizga ko'rinadi, natijalar shaffof.",
-  },
+  { title: "O'qituvchi bilan", text: 'Topshiriqlaringiz tekshiriladi va izoh bilan qaytariladi.' },
+  { title: 'Xavfsiz muhit', text: "Kodingiz faqat sizga ko'rinadi, natijalar shaffof." },
 ];
 
 export default function HomePage() {
@@ -87,37 +34,32 @@ export default function HomePage() {
     <>
       <Hero />
       <section id="qanday" className="container-page scroll-mt-24 py-20">
-        <div className="mx-auto max-w-2xl text-center">
+        <div className="max-w-2xl">
           <span className="section-eyebrow">Qanday o&apos;qiladi</span>
-          <h2 className="mt-4 text-3xl font-bold sm:text-4xl">
-            To&apos;rt qadamda yangi ko&apos;nikma
-          </h2>
+          <h2 className="mt-3 text-title font-bold">To&apos;rt qadamda yangi ko&apos;nikma</h2>
         </div>
-        <ol className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <ol className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {STEPS.map((s) => (
-            <li key={s.n} className="card card-hover relative p-7">
+            <li key={s.n} className="border-t-2 border-brand-600 pt-5 dark:border-brand-400">
               <span
                 aria-hidden="true"
-                className="font-display text-5xl font-bold text-brand-500 dark:text-brand-400"
+                className="font-mono text-sm font-semibold text-brand-700 dark:text-brand-300"
               >
                 {s.n}
               </span>
-              <h3 className="mt-2 text-xl font-semibold">{s.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed">{s.text}</p>
+              <h3 className="mt-2 text-heading font-semibold">{s.title}</h3>
+              <p className="mt-2 leading-relaxed text-muted">{s.text}</p>
             </li>
           ))}
         </ol>
       </section>
 
-      <section id="yonalishlar" className="scroll-mt-24 bg-surface py-20 dark:bg-slate-900/50">
+      <section id="yonalishlar" className="scroll-mt-24 border-y border-line bg-canvas py-20">
         <div className="container-page">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div className="max-w-xl">
               <span className="section-eyebrow">Yo&apos;nalishlar</span>
-              <h2 className="mt-4 text-3xl font-bold sm:text-4xl">
-                Nimani o&apos;rganishni{' '}
-                <span className="text-brand-600 dark:text-brand-400">tanlang</span>
-              </h2>
+              <h2 className="mt-3 text-title font-bold">Nimani o&apos;rganishni tanlang</h2>
             </div>
             <Link href="/register" className="btn btn-outline">
               Barcha kurslar <Icon name="arrowRight" className="size-4" />
@@ -125,16 +67,11 @@ export default function HomePage() {
           </div>
           <ul className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {DIRECTIONS.map((d) => (
-              <li key={d.title} className="card card-hover flex items-center gap-4 p-5">
-                <span className={`grid size-14 shrink-0 place-items-center rounded-xl ${d.tone}`}>
-                  <Icon name={d.icon} className="size-7" />
+              <li key={d.title} className="card p-5">
+                <span className="block font-display text-lg font-semibold text-ink dark:text-white">
+                  {d.title}
                 </span>
-                <span>
-                  <span className="block font-display text-lg font-semibold text-ink dark:text-white">
-                    {d.title}
-                  </span>
-                  <span className="text-sm text-slate-500 dark:text-slate-400">{d.text}</span>
-                </span>
+                <span className="mt-1 block text-sm text-muted">{d.text}</span>
               </li>
             ))}
           </ul>
@@ -142,36 +79,25 @@ export default function HomePage() {
       </section>
 
       <section id="afzalliklar" className="container-page scroll-mt-24 py-20">
-        <div className="mx-auto max-w-2xl text-center">
+        <div className="max-w-2xl">
           <span className="section-eyebrow">Afzalliklar</span>
-          <h2 className="mt-4 text-3xl font-bold sm:text-4xl">Nega aynan WEBDIZAYN.UZ?</h2>
+          <h2 className="mt-3 text-title font-bold">Nega aynan WEBDIZAYN.UZ?</h2>
         </div>
-        <ul className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <ul className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {QUALITIES.map((q) => (
-            <li key={q.title} className="group text-center">
-              <span className="mx-auto grid size-20 place-items-center rounded-full bg-brand-50 text-brand-600 transition-colors group-hover:bg-brand-600 group-hover:text-white dark:bg-brand-950 dark:text-brand-300">
-                <Icon name={q.icon} className="size-9" />
-              </span>
-              <h3 className="mt-5 text-xl font-semibold">{q.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed">{q.text}</p>
+            <li key={q.title}>
+              <h3 className="text-heading font-semibold">{q.title}</h3>
+              <p className="mt-2 leading-relaxed text-muted">{q.text}</p>
             </li>
           ))}
         </ul>
       </section>
 
       <section className="container-page pb-20">
-        <div className="relative overflow-hidden rounded-3xl bg-brand-600 px-8 py-14 text-white sm:px-14">
-          <div
-            aria-hidden="true"
-            className="absolute -top-20 -right-16 size-72 rounded-full bg-white/10"
-          />
-          <div
-            aria-hidden="true"
-            className="absolute bottom-6 left-1/2 size-12 rounded-full border-[6px] border-accent-400"
-          />
-          <div className="relative flex flex-wrap items-center justify-between gap-8">
+        <div className="rounded-panel bg-brand-700 px-6 py-12 text-white sm:px-12">
+          <div className="flex flex-wrap items-center justify-between gap-8">
             <div className="max-w-xl">
-              <h2 className="text-3xl font-bold text-white sm:text-4xl">
+              <h2 className="text-title font-bold text-white">
                 Birinchi darsingizni bugun boshlang
               </h2>
               <p className="mt-3 text-white">
@@ -179,7 +105,10 @@ export default function HomePage() {
                 o&apos;rganing.
               </p>
             </div>
-            <Link href="/register" className="btn btn-accent px-7 py-3 text-base">
+            <Link
+              href="/register"
+              className="btn bg-white px-7 py-3 text-base text-brand-800 hover:bg-brand-50"
+            >
               Bepul boshlash <Icon name="arrowRight" className="size-5" />
             </Link>
           </div>
@@ -191,39 +120,15 @@ export default function HomePage() {
 
 function Hero() {
   return (
-    <section className="relative overflow-hidden bg-surface dark:bg-slate-900/50">
-      <div
-        aria-hidden="true"
-        className="dots-pattern absolute top-16 left-[-60px] size-48 opacity-70"
-      />
-      <div
-        aria-hidden="true"
-        className="absolute -top-32 right-[-120px] size-[480px] rounded-full bg-brand-100/70 dark:bg-brand-950/60"
-      />
-      <div className="container-page relative grid items-center gap-14 py-16 lg:grid-cols-2 lg:py-24">
+    <section className="border-b border-line bg-canvas">
+      <div className="container-page grid items-center gap-14 py-16 lg:grid-cols-2 lg:py-24">
         <div>
           <span className="section-eyebrow">O&apos;zbek tilidagi amaliy ta&apos;lim</span>
-          <h1 className="mt-5 text-4xl leading-tight font-bold sm:text-5xl lg:text-6xl">
-            Web dizaynni{' '}
-            <span className="relative whitespace-nowrap text-brand-600 dark:text-brand-400">
-              amalda
-              <svg
-                aria-hidden="true"
-                viewBox="0 0 200 12"
-                className="absolute -bottom-2 left-0 w-full text-accent-400"
-              >
-                <path
-                  d="M2 9c50-6 146-8 196-2"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="5"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </span>{' '}
+          <h1 className="mt-4 text-display font-bold">
+            Web dizaynni <span className="text-brand-600 dark:text-brand-400">amalda</span>{' '}
             o&apos;rganing
           </h1>
-          <p className="mt-6 max-w-xl text-lg leading-relaxed">
+          <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted">
             Darsni o&apos;qing, kod yozing, natijani tekshiring va o&apos;qituvchidan fikr oling.
             HTML&apos;dan to&apos;liq portfoliogacha bo&apos;lgan yo&apos;l bir joyda.
           </p>
@@ -235,16 +140,9 @@ function Hero() {
               Kirish
             </Link>
           </div>
-          <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium text-ink dark:text-slate-200">
-            {['Ketma-ket darslar', 'Har darsda mashq', "O'qituvchi tekshiruvi"].map((t) => (
-              <li key={t} className="flex items-center gap-2">
-                <span className="grid size-5 place-items-center rounded-full bg-emerald-500 text-white">
-                  <Icon name="check" className="size-3.5" />
-                </span>
-                {t}
-              </li>
-            ))}
-          </ul>
+          <p className="mt-8 text-sm text-muted">
+            Ketma-ket darslar · Har darsda mashq · O&apos;qituvchi tekshiruvi
+          </p>
         </div>
         <HeroIllustration />
       </div>
@@ -294,24 +192,13 @@ function HeroIllustration() {
           </div>
         </div>
       </div>
-      <div className="card absolute -bottom-6 -left-6 flex items-center gap-3 px-4 py-3 sm:-left-10">
-        <span className="grid size-10 place-items-center rounded-full bg-emerald-500 text-white">
-          <Icon name="check" className="size-6" />
-        </span>
+      <div className="card absolute -bottom-6 left-4 flex items-center gap-2.5 px-4 py-3 sm:-left-8">
+        <Icon name="checkCircle" className="size-5 text-emerald-700 dark:text-emerald-400" />
         <span>
           <span className="block text-sm font-semibold text-ink dark:text-white">
             Tekshiruv o&apos;tdi
           </span>
-          <span className="text-xs text-slate-500 dark:text-slate-400">3 / 3 talab bajarildi</span>
-        </span>
-      </div>
-      <div className="card absolute -top-6 -right-4 w-44 px-4 py-3 sm:-right-8">
-        <span className="text-xs text-slate-500 dark:text-slate-400">Kurs progressi</span>
-        <span className="mt-1 block font-display text-xl font-bold text-ink dark:text-white">
-          75%
-        </span>
-        <span className="mt-2 block h-2 rounded-full bg-slate-100 dark:bg-slate-800">
-          <span className="block h-full w-3/4 rounded-full bg-accent-400" />
+          <span className="text-xs text-muted">3 / 3 talab bajarildi</span>
         </span>
       </div>
     </div>

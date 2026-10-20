@@ -19,23 +19,28 @@ import { Button, ErrorText, LoadState, PageHeader, TableScroll } from '@/compone
 import { download, send } from '@/lib/api';
 import { formatDate } from '@/lib/dates';
 import { useApi } from '@/lib/use-api';
+import { Icon, type IconName } from '@/components/icons';
 
-const ROW_STATUS: Record<RosterRowStatus, { label: string; icon: string; tone: string }> = {
-  NEW: { label: 'Yangi hisob', icon: '+', tone: 'text-brand-700 dark:text-brand-300' },
+const ROW_STATUS: Record<RosterRowStatus, { label: string; icon: IconName; tone: string }> = {
+  NEW: { label: 'Yangi hisob', icon: 'plus', tone: 'text-brand-700 dark:text-brand-300' },
   ALREADY_IMPORTED: {
     label: 'Allaqachon bor',
-    icon: '✓',
+    icon: 'checkCircle',
     tone: 'text-emerald-700 dark:text-emerald-400',
   },
   DUPLICATE_IN_INPUT: {
     label: 'Ro‘yxatda takror',
-    icon: '!',
+    icon: 'alertCircle',
     tone: 'text-red-700 dark:text-red-400',
   },
-  IN_OTHER_GROUP: { label: 'Boshqa guruhda', icon: '!', tone: 'text-red-700 dark:text-red-400' },
+  IN_OTHER_GROUP: {
+    label: 'Boshqa guruhda',
+    icon: 'alertCircle',
+    tone: 'text-red-700 dark:text-red-400',
+  },
   NAME_MATCH: {
     label: 'Ismdosh bor — tanlang',
-    icon: '?',
+    icon: 'help',
     tone: 'text-amber-700 dark:text-amber-400',
   },
 };
@@ -63,7 +68,7 @@ export default function AdminGroupsPage() {
         title="Guruhlar va talabalar"
         subtitle="Guruhlar ro‘yxati, talabalarni import qilish va loginlar eksporti."
         actions={
-          <Button variant="accent" onClick={exportLogins} disabled={busy}>
+          <Button variant="primary" onClick={exportLogins} disabled={busy}>
             {busy ? 'Tayyorlanmoqda…' : 'Loginlar (Excel)'}
           </Button>
         }
@@ -231,7 +236,7 @@ function RosterImport({ orgId, onImported }: { orgId: string; onImported: () => 
           {pending ? 'Tekshirilmoqda…' : 'Ko‘rib chiqish'}
         </Button>
         {preview && (
-          <Button variant="accent" onClick={runImport} disabled={pending || !preview.canImport}>
+          <Button variant="primary" onClick={runImport} disabled={pending || !preview.canImport}>
             Import qilish
           </Button>
         )}
@@ -293,7 +298,8 @@ function RosterImport({ orgId, onImported }: { orgId: string; onImported: () => 
                           <td className={`${td} font-mono`}>{r.login ?? '—'}</td>
                           <td className={td}>
                             <span className={s.tone}>
-                              <span aria-hidden="true">{s.icon}</span> {s.label}
+                              <Icon name={s.icon} className="inline size-4 align-[-0.2em]" />{' '}
+                              {s.label}
                               {r.otherGroup && `: ${r.otherGroup}`}
                             </span>
                             {r.status === 'NAME_MATCH' && r.candidates && (

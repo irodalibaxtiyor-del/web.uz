@@ -20,9 +20,9 @@ export const ACHIEVEMENT_INFO: Record<
   Achievement,
   { title: string; text: string; icon: IconName }
 > = {
-  FIRST_EXERCISE: { title: 'Birinchi qadam', text: 'Birinchi mashq o‘tildi', icon: 'check' },
+  FIRST_EXERCISE: { title: 'Birinchi qadam', text: 'Birinchi mashq o‘tildi', icon: 'checkCircle' },
   TEN_EXERCISES: { title: 'Amaliyotchi', text: '10 ta mashq o‘tildi', icon: 'code' },
-  QUIZ_MASTER: { title: 'Test ustasi', text: '5 ta test o‘tildi', icon: 'sparkles' },
+  QUIZ_MASTER: { title: 'Test ustasi', text: '5 ta test o‘tildi', icon: 'award' },
   FIRST_GRADED_ASSIGNMENT: {
     title: 'Birinchi loyiha',
     text: 'O‘qituvchi baholagan topshiriq',
@@ -45,16 +45,11 @@ export function Achievements({ list }: { list: Achievement[] }) {
       {list.map((a) => {
         const info = ACHIEVEMENT_INFO[a];
         return (
-          <li
-            key={a}
-            className="flex items-center gap-3 rounded-xl bg-surface p-3 dark:bg-slate-800"
-          >
-            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-accent-400 text-ink">
-              <Icon name={info.icon} className="size-5" aria-hidden="true" />
-            </span>
+          <li key={a} className="flex items-start gap-3 rounded-control border border-line p-3">
+            <Icon name={info.icon} className="mt-0.5 size-5 text-brand-700 dark:text-brand-300" />
             <span>
-              <span className="block font-semibold">{info.title}</span>
-              <span className="block text-sm text-slate-600 dark:text-slate-400">{info.text}</span>
+              <span className="block font-semibold text-ink dark:text-white">{info.title}</span>
+              <span className="block text-sm text-muted">{info.text}</span>
             </span>
           </li>
         );
@@ -72,7 +67,7 @@ export function CompletedCourses({ list }: { list: CompletedCourse[] }) {
       {list.map((c) => (
         <li key={c.title + c.completedAt} className="flex items-center justify-between gap-3">
           <span className="flex items-center gap-2 font-medium">
-            <Icon name="check" className="size-4 text-emerald-600" aria-hidden="true" />
+            <Icon name="checkCircle" className="size-4 text-emerald-700 dark:text-emerald-400" />
             {c.title}
           </span>
           <span className="text-sm text-slate-500 dark:text-slate-400">

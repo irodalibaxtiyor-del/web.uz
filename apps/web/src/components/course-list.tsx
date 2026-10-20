@@ -13,7 +13,7 @@ import { useId, useState, type FormEvent } from 'react';
 import { send } from '@/lib/api';
 import { useApi } from '@/lib/use-api';
 import { Icon } from './icons';
-import { Button, ErrorText, inputClass, LoadState, ProgressBar } from './ui';
+import { Button, EmptyState, ErrorText, inputClass, LoadState, ProgressBar } from './ui';
 
 export const STATUS_LABEL: Record<CourseStatus, string> = {
   DRAFT: 'Qoralama',
@@ -27,38 +27,6 @@ const STATUS_TONE: Record<CourseStatus, string> = {
   ARCHIVED: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400',
 };
 
-const COVERS = [
-  'from-brand-600 to-brand-400',
-  'from-violet-600 to-fuchsia-400',
-  'from-emerald-600 to-teal-400',
-  'from-orange-500 to-amber-400',
-  'from-rose-600 to-pink-400',
-  'from-cyan-600 to-sky-400',
-];
-
-/** Courses have no images yet; a stable gradient + initials stands in for the cover photo. */
-function CourseCover({ title }: { title: string }) {
-  let hash = 0;
-  for (const ch of title) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;
-  const initials = title
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((w) => w[0]?.toUpperCase())
-    .join('');
-  return (
-    <div
-      aria-hidden="true"
-      className={`relative flex h-40 items-center justify-center overflow-hidden bg-gradient-to-br ${COVERS[hash % COVERS.length]}`}
-    >
-      <div className="dots-pattern absolute inset-0 opacity-30 mix-blend-overlay" />
-      <div className="absolute -right-8 -bottom-10 size-36 rounded-full bg-white/15" />
-      <span className="relative font-display text-5xl font-bold text-white/95 drop-shadow-sm">
-        {initials}
-      </span>
-    </div>
-  );
-}
-
 export function CourseList({ orgId, role }: { orgId: string; role: Role }) {
   const { state } = useApi<CourseSummary[]>(`/orgs/${orgId}/courses`);
   const isStaff = role !== 'STUDENT';
@@ -69,9 +37,11 @@ export function CourseList({ orgId, role }: { orgId: string; role: Role }) {
       <LoadState state={state}>
         {(courses) =>
           courses.length === 0 ? (
-            <p className="text-slate-500 dark:text-slate-400">
-              {isStaff ? "Hali kurs yo'q. Birinchisini yarating." : "Hozircha ochiq kurslar yo'q."}
-            </p>
+            <EmptyState title={isStaff ? "Hali kurs yo'q" : "Hozircha ochiq kurslar yo'q"}>
+              {isStaff
+                ? '"Yangi kurs" tugmasi bilan birinchi kursni yarating.'
+                : "Yangi kurslar e'lon qilinganda shu yerda ko'rinadi."}
+            </EmptyState>
           ) : (
             <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {courses.map((c) => {
@@ -81,8 +51,10 @@ export function CourseList({ orgId, role }: { orgId: string; role: Role }) {
                     : null
                   : `/orgs/${orgId}/courses/${c.id}`;
                 return (
-                  <li key={c.id} className="card card-hover flex flex-col overflow-hidden">
-                    <CourseCover title={c.title} />
+                  <li
+                    key={c.id}
+                    className={`card relative flex flex-col ${href ? 'card-hover focus-within:border-brand-500' : ''}`}
+                  >
                     <div className="flex flex-1 flex-col gap-3 p-6">
                       <div className="flex items-center justify-between gap-3 text-xs">
                         {isStaff ? (
@@ -97,7 +69,7 @@ export function CourseList({ orgId, role }: { orgId: string; role: Role }) {
                           </span>
                         )}
                         {!isStaff && c.enrolled && (
-                          <span className="font-semibold text-brand-600 dark:text-brand-300">
+                          <span className="font-semibold text-brand-700 dark:text-brand-300">
                             {c.progressPercent}%
                           </span>
                         )}
@@ -106,7 +78,7 @@ export function CourseList({ orgId, role }: { orgId: string; role: Role }) {
                         {href ? (
                           <Link
                             href={href}
-                            className="transition-colors hover:text-brand-600 dark:hover:text-brand-300"
+                            className="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none"
                           >
                             {c.title}
                           </Link>
@@ -115,15 +87,16 @@ export function CourseList({ orgId, role }: { orgId: string; role: Role }) {
                         )}
                       </h3>
                       {c.description && (
-                        <p className="line-clamp-2 text-sm leading-relaxed">{c.description}</p>
+                        <p className="line-clamp-2 text-sm leading-relaxed text-muted">
+                          {c.description}
+                        </p>
                       )}
                       {!isStaff && c.enrolled && <ProgressBar percent={c.progressPercent ?? 0} />}
-                      <div className="mt-auto border-t border-slate-100 pt-4 dark:border-slate-800">
+                      <div className="mt-auto border-t border-line pt-4">
                         {href ? (
-                          <Link
-                            href={href}
-                            className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-600 hover:gap-2.5 dark:text-brand-300"
-                            style={{ transition: 'gap 0.2s' }}
+                          <span
+                            aria-hidden="true"
+                            className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700 dark:text-brand-300"
                           >
                             {isStaff
                               ? 'Boshqarish'
@@ -131,11 +104,9 @@ export function CourseList({ orgId, role }: { orgId: string; role: Role }) {
                                 ? "O'qishni davom ettirish"
                                 : "Kursni ko'rish"}
                             <Icon name="arrowRight" className="size-4" />
-                          </Link>
-                        ) : (
-                          <span className="text-sm text-slate-500 dark:text-slate-400">
-                            Sizga biriktirilmagan
                           </span>
+                        ) : (
+                          <span className="text-sm text-muted">Sizga biriktirilmagan</span>
                         )}
                       </div>
                     </div>
@@ -173,7 +144,12 @@ function NewCourseForm({ orgId }: { orgId: string }) {
   }
 
   if (!open) {
-    return <Button onClick={() => setOpen(true)}>+ Yangi kurs</Button>;
+    return (
+      <Button onClick={() => setOpen(true)}>
+        <Icon name="plus" className="size-4" />
+        Yangi kurs
+      </Button>
+    );
   }
   return (
     <form onSubmit={onSubmit} noValidate className="card space-y-4 p-6">

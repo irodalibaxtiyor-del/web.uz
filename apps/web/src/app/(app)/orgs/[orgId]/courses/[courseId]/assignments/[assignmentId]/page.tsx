@@ -1,7 +1,6 @@
 'use client';
 
 import type { AssignmentView, ProjectFile, SubmissionVersionView } from '@webdizayn/shared';
-import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import {
@@ -13,10 +12,11 @@ import { CheckResultPanel } from '@/components/check-result';
 import { Playground } from '@/components/ide/playground';
 import { Markdown } from '@/components/markdown';
 import { TutorPanel } from '@/components/tutor-panel';
-import { Button, ErrorText, LoadState } from '@/components/ui';
+import { BackLink, Button, ErrorText, LoadState } from '@/components/ui';
 import { api, send } from '@/lib/api';
 import { formatDateTime } from '@/lib/dates';
 import { useApi } from '@/lib/use-api';
+import { Icon } from '@/components/icons';
 
 export default function AssignmentPage() {
   const router = useRouter();
@@ -118,12 +118,7 @@ function Workspace({ initial, courseBase }: { initial: AssignmentView; courseBas
     <article className="space-y-6">
       <div className="card space-y-6 p-6 sm:p-10">
         <nav className="text-sm">
-          <Link
-            href={`${courseBase}/lessons/${a.lessonId}`}
-            className="font-semibold text-brand-600 hover:underline dark:text-brand-300"
-          >
-            ← Darsga qaytish
-          </Link>
+          <BackLink href={`${courseBase}/lessons/${a.lessonId}`}>Darsga qaytish</BackLink>
         </nav>
         <header className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-3">
@@ -376,7 +371,11 @@ function ReviewPanel({ view }: { view: AssignmentView }) {
                 : 'text-amber-700 dark:text-amber-400'
             }`}
           >
-            {g.passed ? '✓ O‘tdi' : `! O‘tish bali: ${view.gradingPolicy.passingScore}`}
+            <Icon
+              name={g.passed ? 'checkCircle' : 'alertCircle'}
+              className="inline size-4 align-[-0.2em]"
+            />{' '}
+            {g.passed ? 'O‘tdi' : `O‘tish bali: ${view.gradingPolicy.passingScore}`}
           </span>
           {!g.final && (
             <span className="text-xs text-slate-500 dark:text-slate-400">

@@ -1,4 +1,5 @@
 import type { AssignmentStatus, SubmissionStatus, SubmitBlocker } from '@webdizayn/shared';
+import { Icon, type IconName } from './icons';
 
 export const ASSIGNMENT_STATUS: Record<AssignmentStatus, { label: string; tone: string }> = {
   DRAFT: {
@@ -22,27 +23,35 @@ export function AssignmentStatusBadge({ status }: { status: AssignmentStatus }) 
   );
 }
 
-const SUBMISSION: Record<SubmissionStatus, { label: string; icon: string; tone: string }> = {
-  DRAFT: { label: 'Qoralama', icon: '○', tone: 'text-slate-600 dark:text-slate-400' },
-  SUBMITTED: { label: 'Topshirildi', icon: '↑', tone: 'text-brand-700 dark:text-brand-300' },
-  IN_REVIEW: { label: 'Ko‘rib chiqilmoqda', icon: '◐', tone: 'text-brand-700 dark:text-brand-300' },
+const SUBMISSION: Record<SubmissionStatus, { label: string; icon: IconName; tone: string }> = {
+  DRAFT: { label: 'Qoralama', icon: 'circleDashed', tone: 'text-slate-600 dark:text-slate-400' },
+  SUBMITTED: { label: 'Topshirildi', icon: 'upload', tone: 'text-brand-700 dark:text-brand-300' },
+  IN_REVIEW: {
+    label: 'Ko‘rib chiqilmoqda',
+    icon: 'circleHalf',
+    tone: 'text-brand-700 dark:text-brand-300',
+  },
   REVISION_REQUESTED: {
     label: 'Qayta ishlash so‘raldi',
-    icon: '!',
+    icon: 'alertCircle',
     tone: 'text-amber-700 dark:text-amber-400',
   },
-  GRADED: { label: 'Baholandi', icon: '★', tone: 'text-emerald-700 dark:text-emerald-400' },
-  FINALIZED: { label: 'Yakunlandi', icon: '✓', tone: 'text-emerald-700 dark:text-emerald-400' },
+  GRADED: { label: 'Baholandi', icon: 'star', tone: 'text-emerald-700 dark:text-emerald-400' },
+  FINALIZED: {
+    label: 'Yakunlandi',
+    icon: 'checkCircle',
+    tone: 'text-emerald-700 dark:text-emerald-400',
+  },
 };
 
 /** `null` means the learner has not started the assignment. */
 export function SubmissionStatusBadge({ status }: { status: SubmissionStatus | null }) {
-  const s = status
+  const s: { label: string; icon: IconName; tone: string } = status
     ? SUBMISSION[status]
-    : { label: 'Boshlanmagan', icon: '○', tone: 'text-slate-500 dark:text-slate-400' };
+    : { label: 'Boshlanmagan', icon: 'circleDashed', tone: 'text-slate-500 dark:text-slate-400' };
   return (
     <span className={`text-sm ${s.tone}`}>
-      <span aria-hidden="true">{s.icon}</span> {s.label}
+      <Icon name={s.icon} className="inline size-4 align-[-0.2em]" /> {s.label}
     </span>
   );
 }

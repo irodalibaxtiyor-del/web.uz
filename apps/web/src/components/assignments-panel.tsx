@@ -8,6 +8,7 @@ import { formatDateTime } from '@/lib/dates';
 import { useApi } from '@/lib/use-api';
 import { AssignmentStatusBadge } from './assignment-ui';
 import { Button, ErrorText, inputClass, LoadState } from './ui';
+import { Icon } from './icons';
 
 /** Lesson editor section listing a lesson's assignments for course staff. */
 export function AssignmentsPanel({ base, lessonId }: { base: string; lessonId: string }) {
@@ -83,7 +84,8 @@ export function AssignmentsPanel({ base, lessonId }: { base: string; lessonId: s
             className={inputClass}
           />
           <Button type="submit" variant="secondary" disabled={pending} className="shrink-0">
-            + Topshiriq
+            <Icon name="plus" className="size-4" />
+            Topshiriq
           </Button>
         </div>
         {error && <ErrorText>{error}</ErrorText>}

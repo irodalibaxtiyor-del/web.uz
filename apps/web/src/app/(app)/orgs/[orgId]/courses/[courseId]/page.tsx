@@ -1,23 +1,23 @@
 'use client';
 
-import type { CourseMap, CourseMapLesson, LessonState } from '@webdizayn/shared';
+import type { CourseMap, CourseMapLesson } from '@webdizayn/shared';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
-import { Icon } from '@/components/icons';
-import { Button, ErrorText, LoadState, PageHeader, ProgressBar, StateBadge } from '@/components/ui';
+import { Icon, type IconName } from '@/components/icons';
+import {
+  Button,
+  EmptyState,
+  ErrorText,
+  LoadState,
+  PageHeader,
+  ProgressBar,
+  StateBadge,
+} from '@/components/ui';
 import { send } from '@/lib/api';
 import { useApi } from '@/lib/use-api';
 
 const CRUMBS = [{ href: '/dashboard', label: 'Kabinet' }];
-
-const DOT: Record<LessonState, string> = {
-  COMPLETED: 'bg-emerald-500 text-white',
-  IN_PROGRESS: 'bg-brand-600 text-white ring-4 ring-brand-100 dark:ring-brand-900',
-  AVAILABLE: 'bg-white text-brand-600 ring-2 ring-brand-600 dark:bg-slate-900',
-  NEEDS_IMPROVEMENT: 'bg-amber-400 text-amber-950 ring-4 ring-amber-100 dark:ring-amber-900',
-  LOCKED: 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400',
-};
 
 export default function CourseMapPage() {
   const { orgId, courseId } = useParams<{ orgId: string; courseId: string }>();
@@ -72,7 +72,7 @@ export default function CourseMapPage() {
               subtitle={map.course.description}
               actions={
                 next && (
-                  <Link href={`${base}/lessons/${next.id}`} className="btn btn-accent px-6 py-3">
+                  <Link href={`${base}/lessons/${next.id}`} className="btn btn-primary px-6 py-3">
                     {map.completedLessons === 0 ? 'Boshlash' : 'Davom etish'}
                     <Icon name="arrowRight" className="size-4" />
                   </Link>
@@ -82,13 +82,15 @@ export default function CourseMapPage() {
             <div className="grid gap-8 lg:grid-cols-[1fr_300px]">
               <div className="space-y-6">
                 {map.modules.length === 0 && (
-                  <p className="text-slate-500 dark:text-slate-400">Kursda hali dars yo&apos;q.</p>
+                  <EmptyState title="Kursda hali dars yo'q">
+                    Darslar qo&apos;shilganda shu yerda ko&apos;rinadi.
+                  </EmptyState>
                 )}
                 {map.modules.map((mod, mi) => (
                   <section key={mod.id} className="card overflow-hidden">
-                    <h2 className="flex items-center gap-3 border-b border-slate-100 bg-slate-50/60 px-6 py-4 text-lg font-semibold dark:border-slate-800 dark:bg-slate-800/40">
-                      <span className="grid size-8 place-items-center rounded-lg bg-brand-600 text-sm text-white">
-                        {mi + 1}
+                    <h2 className="border-b border-line px-5 py-4 text-lg font-semibold sm:px-6">
+                      <span className="mb-0.5 block text-xs font-semibold tracking-wide text-muted uppercase">
+                        {mi + 1}-modul
                       </span>
                       {mod.title}
                     </h2>
@@ -96,40 +98,30 @@ export default function CourseMapPage() {
                       {mod.lessons.map((l, li) => (
                         <li
                           key={l.id}
-                          className="flex items-center gap-4 border-b border-slate-100 px-6 py-4 last:border-0 dark:border-slate-800"
+                          className="flex gap-3 border-b border-line px-5 py-4 last:border-0 sm:gap-4 sm:px-6"
                         >
                           <span
-                            className={`grid size-9 shrink-0 place-items-center rounded-full text-sm font-semibold ${DOT[l.state]}`}
+                            aria-hidden="true"
+                            className="w-8 shrink-0 pt-0.5 font-mono text-sm text-muted tabular-nums"
                           >
-                            {l.state === 'COMPLETED' ? (
-                              <Icon name="check" className="size-5" />
-                            ) : l.state === 'LOCKED' ? (
-                              <svg
-                                viewBox="0 0 24 24"
-                                className="size-4"
-                                fill="currentColor"
-                                aria-hidden="true"
-                              >
-                                <path d="M12 2a5 5 0 00-5 5v3H6a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2v-8a2 2 0 00-2-2h-1V7a5 5 0 00-5-5zm-3 8V7a3 3 0 116 0v3H9z" />
-                              </svg>
-                            ) : (
-                              li + 1
-                            )}
+                            {mi + 1}.{li + 1}
                           </span>
-                          <div className="min-w-0 flex-1">
-                            {l.state === 'LOCKED' ? (
-                              <span className="text-slate-500 dark:text-slate-400">{l.title}</span>
-                            ) : (
-                              <Link
-                                href={`${base}/lessons/${l.id}`}
-                                className="font-semibold text-ink transition-colors hover:text-brand-600 dark:text-white dark:hover:text-brand-300"
-                              >
-                                {l.title}
-                              </Link>
-                            )}
-                            <LessonItems lesson={l} base={base} />
+                          <div className="flex min-w-0 flex-1 flex-wrap items-start justify-between gap-x-4 gap-y-1">
+                            <div className="min-w-0">
+                              {l.state === 'LOCKED' ? (
+                                <span className="text-muted">{l.title}</span>
+                              ) : (
+                                <Link
+                                  href={`${base}/lessons/${l.id}`}
+                                  className="font-semibold text-ink hover:text-brand-700 hover:underline dark:text-white dark:hover:text-brand-300"
+                                >
+                                  {l.title}
+                                </Link>
+                              )}
+                              <LessonItems lesson={l} base={base} />
+                            </div>
+                            <StateBadge state={l.state} />
                           </div>
-                          <StateBadge state={l.state} />
                         </li>
                       ))}
                     </ol>
@@ -138,25 +130,25 @@ export default function CourseMapPage() {
               </div>
               <aside className="card h-fit space-y-4 p-6 lg:sticky lg:top-24">
                 <h2 className="text-lg font-semibold">Sizning progressingiz</h2>
-                <div className="font-display text-4xl font-bold text-brand-600 dark:text-brand-300">
+                <div className="font-display text-4xl font-bold text-ink dark:text-white">
                   {map.progressPercent}%
                 </div>
                 <ProgressBar percent={map.progressPercent} />
                 <dl className="grid grid-cols-2 gap-3 pt-2 text-sm">
-                  <div className="rounded-xl bg-surface p-3 dark:bg-slate-800">
+                  <div className="rounded-control border border-line p-3">
                     <dt className="text-slate-500 dark:text-slate-400">Tugatilgan</dt>
                     <dd className="font-display text-xl font-bold text-ink dark:text-white">
                       {map.completedLessons}
                     </dd>
                   </div>
-                  <div className="rounded-xl bg-surface p-3 dark:bg-slate-800">
+                  <div className="rounded-control border border-line p-3">
                     <dt className="text-slate-500 dark:text-slate-400">Jami dars</dt>
                     <dd className="font-display text-xl font-bold text-ink dark:text-white">
                       {map.totalLessons}
                     </dd>
                   </div>
                 </dl>
-                <dl className="space-y-2 border-t border-slate-100 pt-4 text-sm dark:border-slate-800">
+                <dl className="space-y-2 border-t border-line pt-4 text-sm">
                   {(
                     [
                       ['Mashqlar', map.stats.exercises],
@@ -183,26 +175,45 @@ export default function CourseMapPage() {
   );
 }
 
+type Chip = {
+  key: string;
+  kind: string;
+  title: string;
+  href: string;
+  icon: IconName;
+  tone: 'ok' | 'warn' | 'todo';
+};
+
 /** Exercises, quizzes and assignments of a lesson as compact status chips. */
 function LessonItems({ lesson: l, base }: { lesson: CourseMapLesson; base: string }) {
-  const chips = [
-    ...l.exercises.map((e) => ({
+  const chips: Chip[] = [
+    ...l.exercises.map((e): Chip => ({
       key: `e-${e.id}`,
       kind: 'Mashq',
       title: e.title,
       href: `${base}/exercises/${e.id}`,
-      icon: e.status === 'PASSED' ? '✓' : e.status === 'NEEDS_IMPROVEMENT' ? '!' : '○',
+      icon:
+        e.status === 'PASSED'
+          ? 'checkCircle'
+          : e.status === 'NEEDS_IMPROVEMENT'
+            ? 'alertCircle'
+            : 'circleDashed',
       tone: e.status === 'PASSED' ? 'ok' : e.status === 'NEEDS_IMPROVEMENT' ? 'warn' : 'todo',
     })),
-    ...l.quizzes.map((q) => ({
+    ...l.quizzes.map((q): Chip => ({
       key: `q-${q.id}`,
       kind: 'Test',
       title: q.bestScore === null ? q.title : `${q.title} · ${q.bestScore}%`,
       href: `${base}/quizzes/${q.id}`,
-      icon: q.status === 'PASSED' ? '✓' : q.status === 'FAILED' ? '!' : '○',
+      icon:
+        q.status === 'PASSED'
+          ? 'checkCircle'
+          : q.status === 'FAILED'
+            ? 'alertCircle'
+            : 'circleDashed',
       tone: q.status === 'PASSED' ? 'ok' : q.status === 'FAILED' ? 'warn' : 'todo',
     })),
-    ...l.assignments.map((a) => {
+    ...l.assignments.map((a): Chip => {
       const done = a.submissionStatus === 'GRADED' || a.submissionStatus === 'FINALIZED';
       const fix = a.submissionStatus === 'REVISION_REQUESTED';
       return {
@@ -210,7 +221,13 @@ function LessonItems({ lesson: l, base }: { lesson: CourseMapLesson; base: strin
         kind: 'Topshiriq',
         title: a.title,
         href: `${base}/assignments/${a.id}`,
-        icon: done ? '✓' : fix ? '!' : a.submissionStatus ? '↑' : '○',
+        icon: done
+          ? 'checkCircle'
+          : fix
+            ? 'alertCircle'
+            : a.submissionStatus
+              ? 'upload'
+              : 'circleDashed',
         tone: done ? 'ok' : fix ? 'warn' : 'todo',
       };
     }),
@@ -227,7 +244,7 @@ function LessonItems({ lesson: l, base }: { lesson: CourseMapLesson; base: strin
       {chips.map((c) => {
         const body = (
           <>
-            <span aria-hidden="true">{c.icon}</span> {c.kind}: {c.title}
+            <Icon name={c.icon} className="inline size-4 align-[-0.2em]" /> {c.kind}: {c.title}
           </>
         );
         return (

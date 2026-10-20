@@ -96,7 +96,7 @@ function CourseCard({ c }: { c: StudentCourseAnalytics }) {
         <div className="flex flex-wrap justify-between gap-2 text-sm">
           <span>
             {c.progress.lessonsCompleted} / {c.progress.lessonsTotal} dars tugatildi
-            {c.progress.completed && ' · Kurs tugatildi ✓'}
+            {c.progress.completed && ' · Kurs tugatildi'}
           </span>
           <span className="font-semibold">{c.progress.percent}%</span>
         </div>
