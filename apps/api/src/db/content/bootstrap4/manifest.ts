@@ -20,6 +20,7 @@ export const BS4_COURSE: CourseMeta = {
   slug: 'bootstrap4',
   contentDir: 'bootstrap4-course',
   position: 70,
+  directions: ['bootstrap'],
   title: 'Bootstrap 4',
   description:
     'Bootstrap 4.6 bilan Flexbox asosidagi setka, kartalar, utilitalar, navbar, formalar, ' +

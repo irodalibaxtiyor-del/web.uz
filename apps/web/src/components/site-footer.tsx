@@ -5,10 +5,11 @@ const COLUMNS = [
   {
     title: "Yo'nalishlar",
     links: [
-      { href: '/#yonalishlar', label: 'HTML asoslari' },
-      { href: '/#yonalishlar', label: 'CSS va dizayn' },
-      { href: '/#yonalishlar', label: 'JavaScript' },
-      { href: '/#yonalishlar', label: 'Moslashuvchan sayt' },
+      { href: '/yonalishlar/html', label: 'HTML' },
+      { href: '/yonalishlar/css', label: 'CSS va bezash' },
+      { href: '/yonalishlar/javascript', label: 'JavaScript' },
+      { href: '/yonalishlar/moslashuvchan-dizayn', label: 'Moslashuvchan dizayn' },
+      { href: '/yonalishlar', label: 'Barcha yo‘nalishlar' },
     ],
   },
   {

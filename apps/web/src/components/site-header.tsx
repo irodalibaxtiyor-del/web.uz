@@ -9,7 +9,7 @@ import { Logo } from './logo';
 
 const NAV = [
   { href: '/', label: 'Bosh sahifa' },
-  { href: '/#yonalishlar', label: "Yo'nalishlar" },
+  { href: '/yonalishlar', label: "Yo'nalishlar" },
   { href: '/#qanday', label: "Qanday o'qiladi" },
   { href: '/#afzalliklar', label: 'Afzalliklar' },
   { href: '/playground', label: 'Playground' },
@@ -84,7 +84,11 @@ export function SiteHeader({ hasSession }: { hasSession: boolean }) {
             <li key={n.href}>
               <Link
                 href={n.href}
-                aria-current={n.href === pathname ? 'page' : undefined}
+                aria-current={
+                  n.href === pathname || (n.href !== '/' && pathname.startsWith(n.href + '/'))
+                    ? 'page'
+                    : undefined
+                }
                 className="text-[15px] font-medium text-ink transition-colors hover:text-brand-700 aria-[current=page]:text-brand-700 dark:text-slate-200 dark:hover:text-brand-300 dark:aria-[current=page]:text-brand-300"
               >
                 {n.label}

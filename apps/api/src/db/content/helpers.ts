@@ -57,6 +57,8 @@ export interface CourseMeta {
    * `quiz`: no runnable exercises (e.g. server-side PHP); every lesson ends with a quiz.
    */
   practice?: 'check' | 'quiz';
+  /** Public catalogue directions (slugs from `content/directions.ts`) the course is listed under. */
+  directions?: string[];
 }
 
 export interface CourseDef extends CourseMeta {

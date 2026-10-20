@@ -19,6 +19,7 @@ import {
   quizzes,
 } from '../schema';
 import type { CourseDef } from './helpers';
+import { DIRECTION_SLUGS, syncDirections } from './directions';
 
 /** `apps/api/content`; works from both `src/db/content` and `dist/db/content`. */
 export const CONTENT_ROOT = join(__dirname, '..', '..', '..', 'content');
@@ -48,6 +49,9 @@ export function prepareCourse(
 ): PreparedModule[] {
   const problems: string[] = [];
   const slugs = new Set<string>();
+  for (const d of course.directions ?? []) {
+    if (!DIRECTION_SLUGS.has(d)) problems.push(`unknown direction "${d}"`);
+  }
 
   const prepared = course.modules.map((m) => ({
     title: m.title,
@@ -212,6 +216,7 @@ export async function seedCourse(
         }
       }
     }
+    await syncDirections(tx, opts.organizationId);
     return result;
   });
 }

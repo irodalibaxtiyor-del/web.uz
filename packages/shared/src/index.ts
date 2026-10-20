@@ -14,3 +14,4 @@ export * from './libraries';
 export * from './groups';
 export * from './accounts';
 export * from './monitoring';
+export * from './catalog';

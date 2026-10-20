@@ -19,6 +19,8 @@
     "content:verify": "node -r @swc-node/register src/db/content/verify.ts",
     "db:import:roster": "node -r @swc-node/register src/db/import-roster.ts",
     "db:seed:course": "node -r @swc-node/register src/db/seed-course.ts",
+    "db:seed:directions": "node -r @swc-node/register src/db/seed-directions.ts",
+    "db:seed:directions:prod": "node dist/db/seed-directions.js",
     "db:seed:html": "node -r @swc-node/register src/db/seed-course.ts html",
     "db:seed:css": "node -r @swc-node/register src/db/seed-course.ts css",
     "db:seed:js": "node -r @swc-node/register src/db/seed-course.ts js"

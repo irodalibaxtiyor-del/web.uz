@@ -1,16 +1,8 @@
 import Link from 'next/link';
+import type { DirectionSummary } from '@webdizayn/shared';
+import { DirectionCard } from '@/components/catalog-ui';
 import { Icon } from '@/components/icons';
-
-const DIRECTIONS: { title: string; text: string }[] = [
-  { title: 'HTML asoslari', text: 'Sahifa tuzilishi va teglar' },
-  { title: 'CSS va bezash', text: 'Rang, shrift, joylashuv' },
-  { title: 'JavaScript', text: 'Interaktiv sahifalar' },
-  { title: 'Flexbox va Grid', text: 'Zamonaviy maketlar' },
-  { title: 'Moslashuvchan dizayn', text: 'Telefon va planshet uchun' },
-  { title: 'UI asoslari', text: 'Rang va kompozitsiya' },
-  { title: "Figma'dan kodga", text: 'Maketni sahifaga aylantirish' },
-  { title: 'Portfolio', text: "Ishlaringizni ko'rsating" },
-];
+import { getDirections } from '@/lib/catalog';
 
 const STEPS = [
   { n: '01', title: "O'rganing", text: 'Qisqa va tushunarli dars matni, misollar bilan.' },
@@ -29,7 +21,14 @@ const QUALITIES: { title: string; text: string }[] = [
   { title: 'Xavfsiz muhit', text: "Kodingiz faqat sizga ko'rinadi, natijalar shaffof." },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  // The landing page must render even if the catalogue is briefly unavailable.
+  let directions: DirectionSummary[] = [];
+  try {
+    directions = (await getDirections()) ?? [];
+  } catch {
+    directions = [];
+  }
   return (
     <>
       <Hero />
@@ -61,20 +60,29 @@ export default function HomePage() {
               <span className="section-eyebrow">Yo&apos;nalishlar</span>
               <h2 className="mt-3 text-title font-bold">Nimani o&apos;rganishni tanlang</h2>
             </div>
-            <Link href="/register" className="btn btn-outline">
-              Barcha kurslar <Icon name="arrowRight" className="size-4" />
+            <Link href="/yonalishlar" className="btn btn-outline">
+              Barcha yo&apos;nalishlar <Icon name="arrowRight" className="size-4" />
             </Link>
           </div>
-          <ul className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {DIRECTIONS.map((d) => (
-              <li key={d.title} className="card p-5">
-                <span className="block font-display text-lg font-semibold text-ink dark:text-white">
-                  {d.title}
-                </span>
-                <span className="mt-1 block text-sm text-muted">{d.text}</span>
-              </li>
-            ))}
-          </ul>
+          {directions.length > 0 ? (
+            <ul className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {directions.map((d) => (
+                <li key={d.slug}>
+                  <DirectionCard d={d} />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="mt-12 text-muted">
+              Yo&apos;nalishlar ro&apos;yxatini hozir yuklab bo&apos;lmadi.{' '}
+              <Link
+                href="/yonalishlar"
+                className="font-semibold text-brand-700 underline dark:text-brand-300"
+              >
+                Yo&apos;nalishlar sahifasi
+              </Link>
+            </p>
+          )}
         </div>
       </section>
 

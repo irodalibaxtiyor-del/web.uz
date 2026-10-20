@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { api } from './api';
+import { loginUrlForHere } from './safe-next';
 
 export type Loadable<T> =
   | { kind: 'loading' }
@@ -10,7 +11,8 @@ export type Loadable<T> =
   | { kind: 'ready'; data: T };
 
 /**
- * GET helper for client pages. A 401 sends the user to the login page; an account that must
+ * GET helper for client pages. A 401 sends the user to the login page (coming back here after
+ * signing in); an account that must
  * replace a temporary password is sent to the change-password page.
  */
 export function useApi<T>(path: string | null) {
@@ -25,7 +27,7 @@ export function useApi<T>(path: string | null) {
     api<T>(path).then((res) => {
       if (cancelled) return;
       if (res.ok) setState({ kind: 'ready', data: res.data });
-      else if (res.status === 401) router.replace('/login');
+      else if (res.status === 401) router.replace(loginUrlForHere());
       else if (res.code === 'PASSWORD_CHANGE_REQUIRED') router.replace('/change-password');
       else setState({ kind: 'error', status: res.status, message: res.message, code: res.code });
     });

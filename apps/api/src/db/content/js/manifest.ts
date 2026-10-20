@@ -28,6 +28,7 @@ export const JS_COURSE: CourseMeta = {
   slug: 'js',
   contentDir: 'js-course',
   position: 40,
+  directions: ['javascript'],
   title: 'JavaScript: to‘liq kurs',
   description:
     'Sahifalarga jon bering: o‘zgaruvchilar, funksiyalar, massivlar, obyektlar, DOM, hodisalar, ' +

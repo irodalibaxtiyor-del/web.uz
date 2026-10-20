@@ -53,6 +53,8 @@ import { ExercisesService } from './exercises/exercises.service';
 import { organizations } from './db/schema';
 import { HealthController } from './health/health.controller';
 import { OrganizationsController } from './organizations/organizations.controller';
+import { CatalogController } from './catalog/catalog.controller';
+import { CatalogService } from './catalog/catalog.service';
 import { PortfolioController } from './portfolio/portfolio.controller';
 import { PortfolioService } from './portfolio/portfolio.service';
 import { QuizzesController } from './quizzes/quizzes.controller';
@@ -80,6 +82,7 @@ export class AppModule {
         ReviewsController,
         QuizzesController,
         PortfolioController,
+        CatalogController,
         AnalyticsController,
         MetricsController,
         TutorController,
@@ -107,6 +110,7 @@ export class AppModule {
         ReviewsService,
         QuizzesService,
         PortfolioService,
+        CatalogService,
         AnalyticsService,
         { provide: AI_PROVIDER, useValue: aiProvider },
         AiUsageService,

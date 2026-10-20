@@ -20,6 +20,7 @@ export const BS5_COURSE: CourseMeta = {
   slug: 'bootstrap5',
   contentDir: 'bootstrap5-course',
   position: 80,
+  directions: ['bootstrap'],
   title: 'Bootstrap 5',
   description:
     'Bootstrap 5.3 — eng yangi versiya: jQuery’siz komponentlar, oltita ekran sinfi, gutter, ' +

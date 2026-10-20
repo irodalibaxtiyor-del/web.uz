@@ -20,6 +20,7 @@ export const BS3_COURSE: CourseMeta = {
   slug: 'bootstrap3',
   contentDir: 'bootstrap3-course',
   position: 60,
+  directions: ['bootstrap'],
   title: 'Bootstrap 3',
   description:
     'Bootstrap 3.4.1 bilan tez va moslashuvchan sahifalar: setka, tipografiya, tugmalar, ' +

@@ -26,6 +26,7 @@ export const PHP_COURSE: CourseMeta = {
   slug: 'php',
   contentDir: 'php-course',
   position: 50,
+  directions: ['php'],
   practice: 'quiz',
   title: 'PHP: to‘liq kurs',
   description:

@@ -25,6 +25,7 @@ export const CSS_COURSE: CourseMeta = {
   slug: 'css',
   contentDir: 'css-course',
   position: 30,
+  directions: ['css', 'flexbox-va-grid'],
   title: 'CSS: to‘liq kurs',
   description:
     'Sahifalarni chiroyli va qulay qiling: selektorlar, ranglar, quti modeli, shriftlar, ' +

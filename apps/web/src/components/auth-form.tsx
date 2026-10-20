@@ -3,13 +3,15 @@
 import { loginSchema, PASSWORD_MIN_LENGTH, registerSchema } from '@webdizayn/shared';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useId, useState, type FormEvent } from 'react';
+import { useId, useState, useSyncExternalStore, type FormEvent } from 'react';
 import { api } from '@/lib/api';
+import { currentNext } from '@/lib/safe-next';
 
 type Mode = 'login' | 'register';
 
-const inputClass =
-  'w-full rounded-lg border border-slate-300 bg-white px-3 py-2 dark:border-slate-700 dark:bg-slate-900';
+const noSubscribe = () => () => {};
+
+const inputClass = 'field';
 
 export function AuthForm({ mode }: { mode: Mode }) {
   const router = useRouter();
@@ -17,6 +19,9 @@ export function AuthForm({ mode }: { mode: Mode }) {
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const isRegister = mode === 'register';
+  // `?next=` survives switching between the login and register forms.
+  const next = useSyncExternalStore(noSubscribe, currentNext, () => null);
+  const withNext = (path: string) => (next ? `${path}?next=${encodeURIComponent(next)}` : path);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -42,7 +47,8 @@ export function AuthForm({ mode }: { mode: Mode }) {
       setError(res.message);
       return;
     }
-    router.push(res.data.mustChangePassword ? '/change-password' : '/dashboard');
+    // A temporary password must be replaced first; otherwise go back where the user came from.
+    router.push(res.data.mustChangePassword ? '/change-password' : (currentNext() ?? '/dashboard'));
     router.refresh();
   }
 
@@ -140,8 +146,8 @@ export function AuthForm({ mode }: { mode: Mode }) {
           <>
             Akkauntingiz bormi?{' '}
             <Link
-              href="/login"
-              className="font-semibold text-brand-600 hover:underline dark:text-brand-300"
+              href={withNext('/login')}
+              className="font-semibold text-brand-700 hover:underline dark:text-brand-300"
             >
               Kirish
             </Link>
@@ -150,8 +156,8 @@ export function AuthForm({ mode }: { mode: Mode }) {
           <>
             Akkauntingiz yo&apos;qmi?{' '}
             <Link
-              href="/register"
-              className="font-semibold text-brand-600 hover:underline dark:text-brand-300"
+              href={withNext('/register')}
+              className="font-semibold text-brand-700 hover:underline dark:text-brand-300"
             >
               Ro&apos;yxatdan o&apos;tish
             </Link>

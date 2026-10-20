@@ -169,6 +169,44 @@ export const courses = pgTable(
 );
 
 /** Teachers assigned to a course. A TEACHER may manage only courses listed here. */
+/**
+ * Public catalogue directions ("yo'nalishlar"). Platform-wide, not per organization; the
+ * courses shown under a direction are the published courses of the platform organization.
+ */
+export const directions = pgTable(
+  'directions',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    slug: text('slug').notNull(),
+    title: text('title').notNull(),
+    summary: text('summary').notNull().default(''),
+    description: text('description').notNull().default(''),
+    position: integer('position').notNull().default(1000),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (t) => [
+    uniqueIndex('directions_slug_idx').on(t.slug),
+    check('directions_position_nonneg', sql`${t.position} >= 0`),
+  ],
+);
+
+export const courseDirections = pgTable(
+  'course_directions',
+  {
+    courseId: uuid('course_id')
+      .notNull()
+      .references(() => courses.id, { onDelete: 'cascade' }),
+    directionId: uuid('direction_id')
+      .notNull()
+      .references(() => directions.id, { onDelete: 'cascade' }),
+  },
+  (t) => [
+    primaryKey({ columns: [t.courseId, t.directionId] }),
+    index('course_directions_direction_idx').on(t.directionId),
+  ],
+);
+
 export const courseTeachers = pgTable(
   'course_teachers',
   {
