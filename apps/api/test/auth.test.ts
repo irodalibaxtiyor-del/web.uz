@@ -89,7 +89,17 @@ describe('login / me / logout', () => {
     const me = await ctx.http().get('/auth/me').set('Cookie', cookie).expect(200);
     expect(me.body.email).toBe('talaba2@example.uz');
 
-    await ctx.http().post('/auth/logout').set('Cookie', cookie).expect(204);
+    const out = await ctx.http().post('/auth/logout').set('Cookie', cookie).expect(204);
+    // The browser is told to drop the cookie with the attributes it was set with.
+    const cleared = ([] as string[])
+      .concat(out.headers['set-cookie'] ?? [])
+      .find((c) => c.startsWith('wd_session='));
+    expect(cleared).toBeDefined();
+    expect(cleared).toMatch(/^wd_session=;/);
+    expect(cleared).toMatch(/Expires=Thu, 01 Jan 1970/);
+    expect(cleared).toMatch(/HttpOnly/);
+    expect(cleared).toMatch(/SameSite=Lax/);
+    expect(cleared).toMatch(/Path=\//);
     await ctx.http().get('/auth/me').set('Cookie', cookie).expect(401);
   });
 

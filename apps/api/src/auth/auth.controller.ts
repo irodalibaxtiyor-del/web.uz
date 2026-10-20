@@ -82,7 +82,13 @@ export class AuthController {
   @AllowPendingPasswordChange()
   async logout(@CurrentAuth() auth: AuthContext, @Res({ passthrough: true }) res: Response) {
     await this.auth.logout(auth.sessionId, auth.userId);
-    res.clearCookie(SESSION_COOKIE, { path: '/' });
+    // Same attributes as when it was set, so every browser drops exactly this cookie.
+    res.clearCookie(SESSION_COOKIE, {
+      httpOnly: true,
+      secure: this.config.cookieSecure,
+      sameSite: 'lax',
+      path: '/',
+    });
   }
 
   @Get('me')

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import { AccountMenu } from './account-menu';
 import { Icon } from './icons';
 import { Logo } from './logo';
 
@@ -55,11 +56,7 @@ export function SiteHeader({ hasSession }: { hasSession: boolean }) {
     };
   }, [open]);
 
-  const actions = hasSession ? (
-    <Link href="/dashboard" className="btn btn-primary">
-      Shaxsiy kabinet
-    </Link>
-  ) : (
+  const guestActions = (
     <>
       <Link href="/login" className="btn btn-outline">
         Kirish
@@ -95,7 +92,9 @@ export function SiteHeader({ hasSession }: { hasSession: boolean }) {
             </li>
           ))}
         </ul>
-        <div className="hidden items-center gap-3 lg:flex">{actions}</div>
+        <div className="hidden items-center gap-3 lg:flex">
+          {hasSession ? <AccountMenu label="Shaxsiy kabinet" /> : guestActions}
+        </div>
         <button
           ref={toggleRef}
           type="button"
@@ -122,9 +121,15 @@ export function SiteHeader({ hasSession }: { hasSession: boolean }) {
               </Link>
             </li>
           ))}
-          <li className="flex flex-wrap gap-3 pt-3 pb-1" onClick={() => setOpen(false)}>
-            {actions}
-          </li>
+          {hasSession ? (
+            <li className="pt-3 pb-1">
+              <AccountMenu label="Shaxsiy kabinet" inline />
+            </li>
+          ) : (
+            <li className="flex flex-wrap gap-3 pt-3 pb-1" onClick={() => setOpen(false)}>
+              {guestActions}
+            </li>
+          )}
         </ul>
       </div>
     </header>

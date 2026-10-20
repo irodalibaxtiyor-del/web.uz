@@ -1119,3 +1119,16 @@ Roadmap ro'yxati bo'yicha audit va tuzatishlar:
   - `env(safe-area-inset-*)` (top bar, yon menyu, kontent pastki chegarasi, dialoglar), root `viewport-fit=cover`.
 - Kurs xaritasidagi sticky panel scroll konteyneriga moslandi (`top-0`).
 - Tekshiruv (scratchpad'dagi `shell-check.cjs`, demo baza, faqat o'qish): sahifa o'zi scroll bo'lmaydi, kontent scroll bo'ladi, shell aynan oyna balandligida, navigatsiya scroll'ni tiklaydi, faol bo'lim belgilanadi, yig'ish qayta yuklashdan keyin saqlanadi, 1440 → 1100 → 600 → 1440 o'lcham o'zgarishida buzilmaydi, drawer (ochish/Esc/fon/navigatsiya, `inert`) — 20/20; skrinshotlar 390/1024/1440 × light/dark, gorizontal scroll 0, xatolar 0. typecheck ✅, lint ✅, format ✅, web test 36/36 ✅, build ✅. To'liq E2E 4-band bilan birga ishga tushiriladi.
+
+### 4-band — Shaxsiy kabinet submenyusi (yakunlandi)
+
+- **`components/account-menu.tsx`** — "Shaxsiy kabinet" ochiladigan menyusi: Kabinet, **Natija** (`/analytics` — kurslar bo'yicha progress foizda, haftalik grafik, test natijalari), **Portfolio**, ajratuvchi chiziq, **Chiqish**.
+  - ochiq sahifalar header'ida "Shaxsiy kabinet" tugmasi o'rnida; kabinet top-bar'ida foydalanuvchi ismi (telefonda faqat ikonka, ism screen reader uchun qoladi); burger panelida oqim ichida ochiladi (`inline` — scroll konteyneri kesmasligi uchun);
+  - desktopda hover (sichqoncha) va bosish bilan, telefonda bosish bilan ochiladi. Hover bilan ochilgan menyuni bosish uni mahkamlaydi — **topilgan xato:** avval hover'dan keyingi bosish menyuni darhol yopardi;
+  - klaviatura (WAI-ARIA menu button): Enter/Space/↓ — birinchi element, ↑ — oxirgi, ↑/↓ aylanma, Home/End, Esc yopadi va fokusni tugmaga qaytaradi, Tab yopadi. Fokus `useLayoutEffect` da ko'chiriladi (tez bosilgan keyingi tugma tugmaga emas, menyuga tushadi);
+  - joriy sahifa `aria-current` bilan belgilanadi; tashqariga bosish va navigatsiya yopadi.
+- **Chiqish:** tasdiq oynasi ("Haqiqatan chiqmoqchimisiz?") → `POST /auth/logout` (server sessiya qatorini o'chiradi) → `sessionStorage` tozalanadi → `location.replace('/')` (to'liq yuklash — barcha klient keshlari, router keshi ham, tushadi; himoyalangan sahifa tarixda qolmaydi). Tarmoq xatosida "Qayta urinish" oynasi; 401 ham muvaffaqiyatli chiqish hisoblanadi.
+- **API:** `POST /auth/logout` cookie'ni o'rnatilgandagi atributlar bilan tozalaydi (`HttpOnly`, `Secure` (prod), `SameSite=Lax`, `Path=/`). `auth.test.ts` endi tozalovchi `Set-Cookie` ni tekshiradi.
+- Kabinet sarlavhasidagi takroriy "Natijalarim / Portfolio / Chiqish" tugmalari olib tashlandi (menyu va yon menyuda bor).
+- E2E: talaba chiqishni menyu orqali tasdiqlaydi, keyin `/auth/me` 401 tekshiriladi (yangi qadam).
+- Tekshiruv (scratchpad'dagi `account-check.cjs`, demo baza; faqat shu skript ochgan sessiyalar yopiladi) **28/28**: hover/bosish/teginish, klaviatura (Enter, ↓, End, aylanish, Esc + fokus, ↑, Tab), tashqari bosish, faol sahifa, telefonda ekranga sig'ishi, burger ichida; chiqish — bekor qilish sessiyani saqlaydi, tasdiqlash bosh sahifaga olib boradi, cookie yo'q, `/auth/me` 401, `sessionStorage` bo'sh, header'da yana "Kirish", "Orqaga" tugmasi kabinet ma'lumotini ko'rsatmay `/login` ga olib boradi. typecheck ✅, lint ✅, format ✅, test ✅ (web 36, api 334), build ✅, to'liq E2E **51/51** ✅ (7-band o'zgarishlari bilan birga).

@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
 import { useApi } from '@/lib/use-api';
 import { SIDEBAR_COOKIE } from '@/lib/shell';
+import { AccountMenu } from './account-menu';
 import { Icon, type IconName } from './icons';
 import { Logo } from './logo';
 
@@ -139,9 +140,11 @@ export function AppShell({
           <div className="ml-auto flex items-center gap-1 sm:gap-2">
             <FullscreenButton />
             {me && (
-              <span className="hidden max-w-48 truncate text-sm font-medium text-ink md:block dark:text-white">
-                {me.fullName}
-              </span>
+              <AccountMenu
+                label={me.fullName}
+                compact
+                triggerClassName="btn btn-ghost max-w-56 px-2.5 sm:px-3"
+              />
             )}
           </div>
         </div>

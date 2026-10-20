@@ -2,11 +2,8 @@
 
 import type { MeResponse, Role } from '@webdizayn/shared';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { CourseList } from '@/components/course-list';
-import { Icon } from '@/components/icons';
-import { Button, LoadState, PageHeader } from '@/components/ui';
-import { api } from '@/lib/api';
+import { LoadState, PageHeader } from '@/components/ui';
 import { useApi } from '@/lib/use-api';
 
 const ROLE_LABEL: Record<Role, string> = {
@@ -18,14 +15,7 @@ const ROLE_LABEL: Record<Role, string> = {
 const linkClass = 'text-sm font-semibold text-brand-700 underline dark:text-brand-300';
 
 export default function DashboardPage() {
-  const router = useRouter();
   const { state } = useApi<MeResponse>('/auth/me');
-
-  async function logout() {
-    await api('/auth/logout', { method: 'POST' });
-    router.replace('/login');
-    router.refresh();
-  }
 
   return (
     <LoadState state={state}>
@@ -35,20 +25,6 @@ export default function DashboardPage() {
             crumbs={[{ href: '/', label: 'Bosh sahifa' }]}
             title={`Xush kelibsiz, ${me.fullName}`}
             subtitle="O'qishni davom ettiring yoki yangi kursni tanlang."
-            actions={
-              <>
-                <Link href="/analytics" className="btn btn-outline">
-                  Natijalarim
-                </Link>
-                <Link href="/portfolio" className="btn btn-outline">
-                  Portfolio
-                </Link>
-                <Button variant="ghost" onClick={logout}>
-                  <Icon name="logout" className="size-4" />
-                  Chiqish
-                </Button>
-              </>
-            }
           />
           <div className="space-y-12">
             {me.memberships.map((m) => (

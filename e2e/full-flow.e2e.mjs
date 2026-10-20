@@ -274,10 +274,17 @@ async function run() {
   await sp.getByRole('button', { name: "Ro'yxatdan o'tish" }).click();
   await sp.waitForURL('**/dashboard');
   record(true, 'student registers through the form');
-  await sp.getByRole('button', { name: 'Chiqish' }).click();
-  await sp.waitForURL('**/login');
+  // Logout lives in the account menu ("Shaxsiy kabinet" submenu) and is confirmed in a modal.
+  await sp.locator('.app-shell header button[aria-haspopup="menu"]').click();
+  await sp.getByRole('menuitem', { name: 'Chiqish' }).click();
+  await acceptModal(sp);
+  await sp.waitForURL(`${WEB}/`);
+  expect(
+    (await sp.request.get(`${WEB}/api/auth/me`)).status() === 401,
+    'session ended after logout',
+  );
   await login(sp, 'talaba@e2e.uz');
-  record(true, 'student logs out and back in');
+  record(true, 'student logs out from the account menu (confirmed) and back in');
 
   await sp.getByText('E2E HTML').first().click();
   await sp.getByRole('button', { name: 'Kursga yozilish' }).click();
