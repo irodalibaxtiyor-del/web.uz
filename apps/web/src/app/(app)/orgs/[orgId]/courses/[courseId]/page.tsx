@@ -128,7 +128,7 @@ export default function CourseMapPage() {
                   </section>
                 ))}
               </div>
-              <aside className="card h-fit space-y-4 p-6 lg:sticky lg:top-24">
+              <aside className="card h-fit space-y-4 p-6 lg:sticky lg:top-0">
                 <h2 className="text-lg font-semibold">Sizning progressingiz</h2>
                 <div className="font-display text-4xl font-bold text-ink dark:text-white">
                   {map.progressPercent}%

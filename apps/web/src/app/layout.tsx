@@ -1,9 +1,7 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter, Jost } from 'next/font/google';
 import { cookies } from 'next/headers';
 import { DialogHost } from '@/components/dialog';
-import { SiteFooter } from '@/components/site-footer';
-import { SiteHeader } from '@/components/site-header';
 import './globals.css';
 
 const body = Inter({ subsets: ['latin', 'cyrillic'], variable: '--font-body', display: 'swap' });
@@ -18,24 +16,23 @@ export const metadata: Metadata = {
   description: "Web dizayn va web dasturlashni amalda o'rganish platformasi",
 };
 
+// `viewport-fit=cover` lets the layout use env(safe-area-inset-*) on notched phones.
+export const viewport: Viewport = { width: 'device-width', initialScale: 1, viewportFit: 'cover' };
+
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  // Presence only decides which nav buttons to show; every protected action is checked by the API.
-  const hasSession = (await cookies()).has('wd_session');
+  // Reading cookies keeps every page dynamic, which the per-request CSP nonce (proxy.ts) needs.
+  await cookies();
 
   return (
     <html lang="uz" className={`${body.variable} ${heading.variable}`}>
-      <body className="flex min-h-dvh flex-col">
+      <body className="min-h-dvh">
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:shadow-card dark:focus:bg-slate-800"
         >
           Asosiy kontentga o&apos;tish
         </a>
-        <SiteHeader hasSession={hasSession} />
-        <main id="main" className="flex-1">
-          {children}
-        </main>
-        <SiteFooter />
+        {children}
         <DialogHost />
       </body>
     </html>

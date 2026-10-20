@@ -188,6 +188,29 @@
   }
 }
 
+/* App shell: exactly one window tall; only <main> scrolls. 100vh is the fallback for old browsers. */
+.app-shell {
+  height: 100vh;
+  height: 100dvh;
+}
+/* Sidebar rail (icons only): always between lg and xl, and from xl when collapsed. */
+@media (min-width: 1024px) {
+  #app-sidebar .sidebar-label {
+    @apply sr-only;
+  }
+  #app-sidebar a {
+    @apply justify-center px-0;
+  }
+}
+@media (min-width: 1280px) {
+  #app-sidebar[data-collapsed='false'] .sidebar-label {
+    @apply not-sr-only;
+  }
+  #app-sidebar[data-collapsed='false'] a {
+    @apply justify-start px-3;
+  }
+}
+
 /* Lesson markdown typography */
 .lesson-content {
   @apply space-y-4 leading-relaxed;

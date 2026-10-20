@@ -1106,3 +1106,16 @@ Roadmap ro'yxati bo'yicha audit va tuzatishlar:
 - **Brauzerlar** (scratchpad'dagi `xbrowser.mjs`): Chrome 155, Edge 155, Firefox 158 (stock, puppeteer-core 25.12 + WebDriver BiDi, faqat scratchpad'da o'rnatilgan) — 4 sahifa × 6 viewport (320×640, 390×844, 844×390 landshaft, 768×1024, 1024×768, 1440×900) gorizontal scroll 0; burger Esc/tashqari; dialog modal, telefonda to'liq ekran, 1024'da 512px panel, xavfli amalda fokus "Bekor qilish"da, Esc yopadi; sahifa xatolari 0. **Safari tekshirilmadi** (Windows'da yo'q).
 - E2E native dialog o'rniga modalni tasdiqlaydi (`acceptModal`).
 - Tekshiruv: typecheck ✅, lint ✅, format ✅, web test 36/36 ✅, build ✅, to'liq E2E **50/50** ✅.
+
+### 7-band — Ilova oynani to'liq egallaydi (yakunlandi)
+
+- **Route group'lar:** ochiq sahifalar (`/`, `/playground`, `/p/[slug]`, `(auth)`) `app/(site)/` ga ko'chirildi (URL'lar o'zgarmadi): marketing header + oddiy sahifa scroll'i + footer. Root layout endi faqat skelet (`<html>`, skip-link, `DialogHost`); `cookies()` chaqiruvi saqlab qolindi — nonce'li CSP uchun barcha sahifalar dinamik bo'lishi kerak.
+- **`components/app-shell.tsx`** (`(app)` layout):
+  - `.app-shell` balandligi `100vh` → `100dvh` (fallback bilan); faqat `<main>` scroll bo'ladi, sahifaning o'zi emas;
+  - yuqori panel: mobil menyu tugmasi, yon menyuni yig'ish (xl+), logo, to'liq ekran (Fullscreen API, qo'llab-quvvatlanmasa ko'rinmaydi), foydalanuvchi ismi;
+  - yon menyu: shaxsiy bo'limlar (Kabinet, Natijalarim, Portfolio, Playground) va har tashkilot uchun xodim bo'limlari (Guruh paneli; admin uchun Guruhlar, Talabalar, O'qituvchilar, Tashkilot analitikasi). Rol `/auth/me` dan — faqat ko'rinish uchun, ruxsat serverda;
+  - xl+ da yig'ish/yoyish, holat `wd_sidebar` cookie'da va server layout'da o'qiladi (qayta yuklashda "sakrash" yo'q); 1024–1279 px da doim ixcham ikonka paneli (yorliqlar faqat screen reader uchun); < 1024 px da chiqib keladigan drawer (Esc — fokus tugmaga qaytadi, fon bosilishi, navigatsiya yopadi; yopiq drawer `inert`);
+  - sahifa almashganda kontent scroll'i boshiga qaytadi (Next faqat oyna scroll'ini tiklaydi);
+  - `env(safe-area-inset-*)` (top bar, yon menyu, kontent pastki chegarasi, dialoglar), root `viewport-fit=cover`.
+- Kurs xaritasidagi sticky panel scroll konteyneriga moslandi (`top-0`).
+- Tekshiruv (scratchpad'dagi `shell-check.cjs`, demo baza, faqat o'qish): sahifa o'zi scroll bo'lmaydi, kontent scroll bo'ladi, shell aynan oyna balandligida, navigatsiya scroll'ni tiklaydi, faol bo'lim belgilanadi, yig'ish qayta yuklashdan keyin saqlanadi, 1440 → 1100 → 600 → 1440 o'lcham o'zgarishida buzilmaydi, drawer (ochish/Esc/fon/navigatsiya, `inert`) — 20/20; skrinshotlar 390/1024/1440 × light/dark, gorizontal scroll 0, xatolar 0. typecheck ✅, lint ✅, format ✅, web test 36/36 ✅, build ✅. To'liq E2E 4-band bilan birga ishga tushiriladi.
