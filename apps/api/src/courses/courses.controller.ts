@@ -1,14 +1,16 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import {
   createCourseSchema,
   createLessonSchema,
   createModuleSchema,
+  slugSuggestionQuerySchema,
   updateCourseSchema,
   updateLessonSchema,
   updateModuleSchema,
   type CreateCourseInput,
   type CreateLessonInput,
   type CreateModuleInput,
+  type SlugSuggestionQuery,
   type UpdateCourseInput,
   type UpdateLessonInput,
   type UpdateModuleInput,
@@ -43,6 +45,16 @@ export class CoursesController {
     @Body(new ZodPipe(createCourseSchema)) body: CreateCourseInput,
   ) {
     return this.courses.create(auth, m, body);
+  }
+
+  /** Live preview of the slug the server would assign (form helper; the create/patch re-check). */
+  @Get('slug-suggestion')
+  @OrgRoles('TEACHER', 'ORG_ADMIN')
+  slugSuggestion(
+    @CurrentMembership() m: MembershipContext,
+    @Query(new ZodPipe(slugSuggestionQuerySchema)) q: SlugSuggestionQuery,
+  ) {
+    return this.courses.suggestSlug(m, q);
   }
 
   @Get(':courseId/structure')

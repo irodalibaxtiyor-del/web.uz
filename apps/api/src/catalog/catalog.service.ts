@@ -2,6 +2,7 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import {
   CATALOG_SLUG_RE,
   type CourseCounts,
+  type CourseMoved,
   type DirectionDetail,
   type DirectionSummary,
   type PublicCourseDetail,
@@ -12,6 +13,7 @@ import { APP_CONFIG, type AppConfig } from '../config';
 import { DbService } from '../db/db.module';
 import {
   courseDirections,
+  courseSlugRedirects,
   courses,
   directions,
   exercises,
@@ -151,7 +153,23 @@ export class CatalogService {
     };
   }
 
-  async course(slug: string): Promise<PublicCourseDetail> {
+  /** A former slug of a published course → its current slug (the page redirects permanently). */
+  private async movedTo(orgId: string, slug: string): Promise<string | null> {
+    const [row] = await this.db
+      .select({ slug: courses.slug })
+      .from(courseSlugRedirects)
+      .innerJoin(courses, eq(courses.id, courseSlugRedirects.courseId))
+      .where(
+        and(
+          eq(courseSlugRedirects.organizationId, orgId),
+          eq(courseSlugRedirects.slug, slug),
+          eq(courses.status, 'PUBLISHED'),
+        ),
+      );
+    return row?.slug ?? null;
+  }
+
+  async course(slug: string): Promise<PublicCourseDetail | CourseMoved> {
     if (!validSlug(slug)) throw new NotFoundException(NOT_FOUND);
     const orgId = await this.platformOrgId();
     if (!orgId) throw new NotFoundException(NOT_FOUND);
@@ -170,7 +188,11 @@ export class CatalogService {
           eq(courses.status, 'PUBLISHED'),
         ),
       );
-    if (!c) throw new NotFoundException(NOT_FOUND);
+    if (!c) {
+      const moved = await this.movedTo(orgId, slug);
+      if (moved) return { movedTo: moved };
+      throw new NotFoundException(NOT_FOUND);
+    }
 
     const [mods, less, dirs, counts] = await Promise.all([
       this.db

@@ -57,8 +57,9 @@ describe('course authoring', () => {
     courseId = res.body.course.id;
   });
 
-  it('rejects duplicate slugs in the same org and invalid slugs', async () => {
-    await post(owner, base(), { title: 'Takror', slug: 'html-asoslari' }).expect(409);
+  it('gives a taken slug a "-2" suffix and rejects invalid slugs', async () => {
+    const dup = await post(owner, base(), { title: 'Takror', slug: 'html-asoslari' }).expect(201);
+    expect(dup.body.course.slug).toBe('html-asoslari-2');
     await post(owner, base(), { title: 'Yomon', slug: 'Bad Slug!' }).expect(400);
   });
 

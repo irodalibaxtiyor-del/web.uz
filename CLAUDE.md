@@ -1164,3 +1164,21 @@ Roadmap ro'yxati bo'yicha audit va tuzatishlar:
 - Demo bazaga yuklandi (`seed-course` ×4); `/public/directions` — barcha 10 yo'nalishda kurs bor. Mehmon sahifalari (390/1440) xatosiz.
 - Kuzatuv: uzoq ketma-ket `content:verify` da (60+ Chrome) ba'zan boshlang'ich kodda LOAD_TIMEOUT/BUDGET; alohida qayta ishga tushirilganda o'tadi (talabada TIMEOUT holati statusni o'zgartirmaydi).
 - Cheklov: engine `hover`/`pointer`/`prefers-*` media va aylantirishni emulyatsiya qilmaydi — ular faqat darsda; `srcset` tanlovi brauzer ixtiyorida, tekshiruv atributlar bo'yicha.
+
+### 3-band — Slug (yakunlandi)
+
+- **Shared** `slug.ts`: `slugify()` — o'zbek apostroflarining barcha shakllari (`'`, `‘`, `’`, `ʻ`, `ʼ`, `` ` ``) olib tashlanadi (oʻ → o, gʻ → g), sh/ch saqlanadi; kirill: ш→sh, ч→ch, ў→o, ғ→g, қ→q, ҳ→h, х→x, ё→yo, ю→yu, я→ya, ц→ts, е so'z boshida va unlidan keyin → ye; diakritika olib tashlanadi; faqat `a-z0-9-`, takroriy va chetdagi `-` yo'q, 80 belgigacha. `slugCandidate(base, n)` (`-2`, `-3`, suffiks bilan ham ≤80), `courseSlugSchema` (qat'iy: noto'g'ri slug jimgina tuzatilmaydi, 400), `slugSuggestionQuerySchema`, `SlugSuggestion`. 7 ta test (shu jumladan "Oʻzbek tili: Grammatika asoslari" → `ozbek-tili-grammatika-asoslari`).
+- `createCourseSchema.slug` endi ixtiyoriy (berilmasa nomdan yasaladi, bo'sh chiqsa `kurs`); `updateCourseSchema.slug` qo'shildi.
+- Migratsiya `0016_course_slugs.sql`: `course_slug_redirects` (PK org+slug, `course_id` FK + indeks) — kursning eski slug'lari.
+- **API:**
+  - yaratish: org bo'yicha `pg_advisory_xact_lock` ostida birinchi bo'sh variant (`html`, `html-2`, …) — boshqa kursning hozirgi **va eski** slug'lari band hisoblanadi. Avval band slug 409 berardi, endi `-2` qo'shiladi (topshiriq talabi; eski test yangilandi);
+  - tahrirlash (kurs xodimi): band slug 409 `SLUG_TAKEN` (tahrirda jimgina o'zgartirilmaydi); e'lon qilingan kursning eski slug'i yo'naltirish sifatida saqlanadi; kurs o'z eski slug'ini qaytarib olsa, o'sha yo'naltirish o'chadi; zanjir yo'q — barcha eski slug'lar hozirgisiga olib boradi; audit `course.slug_change`;
+  - `GET /orgs/:orgId/courses/slug-suggestion?title|slug&courseId` (TEACHER/ORG_ADMIN) — server hozir qaysi slug berishini ko'rsatadi (faqat ko'rinish, yaratish/tahrir qayta tekshiradi);
+  - ochiq `GET /public/courses/:slug`: eski slug uchun `{ movedTo }` (faqat kurs e'lon qilingan bo'lsa; qoralama/arxiv 404).
+- **Web:**
+  - `components/slug-field.tsx` (`/kurslar/` prefiksli maydon, `aria-live` izoh: "Nomdan yasaldi / Qo'lda kiritilgan · bo'sh", band bo'lsa qaysi manzil berilishi yoki tahrirda xato), `useSlugPreview` (300 ms debounce); `lib/slug-input.ts` — nom o'zgarsa slug yangilanadi, qo'lda tahrir qilingandan keyin ustiga yozilmaydi, maydon tozalansa yana nomga ergashadi; yozish paytida normallashtiriladi. 3 ta test.
+  - Yangi kurs formasi va kurs boshqaruvi sahifasida "Manzil" bloki ("Manzilni o'zgartirish", "Nomdan yasash", e'lon qilingan kursda tasdiq oynasi).
+  - `/kurslar/[slug]`: eski slug → `permanentRedirect` (HTML oqimidan oldin). **Eslatma:** Next.js doimiy yo'naltirish uchun **308** qaytaradi (301 emas); qidiruv tizimlari uchun ikkalasi bir xil doimiy yo'naltirish. Aynan 301 kerak bo'lsa, proxy'da har kurs sahifasiga qo'shimcha API so'rovi kerak bo'ladi — qilinmadi.
+- Testlar: `test/course-slugs.test.ts` 9 ta (lotin/kirill nomdan, org ichida `-2/-3`, boshqa org'da mustaqil, 80 belgi, 5 ta parallel yaratish → 5 xil slug, server validatsiyasi, suggestion RBAC 401/403, qayta nomlash → `movedTo`, ikki marta qayta nomlash, eski slug band (409 / `-2`), o'z eski slug'ini qaytarish, qoralama va arxivda yo'naltirish yo'q, begona o'qituvchi 403, boshqa org 404). `schema.test.ts` (FK indekslari) o'tdi.
+- Regressiya: typecheck ✅, lint ✅, format ✅, test ✅ (shared 57 + libs 3 + sandbox 16 + web 41 + check-engine 23 + api 367 = **507**).
+- Demo bazaga `0016` qo'llandi. Brauzer tekshiruvi (`slug-check.cjs`, scratchpad) **17/17**: jonli slug, band slug izohi, qo'lda tahrir saqlanishi, tozalansa nomga qaytishi, 390px'da gorizontal scroll yo'q, boshqaruv sahifasida qayta nomlash → eski manzil 308 + `Location`, qaytarish. Natijada demo "HTML asoslari" kursi asl `html-asoslari` slug'ida, `html-asoslari-yangi` esa unga yo'naltiruvchi eski slug bo'lib qoldi (zararsiz). Sahifa xatolari 0.

@@ -207,6 +207,28 @@ export const courseDirections = pgTable(
   ],
 );
 
+/**
+ * Former slugs of a course. The public course page answers an old slug with a permanent
+ * redirect, and no other course in the organization may take it (it would break old links).
+ */
+export const courseSlugRedirects = pgTable(
+  'course_slug_redirects',
+  {
+    organizationId: uuid('organization_id')
+      .notNull()
+      .references(() => organizations.id, { onDelete: 'cascade' }),
+    slug: text('slug').notNull(),
+    courseId: uuid('course_id')
+      .notNull()
+      .references(() => courses.id, { onDelete: 'cascade' }),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.organizationId, t.slug] }),
+    index('course_slug_redirects_course_idx').on(t.courseId),
+  ],
+);
+
 export const courseTeachers = pgTable(
   'course_teachers',
   {

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { courseSlugSchema } from './slug';
 import type { ExerciseSummary } from './exercises';
 import type { AssignmentSummary } from './assignments';
 import type { QuizSummary } from './quizzes';
@@ -27,12 +28,8 @@ const title = z.string().trim().min(2).max(200);
 
 export const createCourseSchema = z.object({
   title,
-  slug: z
-    .string()
-    .trim()
-    .toLowerCase()
-    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
-    .max(80),
+  /** Optional: generated from the title when left out. A taken slug gets "-2", "-3"… */
+  slug: courseSlugSchema.optional(),
   description: z.string().trim().max(2000).default(''),
 });
 export type CreateCourseInput = z.infer<typeof createCourseSchema>;
@@ -40,6 +37,8 @@ export type CreateCourseInput = z.infer<typeof createCourseSchema>;
 export const updateCourseSchema = z
   .object({
     title: title.optional(),
+    /** A taken slug is refused (409), never renamed behind the editor's back. */
+    slug: courseSlugSchema.optional(),
     description: z.string().trim().max(2000).optional(),
     status: z.enum(COURSE_STATUSES).optional(),
     /** Catalogue order; only ORG_ADMIN may change it. */

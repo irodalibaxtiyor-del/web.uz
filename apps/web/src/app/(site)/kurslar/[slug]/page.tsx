@@ -1,13 +1,22 @@
 import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import { cache } from 'react';
 import { Crumbs, Paragraphs } from '@/components/catalog-ui';
 import { Icon } from '@/components/icons';
-import { countsLine, getPublicCourse, SITE_NAME, SITE_URL } from '@/lib/catalog';
+import { countsLine, getPublicCourse, isMoved, SITE_NAME, SITE_URL } from '@/lib/catalog';
 
-const load = cache((slug: string) => getPublicCourse(slug));
+/**
+ * The course, or a permanent redirect when `slug` is a former slug of a published course
+ * (old links and search results keep working). Thrown before any HTML is streamed, so the
+ * response is a real redirect status (Next.js uses 308 — permanent like 301).
+ */
+const load = cache(async (slug: string) => {
+  const c = await getPublicCourse(slug);
+  if (c && isMoved(c)) permanentRedirect(`/kurslar/${encodeURIComponent(c.movedTo)}`);
+  return c;
+});
 
 type Props = { params: Promise<{ slug: string }> };
 

@@ -2,6 +2,9 @@ import { ConflictException, ForbiddenException, Injectable } from '@nestjs/commo
 import { and, asc, count, eq, inArray, max, sql } from 'drizzle-orm';
 import {
   progressPercent,
+  slugCandidate,
+  slugify,
+  type SlugSuggestion,
   type CourseStructure,
   type CourseSummary,
   type CreateCourseInput,
@@ -13,8 +16,10 @@ import {
 } from '@webdizayn/shared';
 import { AuditService } from '../audit/audit.service';
 import type { AuthContext, MembershipContext } from '../common/types';
+import type { Db } from '../db/client';
 import { DbService } from '../db/db.module';
 import {
+  courseSlugRedirects,
   courses,
   courseTeachers,
   enrollments,
@@ -23,6 +28,12 @@ import {
   modules,
 } from '../db/schema';
 import { CourseAccessService } from './course-access.service';
+
+/** How many "-n" variants are tried before giving up (a real catalogue never gets close). */
+const SLUG_TRIES = 200;
+
+const slugLock = (orgId: string) =>
+  sql`select pg_advisory_xact_lock(hashtext(${`course-slugs:${orgId}`}))`;
 
 @Injectable()
 export class CoursesService {
@@ -107,15 +118,25 @@ export class CoursesService {
   }
 
   async create(auth: AuthContext, m: MembershipContext, input: CreateCourseInput) {
+    const base = input.slug ?? (slugify(input.title) || 'kurs');
     const created = await this.dbs.db.transaction(async (tx) => {
+      // Serializes slug allocation in the organization: two "HTML" courses created at once
+      // get "html" and "html-2", not a unique-index error.
+      await tx.execute(slugLock(m.organizationId));
+      const slug = await this.freeSlug(tx, m.organizationId, base);
+      if (!slug) return null;
       const [course] = await tx
         .insert(courses)
-        .values({ ...input, organizationId: m.organizationId, createdBy: auth.userId })
-        .onConflictDoNothing()
+        .values({
+          title: input.title,
+          description: input.description,
+          slug,
+          organizationId: m.organizationId,
+          createdBy: auth.userId,
+        })
         .returning({ id: courses.id });
-      if (!course) return null;
-      await tx.insert(courseTeachers).values({ courseId: course.id, userId: auth.userId });
-      return course;
+      await tx.insert(courseTeachers).values({ courseId: course!.id, userId: auth.userId });
+      return course!;
     });
     if (!created) throw new ConflictException('Bu slug bilan kurs allaqachon mavjud');
     await this.audit.record({
@@ -126,6 +147,62 @@ export class CoursesService {
       targetId: created.id,
     });
     return this.structure(auth, m, created.id);
+  }
+
+  /** Slugs (of `candidates`) used by another course now or in the past. */
+  private async takenSlugs(db: Db, orgId: string, candidates: string[], exceptCourseId?: string) {
+    const other = (col: typeof courses.id | typeof courseSlugRedirects.courseId) =>
+      exceptCourseId ? sql`${col} <> ${exceptCourseId}` : sql`true`;
+    const [live, old] = await Promise.all([
+      db
+        .select({ slug: courses.slug })
+        .from(courses)
+        .where(
+          and(
+            eq(courses.organizationId, orgId),
+            inArray(courses.slug, candidates),
+            other(courses.id),
+          ),
+        ),
+      db
+        .select({ slug: courseSlugRedirects.slug })
+        .from(courseSlugRedirects)
+        .where(
+          and(
+            eq(courseSlugRedirects.organizationId, orgId),
+            inArray(courseSlugRedirects.slug, candidates),
+            other(courseSlugRedirects.courseId),
+          ),
+        ),
+    ]);
+    return new Set([...live, ...old].map((r) => r.slug));
+  }
+
+  /** `base`, else the first free "base-2", "base-3"… (null if all tries are taken). */
+  private async freeSlug(db: Db, orgId: string, base: string, exceptCourseId?: string) {
+    for (let start = 1; start <= SLUG_TRIES; start += 50) {
+      const candidates = Array.from({ length: 50 }, (_, i) => slugCandidate(base, start + i));
+      const taken = await this.takenSlugs(db, orgId, candidates, exceptCourseId);
+      const free = candidates.find((c) => !taken.has(c));
+      if (free) return free;
+    }
+    return null;
+  }
+
+  /** Live preview for the course form: the slug the server would give right now. */
+  async suggestSlug(
+    m: MembershipContext,
+    q: { title?: string; slug?: string; courseId?: string },
+  ): Promise<SlugSuggestion> {
+    const requested = q.slug ?? slugify(q.title ?? '');
+    if (!requested) return { requested: '', slug: '', available: false };
+    const db = this.dbs.db;
+    const taken = await this.takenSlugs(db, m.organizationId, [requested], q.courseId);
+    const available = !taken.has(requested);
+    const slug = available
+      ? requested
+      : ((await this.freeSlug(db, m.organizationId, requested, q.courseId)) ?? '');
+    return { requested, slug, available };
   }
 
   async update(
@@ -139,10 +216,50 @@ export class CoursesService {
     if (input.position !== undefined && m.role !== 'ORG_ADMIN') {
       throw new ForbiddenException('Kurslar tartibini faqat administrator o‘zgartiradi');
     }
-    await this.dbs.db
-      .update(courses)
-      .set({ ...input, updatedAt: new Date() })
-      .where(eq(courses.id, courseId));
+    const slugChanged = input.slug !== undefined && input.slug !== before.slug;
+    await this.dbs.db.transaction(async (tx) => {
+      if (slugChanged) {
+        await tx.execute(slugLock(m.organizationId));
+        const taken = await this.takenSlugs(tx, m.organizationId, [input.slug!], courseId);
+        if (taken.size > 0) {
+          throw new ConflictException({
+            statusCode: 409,
+            code: 'SLUG_TAKEN',
+            message: 'Bu manzil boshqa kursda band (yoki avval ishlatilgan)',
+          });
+        }
+        // Taking back one of its own former slugs: that redirect is no longer needed.
+        await tx
+          .delete(courseSlugRedirects)
+          .where(
+            and(
+              eq(courseSlugRedirects.organizationId, m.organizationId),
+              eq(courseSlugRedirects.slug, input.slug!),
+            ),
+          );
+        // Links to a published course may be out in the world: keep the old slug redirecting.
+        if (before.status === 'PUBLISHED') {
+          await tx
+            .insert(courseSlugRedirects)
+            .values({ organizationId: m.organizationId, slug: before.slug, courseId })
+            .onConflictDoNothing();
+        }
+      }
+      await tx
+        .update(courses)
+        .set({ ...input, updatedAt: new Date() })
+        .where(eq(courses.id, courseId));
+    });
+    if (slugChanged) {
+      await this.audit.record({
+        action: 'course.slug_change',
+        actorUserId: auth.userId,
+        organizationId: m.organizationId,
+        targetType: 'course',
+        targetId: courseId,
+        metadata: { from: before.slug, to: input.slug, redirect: before.status === 'PUBLISHED' },
+      });
+    }
     if (input.status && input.status !== before.status) {
       await this.audit.record({
         action: 'course.status_change',

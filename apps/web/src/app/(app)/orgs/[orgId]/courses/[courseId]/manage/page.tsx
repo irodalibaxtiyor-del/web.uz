@@ -1,12 +1,15 @@
 'use client';
 
-import type { CourseStatus, CourseStructure } from '@webdizayn/shared';
+import { slugify, type CourseStatus, type CourseStructure } from '@webdizayn/shared';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useId, useState, type FormEvent } from 'react';
 import { STATUS_LABEL } from '@/components/course-list';
+import { confirmDialog } from '@/components/dialog';
+import { SlugField, useSlugPreview } from '@/components/slug-field';
 import { BackLink, Button, ErrorText, inputClass, LoadState } from '@/components/ui';
 import { send } from '@/lib/api';
+import { slugEdited, type SlugDraft } from '@/lib/slug-input';
 import { useApi } from '@/lib/use-api';
 
 export default function ManageCoursePage() {
@@ -65,6 +68,12 @@ export default function ManageCoursePage() {
             )}
             {error && <ErrorText>{error}</ErrorText>}
 
+            <SlugEditor
+              orgId={orgId}
+              course={s.course}
+              onSaved={(data) => setState({ kind: 'ready', data })}
+            />
+
             <ol className="space-y-6">
               {s.modules.map((mod, mi) => (
                 <li
@@ -115,6 +124,113 @@ export default function ManageCoursePage() {
         );
       }}
     </LoadState>
+  );
+}
+
+function SlugEditor({
+  orgId,
+  course,
+  onSaved,
+}: {
+  orgId: string;
+  course: CourseStructure['course'];
+  onSaved: (s: CourseStructure) => void;
+}) {
+  const id = useId();
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState<SlugDraft>({ slug: course.slug, manual: true });
+  const [error, setError] = useState<string | null>(null);
+  const [pending, setPending] = useState(false);
+  const preview = useSlugPreview(orgId, editing ? draft.slug : '', course.id);
+  const published = course.status === 'PUBLISHED';
+
+  async function save(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setError(null);
+    const slug = slugify(draft.slug);
+    if (!slug) return setError('Manzil bo‘sh bo‘lmasin');
+    if (slug === course.slug) return setEditing(false);
+    if (
+      published &&
+      !(await confirmDialog({
+        title: 'Manzilni o‘zgartirish',
+        message: `Kurs /kurslar/${slug} manziliga o‘tadi. Eski /kurslar/${course.slug} havolasi yangi manzilga doimiy yo‘naltiriladi.`,
+        confirmLabel: 'O‘zgartirish',
+      }))
+    ) {
+      return;
+    }
+    setPending(true);
+    const res = await send<CourseStructure>('PATCH', `/orgs/${orgId}/courses/${course.id}`, {
+      slug,
+    });
+    setPending(false);
+    if (!res.ok) return setError(res.message);
+    onSaved(res.data);
+    setEditing(false);
+  }
+
+  if (!editing) {
+    return (
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-card border border-line p-4">
+        <p className="min-w-0 text-sm">
+          <span className="text-muted">Manzil: </span>
+          {published ? (
+            <Link href={`/kurslar/${course.slug}`} className="font-medium break-all underline">
+              /kurslar/{course.slug}
+            </Link>
+          ) : (
+            <span className="font-medium break-all">/kurslar/{course.slug}</span>
+          )}
+          {!published && <span className="text-muted"> (e’lon qilinganda ochiladi)</span>}
+        </p>
+        <Button
+          variant="ghost"
+          onClick={() => {
+            setDraft({ slug: course.slug, manual: true });
+            setError(null);
+            setEditing(true);
+          }}
+        >
+          Manzilni o‘zgartirish
+        </Button>
+      </div>
+    );
+  }
+  return (
+    <form onSubmit={save} noValidate className="space-y-3 rounded-card border border-line p-4">
+      <SlugField
+        id={`${id}-slug`}
+        value={draft.slug}
+        onChange={(v) => setDraft(slugEdited(v, course.title))}
+        preview={preview}
+        manual={draft.manual}
+        mode="edit"
+      />
+      {published && (
+        <p className="text-sm text-muted">
+          Kurs e’lon qilingan: eski manzil yangi manzilga doimiy yo‘naltiriladi.
+        </p>
+      )}
+      {error && <ErrorText>{error}</ErrorText>}
+      <div className="flex flex-wrap gap-3">
+        <Button
+          type="submit"
+          disabled={pending || (preview.kind === 'ready' && !preview.data.available)}
+        >
+          {pending ? 'Saqlanmoqda…' : 'Saqlash'}
+        </Button>
+        <Button
+          variant="secondary"
+          onClick={() => setDraft({ slug: slugify(course.title), manual: false })}
+        >
+          Nomdan yasash
+        </Button>
+        <Button variant="ghost" onClick={() => setEditing(false)}>
+          Bekor qilish
+        </Button>
+      </div>
+    </form>
   );
 }
 

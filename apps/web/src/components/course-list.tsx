@@ -2,6 +2,7 @@
 
 import {
   createCourseSchema,
+  slugify,
   type CourseStatus,
   type CourseStructure,
   type CourseSummary,
@@ -11,8 +12,10 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useId, useState, type FormEvent } from 'react';
 import { send } from '@/lib/api';
+import { slugEdited, slugFromTitle, type SlugDraft } from '@/lib/slug-input';
 import { useApi } from '@/lib/use-api';
 import { Icon } from './icons';
+import { SlugField, useSlugPreview } from './slug-field';
 import { Button, EmptyState, ErrorText, inputClass, LoadState, ProgressBar } from './ui';
 
 export const STATUS_LABEL: Record<CourseStatus, string> = {
@@ -127,13 +130,19 @@ function NewCourseForm({ orgId }: { orgId: string }) {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const [title, setTitle] = useState('');
+  const [draft, setDraft] = useState<SlugDraft>({ slug: '', manual: false });
+  const preview = useSlugPreview(orgId, draft.slug);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
-    const parsed = createCourseSchema.safeParse(Object.fromEntries(new FormData(e.currentTarget)));
+    const form = Object.fromEntries(new FormData(e.currentTarget));
+    const slug = slugify(draft.slug);
+    // An empty slug is left to the server (generated from the title).
+    const parsed = createCourseSchema.safeParse({ ...form, slug: slug || undefined });
     if (!parsed.success) {
-      setError("Nom kamida 2 belgi, slug esa faqat kichik lotin harflari, raqam va '-' bo'lsin");
+      setError("Nom kamida 2 belgi, manzil esa faqat kichik lotin harflari, raqam va '-' bo'lsin");
       return;
     }
     setPending(true);
@@ -153,25 +162,31 @@ function NewCourseForm({ orgId }: { orgId: string }) {
   }
   return (
     <form onSubmit={onSubmit} noValidate className="card space-y-4 p-6">
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid items-start gap-3 sm:grid-cols-2">
         <div className="space-y-1">
           <label htmlFor={`${id}-title`} className="text-sm font-medium">
             Kurs nomi
           </label>
-          <input id={`${id}-title`} name="title" required className={inputClass} />
-        </div>
-        <div className="space-y-1">
-          <label htmlFor={`${id}-slug`} className="text-sm font-medium">
-            Slug (URL uchun)
-          </label>
           <input
-            id={`${id}-slug`}
-            name="slug"
+            id={`${id}-title`}
+            name="title"
             required
-            placeholder="html-asoslari"
+            value={title}
+            onChange={(e) => {
+              setTitle(e.target.value);
+              setDraft((d) => slugFromTitle(d, e.target.value));
+            }}
             className={inputClass}
           />
         </div>
+        <SlugField
+          id={`${id}-slug`}
+          value={draft.slug}
+          onChange={(v) => setDraft(slugEdited(v, title))}
+          preview={preview}
+          manual={draft.manual}
+          mode="create"
+        />
       </div>
       <div className="space-y-1">
         <label htmlFor={`${id}-desc`} className="text-sm font-medium">

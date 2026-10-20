@@ -1,4 +1,9 @@
-import type { DirectionDetail, DirectionSummary, PublicCourseDetail } from '@webdizayn/shared';
+import type {
+  CourseMoved,
+  DirectionDetail,
+  DirectionSummary,
+  PublicCourseDetail,
+} from '@webdizayn/shared';
 import { headers } from 'next/headers';
 
 /** Server-side only: the API is reached directly, not through the browser `/api` rewrite. */
@@ -33,8 +38,11 @@ export const getDirections = () => publicGet<DirectionSummary[]>('/public/direct
 export const getDirection = (slug: string) =>
   publicGet<DirectionDetail>(`/public/directions/${encodeURIComponent(slug)}`);
 
+/** A renamed course answers its old slug with `{ movedTo }`. */
 export const getPublicCourse = (slug: string) =>
-  publicGet<PublicCourseDetail>(`/public/courses/${encodeURIComponent(slug)}`);
+  publicGet<PublicCourseDetail | CourseMoved>(`/public/courses/${encodeURIComponent(slug)}`);
+
+export const isMoved = (c: PublicCourseDetail | CourseMoved): c is CourseMoved => 'movedTo' in c;
 
 /** "12 modul · 60 dars · 49 mashq · 12 test" (zero counts are left out). */
 export function countsLine(c: {
