@@ -17,6 +17,7 @@ import { Empty, Section } from '@/components/analytics-ui';
 import { Button, ErrorText, LoadState, PageHeader } from '@/components/ui';
 import { send } from '@/lib/api';
 import { useApi } from '@/lib/use-api';
+import { confirmDialog } from '@/components/dialog';
 
 export default function AdminTeachersPage() {
   const { orgId } = useParams<{ orgId: string }>();
@@ -282,8 +283,15 @@ function TeacherCard({
     );
   }
 
-  const reset = () => {
-    if (!window.confirm(`${t.fullName}: yangi vaqtinchalik parol beriladi. Davom etasizmi?`))
+  const reset = async () => {
+    if (
+      !(await confirmDialog({
+        title: 'Parolni tiklash',
+        message: `${t.fullName}: yangi vaqtinchalik parol beriladi, eski parol ishlamay qoladi.`,
+        confirmLabel: 'Parolni tiklash',
+        tone: 'danger',
+      }))
+    )
       return;
     return run(
       () =>
@@ -299,8 +307,16 @@ function TeacherCard({
     );
   };
 
-  const toggle = () => {
-    if (!t.disabled && !window.confirm(`${t.fullName}: hisob faolsizlantiriladi. Davom etasizmi?`))
+  const toggle = async () => {
+    if (
+      !t.disabled &&
+      !(await confirmDialog({
+        title: 'Hisobni faolsizlantirish',
+        message: `${t.fullName}: hisob faolsizlantiriladi va tizimdan chiqariladi.`,
+        confirmLabel: 'Faolsizlantirish',
+        tone: 'danger',
+      }))
+    )
       return;
     return run(
       () =>

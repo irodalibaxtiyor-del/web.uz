@@ -25,6 +25,7 @@ import {
 import { send } from '@/lib/api';
 import { parseRules } from '@/lib/check-rules';
 import { useApi } from '@/lib/use-api';
+import { promptDialog } from '@/components/dialog';
 
 export default function ManageExercisePage() {
   const { orgId, courseId, exerciseId } = useParams<{
@@ -189,8 +190,14 @@ function StudentResults({ base, exerciseId }: { base: string; exerciseId: string
   async function setStatus(userId: string, status: 'PASSED' | 'NEEDS_IMPROVEMENT') {
     let note: string | undefined;
     if (status === 'NEEDS_IMPROVEMENT') {
-      const input = window.prompt('Talabaga izoh (ixtiyoriy):') ?? undefined;
-      note = input?.trim() || undefined;
+      const input = await promptDialog({
+        title: 'Tuzatish kerak',
+        label: 'Talabaga izoh (ixtiyoriy)',
+        multiline: true,
+        confirmLabel: 'Belgilash',
+      });
+      if (input === null) return;
+      note = input.trim() || undefined;
     }
     setError(null);
     const res = await send('PUT', `${base}/exercises/${exerciseId}/students/${userId}/status`, {

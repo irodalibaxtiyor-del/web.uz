@@ -20,6 +20,7 @@ import { download, send } from '@/lib/api';
 import { formatDate } from '@/lib/dates';
 import { useApi } from '@/lib/use-api';
 import { Icon, type IconName } from '@/components/icons';
+import { confirmDialog } from '@/components/dialog';
 
 const ROW_STATUS: Record<RosterRowStatus, { label: string; icon: IconName; tone: string }> = {
   NEW: { label: 'Yangi hisob', icon: 'plus', tone: 'text-brand-700 dark:text-brand-300' },
@@ -190,9 +191,9 @@ function RosterImport({ orgId, onImported }: { orgId: string; onImported: () => 
     if (!input || !preview?.canImport) return;
     const total = preview.totals.NEW + preview.totals.NAME_MATCH;
     if (
-      !window.confirm(
+      !(await confirmDialog(
         `${preview.groups.length} ta guruh, ${total} ta yangi yoki bog‘lanadigan talaba import qilinadi. Davom etasizmi?`,
-      )
+      ))
     )
       return;
     setPending(true);

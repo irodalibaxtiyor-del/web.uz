@@ -17,6 +17,7 @@ import { api, send } from '@/lib/api';
 import { formatDateTime } from '@/lib/dates';
 import { useApi } from '@/lib/use-api';
 import { Icon } from '@/components/icons';
+import { confirmDialog } from '@/components/dialog';
 
 export default function AssignmentPage() {
   const router = useRouter();
@@ -88,7 +89,14 @@ function Workspace({ initial, courseBase }: { initial: AssignmentView; courseBas
       'Topshirilgan versiyani keyin o‘zgartirib bo‘lmaydi.' +
       (sub.wouldBeLate ? ' Muddat o‘tgan: javob kechikkan deb belgilanadi.' : '') +
       ' Topshirasizmi?';
-    if (!window.confirm(question)) return;
+    if (
+      !(await confirmDialog({
+        title: 'Javobni topshirish',
+        message: question,
+        confirmLabel: 'Topshirish',
+      }))
+    )
+      return;
     if (dirty && !(await save())) return;
     setPending(true);
     const res = await send<AssignmentView>('POST', `${url}/submit`);

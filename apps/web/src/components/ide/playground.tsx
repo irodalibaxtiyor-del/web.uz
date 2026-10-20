@@ -128,7 +128,11 @@ export function Playground({
           >
             <div className="flex items-center justify-between px-3 py-1.5 text-xs text-slate-400">
               <span>Konsol</span>
-              <button type="button" onClick={clearConsole} className="hover:text-white">
+              <button
+                type="button"
+                onClick={clearConsole}
+                className="-my-1.5 min-h-11 px-2 hover:text-white sm:min-h-0 sm:px-0"
+              >
                 Tozalash
               </button>
             </div>

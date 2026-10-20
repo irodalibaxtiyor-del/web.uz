@@ -424,7 +424,7 @@ function ReplyCard({
             type="button"
             aria-pressed={r.feedback?.helpful === true}
             onClick={() => onRate(r.interactionId, true)}
-            className={`inline-flex min-h-9 items-center gap-1 rounded-full border px-3 py-1 ${r.feedback?.helpful === true ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950' : 'border-slate-300 dark:border-slate-600'}`}
+            className={`inline-flex min-h-11 items-center gap-1 rounded-full border px-3 py-1 sm:min-h-9 ${r.feedback?.helpful === true ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950' : 'border-slate-300 dark:border-slate-600'}`}
           >
             <Icon name="thumbUp" className="size-4" />
             Ha
@@ -433,7 +433,7 @@ function ReplyCard({
             type="button"
             aria-pressed={r.feedback?.helpful === false}
             onClick={() => onRate(r.interactionId, false)}
-            className={`inline-flex min-h-9 items-center gap-1 rounded-full border px-3 py-1 ${r.feedback?.helpful === false ? 'border-red-400 bg-red-50 dark:bg-red-950' : 'border-slate-300 dark:border-slate-600'}`}
+            className={`inline-flex min-h-11 items-center gap-1 rounded-full border px-3 py-1 sm:min-h-9 ${r.feedback?.helpful === false ? 'border-red-400 bg-red-50 dark:bg-red-950' : 'border-slate-300 dark:border-slate-600'}`}
           >
             <Icon name="thumbDown" className="size-4" />
             Yo‘q

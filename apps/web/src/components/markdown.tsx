@@ -9,7 +9,19 @@ import remarkGfm from 'remark-gfm';
 export function Markdown({ children }: { children: string }) {
   return (
     <div className="lesson-content">
-      <ReactMarkdown remarkPlugins={[remarkGfm]}>{children}</ReactMarkdown>
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        components={{
+          // Lesson images: never block the first paint, keep their aspect ratio.
+          img: ({ src, alt }) =>
+            typeof src === 'string' ? (
+              // eslint-disable-next-line @next/next/no-img-element -- arbitrary author URLs/data URIs
+              <img src={src} alt={alt ?? ''} loading="lazy" decoding="async" />
+            ) : null,
+        }}
+      >
+        {children}
+      </ReactMarkdown>
     </div>
   );
 }

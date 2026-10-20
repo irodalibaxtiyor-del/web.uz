@@ -9,6 +9,9 @@
  * accent used sparingly, thin borders instead of heavy or coloured shadows.
  */
 @theme {
+  --breakpoint-xs: 30rem;
+  --breakpoint-2xl: 90rem;
+
   --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-heading), var(--font-body), ui-sans-serif, sans-serif;
 
@@ -73,6 +76,16 @@
 
 :root {
   color-scheme: light dark;
+}
+
+/* Phones and small tablets: body-size text never below 16px, small print never below 14px. */
+@media (max-width: 767px) {
+  :root {
+    --text-sm: 1rem;
+    --text-sm--line-height: 1.5;
+    --text-xs: 0.875rem;
+    --text-xs--line-height: 1.35;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -225,6 +238,15 @@
 }
 .lesson-content table {
   @apply w-full border-collapse overflow-hidden rounded-xl text-sm;
+}
+/* Wide lesson tables scroll inside themselves on narrow screens instead of the page. */
+@media (max-width: 767px) {
+  .lesson-content table {
+    @apply block max-w-full overflow-x-auto;
+  }
+}
+.lesson-content img {
+  @apply h-auto max-w-full rounded-control;
 }
 .lesson-content th,
 .lesson-content td {

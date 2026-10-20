@@ -21,6 +21,7 @@ import { send } from '@/lib/api';
 import { formatDate } from '@/lib/dates';
 import { useApi } from '@/lib/use-api';
 import { Icon } from '@/components/icons';
+import { confirmDialog } from '@/components/dialog';
 
 export default function MyPortfolioPage() {
   const { state, reload } = useApi<MyPortfolio>('/portfolio/me');
@@ -88,11 +89,14 @@ function PublishPanel({ profile, reload }: { profile: PortfolioProfile; reload: 
   async function toggle() {
     if (
       !profile.isPublished &&
-      !window.confirm(
-        'Portfolio ochiq bo‘ladi: havolani bilgan har kim ismingiz, tavsifingiz, ko‘nikmalaringiz, ' +
+      !(await confirmDialog({
+        title: 'Portfolioni e’lon qilish',
+        message:
+          'Portfolio ochiq bo‘ladi: havolani bilgan har kim ismingiz, tavsifingiz, ko‘nikmalaringiz, ' +
           'yutuqlaringiz, tugatilgan kurslaringiz va tanlangan ishlaringiz kodini ko‘ra oladi. ' +
-          'Email, baholar va o‘qituvchi izohlari ko‘rsatilmaydi. Davom etasizmi?',
-      )
+          'Email, baholar va o‘qituvchi izohlari ko‘rsatilmaydi.',
+        confirmLabel: 'E’lon qilish',
+      }))
     ) {
       return;
     }
@@ -343,31 +347,36 @@ function Items({ items, reload }: { items: PortfolioItemSummary[]; reload: () =>
               <div className="flex flex-wrap gap-2">
                 <Button
                   variant="secondary"
-                  className="px-3"
+                  className="min-w-11 px-3"
                   aria-label={`${item.title}: yuqoriga`}
                   disabled={i === 0}
                   onClick={() => move(i, -1)}
                 >
-                  ↑
+                  <Icon name="arrowUp" className="size-4" />
                 </Button>
                 <Button
                   variant="secondary"
-                  className="px-3"
+                  className="min-w-11 px-3"
                   aria-label={`${item.title}: pastga`}
                   disabled={i === items.length - 1}
                   onClick={() => move(i, 1)}
                 >
-                  ↓
+                  <Icon name="arrowDown" className="size-4" />
                 </Button>
                 <Button variant="secondary" onClick={() => setEditing(item.id)}>
                   Tahrirlash
                 </Button>
                 <Button
                   variant="secondary"
-                  onClick={() =>
-                    window.confirm(`“${item.title}” portfoliodan olib tashlansinmi?`) &&
-                    act(send('DELETE', `/portfolio/me/items/${item.id}`))
-                  }
+                  onClick={async () => {
+                    const ok = await confirmDialog({
+                      title: 'Ishni olib tashlash',
+                      message: `“${item.title}” portfoliodan olib tashlansinmi?`,
+                      confirmLabel: 'Olib tashlash',
+                      tone: 'danger',
+                    });
+                    if (ok) await act(send('DELETE', `/portfolio/me/items/${item.id}`));
+                  }}
                 >
                   O‘chirish
                 </Button>

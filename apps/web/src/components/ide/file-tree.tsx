@@ -3,6 +3,7 @@
 import { PROJECT_MAX_FILES, PROJECT_PATH_RE, type ProjectFile } from '@webdizayn/shared';
 import { useId, useState, type FormEvent } from 'react';
 import { Icon } from '../icons';
+import { confirmDialog, promptDialog } from '../dialog';
 
 const ICON_TONE: Record<string, string> = {
   html: 'text-orange-500',
@@ -55,8 +56,14 @@ export function FileTree({
     onChange([...files, { path, content: '' }], path);
   }
 
-  function rename(path: string) {
-    const next = window.prompt('Yangi nom:', path)?.trim();
+  async function rename(path: string) {
+    const next = (
+      await promptDialog({
+        title: 'Fayl nomini o‘zgartirish',
+        label: 'Yangi nom',
+        defaultValue: path,
+      })
+    )?.trim();
     if (!next || next === path) return;
     const problem = validateNewPath(next, files, path);
     if (problem) return setError(problem);
@@ -67,9 +74,15 @@ export function FileTree({
     );
   }
 
-  function remove(path: string) {
+  async function remove(path: string) {
     if (files.length <= 1) return setError("Oxirgi faylni o'chirib bo'lmaydi");
-    if (!window.confirm(`${path} faylini o'chirasizmi?`)) return;
+    const ok = await confirmDialog({
+      title: "Faylni o'chirish",
+      message: `${path} faylini o'chirasizmi?`,
+      confirmLabel: "O'chirish",
+      tone: 'danger',
+    });
+    if (!ok) return;
     setError(null);
     const rest = files.filter((f) => f.path !== path);
     onChange(rest, active === path ? rest[0]!.path : active);
@@ -93,7 +106,7 @@ export function FileTree({
                 type="button"
                 onClick={() => onSelect(f.path)}
                 aria-current={isActive ? 'true' : undefined}
-                className={`flex min-w-0 flex-1 items-center gap-2 rounded-md px-2 py-1.5 text-left font-mono text-[13px] ${
+                className={`flex min-h-11 min-w-0 flex-1 items-center gap-2 rounded-md px-2 py-1.5 text-left font-mono text-[13px] sm:min-h-8 ${
                   isActive
                     ? 'bg-brand-600/20 text-white'
                     : 'text-slate-300 hover:bg-white/5 hover:text-white'
@@ -108,13 +121,17 @@ export function FileTree({
                 <span className="truncate">{f.path}</span>
               </button>
               <span
-                className={readOnly ? 'hidden' : 'hidden group-focus-within:flex group-hover:flex'}
+                className={
+                  readOnly
+                    ? 'hidden'
+                    : 'hidden group-focus-within:flex group-hover:flex pointer-coarse:flex'
+                }
               >
                 <button
                   type="button"
                   onClick={() => rename(f.path)}
                   aria-label={`${f.path}: nomini o'zgartirish`}
-                  className="grid size-7 place-items-center rounded text-slate-400 hover:text-white"
+                  className="grid size-7 place-items-center rounded text-slate-400 hover:text-white pointer-coarse:size-11"
                 >
                   <Icon name="pencil" className="size-4" />
                 </button>
@@ -122,7 +139,7 @@ export function FileTree({
                   type="button"
                   onClick={() => remove(f.path)}
                   aria-label={`${f.path}: o'chirish`}
-                  className="grid size-7 place-items-center rounded text-slate-400 hover:text-red-400"
+                  className="grid size-7 place-items-center rounded text-slate-400 hover:text-red-400 pointer-coarse:size-11"
                 >
                   <Icon name="trash" className="size-4" />
                 </button>
@@ -140,14 +157,14 @@ export function FileTree({
             id={`${id}-new`}
             name="path"
             placeholder="yangi.css"
-            className="w-full min-w-0 rounded-md border border-white/10 bg-white/5 px-2 py-1.5 font-mono text-[13px] text-white placeholder:text-slate-400 focus:border-brand-400 focus:outline-none"
+            className="min-h-11 w-full min-w-0 rounded-md border border-white/10 bg-white/5 px-2 py-1.5 font-mono text-base text-white sm:min-h-8 sm:text-[13px] placeholder:text-slate-400 focus:border-brand-400 focus:outline-none"
           />
           <button
             type="submit"
             aria-label="Fayl qo'shish"
-            className="shrink-0 rounded-md bg-white/10 px-2.5 text-white hover:bg-white/20"
+            className="grid min-w-11 shrink-0 place-items-center rounded-md bg-white/10 px-2.5 text-white hover:bg-white/20 sm:min-w-8"
           >
-            +
+            <Icon name="plus" className="size-4" />
           </button>
         </div>
         {error && (

@@ -26,6 +26,7 @@ import { Empty, Section } from '@/components/analytics-ui';
 import { Button, ErrorText, LoadState, PageHeader, TableScroll } from '@/components/ui';
 import { send } from '@/lib/api';
 import { useApi } from '@/lib/use-api';
+import { confirmDialog } from '@/components/dialog';
 
 const rank = (a: AccountState) =>
   a.disabled ? 3 : !a.hasPassword ? 0 : a.mustChangePassword ? 1 : 2;
@@ -113,7 +114,7 @@ function StudentsTable({
     const q = target
       ? `${s.fullName} “${target.name}” guruhiga o‘tkaziladi. Davom etasizmi?`
       : `${s.fullName} guruhdan chiqariladi. Davom etasizmi?`;
-    if (!window.confirm(q)) return;
+    if (!(await confirmDialog(q))) return;
     setBusy(s.userId);
     setError(null);
     const res = await send<AdminStudentRow>(
@@ -129,7 +130,14 @@ function StudentsTable({
   }
 
   async function reset(s: AdminStudentRow) {
-    if (!window.confirm(`${s.fullName}: yangi vaqtinchalik parol beriladi. Davom etasizmi?`))
+    if (
+      !(await confirmDialog({
+        title: 'Parolni tiklash',
+        message: `${s.fullName}: yangi vaqtinchalik parol beriladi, eski parol ishlamay qoladi.`,
+        confirmLabel: 'Parolni tiklash',
+        tone: 'danger',
+      }))
+    )
       return;
     setBusy(s.userId);
     setError(null);
@@ -146,7 +154,15 @@ function StudentsTable({
 
   async function toggle(s: AdminStudentRow) {
     const disable = !s.disabled;
-    if (disable && !window.confirm(`${s.fullName}: hisob faolsizlantiriladi. Davom etasizmi?`))
+    if (
+      disable &&
+      !(await confirmDialog({
+        title: 'Hisobni faolsizlantirish',
+        message: `${s.fullName}: hisob faolsizlantiriladi va tizimdan chiqariladi.`,
+        confirmLabel: 'Faolsizlantirish',
+        tone: 'danger',
+      }))
+    )
       return;
     setBusy(s.userId);
     setError(null);

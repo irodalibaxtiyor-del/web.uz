@@ -16,6 +16,7 @@ import { api, send } from '@/lib/api';
 import { formatDateTime } from '@/lib/dates';
 import { useApi } from '@/lib/use-api';
 import { Icon } from '@/components/icons';
+import { confirmDialog } from '@/components/dialog';
 
 const ACTION_LABEL: Record<ReviewAction, string> = {
   REVISION_REQUESTED: 'Qayta ishlash so‘raldi',
@@ -198,7 +199,7 @@ function ReviewActions({
   const total = scoreTotal(rubric, gradingPolicy, input);
 
   async function act(action: string, body: object, confirmText?: string) {
-    if (confirmText && !window.confirm(confirmText)) return;
+    if (confirmText && !(await confirmDialog(confirmText))) return;
     setError(null);
     setPending(true);
     const res = await send<SubmissionReviewView>('POST', `${url}/${action}`, {

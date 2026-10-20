@@ -3,6 +3,7 @@
 import type { ProjectFile } from '@webdizayn/shared';
 import { useEffect, useState } from 'react';
 import { Playground } from '@/components/ide/playground';
+import { confirmDialog } from '@/components/dialog';
 
 const STORAGE_KEY = 'wd-playground-v1';
 
@@ -101,8 +102,14 @@ export default function PlaygroundPage() {
             toolbar={
               <button
                 type="button"
-                onClick={() => {
-                  if (window.confirm("Boshlang'ich namunaga qaytasizmi?")) update(STARTER);
+                onClick={async () => {
+                  const ok = await confirmDialog({
+                    title: 'Namunaga qaytarish',
+                    message: "Kodingiz o'chadi va boshlang'ich namuna tiklanadi.",
+                    confirmLabel: 'Qaytarish',
+                    tone: 'danger',
+                  });
+                  if (ok) update(STARTER);
                 }}
                 className="btn border border-white/20 py-2 text-slate-200 hover:bg-white/10"
               >

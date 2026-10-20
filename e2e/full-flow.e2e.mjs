@@ -67,6 +67,14 @@ function stopAll() {
     }
   }
 }
+/** Confirms the app's modal confirm dialog (<dialog> rendered by DialogHost). */
+async function acceptModal(page) {
+  const dialog = page.locator('dialog[open]');
+  await dialog.waitFor({ timeout: 10_000 });
+  await dialog.locator('footer button').last().click();
+  await dialog.waitFor({ state: 'hidden', timeout: 10_000 });
+}
+
 async function up(url, ms = 60_000) {
   const until = Date.now() + ms;
   while (Date.now() < until) {
@@ -339,6 +347,7 @@ async function run() {
   await sp.waitForURL(`**/assignments/${asg.id}`);
   await typeCode(sp, '<h1>Talaba Ergasheva</h1>');
   await sp.getByRole('button', { name: /^Topshirish/ }).click();
+  await acceptModal(sp);
   await waitText(sp, '1-versiya', 20_000);
   record(true, 'student submits version 1 of the assignment');
 
@@ -351,6 +360,7 @@ async function run() {
   await tp.getByLabel(/Talabaga izoh/).waitFor();
   await tp.getByLabel(/Talabaga izoh/).fill('Tavsif paragrafini ham qo‘shing.');
   await tp.getByRole('button', { name: /Qayta ishlashni so.rash/ }).click();
+  await acceptModal(tp);
   await waitText(tp, 'Qayta ishlash so‘raldi', 20_000);
   record(true, 'teacher starts the review and requests a revision with feedback');
 
@@ -359,6 +369,7 @@ async function run() {
   await waitText(sp, 'Tavsif paragrafini ham qo‘shing.');
   await typeCode(sp, '<h1>Talaba Ergasheva</h1>\n<p>Veb dizaynni o‘rganyapman.</p>');
   await sp.getByRole('button', { name: /^Topshirish/ }).click();
+  await acceptModal(sp);
   await waitText(sp, '2-versiya', 20_000);
   record(true, 'student reads the feedback and resubmits version 2');
 
@@ -371,6 +382,7 @@ async function run() {
   await tp.getByRole('button', { name: 'Baholash', exact: true }).click();
   await waitText(tp, '90', 20_000);
   await tp.getByRole('button', { name: 'Yakunlash' }).click();
+  await acceptModal(tp);
   await waitText(tp, 'Yakunlandi', 20_000);
   record(true, 'teacher grades 55 + 35 = 90 by rubric and finalizes');
 
@@ -385,6 +397,7 @@ async function run() {
   await sp.getByRole('button', { name: 'Saqlash', exact: true }).first().click();
   await sp.getByRole('button', { name: /Shaxsiy vizitka: portfolioga qo.shish/ }).click();
   await sp.getByRole('button', { name: /E.lon qilish/ }).click();
+  await acceptModal(sp);
   await waitText(sp, '/p/talaba-ergasheva', 20_000);
   const anon = await newPage('anonymous');
   await anon.page.goto(`${WEB}/p/talaba-ergasheva`);
@@ -517,6 +530,7 @@ async function run() {
   await ap.getByRole('button', { name: 'Ko‘rib chiqish' }).click();
   await waitText(ap, 'Jami 3 ta qator: 3 yangi');
   await ap.getByRole('button', { name: 'Import qilish' }).click();
+  await acceptModal(ap);
   await waitText(ap, 'Import tugadi: 3 ta yangi hisob');
   const groupList = (await A('GET', `/orgs/${mainOrg}/admin/groups`)).body;
   const g1 = groupList.find((g) => g.name === '1-26 E2E');
@@ -554,9 +568,11 @@ async function run() {
   // admin: temporary password for a student
   await ap.goto(`${WEB}/orgs/${mainOrg}/admin/groups/${g1.id}`);
   await ap.getByRole('button', { name: 'QODIROVA NODIRA: parolni tiklash' }).click();
+  await acceptModal(ap);
   const nodiraTemp = await shownPassword(ap, 'QODIROVA NODIRA');
   await ap.getByLabel('Kurs', { exact: true }).selectOption({ label: 'E2E HTML' });
   await ap.getByRole('button', { name: 'Guruhni kursga yozish' }).click();
+  await acceptModal(ap);
   await waitText(ap, '2 ta talaba yozildi');
   record(true, 'admin enrols the whole group in the course');
   expect(
@@ -649,6 +665,7 @@ async function run() {
   // admin disables the student: the live session ends at once
   await ap.goto(`${WEB}/orgs/${mainOrg}/admin/groups/${g1.id}`);
   await ap.getByRole('button', { name: 'QODIROVA NODIRA: faolsizlantirish' }).click();
+  await acceptModal(ap);
   await waitText(ap, 'Faollashtirish');
   expect(
     (await GS('GET', '/auth/me')).status === 401,

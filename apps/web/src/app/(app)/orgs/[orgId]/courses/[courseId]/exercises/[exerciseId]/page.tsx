@@ -18,6 +18,7 @@ import {
 import { api, send } from '@/lib/api';
 import { useApi } from '@/lib/use-api';
 import { Icon } from '@/components/icons';
+import { confirmDialog } from '@/components/dialog';
 
 export default function ExercisePage() {
   const router = useRouter();
@@ -96,9 +97,14 @@ function Workspace({ initial, courseBase }: { initial: ExerciseView; courseBase:
     await check.start();
   }
 
-  function reset() {
+  async function reset() {
     if (
-      !window.confirm("Barcha o'zgarishlar o'chib, boshlang'ich kod tiklanadi. Davom etasizmi?")
+      !(await confirmDialog({
+        title: "Boshlang'ich kodga qaytish",
+        message: "Barcha o'zgarishlaringiz o'chadi va boshlang'ich kod tiklanadi.",
+        confirmLabel: 'Qaytarish',
+        tone: 'danger',
+      }))
     ) {
       return;
     }

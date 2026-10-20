@@ -88,7 +88,7 @@ export function SortHeader<K extends string>({
       <button
         type="button"
         onClick={() => onSort(k)}
-        className="inline-flex items-center gap-1 font-semibold hover:underline"
+        className="inline-flex min-h-11 items-center gap-1 font-semibold hover:underline sm:min-h-0"
       >
         {label}
         <Icon

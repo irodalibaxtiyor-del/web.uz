@@ -21,6 +21,7 @@ import { parseRules } from '@/lib/check-rules';
 import { formatDateTime, fromLocalInput, toLocalInput } from '@/lib/dates';
 import { useApi } from '@/lib/use-api';
 import { Icon } from '@/components/icons';
+import { confirmDialog } from '@/components/dialog';
 
 export default function ManageAssignmentPage() {
   const { orgId, courseId, assignmentId } = useParams<{
@@ -58,7 +59,7 @@ function StatusBar({
   const [pending, setPending] = useState(false);
 
   async function go(action: 'publish' | 'close', question: string) {
-    if (!window.confirm(question)) return;
+    if (!(await confirmDialog(question))) return;
     setError(null);
     setPending(true);
     const res = await send('POST', `${base}/assignments/${a.id}/${action}`);

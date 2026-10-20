@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter, Jost } from 'next/font/google';
 import { cookies } from 'next/headers';
+import { DialogHost } from '@/components/dialog';
 import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
 import './globals.css';
@@ -35,6 +36,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           {children}
         </main>
         <SiteFooter />
+        <DialogHost />
       </body>
     </html>
   );

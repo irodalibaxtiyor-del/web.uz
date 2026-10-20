@@ -29,6 +29,7 @@ import { Empty, Section } from '@/components/analytics-ui';
 import { Button, ErrorText, LoadState, PageHeader, TableScroll } from '@/components/ui';
 import { download, send } from '@/lib/api';
 import { useApi } from '@/lib/use-api';
+import { confirmDialog } from '@/components/dialog';
 
 type Data = { group: GroupSummary; students: GroupStudentRow[] };
 
@@ -101,9 +102,12 @@ function GroupView({
 
   async function reset(s: GroupStudentRow) {
     if (
-      !window.confirm(
-        `${s.fullName}: yangi vaqtinchalik parol beriladi, eski parol ishlamay qoladi. Davom etasizmi?`,
-      )
+      !(await confirmDialog({
+        title: 'Parolni tiklash',
+        message: `${s.fullName}: yangi vaqtinchalik parol beriladi, eski parol ishlamay qoladi.`,
+        confirmLabel: 'Parolni tiklash',
+        tone: 'danger',
+      }))
     )
       return;
     setBusy(s.userId);
@@ -128,9 +132,12 @@ function GroupView({
     const disable = !s.disabled;
     if (
       disable &&
-      !window.confirm(
-        `${s.fullName}: hisob faolsizlantiriladi va tizimdan chiqariladi. Davom etasizmi?`,
-      )
+      !(await confirmDialog({
+        title: 'Hisobni faolsizlantirish',
+        message: `${s.fullName}: hisob faolsizlantiriladi va tizimdan chiqariladi.`,
+        confirmLabel: 'Faolsizlantirish',
+        tone: 'danger',
+      }))
     )
       return;
     setBusy(s.userId);
@@ -149,7 +156,15 @@ function GroupView({
     const q = onlyWithoutPassword
       ? `Parol berilmagan ${n} ta talabaga vaqtinchalik parol beriladi va Excel fayl yuklab olinadi. Davom etasizmi?`
       : `Guruhdagi ${n} ta faol talabaning HAMMASIGA yangi parol beriladi — eski parollar ishlamay qoladi. Davom etasizmi?`;
-    if (!window.confirm(q)) return;
+    if (
+      !(await confirmDialog({
+        title: onlyWithoutPassword ? 'Parol berish' : 'Hammaga yangi parol',
+        message: q,
+        confirmLabel: 'Parollarni berish',
+        tone: onlyWithoutPassword ? 'primary' : 'danger',
+      }))
+    )
+      return;
     setBusy('bulk');
     setError(null);
     setNotice(null);
@@ -307,9 +322,9 @@ function EnrollGroup({ orgId, group }: { orgId: string; group: GroupSummary }) {
 
   async function enroll(course: CourseSummary) {
     if (
-      !window.confirm(
+      !(await confirmDialog(
         `${group.name} guruhining barcha faol talabalari “${course.title}” kursiga yoziladi. Davom etasizmi?`,
-      )
+      ))
     )
       return;
     setPending(true);

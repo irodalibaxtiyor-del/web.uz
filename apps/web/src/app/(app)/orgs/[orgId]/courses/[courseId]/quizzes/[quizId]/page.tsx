@@ -8,6 +8,7 @@ import { QuizStatusBadge } from '@/components/quiz-ui';
 import { BackLink, Button, ErrorText, LoadState } from '@/components/ui';
 import { send } from '@/lib/api';
 import { useApi } from '@/lib/use-api';
+import { confirmDialog } from '@/components/dialog';
 
 export default function QuizPage() {
   const router = useRouter();
@@ -63,7 +64,11 @@ function Quiz({ initial, courseBase }: { initial: QuizView; courseBase: string }
     e.preventDefault();
     if (
       answered < quiz.questions.length &&
-      !window.confirm('Hamma savolga javob berilmagan. Baribir yuborasizmi?')
+      !(await confirmDialog({
+        title: 'Testni yuborish',
+        message: 'Hamma savolga javob berilmagan. Baribir yuborasizmi?',
+        confirmLabel: 'Yuborish',
+      }))
     ) {
       return;
     }

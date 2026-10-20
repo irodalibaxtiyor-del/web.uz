@@ -177,7 +177,7 @@ export function ColumnChart({
         ))}
       </div>
       <details className="text-sm">
-        <summary className="cursor-pointer text-slate-500 dark:text-slate-400">
+        <summary className="flex min-h-11 cursor-pointer items-center text-slate-500 sm:min-h-0 dark:text-slate-400">
           Jadval ko‘rinishi
         </summary>
         <table id={tableId} className="mt-2 w-full text-left">
