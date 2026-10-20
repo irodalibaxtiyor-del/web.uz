@@ -9,8 +9,10 @@ import { HTML_SOLUTIONS } from './html/solutions';
 import { JS_COURSE, JS_MODULES } from './js/manifest';
 import { JS_SOLUTIONS } from './js/solutions';
 import { PHP_COURSE, PHP_MODULES } from './php/manifest';
+import { PORTFOLIO_COURSE, PORTFOLIO_MODULES, PORTFOLIO_SOLUTIONS } from './portfolio/manifest';
 import { RWD_COURSE, RWD_MODULES, RWD_SOLUTIONS } from './rwd/manifest';
 import { UI_COURSE, UI_MODULES, UI_SOLUTIONS } from './ui/manifest';
+import { FIGMA_COURSE, FIGMA_MODULES, FIGMA_SOLUTIONS } from './figma/manifest';
 
 /** Bundled original courses, in the order they are meant to be taken. */
 export const CONTENT_COURSES: CourseDef[] = [
@@ -18,7 +20,9 @@ export const CONTENT_COURSES: CourseDef[] = [
   { ...CSS_COURSE, modules: CSS_MODULES, solutions: CSS_SOLUTIONS },
   { ...RWD_COURSE, modules: RWD_MODULES, solutions: RWD_SOLUTIONS },
   { ...UI_COURSE, modules: UI_MODULES, solutions: UI_SOLUTIONS },
+  { ...FIGMA_COURSE, modules: FIGMA_MODULES, solutions: FIGMA_SOLUTIONS },
   { ...JS_COURSE, modules: JS_MODULES, solutions: JS_SOLUTIONS },
+  { ...PORTFOLIO_COURSE, modules: PORTFOLIO_MODULES, solutions: PORTFOLIO_SOLUTIONS },
   { ...PHP_COURSE, modules: PHP_MODULES, solutions: {} },
   { ...BS3_COURSE, modules: BS3_MODULES, solutions: BS3_SOLUTIONS },
   { ...BS4_COURSE, modules: BS4_MODULES, solutions: BS4_SOLUTIONS },

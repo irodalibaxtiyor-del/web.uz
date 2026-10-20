@@ -91,6 +91,6 @@ resurs yo‘q, transition’da `wait`, element yo‘qligi `{ min: 0, max: 0 }`).
 
 - **Moslashuvchan dizayn — tayyor:** 6 modul, 28 dars, 28 mashq (CHECK bilan), 6 test. `content:verify` 28/28.
 - **UI asoslari — tayyor:** 6 modul, 29 dars, 29 mashq, 6 test. `content:verify` 29/29 (alohida qayta ishga tushirilganda; uzoq ketma-ket ishda bir marta `yakuniy` boshlang‘ich kodi LOAD_TIMEOUT berdi, qayta 3/3 o‘tdi).
-- Figma’dan kodga — keyingi.
-- Portfolio — rejada.
+- **Figma’dan kodga — tayyor:** 6 modul, 24 dars, 24 mashq, 6 test. `content:verify` 24/24.
+- Portfolio — jarayonda: 1-modul (3 dars) tayyor, 3/3.
 - Demo bazaga hali yuklanmagan (to‘rttasi tayyor bo‘lgach).
