@@ -10,7 +10,7 @@ export function Crumbs({ items }: { items: { href?: string; label: string }[] })
     <nav aria-label="Breadcrumb" className="mb-4">
       <ol className="flex flex-wrap items-center gap-1 text-sm text-muted">
         {items.map((c, i) => (
-          <li key={c.label} className="flex items-center gap-1">
+          <li key={`${i}-${c.label}`} className="flex items-center gap-1">
             {c.href ? (
               <Link
                 href={c.href}
