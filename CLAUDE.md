@@ -1277,3 +1277,10 @@ Roadmap ro'yxati bo'yicha audit va tuzatishlar:
 
 - Bajarildi: 1 dizayn (Tabler ikonkalar, tokenlar, emojisiz), 2 responsivlik (6 viewport, 44px, modal dialoglar), 7 to'liq oyna app-shell, 4 kabinet menyusi va xavfsiz chiqish, 5 yo'nalishlar (ochiq SEO sahifalar + 4 yangi kurs), 3 avtomatik slug va eski slug yo'naltirishlari, 6 elektron darslik (suv belgili flipbook), 8 chatbot.
 - Umumiy cheklovlar va tavsiyalar: Safari va Firefox'da qo'lda tekshirish; Lighthouse 90+ va CLS < 0.1 o'lchanmagan (axe bilan WCAG tekshirilgan, Lighthouse yo'q); E2E'dagi kamdan-kam tarmoq uzilishini kuzatish; Telegram bot; production infratuzilmasi (Docker image'lar, haqiqiy Postgres, alohida sandbox domeni, edge proksi, backup, secret manager) va GitHub push hali ham ochiq.
+
+### GitHub push — urinish (2026-10-22)
+
+- Foydalanuvchi yangi classic token berdi (`repo` ruxsati, repo'da push va admin bor). Repo public qoladi (foydalanuvchi qarori: CHECK qoidalari, yechimlar va test javoblari ochiq bo'lishi qabul qilindi).
+- Push'dan oldin butun tarix (63 commit) skan qilindi: token/kalit/parol yo'q (yagona moslik — guard testidagi soxta `sk-…` namunasi), `.env`/kalit fayllari yo'q, talabalar ro'yxatidagi 74 ta ismdan birortasi ham tarixda yo'q.
+- **Push rad etildi:** token `workflow` ruxsatisiz `.github/workflows/ci.yml` ni yarata olmaydi. Hech narsa yuborilmadi, remote hali bo'sh. Token konfiguratsiya yoki remote URL'ga yozilmadi.
+- Keyingi qadam: `repo` + `workflow` ruxsatli yangi token (yoki shu tokenga `workflow` qo'shish), so'ng push; chatda ochilgan tokenlarni revoke qilish.
