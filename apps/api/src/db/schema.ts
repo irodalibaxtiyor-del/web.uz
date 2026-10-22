@@ -909,3 +909,67 @@ export const groupTeachers = pgTable(
     index('group_teachers_assigned_by_idx').on(t.assignedBy),
   ],
 );
+
+export const bookStatusEnum = pgEnum('book_status', ['PROCESSING', 'READY', 'FAILED']);
+
+/**
+ * Electronic textbooks. The original PDF and the rendered pages live in BOOKS_DIR (outside any
+ * public folder); readers only ever receive watermarked page images through signed URLs.
+ */
+export const books = pgTable(
+  'books',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    organizationId: uuid('organization_id')
+      .notNull()
+      .references(() => organizations.id, { onDelete: 'cascade' }),
+    title: text('title').notNull(),
+    author: text('author').notNull().default(''),
+    year: integer('year'),
+    description: text('description').notNull().default(''),
+    directionId: uuid('direction_id').references(() => directions.id, { onDelete: 'set null' }),
+    courseId: uuid('course_id').references(() => courses.id, { onDelete: 'set null' }),
+    status: bookStatusEnum('status').notNull().default('PROCESSING'),
+    error: text('error'),
+    published: boolean('published').notNull().default(false),
+    pageCount: integer('page_count').notNull().default(0),
+    pageWidth: integer('page_width').notNull().default(0),
+    pageHeight: integer('page_height').notNull().default(0),
+    toc: jsonb('toc')
+      .$type<{ title: string; page: number; level: number }[]>()
+      .notNull()
+      .default([]),
+    fileSize: integer('file_size').notNull(),
+    hasCover: boolean('has_cover').notNull().default(false),
+    createdBy: uuid('created_by').references(() => users.id, { onDelete: 'set null' }),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (t) => [
+    index('books_org_idx').on(t.organizationId, t.published),
+    index('books_direction_idx').on(t.directionId),
+    index('books_course_idx').on(t.courseId),
+    index('books_created_by_idx').on(t.createdBy),
+    check('books_page_count_nonneg', sql`${t.pageCount} >= 0`),
+  ],
+);
+
+/** Last page a reader was on (one row per reader and book). */
+export const bookProgress = pgTable(
+  'book_progress',
+  {
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    bookId: uuid('book_id')
+      .notNull()
+      .references(() => books.id, { onDelete: 'cascade' }),
+    page: integer('page').notNull(),
+    updatedAt: updatedAt(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.userId, t.bookId] }),
+    index('book_progress_book_idx').on(t.bookId),
+    check('book_progress_page_pos', sql`${t.page} >= 1`),
+  ],
+);

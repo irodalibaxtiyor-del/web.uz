@@ -135,6 +135,7 @@ describe('provider selection', () => {
       AI_ALLOW_REAL_STUDENT_DATA: 'true',
       NODE_ENV: 'production',
       DATABASE_URL: 'postgres://u@h/db',
+      BOOK_URL_SECRET: 'b'.repeat(32),
     };
     expect(() => loadConfig(env)).toThrow(/AI_PROVIDER_URL/);
     expect(() => loadConfig(env)).not.toThrow(new RegExp(KEY));

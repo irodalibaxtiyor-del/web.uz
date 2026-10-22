@@ -1182,3 +1182,66 @@ Roadmap ro'yxati bo'yicha audit va tuzatishlar:
 - Testlar: `test/course-slugs.test.ts` 9 ta (lotin/kirill nomdan, org ichida `-2/-3`, boshqa org'da mustaqil, 80 belgi, 5 ta parallel yaratish → 5 xil slug, server validatsiyasi, suggestion RBAC 401/403, qayta nomlash → `movedTo`, ikki marta qayta nomlash, eski slug band (409 / `-2`), o'z eski slug'ini qaytarish, qoralama va arxivda yo'naltirish yo'q, begona o'qituvchi 403, boshqa org 404). `schema.test.ts` (FK indekslari) o'tdi.
 - Regressiya: typecheck ✅, lint ✅, format ✅, test ✅ (shared 57 + libs 3 + sandbox 16 + web 41 + check-engine 23 + api 367 = **507**).
 - Demo bazaga `0016` qo'llandi. Brauzer tekshiruvi (`slug-check.cjs`, scratchpad) **17/17**: jonli slug, band slug izohi, qo'lda tahrir saqlanishi, tozalansa nomga qaytishi, 390px'da gorizontal scroll yo'q, boshqaruv sahifasida qayta nomlash → eski manzil 308 + `Location`, qaytarish. Natijada demo "HTML asoslari" kursi asl `html-asoslari` slug'ida, `html-asoslari-yangi` esa unga yo'naltiruvchi eski slug bo'lib qoldi (zararsiz). Sahifa xatolari 0.
+- Commit: `c3e04ad`.
+
+### 6-band — Elektron darslik (boshlandi, to'xtatildi)
+
+- 6-band ishlari **hali commit qilinmagan** (ishchi daraxtda).
+- **Bog'liqliklar:** api — `pdfjs-dist@6.4.299` (Node 24 `require(esm)` bilan CommonJS'dan yuklanadi), `@napi-rs/canvas@1.0.10`; web — `page-flip@2.0.7` (MIT, tiplari yo'q — `src/types/page-flip.d.ts`).
+- **Shared** `books.ts`: `bookMetaSchema` (multipart maydonlari: nom, muallif, yil 1900–2100, tavsif, yo'nalish, kurs), `updateBookSchema` (+ `published`), `bookProgressSchema`, `bookPagesQuerySchema` (oraliq ≤12 bet, `sm|lg`), `BOOK_URL_TTL_SECONDS = 300`, tiplar `BookSummary`, `BookDetail` (mundarija, bet o'lchami, suv belgisi matni), `BookAdmin`, `BookAdminList` (+ ogohlantirishlar), `BookPageUrls`.
+- Migratsiya `0017_books.sql`: `books` (holat PROCESSING/READY/FAILED, xato matni, `published`, betlar soni va o'lchami, `toc` jsonb, fayl hajmi, muqova) va `book_progress` (PK foydalanuvchi + kitob). Hamma FK indeksli. Demo bazaga **hali qo'llanmagan**.
+- Config (`.env.example` ga qo'shildi): `BOOKS_DIR` (default `./.data/books`, ochiq papka emas), `BOOK_MAX_MB` (50), `BOOK_MAX_PAGES` (1000), `BOOK_PROCESS_TIMEOUT_MS` (10 daqiqa), `BOOK_URL_SECRET` (≥32, **production'da majburiy**; aks holda har process'da tasodifiy), `BOOK_PAGE_RATE_PER_MINUTE` (120). `config.test.ts` yangilandi.
+- **API** (`src/books/`):
+  - `rasterize.ts` + `rasterize-main.ts`: alohida child process'da (env allowlist — DB URL va sirlarsiz, heap 768 MB, qattiq kill taymeri, chiqish ≤512 KB) pdf.js har betni WebP'ga aylantiradi: `lg` 1400px va `sm` 700px eni, balandlik ≤2400px; skript/XFA o'chiq, shriftlar pdf.js'ning lokal `standard_fonts` dan (tarmoq yo'q). Mundarija (outline, 3 daraja, 300 ta). Muqova: yuklangan rasm qayta kodlanadi (≤600px, metadata tushadi) yoki 1-bet. Parol bilan himoyalangan yoki buzilgan PDF → FAILED + tushunarli matn.
+  - `book-processor.ts`: navbat (bir vaqtda bitta), restart'da PROCESSING kitoblar qayta navbatga qo'yiladi (bitta instance), worker javobi `parseReply` bilan qayta tekshiriladi.
+  - `book-files.ts`: saqlash yo'llari (`<BOOKS_DIR>/<uuid>/original.pdf`, `pages/<n>-lg|sm.webp`, `cover.webp`), magic-byte tekshiruvi (PDF, PNG/JPEG/WebP), `PageSigner` — HMAC-SHA256 (foydalanuvchi + **sessiya** + kitob + bet + o'lcham + muddat, timing-safe), `watermark()` — har so'rovda betga diagonal takrorlanuvchi va pastki qatorda "Ism · ID xxxxxxxx · sana vaqt (Toshkent)" chiziladi (shrift pdf.js'dagi Liberation Sans — konteynerda tizim shrifti bo'lmasa ham ishlaydi).
+  - `books.service.ts` + `books.controller.ts`:
+    - admin (faqat ORG_ADMIN, `/orgs/:orgId/admin/books`): ro'yxat (+ yo'nalishlar, kurslar, limitlar, oxirgi 30 kun ogohlantirishlari), yuklash (multipart `file` + ixtiyoriy `cover`; nom `.pdf` + MIME `application/pdf` + `%PDF-` baytlari — uchchalasi shart; hajm limiti; begona tashkilot kursi 400), tahrir, e'lon qilish/yashirish (faqat READY, aks holda 409 `BOOK_NOT_READY`), o'chirish (fayllar bilan), muqova. Audit: `book.upload`, `book.publish/unpublish`, `book.delete`.
+    - o'quvchi (tizimga kirgan har bir foydalanuvchi, `/books`): platforma tashkiloti va o'z tashkilotlarining e'lon qilingan READY kitoblari; e'lon qilinmaganini faqat o'sha tashkilot admini ko'radi; qolgan holatlar bir xil 404. `GET /books`, `GET /books/:id`, `GET /books/:id/pages?from&to&size` (imzolangan URL'lar, 5 daqiqa), `GET /books/:id/pages/:n?size&exp&sig` (sessiya + imzo + kirish huquqi qayta tekshiriladi, suv belgili WebP), `GET /books/:id/cover`, `PUT /books/:id/progress`.
+    - Rasm javoblari: `image/webp`, `Content-Disposition: inline`, `Cache-Control: no-store, private`, `Cross-Origin-Resource-Policy: same-origin`, `X-Robots-Tag: noindex`. Asl PDF uchun route yo'q.
+    - Limit: foydalanuvchi bo'yicha daqiqasiga `BOOK_PAGE_RATE_PER_MINUTE` bet (DB limiter) → 429 `BOOK_RATE_LIMITED` + admin uchun ogohlantirish (audit `book.rate_limited`, bir foydalanuvchiga 10 daqiqada bittadan ko'p emas).
+  - `make-pdf.ts`: testlar uchun kichik PDF yozuvchi (matn + outline).
+  - Testlar `test/books.test.ts` **13/13** ✅: RBAC (401, TEACHER/STUDENT 403, begona org 404); PDF emas / noto'g'ri kengaytma / MIME / hajm / yomon muqova / yil — 400; begona kurs 400; 2 o'lchamda WebP, outline, muqova; e'lon qilinmagan yashirin, admin oldindan ko'radi; buzilgan PDF → FAILED va e'lon qilib bo'lmaydi; boshqa tashkilot kitoblari ajratilgan; suv belgili rasm (saqlangan fayldan farq qiladi) va header'lar; soxta imzo, boshqa bet/o'lcham/muddat, muddati o'tgan, boshqa foydalanuvchi, **boshqa sessiya** — 403, sessiyasiz 401, asl faylga yo'l 404; limit (10 tadan keyin 429, bitta ogohlantirish, boshqa foydalanuvchiga ta'sir yo'q); progress; tahrir/yashirish/o'chirish.
+  - API typecheck toza. To'liq `pnpm -r test` hali ishga tushirilmagan.
+- **Web** — yozildi, lekin **typecheck/lint/format/test va brauzer tekshiruvi hali qilinmagan** (ish shu joyda to'xtadi):
+  - `lib/books.ts`: `filterBooks` (qidiruv apostrofga befarq, yo'nalish filtri, 5 xil saralash), `visiblePages`, `pagesToLoad` (joriy ±2), `isBlockedShortcut` (Ctrl/Cmd+S/P/U, Ctrl+Shift+I/J/C, F12).
+  - `/kitoblar`: muqovali kartalar (stretched link), qidiruv, yo'nalish filtri, saralash, "O'qish" / "Davom ettirish (N-bet)" + progress foizi, skeleton, bo'sh holatlar; yuklab olish tugmasi yo'q.
+  - `/kitoblar/[id]` + `components/book-reader.tsx`: page-flip (HTML rejimi, betlar imperativ yaratiladi — vidjet DOM'ni o'zi boshqaradi), desktopda ikki bet, < 768px bitta; har bet `<canvas>` (`<img>` yo'q), rasm `fetch` → `createImageBitmap` → canvas; joriy ±2 bet lazy, skeleton; uzoqdagi betlar xotiradan bo'shatiladi (±6); pastki panel: oldingi/keyingi, "3–4 / 120", betga o'tish, mundarija (Dialog), zoom 100–200%, to'liq ekran; klaviatura ←/→/PageUp/PageDown/Home/End; progress 800 ms debounce bilan saqlanadi; kontekst menyu, sudrash, belgilash, nusxa olish o'chiq; chop etishda bo'sh sahifa (`globals.css`). App-shell'da `/kitoblar/[id]` to'liq kenglikda (`FULL_BLEED`).
+  - `/orgs/[orgId]/admin/books`: drag & drop yuklash (XHR progress foizi, klientda ham PDF/hajm tekshiruvi), metadata, muqova, holatlar (tayyorlanmoqda — 3 s polling / tayyor / xato), e'lon qilish/yashirish, "Ko'rish", tahrir (Dialog), o'chirish (tasdiq bilan), ogohlantirishlar.
+  - Navigatsiya: yon menyuda "Elektron darslik" (hamma) va "Elektron darsliklar" (admin), `AdminNav` tabi; yangi ikonkalar `eye`, `eyeOff`, `list`, `zoomIn`, `zoomOut`.
+
+### Keyingi qilinadigan ishlar (2026-10-20 holati)
+
+1. ~~**6-bandni yakunlash:**~~ — bajarildi, 2026-10-22 yozuviga qarang.
+   - web: typecheck, lint, `prettier --write` (yangi fayllar formatlanmagan), unit testlar (`lib/books.ts`: filtr/saralash, `pagesToLoad`, `isBlockedShortcut`);
+   - to'liq `pnpm -r test` va `pnpm -r build`;
+   - demo bazaga `0017` (API'ni to'xtatib `node dist/db/migrate.js`, keyin qayta ishga tushirish);
+   - brauzer tekshiruvi (Chrome, iloji bo'lsa Firefox/Edge): admin sinov PDF'ini yuklaydi (`makePdf` bilan ko'p betli) → READY → e'lon qilish; talaba ro'yxat, qidiruv/filtr; o'quvchi: ikki bet / telefonda bitta, varaqlash (tugma, klaviatura, sudrash, swipe), betga o'tish, mundarija, zoom (qayta yaratilganda xato yo'qligi, zoom > 1 da sichqoncha bilan varaqlash o'chiq), to'liq ekran, qayta ochganda progress tiklanishi, canvas'da suv belgisi, kontekst menyu/Ctrl+S/P bloklangan, print bo'sh; 390/1440 × light/dark, gorizontal scroll 0, konsol xatolari 0;
+   - `deploy/README.md` ga `BOOKS_DIR` (volume, zaxira nusxa) va `BOOK_URL_SECRET`;
+   - jurnalga yakuniy yozuv va commit.
+   - Hisobotdagi cheklovlar: himoya mutlaq emas (skrinshot/kamerani to'xtatib bo'lmaydi — suv belgisi kimligini ko'rsatadi); navbat bitta instance ichida; rasterizatsiya API host'idagi child process (production'da alohida worker tavsiya); Safari tekshirilmagan.
+2. **8-band — Chatbot:** suzuvchi tugma (o'ng pastda, telefonda to'liq ekran); platformadan foydalanish, kurslar va yo'nalishlar bo'yicha yordam va havolalar; bilim bazasi (FAQ + kurslar + yo'nalishlar, BM25'ga o'xshash qidiruv, kirill → lotin — `slugify` qoidalaridan foydalanish mumkin); o'zbekcha javob; tezkor savol tugmalari, yozmoqda indikatori, sessiya tarixi (`sessionStorage`), "Yangi suhbat"; javob topilmasa "Admin bilan bog'lanish" — DB + admin panel ro'yxati + Telegram notifier interfeysi (hozircha o'chiq, bot keyin); mehmonlarga ochiq; default retrieval/mock, haqiqiy LLM faqat `AI_PROVIDER=http`; kalitlar faqat serverda; rate limit; maxfiylik. Testlar, brauzer tekshiruvi, jurnal, commit.
+3. **Yakuniy umumiy hisobot** (8 band: nima qilindi, o'zgargan fayllar, qanday tekshirish, tekshirilgan sahifalar, cheklovlar va tavsiyalar — Safari, Lighthouse 90+ o'lchovi, production infratuzilmasi).
+4. Avvalgi ochiq masalalar o'zgarmagan: GitHub push (yangi token, public/private qarori), eski tokenni revoke qilish, Docker / haqiqiy Postgres / sandbox domeni / edge proksi / backup, demo talabalarga parol berish.
+
+## 2026-10-22
+
+### 6-band — Elektron darslik (yakunlandi)
+
+- Web qismi: typecheck ✅, lint ✅, format ✅; `lib/books.test.ts` (filtr/saralash, bet oynalari, bloklangan tugmalar) bor edi va o'tdi.
+- **Topilgan va tuzatilgan:**
+  - **Telefonda darslik ikki betli mayda ko'rinishda chiqardi** va "Keyingi bet" 2 betga sakrardi. Sabab: page-flip `stretch` rejimida faqat blok eni `2 × minWidth` dan tor bo'lganda bitta betga o'tadi, biz `minWidth: 100` bergan edik. Endi portret rejimida `minWidth` = host eni. Brauzerda tasdiqlandi: 31 → 32 → 33 …
+  - `BOOK_URL_SECRET` production'da majburiy bo'lgach, AI config testi (`provider.test.ts`) kutilgan `AI_PROVIDER_URL` xatosi o'rniga shu xatoni olardi — test muhitiga sir qo'shildi.
+  - `monaco-bundle.test.ts` parallel test paketlari bilan 5 s limitdan oshardi (bir necha MB minified kodni o'qiydi) — 30 s timeout.
+  - Ro'yxatdagi "Davom ettirish (17-bet)" tugmasi tor kartada ikki qatorga bo'linardi — bet raqami progress ostida bor, tugma "Davom ettirish".
+- **Deploy** (tekshirilmagan — lokal Docker yo'q): API image'ida `/data/books` (`node` egasi, `BOOKS_DIR`), compose'da `books` volume (API root FS read-only qoladi) va API xotira limiti 512M → 1536M (rasterizatsiya child process'ining heap'i 768 MB). `deploy/README.md`: "Electronic textbooks" bo'limi (`BOOK_URL_SECRET` barcha instance'larda bir xil, volume zaxirasi bazaning dump'i bilan bir kecha, bir nechta instance'da qayta navbatga qo'yish ogohlantirishi) va backup jadvaliga qator.
+- Demo bazaga `0017` qo'llandi (hali kitob yuklanmagan).
+- Brauzer tekshiruvi (demo bazaning **nusxasida**, compiled API + `next start` + sandbox, scratchpad'dagi `books-check.cjs`): **Chrome 29/29, Edge 29/29.** Admin 40 betli mundarijali PDF'ni UI orqali yuklaydi → "Tayyor" → e'lon qiladi; soxta PDF rad etiladi; talaba ro'yxatda ko'radi, qidiruv, yuklab olish havolasi yo'q; o'quvchi: desktopda ikki bet (1–2), ←/→/Home/End, tugmalar, betga o'tish, mundarija (→ 17–18), suv belgisi canvas'da, zoom 125–200% (bet saqlanadi, maksimumda tugma o'chadi), kontekst menyu/Ctrl+S/Ctrl+P bloklangan, chop etishda bo'sh, qayta yuklashda progress tiklanadi, ro'yxatda "Davom ettirish"; telefon (390, dark) — bitta bet, +1 qadam, gorizontal scroll yo'q; mehmon `/login` ga. Nusxa baza va fayllar keyin o'chirildi.
+- Regressiya: format ✅, typecheck ✅, lint ✅, build ✅, test ✅ (shared 57 + libs 3 + sandbox 16 + web 49 + check-engine 23 + api 380 = **528**), to'liq E2E **51/51** ✅.
+- **STATUS: READY_WITH_INFRASTRUCTURE_LIMITATIONS.**
+- Cheklovlar:
+  - Himoya mutlaq emas: skrinshot yoki kamera bilan suratga olishni to'xtatib bo'lmaydi — suv belgisi kim va qachon olganini ko'rsatadi. Klientdagi to'siqlar (kontekst menyu, tugmalar, print) faqat tasodifiy nusxalashni qiyinlashtiradi.
+  - Rasterizatsiya navbati bitta instance ichida, API host'idagi child process (production'da alohida worker tavsiya etiladi).
+  - Firefox va Safari'da o'quvchi tekshirilmagan (Playwright'ning Firefox build'i o'rnatilmagan; Safari Windows'da yo'q). Sudrash/swipe bilan varaqlash avtomatik tekshirilmadi (tugma va klaviatura tekshirildi).
+  - Docker image va volume o'zgarishlari lokal tekshirilmagan.
+- Keyingi qadam: **8-band — Chatbot**, keyin 8 band bo'yicha yakuniy hisobot.

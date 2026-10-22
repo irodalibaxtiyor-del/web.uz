@@ -17,6 +17,7 @@ const PERSONAL: NavItem[] = [
   { href: '/dashboard', label: 'Kabinet', icon: 'dashboard' },
   { href: '/analytics', label: 'Natijalarim', icon: 'chart' },
   { href: '/portfolio', label: 'Portfolio', icon: 'briefcase' },
+  { href: '/kitoblar', label: 'Elektron darslik', icon: 'book' },
   { href: '/playground', label: 'Playground', icon: 'code' },
 ];
 
@@ -32,6 +33,7 @@ function sectionsFor(me: MeResponse | null): NavSection[] {
         { href: `${base}/admin/groups`, label: 'Guruhlar', icon: 'school' },
         { href: `${base}/admin/students`, label: 'Talabalar', icon: 'user' },
         { href: `${base}/admin/teachers`, label: 'O‘qituvchilar', icon: 'users' },
+        { href: `${base}/admin/books`, label: 'Elektron darsliklar', icon: 'book' },
         { href: `${base}/analytics`, label: 'Tashkilot analitikasi', icon: 'chart' },
       );
     }
@@ -39,6 +41,8 @@ function sectionsFor(me: MeResponse | null): NavSection[] {
   }
   return sections;
 }
+
+const FULL_BLEED = /^\/kitoblar\/[^/]+$/;
 
 function isActive(pathname: string, href: string) {
   return href === '/dashboard'
@@ -215,9 +219,14 @@ export function AppShell({
           tabIndex={-1}
           className="min-w-0 flex-1 overflow-y-auto overscroll-contain focus:outline-none"
         >
-          <div className="container-page max-w-6xl py-8 pb-[max(2.5rem,env(safe-area-inset-bottom))]">
-            {children}
-          </div>
+          {/* Full-bleed views (the textbook reader) use the whole content area. */}
+          {FULL_BLEED.test(pathname) ? (
+            <div className="h-full">{children}</div>
+          ) : (
+            <div className="container-page max-w-6xl py-8 pb-[max(2.5rem,env(safe-area-inset-bottom))]">
+              {children}
+            </div>
+          )}
         </main>
       </div>
     </div>

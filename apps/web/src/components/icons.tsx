@@ -24,12 +24,15 @@ import {
   IconCode,
   IconCopy,
   IconExternalLink,
+  IconEye,
+  IconEyeOff,
   IconHelpCircle,
   IconHome,
   IconInfoCircle,
   IconLayoutDashboard,
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarLeftExpand,
+  IconListDetails,
   IconLoader2,
   IconLock,
   IconLogout,
@@ -54,6 +57,8 @@ import {
   IconUser,
   IconUsers,
   IconX,
+  IconZoomIn,
+  IconZoomOut,
   type Icon as TablerIcon,
 } from '@tabler/icons-react';
 import type { SVGProps } from 'react';
@@ -89,10 +94,13 @@ const ICONS = {
   code: IconCode,
   copy: IconCopy,
   external: IconExternalLink,
+  eye: IconEye,
+  eyeOff: IconEyeOff,
   help: IconHelpCircle,
   home: IconHome,
   info: IconInfoCircle,
   dashboard: IconLayoutDashboard,
+  list: IconListDetails,
   loader: IconLoader2,
   lock: IconLock,
   logout: IconLogout,
@@ -119,6 +127,8 @@ const ICONS = {
   user: IconUser,
   users: IconUsers,
   x: IconX,
+  zoomIn: IconZoomIn,
+  zoomOut: IconZoomOut,
 } satisfies Record<string, TablerIcon>;
 
 export type IconName = keyof typeof ICONS;

@@ -77,6 +77,16 @@ const envSchema = z.object({
   LOG_LEVEL: z.enum(['silent', 'error', 'warn', 'info', 'debug']).optional(),
   /** Default: `json` in production (one object per line), `text` otherwise. */
   LOG_FORMAT: z.enum(['json', 'text']).optional(),
+  /** Electronic textbooks: originals and rendered pages (must not be a public web folder). */
+  BOOKS_DIR: z.string().min(1).default('./.data/books'),
+  BOOK_MAX_MB: z.coerce.number().int().min(1).max(200).default(50),
+  BOOK_MAX_PAGES: z.coerce.number().int().min(1).max(5000).default(1000),
+  /** Hard limit for rendering one PDF in the isolated process. */
+  BOOK_PROCESS_TIMEOUT_MS: z.coerce.number().int().min(10_000).max(3_600_000).default(600_000),
+  /** HMAC key for signed page URLs (>= 32 chars). Required in production; random per process otherwise. */
+  BOOK_URL_SECRET: z.string().min(32).optional(),
+  /** Page images per reader per minute; going over is refused and reported to admins. */
+  BOOK_PAGE_RATE_PER_MINUTE: z.coerce.number().int().min(10).max(10_000).default(120),
   /** Enables GET /metrics (Prometheus) for `Authorization: Bearer <token>`; >= 32 chars. */
   METRICS_TOKEN: z.string().min(32).optional(),
 });
@@ -117,6 +127,9 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   }
   if (cfg.CHECK_ENGINE === 'remote' && (!cfg.CHECK_WORKER_URL || !cfg.CHECK_WORKER_TOKEN)) {
     throw new Error('Invalid environment configuration: CHECK_WORKER_URL, CHECK_WORKER_TOKEN');
+  }
+  if (cfg.NODE_ENV === 'production' && !cfg.BOOK_URL_SECRET) {
+    throw new Error('Invalid environment configuration: BOOK_URL_SECRET');
   }
   const aiHttp =
     cfg.AI_PROVIDER === 'http' &&

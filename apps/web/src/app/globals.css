@@ -281,3 +281,36 @@
 .lesson-content {
   @apply text-[1.05rem];
 }
+
+/* Textbook reader: pages are canvases inside page-flip's own nodes. */
+.book-page {
+  overflow: hidden;
+  background: #fff;
+}
+.book-page canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.book-page.is-loading {
+  @apply animate-shimmer bg-subtle;
+}
+.book-page.is-loading canvas {
+  visibility: hidden;
+}
+.book-reader,
+.book-reader * {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+.book-reader input {
+  -webkit-user-select: text;
+  user-select: text;
+}
+/* Printing the reader gives a blank page. */
+@media print {
+  body:has(.book-reader) > * {
+    display: none !important;
+  }
+}

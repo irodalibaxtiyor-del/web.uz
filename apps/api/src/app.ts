@@ -20,6 +20,9 @@ import { AssignmentsService } from './assignments/assignments.service';
 import { ReviewsController } from './assignments/reviews.controller';
 import { ReviewsService } from './assignments/reviews.service';
 import { AuditService } from './audit/audit.service';
+import { BookProcessor } from './books/book-processor';
+import { AdminBooksController, BooksController } from './books/books.controller';
+import { BooksService } from './books/books.service';
 import { AuthController } from './auth/auth.controller';
 import { AuthGuard } from './auth/auth.guard';
 import { AuthService } from './auth/auth.service';
@@ -89,10 +92,14 @@ export class AppModule {
         AdminGroupsController,
         AdminAccountsController,
         GroupsController,
+        AdminBooksController,
+        BooksController,
       ],
       providers: [
         { provide: APP_CONFIG, useValue: config },
         AuditService,
+        BookProcessor,
+        BooksService,
         PasswordService,
         SessionService,
         LoginRateLimiter,

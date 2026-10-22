@@ -10,6 +10,7 @@ export function AdminNav({ orgId }: { orgId: string }) {
     { href: `/orgs/${orgId}/admin/groups`, label: 'Guruhlar va import' },
     { href: `/orgs/${orgId}/admin/students`, label: 'Talabalar' },
     { href: `/orgs/${orgId}/admin/teachers`, label: 'O‘qituvchilar' },
+    { href: `/orgs/${orgId}/admin/books`, label: 'Elektron darsliklar' },
     { href: `/orgs/${orgId}/groups`, label: 'Guruh paneli' },
   ];
   return (

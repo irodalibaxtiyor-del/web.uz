@@ -21,5 +21,6 @@ describe('bundled Monaco', () => {
       expect(src).not.toMatch(/IN_PLACE\s*:\s*(!0|true)/);
       expect(src).toMatch(/RETURN_DOM_FRAGMENT\s*:\s*!0/);
     }
-  });
+    // Reads and scans several MB of minified code; slow when other packages test in parallel.
+  }, 30_000);
 });

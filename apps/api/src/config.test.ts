@@ -14,12 +14,14 @@ describe('loadConfig', () => {
       NODE_ENV: 'production',
       DATABASE_URL: 'postgres://u@h/db',
       WEB_ORIGINS: 'https://webdizayn.uz',
+      BOOK_URL_SECRET: 'x'.repeat(32),
     };
     const c = loadConfig(prod);
     expect(c).toMatchObject({ cookieSecure: true, LOG_FORMAT: 'json', LOG_LEVEL: 'info' });
     expect(() => loadConfig({ ...prod, WEB_ORIGINS: 'http://webdizayn.uz' })).toThrow(
       /WEB_ORIGINS/,
     );
+    expect(() => loadConfig({ ...prod, BOOK_URL_SECRET: undefined })).toThrow(/BOOK_URL_SECRET/);
     expect(loadConfig({ NODE_ENV: 'test' }).LOG_LEVEL).toBe('silent');
   });
 

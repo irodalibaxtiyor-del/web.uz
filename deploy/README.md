@@ -68,6 +68,21 @@ docker compose -f deploy/docker-compose.prod.yml run --rm -e BOOTSTRAP_ADMIN_LOG
 - Teachers and students are then created from the admin panel; their temporary passwords are
   shown once (or downloaded once as .xlsx) and are not stored in plain text.
 
+## Electronic textbooks
+
+- `BOOKS_DIR` (`/data/books` in the image, the `books` volume in compose) holds the uploaded
+  PDFs and the rendered page images. It is never served directly: pages go out only through
+  `GET /books/:id/pages/:n` with a session, a signed URL and a per-request watermark.
+- `BOOK_URL_SECRET` (32+ characters, from the secret manager) is **required in production**.
+  Every API instance must use the same value, otherwise a URL signed by one instance is
+  rejected by another. Rotating it only invalidates page URLs issued in the last 5 minutes.
+- Rendering runs in a child process of the API (no database URL or secrets in its env,
+  768 MB heap, `BOOK_PROCESS_TIMEOUT_MS`), one book at a time per instance. Books left in
+  `PROCESSING` are re-queued when an instance starts — with several instances, upload through
+  one admin at a time or move rendering to a dedicated worker.
+- A database row without its files (or the reverse) shows as a broken book: restore the
+  volume snapshot and the dump from the same night.
+
 ## Backups and restore
 
 Strategy (status: **documented, not exercised** on real infrastructure):
@@ -77,6 +92,7 @@ Strategy (status: **documented, not exercised** on real infrastructure):
 | Nightly full dump  | `deploy/backup.sh` (`pg_dump -Fc`), copied to off-site storage | 14 daily, 8 weekly |
 | Point-in-time      | Managed Postgres PITR / WAL archiving where available          | 7 days             |
 | Before each deploy | `deploy/backup.sh` with a `pre-deploy` label                   | until next deploy  |
+| Textbook files     | Snapshot of the `books` volume (`BOOKS_DIR`), same schedule    | as the dumps       |
 
 - Dumps contain student work and personal data: store them encrypted, in the same
   jurisdiction as the database, with access limited to operators.

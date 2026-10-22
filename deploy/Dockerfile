@@ -34,7 +34,13 @@ COPY --from=build --chown=root:root /src/node_modules ./node_modules
 COPY --from=build --chown=root:root /src/packages ./packages
 COPY --from=build --chown=root:root /src/apps/api ./apps/api
 WORKDIR /app/apps/api
-ENV CHECK_ENGINE=remote
+# Electronic textbooks (original PDFs + rendered pages). Owned by `node` so a named volume
+# mounted here starts writable; the rest of the filesystem stays read-only.
+USER root
+RUN mkdir -p /data/books && chown node:node /data/books
+USER node
+ENV CHECK_ENGINE=remote \
+    BOOKS_DIR=/data/books
 EXPOSE 4000
 CMD ["node", "dist/main.js"]
 
