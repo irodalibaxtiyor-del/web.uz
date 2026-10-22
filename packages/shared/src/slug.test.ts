@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { courseSlugSchema, slugCandidate, slugify, SLUG_MAX } from './slug';
+import { courseSlugSchema, slugCandidate, slugify, SLUG_MAX, toLatin } from './slug';
+
+describe('toLatin', () => {
+  it('reads Cyrillic and Latin the same way and keeps spaces and punctuation', () => {
+    expect(toLatin('Курсга қандай ёзиламан?')).toBe('kursga qanday yozilaman?');
+    expect(toLatin('Kursga QANDAY yozilaman?')).toBe('kursga qanday yozilaman?');
+    expect(toLatin('Oʻqish, g‘oya')).toBe('oqish, goya');
+  });
+});
 
 describe('slugify', () => {
   it('handles every Uzbek apostrophe form', () => {

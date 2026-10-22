@@ -17,3 +17,4 @@ export * from './monitoring';
 export * from './catalog';
 export * from './slug';
 export * from './books';
+export * from './chatbot';

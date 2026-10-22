@@ -34,6 +34,7 @@ function sectionsFor(me: MeResponse | null): NavSection[] {
         { href: `${base}/admin/students`, label: 'Talabalar', icon: 'user' },
         { href: `${base}/admin/teachers`, label: 'O‘qituvchilar', icon: 'users' },
         { href: `${base}/admin/books`, label: 'Elektron darsliklar', icon: 'book' },
+        { href: `${base}/admin/contacts`, label: 'Murojaatlar', icon: 'inbox' },
         { href: `${base}/analytics`, label: 'Tashkilot analitikasi', icon: 'chart' },
       );
     }

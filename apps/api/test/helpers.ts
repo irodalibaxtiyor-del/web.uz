@@ -5,6 +5,7 @@ import request from 'supertest';
 import { createApp } from '../src/app';
 import type { AiProvider } from '../src/ai/provider';
 import type { CheckExecutor } from '../src/checks/check-executor';
+import type { ContactNotifier } from '../src/chatbot/notifier';
 import { PasswordService } from '../src/auth/password.service';
 import { loadConfig, type AppConfig } from '../src/config';
 import { createDb, type DbHandle } from '../src/db/client';
@@ -21,7 +22,11 @@ export interface TestContext {
 
 export async function setup(
   env: Record<string, string> = {},
-  opts: { checkExecutor?: CheckExecutor; aiProvider?: AiProvider } = {},
+  opts: {
+    checkExecutor?: CheckExecutor;
+    aiProvider?: AiProvider;
+    contactNotifier?: ContactNotifier;
+  } = {},
 ): Promise<TestContext> {
   const config = loadConfig({ NODE_ENV: 'test', DATABASE_URL: 'pglite://memory', ...env });
   const handle = createDb(config.DATABASE_URL);

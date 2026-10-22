@@ -973,3 +973,32 @@ export const bookProgress = pgTable(
     check('book_progress_page_pos', sql`${t.page} >= 1`),
   ],
 );
+
+/**
+ * "Contact the administrator" requests sent from the help chatbot (guests too). Personal data:
+ * visible to the platform organization's admins only, never sent to an AI provider. Chat
+ * questions themselves are not stored.
+ */
+export const chatContactRequests = pgTable(
+  'chat_contact_requests',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    organizationId: uuid('organization_id')
+      .notNull()
+      .references(() => organizations.id, { onDelete: 'cascade' }),
+    /** The signed-in account that sent it, if any. */
+    userId: uuid('user_id').references(() => users.id, { onDelete: 'set null' }),
+    name: text('name').notNull(),
+    contact: text('contact').notNull(),
+    message: text('message').notNull(),
+    page: text('page'),
+    createdAt: createdAt(),
+    resolvedAt: timestamp('resolved_at', { withTimezone: true }),
+    resolvedBy: uuid('resolved_by').references(() => users.id, { onDelete: 'set null' }),
+  },
+  (t) => [
+    index('chat_contact_org_idx').on(t.organizationId, t.createdAt),
+    index('chat_contact_user_idx').on(t.userId),
+    index('chat_contact_resolved_by_idx').on(t.resolvedBy),
+  ],
+);

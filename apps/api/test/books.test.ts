@@ -38,10 +38,12 @@ const json = (who: Member, method: 'patch' | 'put', path: string, body: object) 
   ctx.http()[method](path).set('Cookie', who.cookie).send(body);
 const binary = {
   buffer: true,
-  parser: (res: NodeJS.ReadableStream, cb: (e: Error | null, b: Buffer) => void) => {
+  // superagent types the first argument as its Response; in Node it is the response stream.
+  parser: (res: unknown, cb: (e: Error | null, b: Buffer) => void) => {
+    const stream = res as NodeJS.ReadableStream;
     const chunks: Buffer[] = [];
-    res.on('data', (c: Buffer) => chunks.push(c));
-    res.on('end', () => cb(null, Buffer.concat(chunks)));
+    stream.on('data', (c: Buffer) => chunks.push(c));
+    stream.on('end', () => cb(null, Buffer.concat(chunks)));
   },
 };
 

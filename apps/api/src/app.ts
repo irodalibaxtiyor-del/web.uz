@@ -57,6 +57,10 @@ import { organizations } from './db/schema';
 import { HealthController } from './health/health.controller';
 import { OrganizationsController } from './organizations/organizations.controller';
 import { CatalogController } from './catalog/catalog.controller';
+import { AdminContactsController, ChatbotController } from './chatbot/chatbot.controller';
+import { ChatbotService } from './chatbot/chatbot.service';
+import { KnowledgeBase } from './chatbot/knowledge';
+import { CONTACT_NOTIFIER, NoopContactNotifier, type ContactNotifier } from './chatbot/notifier';
 import { CatalogService } from './catalog/catalog.service';
 import { PortfolioController } from './portfolio/portfolio.controller';
 import { PortfolioService } from './portfolio/portfolio.service';
@@ -70,6 +74,7 @@ export class AppModule {
     handle: DbHandle,
     checkExecutor: CheckExecutor = createCheckExecutor(config),
     aiProvider: AiProvider = createAiProvider(config),
+    contactNotifier: ContactNotifier = new NoopContactNotifier(),
   ): DynamicModule {
     return {
       module: AppModule,
@@ -94,6 +99,8 @@ export class AppModule {
         GroupsController,
         AdminBooksController,
         BooksController,
+        ChatbotController,
+        AdminContactsController,
       ],
       providers: [
         { provide: APP_CONFIG, useValue: config },
@@ -125,6 +132,9 @@ export class AppModule {
         GroupsService,
         AccountsService,
         MonitoringService,
+        KnowledgeBase,
+        ChatbotService,
+        { provide: CONTACT_NOTIFIER, useValue: contactNotifier },
         // Order matters: authenticate first, then resolve org role.
         { provide: APP_GUARD, useClass: AuthGuard },
         { provide: APP_GUARD, useClass: OrgRoleGuard },
@@ -148,6 +158,8 @@ export interface CreateAppOptions {
   checkExecutor?: CheckExecutor;
   /** Replaces the configured AI provider (tests). */
   aiProvider?: AiProvider;
+  /** Where new chatbot contact requests are announced (default: nowhere; tests). */
+  contactNotifier?: ContactNotifier;
 }
 
 export async function createApp(
@@ -161,7 +173,7 @@ export async function createApp(
 
   const logger = new AppLogger(config);
   const app = await NestFactory.create<NestExpressApplication>(
-    AppModule.forRoot(config, handle, opts.checkExecutor, opts.aiProvider),
+    AppModule.forRoot(config, handle, opts.checkExecutor, opts.aiProvider, opts.contactNotifier),
     {
       logger:
         config.LOG_LEVEL === 'silent'

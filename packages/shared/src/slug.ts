@@ -56,6 +56,18 @@ const APOSTROPHES = /['`´ʹʻʼʽ‘’‛′]/g;
  * "Ўзбек тили" → "ozbek-tili". Returns "" when nothing usable is left.
  */
 export function slugify(input: string, max = SLUG_MAX): string {
+  const slug = toLatin(input)
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  return trimSlug(slug, max);
+}
+
+/**
+ * Lowercase Uzbek Latin without apostrophes or diacritics, other characters kept:
+ * "Ўзбек тили" → "ozbek tili", "Oʻqish" → "oqish". Used for slugs and for matching text
+ * typed in either script.
+ */
+export function toLatin(input: string): string {
   const lower = input.normalize('NFC').toLowerCase();
   let out = '';
   for (let i = 0; i < lower.length; i++) {
@@ -68,13 +80,7 @@ export function slugify(input: string, max = SLUG_MAX): string {
       out += CYRILLIC[ch] ?? ch;
     }
   }
-  const slug = out
-    .replace(APOSTROPHES, '')
-    .normalize('NFKD')
-    .replace(/\p{M}/gu, '') // é → e, ñ → n
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-  return trimSlug(slug, max);
+  return out.replace(APOSTROPHES, '').normalize('NFKD').replace(/\p{M}/gu, ''); // é → e, ñ → n
 }
 
 /** Cut to `max` characters without leaving a trailing `-`. */

@@ -8,7 +8,7 @@
 // API (its UI was click-tested in earlier phases); every learning, review and portfolio step
 // below is driven through the UI.
 import { execFileSync, spawn } from 'node:child_process';
-import { createWriteStream, mkdirSync, mkdtempSync } from 'node:fs';
+import { createWriteStream, mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -158,6 +158,8 @@ async function waitText(page, text, timeout = 30_000) {
 // ---------------------------------------------------------------- main
 
 let browser;
+/** Kept outside run() so a crashed run can still write them to the artifacts. */
+const diagnostics = { console: [], failed: [] };
 async function run() {
   for (const url of [WEB, API, SANDBOX]) {
     if (!(await free(url))) throw new Error(`${url} is already in use; stop other servers first`);
@@ -194,7 +196,7 @@ async function run() {
   record(true, 'api, sandbox and web are up');
 
   browser = await chromium.launch({ channel: 'chrome', executablePath: process.env.CHROME_PATH });
-  const consoleErrors = [];
+  const consoleErrors = diagnostics.console;
   const newPage = async (label) => {
     const ctx = await browser.newContext({ viewport: { width: 1366, height: 900 } });
     const page = await ctx.newPage();
@@ -206,6 +208,9 @@ async function run() {
         consoleErrors.push(`${label}: ${m.text()}`);
       }
     });
+    page.on('requestfailed', (r) =>
+      diagnostics.failed.push(`${label}: ${r.method()} ${r.url()} — ${r.failure()?.errorText}`),
+    );
     return { ctx, page };
   };
 
@@ -699,10 +704,31 @@ try {
   crashed = e;
   if (!String(e?.message).startsWith('assertion failed'))
     record(false, 'run aborted', e?.message ?? String(e));
+  writeFileSync(
+    join(OUT, 'browser-diagnostics.txt'),
+    [
+      '# console errors',
+      ...diagnostics.console,
+      '',
+      '# failed requests',
+      ...diagnostics.failed,
+    ].join('\n'),
+  );
   try {
     const pages = browser ? browser.contexts().flatMap((c) => c.pages()) : [];
-    for (const [i, p] of pages.entries())
+    for (const [i, p] of pages.entries()) {
       await p.screenshot({ path: join(OUT, `failure-${i}.png`), fullPage: true });
+      // Inside the app shell only <main> scrolls, so the screenshot can miss an error shown
+      // higher up: keep the URL and every alert/status text as well.
+      const alerts = await p
+        .locator('[role="alert"], [role="status"]')
+        .allInnerTexts()
+        .catch(() => []);
+      writeFileSync(
+        join(OUT, `failure-${i}.txt`),
+        [p.url(), ...alerts.map((t) => `- ${t.trim()}`)].join('\n'),
+      );
+    }
   } catch {
     // best effort
   }

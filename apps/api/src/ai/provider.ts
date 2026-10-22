@@ -4,8 +4,11 @@ import { mockAnswer, type TutorPlan } from './pedagogy';
 export interface ProviderRequest {
   system: string;
   user: string;
-  /** Structured teaching plan; the mock answers from it, real models get it inside `user`. */
-  plan: TutorPlan;
+  /**
+   * Structured teaching plan; the mock answers from it, real models get it inside `user`.
+   * Absent for non-tutor prompts (the help chatbot), which only a real model can answer.
+   */
+  plan?: TutorPlan;
 }
 
 export interface ProviderResult {
@@ -43,6 +46,7 @@ export class MockProvider implements AiProvider {
   readonly model = 'mock-tutor';
 
   async complete(req: ProviderRequest): Promise<ProviderResult> {
+    if (!req.plan) throw new AiProviderError('BAD_RESPONSE', 1);
     return { text: JSON.stringify(mockAnswer(req.plan)), model: this.model, attempts: 1 };
   }
 }

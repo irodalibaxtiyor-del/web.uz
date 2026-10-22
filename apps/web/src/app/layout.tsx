@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter, Jost } from 'next/font/google';
 import { cookies } from 'next/headers';
+import { ChatWidget } from '@/components/chat-widget';
 import { DialogHost } from '@/components/dialog';
 import './globals.css';
 
@@ -33,6 +34,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           Asosiy kontentga o&apos;tish
         </a>
         {children}
+        <ChatWidget />
         <DialogHost />
       </body>
     </html>

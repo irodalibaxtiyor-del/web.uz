@@ -87,6 +87,21 @@ const envSchema = z.object({
   BOOK_URL_SECRET: z.string().min(32).optional(),
   /** Page images per reader per minute; going over is refused and reported to admins. */
   BOOK_PAGE_RATE_PER_MINUTE: z.coerce.number().int().min(10).max(10_000).default(120),
+  /** Help chatbot questions per client IP per minute. */
+  CHATBOT_RATE_PER_MINUTE: z.coerce.number().int().min(1).max(1_000).default(20),
+  /** "Contact the administrator" requests per client IP per hour. */
+  CHATBOT_CONTACT_PER_HOUR: z.coerce.number().int().min(1).max(100).default(5),
+  /**
+   * Let the configured AI provider phrase chatbot answers from the knowledge base. Only takes
+   * effect when the provider is `http` (see AI_*); otherwise answers come from the knowledge
+   * base as is. Only the question and public catalogue text are sent.
+   */
+  CHATBOT_AI: z
+    .enum(['true', 'false'])
+    .default('false')
+    .transform((v) => v === 'true'),
+  /** Platform-wide cap on AI-phrased chatbot answers per 24 hours (cost guard; guests too). */
+  CHATBOT_AI_DAILY: z.coerce.number().int().min(1).default(500),
   /** Enables GET /metrics (Prometheus) for `Authorization: Bearer <token>`; >= 32 chars. */
   METRICS_TOKEN: z.string().min(32).optional(),
 });
