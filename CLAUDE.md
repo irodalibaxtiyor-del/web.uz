@@ -1284,3 +1284,6 @@ Roadmap ro'yxati bo'yicha audit va tuzatishlar:
 - Push'dan oldin butun tarix (63 commit) skan qilindi: token/kalit/parol yo'q (yagona moslik — guard testidagi soxta `sk-…` namunasi), `.env`/kalit fayllari yo'q, talabalar ro'yxatidagi 74 ta ismdan birortasi ham tarixda yo'q.
 - **Push rad etildi:** token `workflow` ruxsatisiz `.github/workflows/ci.yml` ni yarata olmaydi. Hech narsa yuborilmadi, remote hali bo'sh. Token konfiguratsiya yoki remote URL'ga yozilmadi.
 - Keyingi qadam: `repo` + `workflow` ruxsatli yangi token (yoki shu tokenga `workflow` qo'shish), so'ng push; chatda ochilgan tokenlarni revoke qilish.
+- **Qayta urinish — muvaffaqiyatli:** foydalanuvchi tokenga `workflow` ruxsatini qo'shdi (`X-OAuth-Scopes: repo, workflow`). `git push -u origin main` → `[new branch] main -> main`; remote `main` = lokal `9a4b5e5`. Token faqat bitta buyruqda vaqtinchalik header sifatida ishlatildi, konfiguratsiyada yo'q.
+- GitHub Actions'da **CI birinchi marta ishga tushdi** (run 39759609938, push'da). Natijasi keyin tekshiriladi (Docker image'lar, Ubuntu'da E2E, gitleaks — avval hech qachon ishlamagan).
+- Tavsiya: chatda ochilgan tokenni revoke qilish; keyingi push'lar uchun yangi token yoki Git Credential Manager.
