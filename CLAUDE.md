@@ -1302,3 +1302,15 @@ Roadmap ro'yxati bo'yicha audit va tuzatishlar:
 - **"Murojaatlar" menyusi** (8-band cheklovi): `/auth/me` har a'zolikda `platform` belgisini qaytaradi (`DEFAULT_ORG_SLUG` bo'yicha). Yon menyu va `AdminNav` bo'limni faqat platforma tashkiloti adminiga ko'rsatadi (ruxsat avvalgidek serverda). Testlar: `auth.test.ts`, `chatbot.test.ts` (begona tashkilot admini — `false`).
 - Regressiya: format ✅, typecheck ✅, lint ✅, build ✅, test ✅ (shared 61 + libs 3 + sandbox 16 + web 53 + check-engine 23 + api 411 = **567**), audit ✅, to'liq E2E **51/51** ✅ (Next 16.4.2 bilan).
 - Ochiq: Docker image'lar va Ubuntu E2E keyingi push'dagi CI'da birinchi marta tekshiriladi; demo bazada `next dev` ham yangi versiyada ishlaydi (qayta ishga tushirishda).
+
+### QA: qo'lda va brauzerlararo tekshiruv (2026-10-23)
+
+- CI (`ba17760`, foydalanuvchi push qildi): `check` ✅, Docker image'lar (api, check-worker, web, sandbox) **birinchi marta** ✅, `e2e` (Ubuntu) ❌ — loglar faqat admin uchun ochiq (API 403), lokal 55/55. Ochiq.
+- Hisobot: [QA_HISOBOT.md](QA_HISOBOT.md). Muhit: demo bazaning nusxasi, compiled API, `next start`, haqiqiy CHECK; skriptlar scratchpad'da (demo ID'lariga bog'liq).
+- Chrome'da 8 funksiya × baxtli yo'l/negativ + xavfsizlik: **39/39** (tuzatishdan keyin). Brauzerlar: Chrome, Edge, Firefox, WebKit (Playwright build'lari scratchpad'da) × telefon/planshet/desktop — **154/156**, ikkala qolgani test muhiti (umumiy IP limiti, bekor qilingan so'rov), takrorlanmadi.
+- **Topildi va tuzatildi:**
+  - ro'yxatdan o'tish formasi har qanday validatsiya xatosida (bo'sh ism, noto'g'ri email, uzun ism) "parol kamida 10 belgi" derdi. Endi `lib/register-errors.ts` — har maydon o'z xabari, `aria-invalid`/`aria-describedby`, fokus birinchi xato maydonga; ism `maxLength=120`;
+  - xato maydonlar ajralib turmasdi — `.field[aria-invalid='true']` qizil chegara.
+- Ochiq: WebKit (Windows) variable shriftlarda (Inter/Jost) qalinlikni qo'llamaydi — haqiqiy Safari'da tekshirish kerak; Ubuntu E2E.
+- Xavfsizlik: begona ma'lumot 404, rol 403, Argon2id, ochiq parol bazada va logda yo'q, login limiti 429, bir xil login xabari, XSS matn bo'lib chiqadi, sandbox cookie/parent'ga yetmaydi.
+- Avtomatlashtirildi: E2E'ga 4 ta negativ qadam (maydon xatolari, 120 belgi, oflayn xabari, bir xil login xabari) — **55/55**; `register-errors.test.ts` 3 ta. Testlar: shared 61 + libs 3 + sandbox 16 + web 56 + check-engine 23 + api 411 = **570**. typecheck ✅, lint ✅, format ✅.

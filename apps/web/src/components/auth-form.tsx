@@ -1,10 +1,11 @@
 'use client';
 
-import { loginSchema, PASSWORD_MIN_LENGTH, registerSchema } from '@webdizayn/shared';
+import { loginSchema, PASSWORD_MIN_LENGTH } from '@webdizayn/shared';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useId, useState, useSyncExternalStore, type FormEvent } from 'react';
 import { api } from '@/lib/api';
+import { registerErrors, REGISTER_FIELDS, type RegisterField } from '@/lib/register-errors';
 import { currentNext } from '@/lib/safe-next';
 
 type Mode = 'login' | 'register';
@@ -18,6 +19,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
   const id = useId();
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<RegisterField, string>>>({});
   const isRegister = mode === 'register';
   // `?next=` survives switching between the login and register forms.
   const next = useSyncExternalStore(noSubscribe, currentNext, () => null);
@@ -26,18 +28,25 @@ export function AuthForm({ mode }: { mode: Mode }) {
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
-    const form = Object.fromEntries(new FormData(e.currentTarget));
-    const parsed = (isRegister ? registerSchema : loginSchema).safeParse(form);
-    if (!parsed.success) {
-      setError(
-        isRegister
-          ? `Ma'lumotlarni tekshiring: parol kamida ${PASSWORD_MIN_LENGTH} belgidan iborat bo'lsin`
-          : "Login (yoki email) va parolni to'g'ri kiriting",
-      );
+    const formEl = e.currentTarget;
+    const form = Object.fromEntries(new FormData(formEl));
+    if (isRegister) {
+      // Each wrong field gets its own message, and focus moves to the first one.
+      const errors = registerErrors(form) ?? {};
+      setFieldErrors(errors);
+      const first = REGISTER_FIELDS.find((f) => errors[f]);
+      if (first) {
+        (formEl.elements.namedItem(first) as HTMLInputElement | null)?.focus();
+        return;
+      }
+    } else if (!loginSchema.safeParse(form).success) {
+      setError("Login (yoki email) va parolni to'g'ri kiriting");
       return;
     }
     setPending(true);
-    const body = isRegister ? parsed.data : { login: form.login, password: form.password };
+    const body = isRegister
+      ? { fullName: form.fullName, email: form.email, password: form.password }
+      : { login: form.login, password: form.password };
     const res = await api<{ mustChangePassword?: boolean }>(`/auth/${mode}`, {
       method: 'POST',
       body: JSON.stringify(body),
@@ -51,6 +60,23 @@ export function AuthForm({ mode }: { mode: Mode }) {
     router.push(res.data.mustChangePassword ? '/change-password' : (currentNext() ?? '/dashboard'));
     router.refresh();
   }
+
+  /** Props that tie an input to its own validation message (register form only). */
+  const fieldProps = (name: RegisterField, hintId?: string) => {
+    const err = isRegister ? fieldErrors[name] : undefined;
+    const ids = [hintId, err ? `${id}-${name}-err` : undefined].filter(Boolean).join(' ');
+    return {
+      'aria-invalid': err ? true : undefined,
+      'aria-describedby': ids || undefined,
+      onChange: () => err && setFieldErrors((prev) => ({ ...prev, [name]: undefined })),
+    };
+  };
+  const fieldError = (name: RegisterField) =>
+    isRegister && fieldErrors[name] ? (
+      <p id={`${id}-${name}-err`} className="text-xs font-medium text-red-700 dark:text-red-300">
+        {fieldErrors[name]}
+      </p>
+    ) : null;
 
   return (
     // method="post": if the script has not loaded yet, a native submit must never put the
@@ -79,8 +105,11 @@ export function AuthForm({ mode }: { mode: Mode }) {
             name="fullName"
             autoComplete="name"
             required
+            maxLength={120}
             className={inputClass}
+            {...fieldProps('fullName')}
           />
+          {fieldError('fullName')}
         </div>
       )}
       <div className="space-y-1.5">
@@ -98,9 +127,10 @@ export function AuthForm({ mode }: { mode: Mode }) {
           autoCapitalize="none"
           spellCheck={false}
           required
-          aria-describedby={isRegister ? undefined : `${id}-login-hint`}
           className={inputClass}
+          {...(isRegister ? fieldProps('email') : { 'aria-describedby': `${id}-login-hint` })}
         />
+        {fieldError('email')}
         {!isRegister && (
           <p id={`${id}-login-hint`} className="text-xs text-slate-500 dark:text-slate-400">
             Masalan: familiya.ism — loginni administrator yoki o&apos;qituvchingiz beradi
@@ -121,9 +151,10 @@ export function AuthForm({ mode }: { mode: Mode }) {
           autoComplete={isRegister ? 'new-password' : 'current-password'}
           minLength={isRegister ? PASSWORD_MIN_LENGTH : undefined}
           required
-          aria-describedby={isRegister ? `${id}-pw-hint` : undefined}
           className={inputClass}
+          {...(isRegister ? fieldProps('password', `${id}-pw-hint`) : {})}
         />
+        {fieldError('password')}
         {isRegister && (
           <p id={`${id}-pw-hint`} className="text-xs text-slate-500 dark:text-slate-400">
             Kamida {PASSWORD_MIN_LENGTH} belgi

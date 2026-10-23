@@ -203,8 +203,9 @@ async function run() {
     page.on('dialog', (d) => d.accept());
     page.on('pageerror', (e) => consoleErrors.push(`${label}: ${e.message}`));
     page.on('console', (m) => {
-      // Expected 4xx (locked lesson, not enrolled, ...) are asserted explicitly below.
-      if (m.type() === 'error' && !/status of 4\d\d/.test(m.text())) {
+      // Expected 4xx (locked lesson, not enrolled, ...) and the deliberately simulated offline
+      // request are asserted explicitly below.
+      if (m.type() === 'error' && !/status of 4\d\d|ERR_INTERNET_DISCONNECTED/.test(m.text())) {
         consoleErrors.push(`${label}: ${m.text()}`);
       }
     });
@@ -272,6 +273,35 @@ async function run() {
   // 4. Student: register → login → course → enroll → lesson → exercise
   const student = await newPage('student');
   const sp = student.page;
+  // Negative inputs first: each wrong field gets its own message and focus; nothing is sent.
+  await sp.goto(`${WEB}/register`);
+  await sp.locator('input[name="email"]').fill('abc');
+  await sp.locator('input[name="password"]').fill(PASSWORD);
+  await sp.getByRole('button', { name: "Ro'yxatdan o'tish" }).click();
+  await sp.locator('[aria-invalid="true"]').first().waitFor();
+  const invalid = await sp
+    .locator('[aria-invalid="true"]')
+    .evaluateAll((els) => els.map((e) => e.getAttribute('name')));
+  expect(
+    invalid.join() === 'fullName,email' &&
+      (await sp.evaluate(() => document.activeElement?.getAttribute('name'))) === 'fullName',
+    'register form marks only the wrong fields (empty name, bad email) and focuses the first',
+    `marked: ${invalid.join()}`,
+  );
+  await sp.locator('input[name="fullName"]').fill('A'.repeat(500));
+  expect(
+    (await sp.locator('input[name="fullName"]').inputValue()).length === 120,
+    'name field caps very long input at 120 characters',
+  );
+  // Lost connection: a clear message, and the form stays usable.
+  await sp.locator('input[name="fullName"]').fill('Talaba Ergasheva');
+  await sp.locator('input[name="email"]').fill('talaba@e2e.uz');
+  await student.ctx.setOffline(true);
+  await sp.getByRole('button', { name: "Ro'yxatdan o'tish" }).click();
+  const offline = await sp.getByRole('alert').filter({ hasText: /aloqa/ }).first().innerText();
+  await student.ctx.setOffline(false);
+  record(true, 'register while offline shows the network error', offline.trim());
+
   await sp.goto(`${WEB}/register`);
   await sp.locator('input[name="fullName"]').fill('Talaba Ergasheva');
   await sp.locator('input[name="email"]').fill('talaba@e2e.uz');
@@ -287,6 +317,20 @@ async function run() {
   expect(
     (await sp.request.get(`${WEB}/api/auth/me`)).status() === 401,
     'session ended after logout',
+  );
+  // A wrong password and an unknown account must read the same (no account enumeration).
+  const loginError = async (identifier) => {
+    await sp.goto(`${WEB}/login`);
+    await sp.locator('input[name="login"]').fill(identifier);
+    await sp.locator('input[name="password"]').fill('notogri-parol-123');
+    await sp.getByRole('button', { name: 'Kirish', exact: true }).click();
+    return (await sp.getByRole('alert').filter({ hasText: /\S/ }).first().innerText()).trim();
+  };
+  const wrongPassword = await loginError('talaba@e2e.uz');
+  expect(
+    wrongPassword.length > 0 && wrongPassword === (await loginError('yoq@e2e.uz')),
+    'wrong password and unknown account show the same login error',
+    wrongPassword,
   );
   await login(sp, 'talaba@e2e.uz');
   record(true, 'student logs out from the account menu (confirmed) and back in');
