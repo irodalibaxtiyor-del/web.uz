@@ -34,9 +34,12 @@ function sectionsFor(me: MeResponse | null): NavSection[] {
         { href: `${base}/admin/students`, label: 'Talabalar', icon: 'user' },
         { href: `${base}/admin/teachers`, label: 'O‘qituvchilar', icon: 'users' },
         { href: `${base}/admin/books`, label: 'Elektron darsliklar', icon: 'book' },
-        { href: `${base}/admin/contacts`, label: 'Murojaatlar', icon: 'inbox' },
-        { href: `${base}/analytics`, label: 'Tashkilot analitikasi', icon: 'chart' },
       );
+      // Chatbot contact requests only ever land in the platform organization.
+      if (m.platform) {
+        items.push({ href: `${base}/admin/contacts`, label: 'Murojaatlar', icon: 'inbox' });
+      }
+      items.push({ href: `${base}/analytics`, label: 'Tashkilot analitikasi', icon: 'chart' });
     }
     sections.push({ title: m.organizationName, items });
   }

@@ -1287,3 +1287,17 @@ Roadmap ro'yxati bo'yicha audit va tuzatishlar:
 - **Qayta urinish — muvaffaqiyatli:** foydalanuvchi tokenga `workflow` ruxsatini qo'shdi (`X-OAuth-Scopes: repo, workflow`). `git push -u origin main` → `[new branch] main -> main`; remote `main` = lokal `9a4b5e5`. Token faqat bitta buyruqda vaqtinchalik header sifatida ishlatildi, konfiguratsiyada yo'q.
 - GitHub Actions'da **CI birinchi marta ishga tushdi** (run 39759609938, push'da). Natijasi keyin tekshiriladi (Docker image'lar, Ubuntu'da E2E, gitleaks — avval hech qachon ishlamagan).
 - Tavsiya: chatda ochilgan tokenni revoke qilish; keyingi push'lar uchun yangi token yoki Git Credential Manager.
+
+## 2026-10-23
+
+### Kamchiliklar tuzatildi: CI audit, Next RCE, "Murojaatlar" menyusi
+
+- **CI natijasi tekshirildi** (birinchi run, `86507b7`): `check` job'ida format, typecheck, lint, test (Ubuntu'da haqiqiy Chrome bilan CHECK), build va migratsiya drift **o'tgan**; yagona yiqilgan qadam — `pnpm audit --prod`. Shu sabab `images` (Docker) va `e2e` job'lari o'tkazib yuborilgan, ya'ni hali ham tekshirilmagan.
+- **Audit topilmalari va tuzatishlar:**
+  - **Next.js 16.4.0** — 2 ta critical (autentifikatsiyasiz RCE: Image Optimization + SVG, `use cache`) va 1 ta high (Server Actions DoS). `next` va `eslint-config-next` → **16.4.2**.
+  - **DOMPurify ≤3.4.16** (Monaco orqali) — override `>=3.4.17`. Monaco `min` bundle'idagi ichki nusxa (3.4.15) override'dan ta'sirlanmaydi: bundle tahlil qilindi — Monaco faqat `RETURN_DOM_FRAGMENT`/`RETURN_TRUSTED_TYPE` beradi, advisory'lar talab qiladigan `IN_PLACE`, `SAFE_FOR_TEMPLATES`, `PARSER_MEDIA_TYPE` ni hech qachon bermaydi. `monaco-bundle.test.ts` uchala opsiyani tekshiradi.
+  - **Bootstrap 3.4.1** (2 ta moderate XSS) — tuzatilgan versiyasi yo'q; faqat Bootstrap 3 kursi uchun talaba loyihasiga sandbox ichida (opaque origin, tarmoqsiz, platforma cookie'larisiz) beriladi. `pnpm-workspace.yaml` da `auditConfig.ignoreGhsas` bilan asoslangan istisno.
+  - `pnpm audit --prod`: "2 ignored", qolgani toza.
+- **"Murojaatlar" menyusi** (8-band cheklovi): `/auth/me` har a'zolikda `platform` belgisini qaytaradi (`DEFAULT_ORG_SLUG` bo'yicha). Yon menyu va `AdminNav` bo'limni faqat platforma tashkiloti adminiga ko'rsatadi (ruxsat avvalgidek serverda). Testlar: `auth.test.ts`, `chatbot.test.ts` (begona tashkilot admini — `false`).
+- Regressiya: format ✅, typecheck ✅, lint ✅, build ✅, test ✅ (shared 61 + libs 3 + sandbox 16 + web 53 + check-engine 23 + api 411 = **567**), audit ✅, to'liq E2E **51/51** ✅ (Next 16.4.2 bilan).
+- Ochiq: Docker image'lar va Ubuntu E2E keyingi push'dagi CI'da birinchi marta tekshiriladi; demo bazada `next dev` ham yangi versiyada ishlaydi (qayta ishga tushirishda).

@@ -1,17 +1,24 @@
 'use client';
 
+import type { MeResponse } from '@webdizayn/shared';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useApi } from '@/lib/use-api';
 
 /** Section tabs for the organization administrator pages. */
 export function AdminNav({ orgId }: { orgId: string }) {
   const pathname = usePathname();
+  const { state } = useApi<MeResponse>('/auth/me');
+  // Chatbot contact requests only ever land in the platform organization.
+  const platform =
+    state.kind === 'ready' &&
+    state.data.memberships.some((m) => m.organizationId === orgId && m.platform);
   const items = [
     { href: `/orgs/${orgId}/admin/groups`, label: 'Guruhlar va import' },
     { href: `/orgs/${orgId}/admin/students`, label: 'Talabalar' },
     { href: `/orgs/${orgId}/admin/teachers`, label: 'O‘qituvchilar' },
     { href: `/orgs/${orgId}/admin/books`, label: 'Elektron darsliklar' },
-    { href: `/orgs/${orgId}/admin/contacts`, label: 'Murojaatlar' },
+    ...(platform ? [{ href: `/orgs/${orgId}/admin/contacts`, label: 'Murojaatlar' }] : []),
     { href: `/orgs/${orgId}/groups`, label: 'Guruh paneli' },
   ];
   return (

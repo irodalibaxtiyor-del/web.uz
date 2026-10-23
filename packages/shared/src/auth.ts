@@ -61,5 +61,11 @@ export interface MeResponse {
   fullName: string;
   /** True after an admin issued a temporary password: everything else is blocked until changed. */
   mustChangePassword: boolean;
-  memberships: { organizationId: string; organizationName: string; role: import('./roles').Role }[];
+  memberships: {
+    organizationId: string;
+    organizationName: string;
+    role: import('./roles').Role;
+    /** The platform organization: the one that receives public chatbot contact requests. */
+    platform: boolean;
+  }[];
 }

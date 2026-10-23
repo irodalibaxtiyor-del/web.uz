@@ -181,6 +181,13 @@ describe('contact the administrator', () => {
       .set('Cookie', otherAdmin.cookie)
       .send({ resolved: true })
       .expect(404);
+    // The web menu shows "Murojaatlar" only where requests can arrive.
+    const platformOf = async (who: Member, org: string) =>
+      (
+        await ctx.http().get('/auth/me').set('Cookie', who.cookie).expect(200)
+      ).body.memberships.find((m: { organizationId: string }) => m.organizationId === org).platform;
+    expect(await platformOf(admin, platformOrg)).toBe(true);
+    expect(await platformOf(otherAdmin, otherOrg)).toBe(false);
   });
 
   it('links a request to the account only through a real session', async () => {

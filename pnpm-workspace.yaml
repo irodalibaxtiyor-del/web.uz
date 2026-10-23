@@ -8,6 +8,14 @@ allowBuilds:
   unrs-resolver: true
   sharp: true
 
-# Security: Monaco's bundled DOMPurify <=3.4.15 has two low-severity advisories (GHSA-6688-9rhm-gjv2).
+# Security: Monaco bundles DOMPurify; force a patched copy (GHSA-c6gr-qvv4-5v3f and friends, fixed in 3.4.17).
 overrides:
-  dompurify: '>=3.4.16'
+  dompurify: '>=3.4.17'
+
+# Bootstrap 3.4.1 is end-of-life and has no patched release. It is served only to student
+# projects inside the RUN/CHECK sandboxes (opaque origin, no network, no platform cookies)
+# for the Bootstrap 3 course, never to the platform UI itself.
+auditConfig:
+  ignoreGhsas:
+    - GHSA-vxmc-5x29-h64v
+    - GHSA-q58r-hwc8-rm9j

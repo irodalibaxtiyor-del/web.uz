@@ -156,11 +156,18 @@ export class AuthService {
       .select({
         organizationId: memberships.organizationId,
         organizationName: organizations.name,
+        organizationSlug: organizations.slug,
         role: memberships.role,
       })
       .from(memberships)
       .innerJoin(organizations, eq(organizations.id, memberships.organizationId))
       .where(eq(memberships.userId, userId));
-    return { ...user, memberships: rows };
+    return {
+      ...user,
+      memberships: rows.map(({ organizationSlug, ...m }) => ({
+        ...m,
+        platform: organizationSlug === this.config.DEFAULT_ORG_SLUG,
+      })),
+    };
   }
 }

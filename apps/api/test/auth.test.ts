@@ -34,6 +34,7 @@ describe('register', () => {
     expect(res.body.email).toBe('talaba1@example.uz');
     expect(res.body.memberships).toHaveLength(1);
     expect(res.body.memberships[0].role).toBe('STUDENT');
+    expect(res.body.memberships[0].platform).toBe(true);
     // The only password-related field is the boolean flag; no hash or token value appears.
     expect(res.body.mustChangePassword).toBe(false);
     const rest = { ...(res.body as Record<string, unknown>) };
