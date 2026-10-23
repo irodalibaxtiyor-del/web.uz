@@ -1294,6 +1294,7 @@ Roadmap ro'yxati bo'yicha audit va tuzatishlar:
 
 - **CI natijasi tekshirildi** (birinchi run, `86507b7`): `check` job'ida format, typecheck, lint, test (Ubuntu'da haqiqiy Chrome bilan CHECK), build va migratsiya drift **o'tgan**; yagona yiqilgan qadam — `pnpm audit --prod`. Shu sabab `images` (Docker) va `e2e` job'lari o'tkazib yuborilgan, ya'ni hali ham tekshirilmagan.
 - **Audit topilmalari va tuzatishlar:**
+  - CI'dagi (22-oktabr) audit faqat Bootstrap 3 ni topgan; Next.js advisory'lari bazaga keyin qo'shilgan va 23-oktabrdagi lokal audit'da chiqdi. Ikkalasi ham tuzatildi, aks holda keyingi CI Next sabab yiqilardi.
   - **Next.js 16.4.0** — 2 ta critical (autentifikatsiyasiz RCE: Image Optimization + SVG, `use cache`) va 1 ta high (Server Actions DoS). `next` va `eslint-config-next` → **16.4.2**.
   - **DOMPurify ≤3.4.16** (Monaco orqali) — override `>=3.4.17`. Monaco `min` bundle'idagi ichki nusxa (3.4.15) override'dan ta'sirlanmaydi: bundle tahlil qilindi — Monaco faqat `RETURN_DOM_FRAGMENT`/`RETURN_TRUSTED_TYPE` beradi, advisory'lar talab qiladigan `IN_PLACE`, `SAFE_FOR_TEMPLATES`, `PARSER_MEDIA_TYPE` ni hech qachon bermaydi. `monaco-bundle.test.ts` uchala opsiyani tekshiradi.
   - **Bootstrap 3.4.1** (2 ta moderate XSS) — tuzatilgan versiyasi yo'q; faqat Bootstrap 3 kursi uchun talaba loyihasiga sandbox ichida (opaque origin, tarmoqsiz, platforma cookie'larisiz) beriladi. `pnpm-workspace.yaml` da `auditConfig.ignoreGhsas` bilan asoslangan istisno.
