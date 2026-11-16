@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   HttpCode,
+  Inject,
   Param,
   ParseIntPipe,
   HttpStatus,
@@ -11,6 +12,7 @@ import {
   Post,
   Put,
   Query,
+  Req,
   Res,
   UploadedFiles,
   UseInterceptors,
@@ -21,14 +23,17 @@ import {
   bookMetaSchema,
   bookPagesQuerySchema,
   bookProgressSchema,
+  bookSearchQuerySchema,
   updateBookSchema,
   type BookMetaInput,
   type BookPagesQuery,
   type UpdateBookInput,
 } from '@webdizayn/shared';
-import type { Response } from 'express';
+import type { Request, Response } from 'express';
 import { z } from 'zod';
-import { CurrentAuth, CurrentMembership, OrgRoles } from '../common/decorators';
+import { CurrentAuth, CurrentMembership, OrgRoles, Public } from '../common/decorators';
+import { RateLimiter } from '../common/rate-limiter';
+import { APP_CONFIG, type AppConfig } from '../config';
 import { Id } from '../common/params';
 import type { AuthContext, MembershipContext } from '../common/types';
 import { ZodPipe } from '../common/zod.pipe';
@@ -83,7 +88,7 @@ export class AdminBooksController {
         { name: 'cover', maxCount: 1 },
       ],
       {
-        limits: { fileSize: UPLOAD_MAX_BYTES, files: 2, fields: 10, fieldSize: 16 * 1024 },
+        limits: { fileSize: UPLOAD_MAX_BYTES, files: 2, fields: 16, fieldSize: 16 * 1024 },
       },
     ),
   )
@@ -116,6 +121,16 @@ export class AdminBooksController {
     @Param('bookId', Id) bookId: string,
   ) {
     await this.books.remove(auth, m, bookId);
+  }
+
+  @Post(':bookId/reprocess')
+  @OrgRoles('ORG_ADMIN')
+  reprocess(
+    @CurrentAuth() auth: AuthContext,
+    @CurrentMembership() m: MembershipContext,
+    @Param('bookId', Id) bookId: string,
+  ) {
+    return this.books.reprocess(auth, m, bookId);
   }
 
   @Get(':bookId/cover')
@@ -176,6 +191,18 @@ export class BooksController {
     sendImage(res, await this.books.cover(auth, bookId));
   }
 
+  /** Search inside the book: snippets and highlight boxes, rate-limited per reader. */
+  @Get(':bookId/search')
+  search(
+    @CurrentAuth() auth: AuthContext,
+    @Param('bookId', Id) bookId: string,
+    @Query(new ZodPipe(bookSearchQuerySchema)) q: { q: string },
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    res.setHeader('Cache-Control', 'no-store');
+    return this.books.search(auth, bookId, q.q);
+  }
+
   @Put(':bookId/progress')
   progress(
     @CurrentAuth() auth: AuthContext,
@@ -183,5 +210,48 @@ export class BooksController {
     @Body(new ZodPipe(bookProgressSchema)) body: z.infer<typeof bookProgressSchema>,
   ) {
     return this.books.saveProgress(auth, bookId, body.page);
+  }
+}
+
+/**
+ * Public "Muallif kitoblari" page: published AUTHOR books of the platform organization. Cards
+ * and covers only — reading always goes through the signed-in reader above.
+ */
+@Controller('public/books')
+export class PublicBooksController {
+  constructor(
+    private readonly books: BooksService,
+    private readonly limiter: RateLimiter,
+    @Inject(APP_CONFIG) private readonly config: AppConfig,
+  ) {}
+
+  @Public()
+  @Get()
+  async list(@Req() req: Request) {
+    await this.limit(req);
+    return this.books.publicList();
+  }
+
+  @Public()
+  @Get(':bookId')
+  async one(@Param('bookId', Id) bookId: string, @Req() req: Request) {
+    await this.limit(req);
+    return this.books.publicBook(bookId);
+  }
+
+  @Public()
+  @Get(':bookId/cover')
+  async cover(@Param('bookId', Id) bookId: string, @Req() req: Request, @Res() res: Response) {
+    await this.limit(req);
+    sendImage(res, await this.books.publicCover(bookId));
+  }
+
+  private async limit(req: Request) {
+    await this.limiter.consume(
+      `public:${req.ip ?? 'unknown'}`,
+      this.config.PUBLIC_RATE_PER_MINUTE,
+      60_000,
+      'PUBLIC_RATE_LIMITED',
+    );
   }
 }

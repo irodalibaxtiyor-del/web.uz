@@ -21,7 +21,11 @@ import { ReviewsController } from './assignments/reviews.controller';
 import { ReviewsService } from './assignments/reviews.service';
 import { AuditService } from './audit/audit.service';
 import { BookProcessor } from './books/book-processor';
-import { AdminBooksController, BooksController } from './books/books.controller';
+import {
+  AdminBooksController,
+  BooksController,
+  PublicBooksController,
+} from './books/books.controller';
 import { BooksService } from './books/books.service';
 import { AuthController } from './auth/auth.controller';
 import { AuthGuard } from './auth/auth.guard';
@@ -112,6 +116,7 @@ export class AppModule {
         GroupsController,
         AdminBooksController,
         BooksController,
+        PublicBooksController,
         ChatbotController,
         AdminContactsController,
       ],

@@ -350,3 +350,121 @@ async function createSession(email: string) {
   const raw = res.headers['set-cookie'] as unknown as string[];
   return raw.find((c) => c.startsWith('wd_session='))!.split(';')[0]!;
 }
+
+describe('author books and search inside a book', () => {
+  let authorId: string;
+  let textbookId: string;
+  const BOOK = makePdf({
+    pages: [
+      'Kirish: web dizayn asoslari',
+      'Flexbox maket tuzish',
+      'Grid va Flexbox birga',
+      'Rasm siz bet',
+    ],
+  });
+
+  beforeAll(async () => {
+    const a = await upload(
+      admin,
+      {
+        title: 'Web dizayn sirlari',
+        author: 'Muallif',
+        year: '2024',
+        publisher: 'Nashriyot',
+        isbn: '978-9943-00-000-0',
+        collection: 'AUTHOR',
+      },
+      pdfFile(BOOK),
+    ).expect(201);
+    authorId = a.body.id;
+    const t = await upload(admin, { title: 'Oddiy darslik' }, pdfFile(BOOK)).expect(201);
+    textbookId = t.body.id;
+    await idle();
+  });
+
+  it('extracts the text layer while processing', async () => {
+    const a = await get(admin, `${admBase()}`).expect(200);
+    const row = a.body.books.find((b: { id: string }) => b.id === authorId);
+    expect(row).toMatchObject({
+      status: 'READY',
+      collection: 'AUTHOR',
+      publisher: 'Nashriyot',
+      searchable: true,
+    });
+  });
+
+  it('the public page lists only published author books of the platform', async () => {
+    let list = await ctx.http().get('/public/books').expect(200);
+    expect(list.body).toEqual([]);
+    for (const id of [authorId, textbookId]) {
+      await json(admin, 'patch', `${admBase()}/${id}`, { published: true }).expect(200);
+    }
+    list = await ctx.http().get('/public/books').expect(200);
+    expect(list.body.map((b: { id: string }) => b.id)).toEqual([authorId]);
+    expect(list.body[0]).toMatchObject({ title: 'Web dizayn sirlari', year: 2024, pageCount: 4 });
+    const one = await ctx.http().get(`/public/books/${authorId}`).expect(200);
+    expect(JSON.stringify(one.body)).not.toMatch(/organization|createdBy|fileSize/);
+    const cover = await ctx
+      .http()
+      .get(`/public/books/${authorId}/cover`)
+      .buffer(binary.buffer)
+      .parse(binary.parser)
+      .expect(200);
+    expect(cover.headers['content-type']).toBe('image/webp');
+    await ctx.http().get(`/public/books/${textbookId}`).expect(404);
+    await ctx.http().get(`/public/books/${textbookId}/cover`).expect(404);
+    // Pages and search still need a signed-in reader.
+    await ctx.http().get(`/books/${authorId}/search?q=flexbox`).expect(401);
+    await ctx.http().get(`/books/${authorId}/pages?from=1&to=1`).expect(401);
+  });
+
+  it('finds pages with snippets and highlight boxes, never whole pages', async () => {
+    const res = await get(student, `/books/${authorId}/search?q=FLEXBOX`).expect(200);
+    expect(res.body.hits.map((h: { page: number }) => h.page)).toEqual([2, 3]);
+    const hit = res.body.hits[0];
+    expect(hit.match.toLowerCase()).toBe('flexbox');
+    expect(hit.rects).toHaveLength(1);
+    const [x, y, w, h] = hit.rects[0];
+    for (const v of [x, y, w, h]) expect(v).toBeGreaterThanOrEqual(0);
+    expect(x + w).toBeLessThanOrEqual(1);
+    expect(y + h).toBeLessThanOrEqual(1.05);
+    const none = await get(student, `/books/${authorId}/search?q=yoqsoz`).expect(200);
+    expect(none.body).toMatchObject({ hits: [], pages: 0 });
+    await get(student, `/books/${authorId}/search?q=a`).expect(400);
+  });
+
+  it('search follows reading access', async () => {
+    await get(outsider, `/books/${authorId}/search?q=grid`).expect(200);
+    await json(admin, 'patch', `${admBase()}/${authorId}`, { published: false }).expect(200);
+    await get(student, `/books/${authorId}/search?q=grid`).expect(404);
+    await json(admin, 'patch', `${admBase()}/${authorId}`, { published: true }).expect(200);
+  });
+
+  it('is rate-limited per reader', async () => {
+    for (let i = 0; i < 30; i++) {
+      await get(student2, `/books/${authorId}/search?q=grid`).expect(200);
+    }
+    const res = await get(student2, `/books/${authorId}/search?q=grid`).expect(429);
+    expect(res.body.code).toBe('BOOK_SEARCH_RATE_LIMITED');
+  });
+
+  it('administrators can rebuild a book (pages and text layer)', async () => {
+    await ctx
+      .http()
+      .post(`${admBase()}/${textbookId}/reprocess`)
+      .set('Cookie', teacher.cookie)
+      .expect(403);
+    const r = await ctx
+      .http()
+      .post(`${admBase()}/${textbookId}/reprocess`)
+      .set('Cookie', admin.cookie)
+      .expect(201);
+    expect(r.body.status).toBe('PROCESSING');
+    await idle();
+    const after = await get(admin, admBase()).expect(200);
+    expect(after.body.books.find((b: { id: string }) => b.id === textbookId)).toMatchObject({
+      status: 'READY',
+      searchable: true,
+    });
+  });
+});

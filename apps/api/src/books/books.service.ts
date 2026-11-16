@@ -10,6 +10,8 @@ import {
 } from '@nestjs/common';
 import {
   BOOK_URL_TTL_SECONDS,
+  normalizeBookText,
+  searchPageText,
   type BookAdmin,
   type BookAdminList,
   type BookAlert,
@@ -18,10 +20,13 @@ import {
   type BookPageSize,
   type BookPagesQuery,
   type BookPageUrls,
+  type BookSearchHit,
+  type BookSearchResponse,
   type BookSummary,
+  type PublicBook,
   type UpdateBookInput,
 } from '@webdizayn/shared';
-import { and, desc, eq, gte, inArray, sql, type SQL } from 'drizzle-orm';
+import { and, asc, desc, eq, gte, inArray, sql, type SQL } from 'drizzle-orm';
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { AuditService } from '../audit/audit.service';
 import { RateLimiter } from '../common/rate-limiter';
@@ -30,6 +35,7 @@ import { APP_CONFIG, type AppConfig } from '../config';
 import { DbService } from '../db/db.module';
 import {
   auditEvents,
+  bookPageText,
   bookProgress,
   books,
   courses,
@@ -52,6 +58,8 @@ export interface UploadedFile {
 const COVER_MAX_BYTES = 5 * 1024 * 1024;
 const NOT_FOUND = 'Kitob topilmadi';
 const RATE_CODE = 'BOOK_RATE_LIMITED';
+const SEARCH_PER_MINUTE = 30;
+const SEARCH_MAX_HITS = 50;
 /** One alert per reader per this window, however many requests were refused. */
 const ALERT_WINDOW_MS = 10 * 60_000;
 
@@ -148,6 +156,10 @@ export class BooksService {
       author: b.author,
       year: b.year,
       description: b.description,
+      publisher: b.publisher,
+      isbn: b.isbn,
+      collection: b.collection,
+      searchable: b.searchable,
       direction: dirSlug && dirTitle ? { slug: dirSlug, title: dirTitle } : null,
       course: b.courseId && courseTitle ? { id: b.courseId, title: courseTitle } : null,
       pageCount: b.pageCount,
@@ -240,6 +252,9 @@ export class BooksService {
         author: meta.author,
         year: meta.year ?? null,
         description: meta.description,
+        publisher: meta.publisher,
+        isbn: meta.isbn,
+        collection: meta.collection,
         directionId: meta.directionId ?? null,
         courseId: meta.courseId ?? null,
         fileSize: pdf.size,
@@ -314,6 +329,25 @@ export class BooksService {
       targetType: 'book',
       targetId: id,
     });
+  }
+
+  /** Renders the pages and the text layer again (e.g. books uploaded before search existed). */
+  async reprocess(auth: AuthContext, m: MembershipContext, id: string): Promise<BookAdmin> {
+    const b = await this.adminOne(m, id);
+    if (b.status === 'PROCESSING') return b;
+    await this.db
+      .update(books)
+      .set({ status: 'PROCESSING', error: null, updatedAt: new Date() })
+      .where(eq(books.id, id));
+    this.processor.enqueue(id);
+    await this.audit.record({
+      action: 'book.reprocess',
+      actorUserId: auth.userId,
+      organizationId: m.organizationId,
+      targetType: 'book',
+      targetId: id,
+    });
+    return this.adminOne(m, id);
   }
 
   async adminCover(m: MembershipContext, id: string): Promise<Buffer> {
@@ -518,6 +552,77 @@ export class BooksService {
     return readFile(this.paths(id).cover);
   }
 
+  /**
+   * Search inside a book the reader may open. Returns short snippets and highlight boxes per
+   * page — never whole pages of text — and is rate-limited per reader.
+   */
+  async search(auth: AuthContext, id: string, q: string): Promise<BookSearchResponse> {
+    const b = await this.readable(auth.userId, id);
+    await this.limiter.consume(
+      `book-search:${auth.userId}`,
+      SEARCH_PER_MINUTE,
+      60_000,
+      'BOOK_SEARCH_RATE_LIMITED',
+    );
+    const query = normalizeBookText(q).trim();
+    if (!b.searchable || query.length < 2) {
+      return { query: q, hits: [], pages: 0, truncated: false };
+    }
+    const rows = await this.db
+      .select()
+      .from(bookPageText)
+      .where(and(eq(bookPageText.bookId, id), sql`position(${query} in ${bookPageText.text}) > 0`))
+      .orderBy(asc(bookPageText.page));
+    const hits: BookSearchHit[] = [];
+    for (const row of rows) {
+      if (hits.length >= SEARCH_MAX_HITS) break;
+      const r = searchPageText(row, query);
+      if (r) hits.push({ page: row.page, ...r });
+    }
+    return { query: q, hits, pages: rows.length, truncated: rows.length > hits.length };
+  }
+
+  // =====================================================================
+  // Public "Muallif kitoblari" page (anyone): cards and covers only, reading needs sign-in
+  // =====================================================================
+
+  private async platformAuthorBook(id?: string) {
+    const [platform] = await this.db
+      .select({ id: organizations.id })
+      .from(organizations)
+      .where(eq(organizations.slug, this.config.DEFAULT_ORG_SLUG));
+    if (!platform) return [];
+    return this.db
+      .select()
+      .from(books)
+      .where(
+        and(
+          eq(books.organizationId, platform.id),
+          eq(books.collection, 'AUTHOR'),
+          eq(books.status, 'READY'),
+          eq(books.published, true),
+          id ? eq(books.id, id) : undefined,
+        ),
+      )
+      .orderBy(desc(books.year), desc(books.createdAt));
+  }
+
+  async publicList(): Promise<PublicBook[]> {
+    return (await this.platformAuthorBook()).map(toPublic);
+  }
+
+  async publicBook(id: string): Promise<PublicBook> {
+    const [b] = await this.platformAuthorBook(id);
+    if (!b) throw new NotFoundException(NOT_FOUND);
+    return toPublic(b);
+  }
+
+  async publicCover(id: string): Promise<Buffer> {
+    const [b] = await this.platformAuthorBook(id);
+    if (!b) throw new NotFoundException(NOT_FOUND);
+    return readFile(this.paths(id).cover);
+  }
+
   async saveProgress(auth: AuthContext, id: string, page: number) {
     const b = await this.readable(auth.userId, id);
     const p = Math.min(page, b.pageCount);
@@ -530,6 +635,20 @@ export class BooksService {
       });
     return progressOf(p, b.pageCount);
   }
+}
+
+function toPublic(b: BookRow): PublicBook {
+  return {
+    id: b.id,
+    title: b.title,
+    author: b.author,
+    year: b.year,
+    publisher: b.publisher,
+    isbn: b.isbn,
+    description: b.description,
+    pageCount: b.pageCount,
+    searchable: b.searchable,
+  };
 }
 
 function progressOf(page: number | null, pageCount: number) {

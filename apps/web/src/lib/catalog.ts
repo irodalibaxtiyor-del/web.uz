@@ -2,6 +2,7 @@ import type {
   CourseMoved,
   DirectionDetail,
   DirectionSummary,
+  PublicBook,
   PublicCourseDetail,
 } from '@webdizayn/shared';
 import { headers } from 'next/headers';
@@ -61,3 +62,11 @@ export function countsLine(c: {
     .map(([n, w]) => `${n} ${w}`)
     .join(' · ');
 }
+
+/** Published books of the author ("Muallif kitoblari"); reading still needs sign-in. */
+export const getAuthorBooks = () => publicGet<PublicBook[]>('/public/books');
+
+export const getAuthorBook = (id: string) =>
+  /^[0-9a-f-]{36}$/i.test(id)
+    ? publicGet<PublicBook>(`/public/books/${id}`)
+    : Promise.resolve(null);

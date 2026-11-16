@@ -211,3 +211,25 @@ Oldingi sessiyalar (2026-10-08 … 2026-10-27): [docs/ISH_JURNALI_ARXIV.md](docs
 - Tajriba taqqoslovi (har ko'rsatkich): Mann–Whitney, har guruh Shapiro–Wilk p, `recommended` (ikkala guruh normal bo'lsa Welch t, aks holda Mann–Whitney) va uning `p` si. Xulosa matni endi tavsiya etilgan mezon p qiymatiga tayanadi va mezon nomini aytadi.
 - Web: taqqoslash jadvalida Mann–Whitney va normallik ustunlari, asosiy mezon ★ bilan; kirish/yakuniy statistikada Wilcoxon va Shapiro–Wilk. Excel'larda ham.
 - Testlar: shared **107**, API tadqiqot testlari 30/30, web 67/67; typecheck, lint, format toza.
+
+### Commit va jurnal arxivi
+
+- Commit'lar: `7430819` (Loms dizayni, Lighthouse va CI diagnostikasi), `b13cc2e` (test turlari va ilmiy modul), `2e5cbd8` (jurnal arxivi). `apps/web/next-env.d.ts` (`next dev` o'zgartiradi) commit qilinmadi; roadmap boshidagi tasodifiy `a` olib tashlandi. Push qilinmagan.
+- Tugallangan sessiyalar (2026-10-08 … 10-27) `docs/ISH_JURNALI_ARXIV.md` ga ko'chirildi, CLAUDE.md'da qisqa "Joriy holat" bo'limi. CLAUDE.md 220 KB → 26 KB.
+
+### "Muallif kitoblari" bo'limi va kitob ichidan qidiruv
+
+- So'rov: bosh sahifa menyusida muallifning nashr etilgan kitoblari uchun alohida bo'lim; PDF'lar joylanadi, lekin foydalanuvchi PDF'ni ocholmaydi va yuklab ololmaydi — onlayn o'qiydi; kitob ichidan qidiruv; qulaylik.
+- Qaror: mavjud elektron darslik tizimi (PDF → suv belgili WebP betlar, imzolangan qisqa muddatli havolalar, asl PDF uchun route yo'q, limit va ogohlantirish) qayta ishlatildi. Kitobga **bo'lim** qo'shildi: `TEXTBOOK` (darslik) yoki `AUTHOR` (muallif kitobi). Ro'yxat va muqova mehmonlarga ochiq; o'qish uchun kirish shart (suv belgisida o'quvchi ismi).
+- Shared: `BOOK_COLLECTIONS`, `publisher`, `isbn`, `searchable`; `normalizeBookText` (lotin/kirill, apostroflarsiz, kichik harf); `book-search.ts` — `buildPageText` (matn bo'laklari → normallashgan va asl matn + bet ustidagi joylashuv) va `searchPageText` (mos kelishlar soni, belgilash to'rtburchaklari, asl matndan snippet). 5 ta test.
+- Migratsiya `0025_book_search.sql`: `books.publisher/isbn/collection/searchable` (CHECK + indeks) va `book_page_text` (PK kitob+bet).
+- Ishchi jarayon (`rasterize.ts`): har bet uchun pdf.js `getTextContent()` → matn qatlami; xato betni buzmaydi (skanerlangan bet shunchaki qidirilmaydi). Matn stdout (512 KB) orqali emas, `pages/text.json` fayl orqali uzatiladi; `BookProcessor.storeText` qatorlarni tekshirib bazaga yozadi va faylni o'chiradi.
+- API: `GET /books/:id/search?q=` (o'qish huquqi bilan bir xil; foydalanuvchiga daqiqasiga 30 so'rov; 50 tagacha natija; faqat snippet va to'rtburchaklar — butun bet matni hech qachon berilmaydi); `POST /orgs/:orgId/admin/books/:id/reprocess` (betlar va matnni qayta tayyorlash, audit); ochiq `GET /public/books`, `/public/books/:id`, `/public/books/:id/cover` (faqat platforma tashkilotining e'lon qilingan `AUTHOR` kitoblari, IP limiti). Testlar `books.test.ts` +6 (jami 19).
+- Web:
+  - menyu va footer'da "Muallif kitoblari"; `/muallif-kitoblari` (kartalar: muqova, muallif, nashriyot, yil, betlar, tavsif) va `/muallif-kitoblari/[id]` (SEO meta, "Onlayn o'qish" yoki "Kirib o'qish" → kirgach o'quvchiga qaytadi);
+  - o'quvchida qidiruv paneli (Ctrl+F ham ochadi): natijalar ro'yxati (bet, snippet `<mark>` bilan, necha marta), keyingi/oldingi natija, topilgan so'zlar bet ustida sariq belgilanadi, Esc yopadi; telefonda natija tanlansa panel yopiladi; muallif kitobida "orqaga" kitob sahifasiga qaytaradi;
+  - admin: bo'lim tanlovi, nashriyot, ISBN, "Ichidan qidirish mumkin"/"Matn topilmadi (skanerlangan?)" belgisi, "Qayta ishlash".
+- Brauzer tekshiruvi (demo baza va kitoblar papkasining **nusxasida**, scratchpad'dagi `authorbooks.cjs` + telefon skripti) **19/19**, xatolar 0: admin UI orqali yuklash → matn ajratildi → e'lon qilish; mehmon menyudan bo'limga kiradi, muqova yuklanadi, sahifada PDF havolasi yo'q, betlar 401; "Kirib o'qish" → kirish → o'quvchi; Ctrl+F, 4 ta natija, belgilash, keyingi natija beti almashadi, "Hech narsa topilmadi", Esc; PDF beradigan route yo'q; telefon (390, dark).
+- Regressiya: format ✅, typecheck ✅, lint ✅, build ✅, test ✅ (shared 112 + libs 3 + sandbox 16 + web 67 + check-engine 23 + api 455 = **676**), E2E **55/55** ✅. Demo bazaga `0025` qo'llandi.
+- PDF'lar uchun git'ga tushmaydigan papka: `apps/api/.data/kitoblar/`.
+- Cheklovlar: skanerlangan (rasm) PDF'larda matn yo'q — qidiruv ishlamaydi (OCR yo'q); belgilash to'rtburchagi harf enini taxminiy hisoblaydi; qidiruv orqali ko'p so'rov bilan matnni bo'laklab yig'ish nazariy jihatdan mumkin (limit 30/daq. buni sekinlashtiradi); himoya mutlaq emas — ekran rasmini to'xtatib bo'lmaydi, suv belgisi kimligini ko'rsatadi.

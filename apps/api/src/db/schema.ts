@@ -36,6 +36,7 @@ import {
   type ProjectFile,
   type ActivityKind,
   type AssessmentKind,
+  type BookCollection,
   type ExperimentRole,
   type SurveyItem,
   type SurveyPhase,
@@ -941,6 +942,12 @@ export const books = pgTable(
     author: text('author').notNull().default(''),
     year: integer('year'),
     description: text('description').notNull().default(''),
+    publisher: text('publisher').notNull().default(''),
+    isbn: text('isbn').notNull().default(''),
+    /** TEXTBOOK (course e-textbooks) or AUTHOR (public "Muallif kitoblari" page). */
+    collection: text('collection').$type<BookCollection>().notNull().default('TEXTBOOK'),
+    /** Text layer extracted: readers can search inside the book. */
+    searchable: boolean('searchable').notNull().default(false),
     directionId: uuid('direction_id').references(() => directions.id, { onDelete: 'set null' }),
     courseId: uuid('course_id').references(() => courses.id, { onDelete: 'set null' }),
     status: bookStatusEnum('status').notNull().default('PROCESSING'),
@@ -965,7 +972,29 @@ export const books = pgTable(
     index('books_course_idx').on(t.courseId),
     index('books_created_by_idx').on(t.createdBy),
     check('books_page_count_nonneg', sql`${t.pageCount} >= 0`),
+    check('books_collection', sql`${t.collection} in ('TEXTBOOK', 'AUTHOR')`),
+    index('books_collection_idx').on(t.collection, t.published),
   ],
+);
+
+/**
+ * Text layer of each page for search inside a book (never served as a whole: search returns
+ * short snippets and highlight boxes only).
+ */
+export const bookPageText = pgTable(
+  'book_page_text',
+  {
+    bookId: uuid('book_id')
+      .notNull()
+      .references(() => books.id, { onDelete: 'cascade' }),
+    page: integer('page').notNull(),
+    /** normalizeBookText(display): what queries are matched against. */
+    text: text('text').notNull(),
+    display: text('display').notNull(),
+    /** [textStart, textEnd, displayStart, displayEnd, x, y, w, h] per PDF text item. */
+    spans: jsonb('spans').$type<number[][]>().notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.bookId, t.page] })],
 );
 
 /** Last page a reader was on (one row per reader and book). */

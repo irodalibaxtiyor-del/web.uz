@@ -2,13 +2,16 @@ import { Inject, Injectable, Logger, type OnModuleInit } from '@nestjs/common';
 import { workerEnv } from '@webdizayn/check-engine';
 import { and, eq } from 'drizzle-orm';
 import { spawn } from 'node:child_process';
-import { rm } from 'node:fs/promises';
+import { readFile, rm, stat } from 'node:fs/promises';
 import { join } from 'node:path';
 import { APP_CONFIG, type AppConfig } from '../config';
 import { DbService } from '../db/db.module';
-import { books } from '../db/schema';
+import { bookPageText, books } from '../db/schema';
 import { bookPaths } from './book-files';
-import type { RasterizeResult } from './rasterize';
+import { TEXT_FILE, type RasterizeResult, type TextFile } from './rasterize';
+
+/** Upper bound for the text layer file (a 1000-page book is far below this). */
+const MAX_TEXT_BYTES = 64 * 1024 * 1024;
 
 const ERROR_TEXT: Record<string, string> = {
   NOT_PDF: 'PDF faylni o‘qib bo‘lmadi (buzilgan yoki PDF emas)',
@@ -91,6 +94,7 @@ export class BookProcessor implements OnModuleInit {
     });
     if (!reply.ok) return this.fail(bookId, reply.code);
     const r = reply.result;
+    const searchable = await this.storeText(bookId, join(paths.pages, TEXT_FILE), r.pageCount);
     const updated = await this.dbs.db
       .update(books)
       .set({
@@ -101,12 +105,56 @@ export class BookProcessor implements OnModuleInit {
         pageHeight: Math.round(r.height),
         toc: r.toc.filter((t) => t.page >= 1 && t.page <= r.pageCount),
         hasCover: r.customCover,
+        searchable,
         updatedAt: new Date(),
       })
       .where(and(eq(books.id, bookId), eq(books.status, 'PROCESSING')))
       .returning({ id: books.id });
     await rm(paths.coverUpload, { force: true });
     if (updated.length === 0) await rm(paths.dir, { recursive: true, force: true });
+  }
+
+  /**
+   * Moves the worker's text layer into the database (replacing any previous one) and deletes
+   * the file. Malformed rows are skipped; returns whether any page is searchable.
+   */
+  private async storeText(bookId: string, file: string, pageCount: number): Promise<boolean> {
+    let rows: TextFile = [];
+    try {
+      if ((await stat(file)).size <= MAX_TEXT_BYTES) {
+        const parsed = JSON.parse(await readFile(file, 'utf8')) as unknown;
+        if (Array.isArray(parsed)) rows = parsed as TextFile;
+      }
+    } catch {
+      rows = [];
+    } finally {
+      await rm(file, { force: true });
+    }
+    const valid = rows.filter(
+      (x) =>
+        Number.isInteger(x.page) &&
+        x.page >= 1 &&
+        x.page <= pageCount &&
+        typeof x.text === 'string' &&
+        typeof x.display === 'string' &&
+        Array.isArray(x.spans) &&
+        x.spans.every(
+          (s) => Array.isArray(s) && s.length === 8 && s.every((v) => typeof v === 'number'),
+        ),
+    );
+    await this.dbs.db.delete(bookPageText).where(eq(bookPageText.bookId, bookId));
+    for (let i = 0; i < valid.length; i += 50) {
+      await this.dbs.db.insert(bookPageText).values(
+        valid.slice(i, i + 50).map((x) => ({
+          bookId,
+          page: x.page,
+          text: x.text.slice(0, 200_000),
+          display: x.display.slice(0, 200_000),
+          spans: x.spans.slice(0, 5000),
+        })),
+      );
+    }
+    return valid.length > 0;
   }
 
   private async fail(bookId: string, code: string) {
@@ -163,6 +211,7 @@ export function parseReply(raw: string): WorkerReply {
     if (
       r.ok === true &&
       Number.isInteger(x.pageCount) &&
+      Number.isInteger(x.textPages ?? 0) &&
       x.pageCount > 0 &&
       x.width > 0 &&
       x.height > 0 &&

@@ -106,6 +106,19 @@ function MetaFields({
 }) {
   return (
     <div className="grid gap-4 sm:grid-cols-2">
+      <Field id={`${id}-coll`} label="Bo‘lim" className="sm:col-span-2">
+        <select
+          id={`${id}-coll`}
+          name="collection"
+          defaultValue={initial?.collection ?? 'TEXTBOOK'}
+          className={inputClass}
+        >
+          <option value="TEXTBOOK">Elektron darslik (faqat tizimga kirganlar ro‘yxatida)</option>
+          <option value="AUTHOR">
+            Muallif kitoblari (bosh sahifadagi ochiq bo‘limda ko‘rinadi)
+          </option>
+        </select>
+      </Field>
       <Field id={`${id}-title`} label="Nomi" className="sm:col-span-2">
         <input
           id={`${id}-title`}
@@ -134,6 +147,24 @@ function MetaFields({
           min={1900}
           max={2100}
           defaultValue={initial?.year ?? ''}
+          className={inputClass}
+        />
+      </Field>
+      <Field id={`${id}-pub`} label="Nashriyot">
+        <input
+          id={`${id}-pub`}
+          name="publisher"
+          maxLength={200}
+          defaultValue={initial?.publisher}
+          className={inputClass}
+        />
+      </Field>
+      <Field id={`${id}-isbn`} label="ISBN">
+        <input
+          id={`${id}-isbn`}
+          name="isbn"
+          maxLength={40}
+          defaultValue={initial?.isbn}
           className={inputClass}
         />
       </Field>
@@ -400,11 +431,29 @@ function BookRow({
       title: text('title'),
       author: text('author'),
       description: text('description'),
+      publisher: text('publisher'),
+      isbn: text('isbn'),
+      collection: text('collection') === 'AUTHOR' ? 'AUTHOR' : 'TEXTBOOK',
       year: year ? Number(year) : null,
       directionId: text('directionId') || null,
       courseId: text('courseId') || null,
     });
     if (ok) setEditing(false);
+  }
+
+  async function reprocess() {
+    const yes = await confirmDialog({
+      title: 'Kitobni qayta ishlash',
+      message:
+        'Betlar va qidiruv uchun matn PDF’dan qaytadan tayyorlanadi. Jarayon tugaguncha kitob o‘quvchilarga ko‘rinmaydi.',
+      confirmLabel: 'Qayta ishlash',
+    });
+    if (!yes) return;
+    setPending(true);
+    const res = await send('POST', `${base}/${b.id}/reprocess`);
+    setPending(false);
+    if (!res.ok) return setError(res.message);
+    onChange();
   }
 
   async function remove() {
@@ -440,6 +489,19 @@ function BookRow({
           <StatusLabel icon={s.icon} tone={s.tone}>
             {s.text}
           </StatusLabel>
+          {b.collection === 'AUTHOR' && (
+            <StatusLabel icon="award" tone="info">
+              Muallif kitobi
+            </StatusLabel>
+          )}
+          {b.status === 'READY' && (
+            <StatusLabel
+              icon={b.searchable ? 'search' : 'ban'}
+              tone={b.searchable ? 'success' : 'warning'}
+            >
+              {b.searchable ? 'Ichidan qidirish mumkin' : 'Matn topilmadi (skanerlangan?)'}
+            </StatusLabel>
+          )}
           {b.status === 'READY' && (
             <StatusLabel
               icon={b.published ? 'eye' : 'eyeOff'}
@@ -452,6 +514,7 @@ function BookRow({
         <p className="text-sm text-muted">
           {[
             b.author,
+            b.publisher,
             b.year,
             b.pageCount ? `${b.pageCount} bet` : null,
             mb(b.fileSize),
@@ -485,6 +548,12 @@ function BookRow({
               <Icon name="book" className="size-4" />
               Ko‘rish
             </Link>
+          )}
+          {b.status !== 'PROCESSING' && (
+            <Button variant="ghost" disabled={pending} onClick={reprocess}>
+              <Icon name="refresh" className="size-4" />
+              Qayta ishlash
+            </Button>
           )}
           <Button variant="ghost" onClick={() => setEditing(true)}>
             <Icon name="pencil" className="size-4" />

@@ -10,6 +10,7 @@ import { Logo } from './logo';
 const NAV = [
   { href: '/', label: 'Bosh sahifa' },
   { href: '/yonalishlar', label: "Yo'nalishlar" },
+  { href: '/muallif-kitoblari', label: 'Muallif kitoblari' },
   { href: '/#qanday', label: "Qanday o'qiladi" },
   { href: '/#afzalliklar', label: 'Afzalliklar' },
   { href: '/playground', label: 'Playground' },

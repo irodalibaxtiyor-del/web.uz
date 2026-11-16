@@ -31,3 +31,4 @@ export * from './experiment';
 export * from './surveys';
 export * from './item-analysis';
 export * from './activity';
+export * from './book-search';

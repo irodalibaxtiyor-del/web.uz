@@ -1,6 +1,12 @@
 'use client';
 
-import type { BookDetail, BookPageSize, BookPageUrls } from '@webdizayn/shared';
+import type {
+  BookDetail,
+  BookPageSize,
+  BookPageUrls,
+  BookRect,
+  BookSearchResponse,
+} from '@webdizayn/shared';
 import Link from 'next/link';
 import type { PageFlip } from 'page-flip';
 import { useCallback, useEffect, useId, useRef, useState, type FormEvent } from 'react';
@@ -34,6 +40,8 @@ export function BookReader({ book }: { book: BookDetail }) {
   const hostRef = useRef<HTMLDivElement>(null);
   const flipRef = useRef<PageFlip | null>(null);
   const canvases = useRef(new Map<number, HTMLCanvasElement>());
+  const overlays = useRef(new Map<number, HTMLDivElement>());
+  const highlightsRef = useRef(new Map<number, BookRect[]>());
   const cache = useRef(new Map<number, Cached>());
   const inflight = useRef(new Set<string>());
   const startIndex = Math.max(0, (book.progress?.page ?? 1) - 1);
@@ -45,6 +53,8 @@ export function BookReader({ book }: { book: BookDetail }) {
   const [ready, setReady] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [tocOpen, setTocOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [highlights, setHighlights] = useState(new Map<number, BookRect[]>());
   const [fullscreen, setFullscreen] = useState(false);
   const aspect = book.pageHeight / Math.max(1, book.pageWidth) || 1.414;
   const n = book.pageCount;
@@ -88,6 +98,27 @@ export function BookReader({ book }: { book: BookDetail }) {
     canvas.parentElement?.classList.remove('is-loading');
   }, []);
 
+  /** Draws the search matches over every page that has some (boxes in page fractions). */
+  const paint = useCallback(() => {
+    for (const [page, layer] of overlays.current) {
+      layer.replaceChildren();
+      for (const [x, y, w, h] of highlightsRef.current.get(page) ?? []) {
+        const mark = document.createElement('span');
+        // A little slack: glyph widths are estimated from the item width.
+        mark.style.left = `${(x - 0.003) * 100}%`;
+        mark.style.top = `${y * 100}%`;
+        mark.style.width = `${(w + 0.006) * 100}%`;
+        mark.style.height = `${h * 100}%`;
+        layer.append(mark);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    highlightsRef.current = highlights;
+    paint();
+  }, [highlights, paint]);
+
   // ---- The flipbook itself (re-created when the layout or zoom changes) ----
   useEffect(() => {
     const host = hostRef.current;
@@ -101,6 +132,7 @@ export function BookReader({ book }: { book: BookDetail }) {
     host.appendChild(bookEl);
     const pageEls: HTMLElement[] = [];
     canvases.current.clear();
+    overlays.current.clear();
     for (let p = 1; p <= n; p++) {
       const el = document.createElement('div');
       el.className = 'book-page is-loading';
@@ -108,12 +140,16 @@ export function BookReader({ book }: { book: BookDetail }) {
       const canvas = document.createElement('canvas');
       canvas.width = 1;
       canvas.height = 1;
-      el.append(canvas);
+      const layer = document.createElement('div');
+      layer.className = 'book-hl';
+      el.append(canvas, layer);
       bookEl.append(el);
       pageEls.push(el);
       canvases.current.set(p, canvas);
+      overlays.current.set(p, layer);
     }
     for (const p of cache.current.keys()) draw(p);
+    paint();
 
     void import('page-flip').then(({ PageFlip }) => {
       if (disposed) return;
@@ -162,7 +198,7 @@ export function BookReader({ book }: { book: BookDetail }) {
       }
       host.replaceChildren();
     };
-  }, [layout, zoom, n, aspect, draw]);
+  }, [layout, zoom, n, aspect, draw, paint]);
 
   // ---- Lazy loading: the current view ±2 pages, through fresh signed URLs ----
   useEffect(() => {
@@ -255,6 +291,17 @@ export function BookReader({ book }: { book: BookDetail }) {
   // ---- Keyboard: turning pages, and refusing save/print/source shortcuts ----
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      // Ctrl/Cmd+F opens the in-book search (the page images have no text for the browser's).
+      if (
+        (e.ctrlKey || e.metaKey) &&
+        !e.shiftKey &&
+        e.key.toLowerCase() === 'f' &&
+        book.searchable
+      ) {
+        e.preventDefault();
+        setSearchOpen(true);
+        return;
+      }
       if (isBlockedShortcut(e)) {
         e.preventDefault();
         e.stopPropagation();
@@ -273,7 +320,7 @@ export function BookReader({ book }: { book: BookDetail }) {
     };
     window.addEventListener('keydown', onKey, true);
     return () => window.removeEventListener('keydown', onKey, true);
-  }, [n]);
+  }, [n, book.searchable]);
 
   useEffect(() => {
     const onChange = () => setFullscreen(document.fullscreenElement === rootRef.current);
@@ -305,9 +352,11 @@ export function BookReader({ book }: { book: BookDetail }) {
     >
       <header className="flex items-center gap-3 border-b border-line bg-panel px-4 py-2">
         <Link
-          href="/kitoblar"
+          href={book.collection === 'AUTHOR' ? `/muallif-kitoblari/${book.id}` : '/kitoblar'}
           className="btn btn-ghost min-w-11 px-2"
-          aria-label="Darsliklar ro‘yxati"
+          aria-label={
+            book.collection === 'AUTHOR' ? 'Kitob sahifasiga qaytish' : 'Darsliklar ro‘yxati'
+          }
         >
           <Icon name="arrowLeft" />
         </Link>
@@ -317,21 +366,32 @@ export function BookReader({ book }: { book: BookDetail }) {
         </div>
       </header>
 
-      <div
-        ref={stageRef}
-        className="relative flex-1 overflow-auto"
-        role="region"
-        aria-roledescription="kitob"
-        aria-label={`${book.title}: ${label}-bet, jami ${n}`}
-      >
-        <div className="flex min-h-full min-w-fit items-center justify-center p-2">
-          <div ref={hostRef} className="book-host" />
-        </div>
-        {!ready && (
-          <div className="absolute inset-0 grid place-items-center" role="status">
-            <div className="skeleton h-3/4 w-1/2 max-w-md" aria-hidden="true" />
-            <span className="sr-only">Kitob ochilmoqda…</span>
+      <div className="relative flex min-h-0 flex-1">
+        <div
+          ref={stageRef}
+          className="relative min-w-0 flex-1 overflow-auto"
+          role="region"
+          aria-roledescription="kitob"
+          aria-label={`${book.title}: ${label}-bet, jami ${n}`}
+        >
+          <div className="flex min-h-full min-w-fit items-center justify-center p-2">
+            <div ref={hostRef} className="book-host" />
           </div>
+          {!ready && (
+            <div className="absolute inset-0 grid place-items-center" role="status">
+              <div className="skeleton h-3/4 w-1/2 max-w-md" aria-hidden="true" />
+              <span className="sr-only">Kitob ochilmoqda…</span>
+            </div>
+          )}
+        </div>
+        {searchOpen && (
+          <SearchPanel
+            bookId={book.id}
+            current={index + 1}
+            onGo={goTo}
+            onHighlights={setHighlights}
+            onClose={() => setSearchOpen(false)}
+          />
         )}
       </div>
 
@@ -364,6 +424,14 @@ export function BookReader({ book }: { book: BookDetail }) {
           disabled={!ready || shown.at(-1)! >= n}
         />
         <GoToPage pageCount={n} onGo={goTo} disabled={!ready} />
+        {book.searchable && (
+          <ToolButton
+            icon="search"
+            label="Kitob ichidan qidirish"
+            onClick={() => setSearchOpen((o) => !o)}
+            disabled={!ready}
+          />
+        )}
         {book.toc.length > 0 && (
           <ToolButton
             icon="list"
@@ -485,5 +553,188 @@ function GoToPage({
         O‘tish
       </button>
     </form>
+  );
+}
+
+/**
+ * Search inside the book: results list (page + snippet), next/previous match, and the matches
+ * highlighted on the pages. Only snippets come from the server, never whole pages of text.
+ */
+function SearchPanel({
+  bookId,
+  current,
+  onGo,
+  onHighlights,
+  onClose,
+}: {
+  bookId: string;
+  current: number;
+  onGo: (page: number) => void;
+  onHighlights: (h: Map<number, BookRect[]>) => void;
+  onClose: () => void;
+}) {
+  const id = useId();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [q, setQ] = useState('');
+  const [res, setRes] = useState<BookSearchResponse | null>(null);
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [active, setActive] = useState(-1);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onClose]);
+
+  async function run(e: FormEvent) {
+    e.preventDefault();
+    const query = q.trim();
+    if (query.length < 2) return setError('Kamida 2 ta harf yozing');
+    setPending(true);
+    setError(null);
+    const r = await api<BookSearchResponse>(
+      `/books/${bookId}/search?q=${encodeURIComponent(query)}`,
+    );
+    setPending(false);
+    if (!r.ok) {
+      setRes(null);
+      onHighlights(new Map());
+      return setError(
+        r.status === 429 ? 'Juda tez qidirilmoqda. Bir daqiqadan keyin urinib ko‘ring.' : r.message,
+      );
+    }
+    setRes(r.data);
+    onHighlights(new Map(r.data.hits.map((h) => [h.page, h.rects])));
+    // Jump to the first match at or after the current page.
+    const next = r.data.hits.findIndex((h) => h.page >= current);
+    const first = next >= 0 ? next : 0;
+    setActive(r.data.hits.length ? first : -1);
+    if (r.data.hits[first]) onGo(r.data.hits[first].page);
+  }
+
+  function open(i: number) {
+    const hit = res?.hits[i];
+    if (!hit) return;
+    setActive(i);
+    onGo(hit.page);
+    // On a phone the panel covers the book: close it, the match stays highlighted.
+    if (window.innerWidth < 640) onClose();
+  }
+
+  function clear() {
+    setQ('');
+    setRes(null);
+    setActive(-1);
+    onHighlights(new Map());
+    inputRef.current?.focus();
+  }
+
+  const hits = res?.hits ?? [];
+  return (
+    <aside
+      aria-label="Kitob ichidan qidirish"
+      className="absolute inset-y-0 right-0 z-20 flex w-full max-w-sm flex-col border-l border-line bg-panel shadow-overlay"
+    >
+      <div className="flex items-center justify-between gap-2 border-b border-line px-4 py-2">
+        <h2 className="font-semibold">Kitob ichidan qidirish</h2>
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Qidiruvni yopish"
+          className="btn btn-ghost min-w-11 px-2"
+        >
+          <Icon name="x" />
+        </button>
+      </div>
+      <form onSubmit={run} className="flex gap-2 border-b border-line p-3" role="search">
+        <label htmlFor={id} className="sr-only">
+          Qidiriladigan so‘z
+        </label>
+        <input
+          ref={inputRef}
+          id={id}
+          type="search"
+          value={q}
+          maxLength={100}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="Masalan: flexbox"
+          className="field h-11 min-w-0 flex-1"
+        />
+        <button type="submit" className="btn btn-primary min-w-11 px-3" disabled={pending}>
+          <Icon name="search" className="size-4" />
+          <span className="sr-only sm:not-sr-only">Topish</span>
+        </button>
+      </form>
+      <div className="flex items-center justify-between gap-2 px-4 py-2 text-sm" aria-live="polite">
+        <span className="text-muted">
+          {pending
+            ? 'Qidirilmoqda…'
+            : res
+              ? hits.length
+                ? `${res.pages} ta betda topildi${res.truncated ? ` (birinchi ${hits.length} tasi)` : ''}`
+                : 'Hech narsa topilmadi'
+              : 'So‘z yoki ibora yozing (lotin yoki kirill)'}
+        </span>
+        {hits.length > 0 && (
+          <span className="flex items-center gap-1">
+            <button
+              type="button"
+              className="btn btn-ghost min-w-11 px-2"
+              aria-label="Oldingi natija"
+              onClick={() => open((active - 1 + hits.length) % hits.length)}
+            >
+              <Icon name="chevronUp" />
+            </button>
+            <button
+              type="button"
+              className="btn btn-ghost min-w-11 px-2"
+              aria-label="Keyingi natija"
+              onClick={() => open((active + 1) % hits.length)}
+            >
+              <Icon name="chevronDown" />
+            </button>
+            <button type="button" className="btn btn-ghost px-2 text-sm" onClick={clear}>
+              Tozalash
+            </button>
+          </span>
+        )}
+      </div>
+      {error && (
+        <p
+          role="alert"
+          className="mx-4 rounded-control bg-red-50 px-3 py-2 text-sm text-red-800 dark:bg-red-950 dark:text-red-300"
+        >
+          {error}
+        </p>
+      )}
+      <ol className="flex-1 space-y-1 overflow-y-auto p-2">
+        {hits.map((h, i) => (
+          <li key={h.page}>
+            <button
+              type="button"
+              onClick={() => open(i)}
+              aria-current={i === active || undefined}
+              className={`w-full rounded-control px-3 py-2 text-left text-sm hover:bg-subtle ${
+                i === active ? 'bg-brand-50 ring-2 ring-brand-500 dark:bg-brand-950' : ''
+              }`}
+            >
+              <span className="mb-1 flex items-center justify-between font-semibold">
+                <span>{h.page}-bet</span>
+                {h.count > 1 && <span className="text-xs text-muted">{h.count} marta</span>}
+              </span>
+              <span className="block text-muted">
+                {h.before}
+                <mark className="rounded bg-accent-300 px-0.5 text-ink">{h.match}</mark>
+                {h.after}
+              </span>
+            </button>
+          </li>
+        ))}
+      </ol>
+    </aside>
   );
 }

@@ -1,4 +1,5 @@
 import { createCanvas, loadImage } from '@napi-rs/canvas';
+import { buildPageText, type PageText, type TextItem } from '@webdizayn/shared';
 import { copyFile, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join, sep } from 'node:path';
 
@@ -19,7 +20,13 @@ export interface RasterizeResult {
   width: number;
   height: number;
   toc: TocEntry[];
+  /** Pages that have a text layer (searchable). */
+  textPages: number;
 }
+
+/** File written next to the page images; the API moves it into the database. */
+export const TEXT_FILE = 'text.json';
+export type TextFile = ({ page: number } & PageText)[];
 
 export class RasterizeError extends Error {
   constructor(
@@ -82,6 +89,7 @@ export async function rasterize(
   await mkdir(outDir, { recursive: true });
 
   let first = { width: 0, height: 0 };
+  const texts: TextFile = [];
   for (let n = 1; n <= doc.numPages; n++) {
     const page = await doc.getPage(n);
     const base = page.getViewport({ scale: 1 });
@@ -109,12 +117,44 @@ export async function rasterize(
     sm.getContext('2d').drawImage(lg, 0, 0, sm.width, sm.height);
     await writeFile(join(outDir, `${n}-lg.webp`), await lg.encode('webp', WEBP_QUALITY));
     await writeFile(join(outDir, `${n}-sm.webp`), await sm.encode('webp', WEBP_QUALITY));
+    const layer = await textLayer(pdfjs, page, base);
+    if (layer.text) texts.push({ page: n, ...layer });
     page.cleanup();
   }
+  await writeFile(join(outDir, TEXT_FILE), JSON.stringify(texts));
 
   const toc = await readOutline(doc);
   await task.destroy();
-  return { pageCount: doc.numPages, ...first, toc };
+  return { pageCount: doc.numPages, ...first, toc, textPages: texts.length };
+}
+
+type Page = Awaited<ReturnType<Doc['getPage']>>;
+type Viewport = ReturnType<Page['getViewport']>;
+
+/**
+ * Text items of a page with their boxes as page fractions (y from the top). Scanned pages have
+ * no text; a failure here never fails the book, the page is just not searchable.
+ */
+async function textLayer(pdfjs: PdfJs, page: Page, base: Viewport): Promise<PageText> {
+  try {
+    const content = await page.getTextContent();
+    const items: TextItem[] = [];
+    for (const it of content.items) {
+      if (!('str' in it) || !it.str.trim()) continue;
+      const tx = pdfjs.Util.transform(base.transform, it.transform) as number[];
+      const fontHeight = Math.hypot(tx[2]!, tx[3]!);
+      items.push({
+        str: it.str,
+        x: tx[4]! / base.width,
+        y: (tx[5]! - fontHeight) / base.height,
+        w: it.width / base.width,
+        h: (fontHeight * 1.2) / base.height,
+      });
+    }
+    return buildPageText(items);
+  } catch {
+    return { text: '', display: '', spans: [] };
+  }
 }
 
 type Doc = Awaited<ReturnType<PdfJs['getDocument']>['promise']>;
