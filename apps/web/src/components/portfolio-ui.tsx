@@ -45,8 +45,13 @@ export function Achievements({ list }: { list: Achievement[] }) {
       {list.map((a) => {
         const info = ACHIEVEMENT_INFO[a];
         return (
-          <li key={a} className="flex items-start gap-3 rounded-control border border-line p-3">
-            <Icon name={info.icon} className="mt-0.5 size-5 text-brand-700 dark:text-brand-300" />
+          <li
+            key={a}
+            className="flex items-center gap-3 rounded-xl bg-canvas p-3 dark:bg-slate-800"
+          >
+            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-accent-400 text-ink">
+              <Icon name={info.icon} className="size-5" />
+            </span>
             <span>
               <span className="block font-semibold text-ink dark:text-white">{info.title}</span>
               <span className="block text-sm text-muted">{info.text}</span>

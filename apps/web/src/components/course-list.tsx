@@ -30,6 +30,38 @@ const STATUS_TONE: Record<CourseStatus, string> = {
   ARCHIVED: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400',
 };
 
+const COVERS = [
+  'from-brand-600 to-brand-400',
+  'from-violet-600 to-fuchsia-400',
+  'from-emerald-600 to-teal-400',
+  'from-orange-500 to-amber-400',
+  'from-rose-600 to-pink-400',
+  'from-cyan-600 to-sky-400',
+];
+
+/** Courses have no images yet; a stable gradient + initials stands in for the cover photo. */
+export function CourseCover({ title }: { title: string }) {
+  let hash = 0;
+  for (const ch of title) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;
+  const initials = title
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase())
+    .join('');
+  return (
+    <div
+      aria-hidden="true"
+      className={`relative flex h-40 items-center justify-center overflow-hidden rounded-t-card bg-gradient-to-br ${COVERS[hash % COVERS.length]}`}
+    >
+      <div className="dots-pattern absolute inset-0 opacity-30 mix-blend-overlay" />
+      <div className="absolute -right-8 -bottom-10 size-36 rounded-full bg-white/15" />
+      <span className="relative font-display text-5xl font-bold text-white drop-shadow-sm">
+        {initials}
+      </span>
+    </div>
+  );
+}
+
 export function CourseList({ orgId, role }: { orgId: string; role: Role }) {
   const { state } = useApi<CourseSummary[]>(`/orgs/${orgId}/courses`);
   const isStaff = role !== 'STUDENT';
@@ -58,6 +90,7 @@ export function CourseList({ orgId, role }: { orgId: string; role: Role }) {
                     key={c.id}
                     className={`card relative flex flex-col ${href ? 'card-hover focus-within:border-brand-500' : ''}`}
                   >
+                    <CourseCover title={c.title} />
                     <div className="flex flex-1 flex-col gap-3 p-6">
                       <div className="flex items-center justify-between gap-3 text-xs">
                         {isStaff ? (

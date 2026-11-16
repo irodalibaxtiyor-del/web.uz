@@ -1,10 +1,12 @@
 'use client';
 
-import Editor, { loader, type OnMount } from '@monaco-editor/react';
+import Editor, { loader, type BeforeMount, type OnMount } from '@monaco-editor/react';
 import { useEffect, useRef } from 'react';
 
 // Serve Monaco from our own origin (copied to public/monaco by scripts/copy-monaco.mjs).
 loader.config({ paths: { vs: '/monaco/vs' } });
+
+const THEME = 'wd-dark';
 
 const LANGUAGE: Record<string, string> = { html: 'html', css: 'css', js: 'javascript' };
 
@@ -34,6 +36,21 @@ export function CodeEditor({
     runRef.current = onRun;
   }, [onRun]);
 
+  // vs-dark with line numbers that meet WCAG AA on #1e1e1e (the dimmed final-line number
+  // is #474747 there, 1.8:1).
+  const beforeMount: BeforeMount = (monaco) => {
+    monaco.editor.defineTheme(THEME, {
+      base: 'vs-dark',
+      inherit: true,
+      rules: [],
+      colors: {
+        'editorLineNumber.foreground': '#9d9d9d',
+        'editorLineNumber.dimmedForeground': '#8f8f8f',
+        'editorLineNumber.activeForeground': '#e6e6e6',
+      },
+    });
+  };
+
   const onMount: OnMount = (editor, monaco) => {
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => runRef.current?.());
   };
@@ -44,8 +61,9 @@ export function CodeEditor({
       path={modelPath}
       language={languageFor(path)}
       value={value}
-      theme="vs-dark"
+      theme={THEME}
       onChange={(v) => onChange(v ?? '')}
+      beforeMount={beforeMount}
       onMount={onMount}
       loading={<span className="text-sm text-slate-400">Muharrir yuklanmoqda…</span>}
       options={{

@@ -5,8 +5,8 @@
  * classes below comes from here. Semantic colours (canvas, panel, line, muted, fg) are
  * re-defined for dark mode, so components do not need `dark:` variants for them.
  *
- * Visual language: neutral surfaces, one brand blue for actions and active state, a yellow
- * accent used sparingly, thin borders instead of heavy or coloured shadows.
+ * Visual language (Loms style): bright education blue, warm yellow accent, soft blue-tinted
+ * section backgrounds, rounded cards with soft shadows, blue page banners.
  */
 @theme {
   --breakpoint-xs: 30rem;
@@ -32,10 +32,10 @@
   --color-accent-500: #e5ae00;
 
   /* Semantic surfaces and text (overridden for dark mode below). */
-  --color-canvas: #f6f8fb;
+  --color-canvas: #f5faff;
   --color-panel: #ffffff;
   --color-subtle: #f1f4f8;
-  --color-line: #e3e8ef;
+  --color-line: #e6edf5;
   --color-line-strong: #cbd5e1;
   --color-fg: #334155;
   --color-muted: #5b6577;
@@ -47,11 +47,11 @@
   --color-chart: #0071dc;
 
   --radius-control: 0.5rem;
-  --radius-card: 0.75rem;
-  --radius-panel: 1rem;
+  --radius-card: 1rem;
+  --radius-panel: 1.5rem;
 
-  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.05), 0 1px 3px rgb(15 23 42 / 0.04);
-  --shadow-card-hover: 0 6px 16px -6px rgb(15 23 42 / 0.14);
+  --shadow-card: 0 10px 30px -12px rgb(14 17 51 / 0.18);
+  --shadow-card-hover: 0 20px 40px -14px rgb(0 113 220 / 0.35);
   --shadow-overlay: 0 16px 40px -12px rgb(15 23 42 / 0.28);
 
   /* Fluid type scale for headings (min at 320px, max at 1440px). */
@@ -141,13 +141,13 @@
   }
 
   .btn {
-    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-control px-5 py-2.5 text-sm font-semibold transition-colors duration-150 disabled:pointer-events-none disabled:opacity-60 sm:min-h-10;
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-control px-5 py-2.5 text-sm font-semibold transition-all duration-200 disabled:pointer-events-none disabled:opacity-60 sm:min-h-10;
   }
   .btn-primary {
-    @apply bg-brand-600 text-white hover:bg-brand-700 active:bg-brand-800;
+    @apply bg-brand-600 text-white shadow-[0_8px_20px_-8px_rgb(0_113_220/0.6)] hover:-translate-y-0.5 hover:bg-brand-700 active:bg-brand-800;
   }
   .btn-accent {
-    @apply bg-accent-400 text-ink hover:bg-accent-300;
+    @apply bg-accent-400 text-ink hover:-translate-y-0.5 hover:bg-accent-300;
   }
   .btn-outline {
     @apply border border-line-strong bg-panel text-ink hover:border-brand-600 hover:text-brand-700 dark:text-white dark:hover:border-brand-400 dark:hover:text-brand-300;
@@ -163,11 +163,11 @@
     @apply rounded-card border border-line bg-panel shadow-card;
   }
   .card-hover {
-    @apply transition-[border-color,box-shadow,translate] duration-200 hover:-translate-y-0.5 hover:border-line-strong hover:shadow-card-hover;
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover;
   }
 
   .section-eyebrow {
-    @apply inline-block text-sm font-semibold tracking-wide text-brand-700 uppercase dark:text-brand-300;
+    @apply inline-block rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold tracking-wide text-brand-700 uppercase dark:bg-brand-950 dark:text-brand-300;
   }
 
   .field {
@@ -177,6 +177,12 @@
   /* A field with a validation error: the colour backs up the message under it. */
   .field[aria-invalid='true'] {
     @apply border-red-600 focus:border-red-600 focus:ring-red-100 dark:border-red-400 dark:focus:border-red-400 dark:focus:ring-red-950;
+  }
+
+  /* Decorative dotted pattern used behind hero, banners and course covers. */
+  .dots-pattern {
+    background-image: radial-gradient(rgb(0 113 220 / 0.25) 1.5px, transparent 1.5px);
+    background-size: 18px 18px;
   }
 
   .skeleton {
@@ -318,4 +324,25 @@
   body:has(.book-reader) > * {
     display: none !important;
   }
+}
+
+/*
+ * Inside the blue page banner, secondary text and links inherit white so they stay legible
+ * (WCAG AA); outline buttons keep their own white surface.
+ */
+.page-banner :where(.text-muted, .text-fg) {
+  color: #fff;
+}
+.page-banner :where(a:not(.btn)) {
+  color: #fff;
+}
+
+/* Primary actions inside the blue banner use the yellow accent so they stand out from it. */
+.page-banner .btn-primary {
+  background-color: var(--color-accent-400);
+  color: var(--color-ink);
+  box-shadow: none;
+}
+.page-banner .btn-primary:hover {
+  background-color: var(--color-accent-300);
 }

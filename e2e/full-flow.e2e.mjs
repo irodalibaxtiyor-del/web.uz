@@ -8,7 +8,14 @@
 // API (its UI was click-tested in earlier phases); every learning, review and portfolio step
 // below is driven through the UI.
 import { execFileSync, spawn } from 'node:child_process';
-import { createWriteStream, mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
+import {
+  createWriteStream,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  readdirSync,
+  writeFileSync,
+} from 'node:fs';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -741,6 +748,40 @@ async function run() {
   );
 }
 
+/**
+ * CI job logs and artifacts need a signed-in GitHub account, check-run annotations do not.
+ * On failure, repeat the essentials as `::error` annotations so the cause is readable from
+ * the public API. The run's random password is masked; servers log at `warn` without bodies.
+ */
+function annotateFailure() {
+  const tail = (file, n) => {
+    try {
+      return readFileSync(join(OUT, file), 'utf8').trimEnd().split('\n').slice(-n).join('\n');
+    } catch {
+      return '(none)';
+    }
+  };
+  const failures = readdirSync(OUT)
+    .filter((f) => /^failure-\d+\.txt$/.test(f))
+    .map((f) => `${f}:\n${tail(f, 15)}`);
+  const sections = [
+    ['e2e steps', results.slice(-12).join('\n')],
+    ['crash', crashed?.stack?.split('\n').slice(0, 8).join('\n') ?? '(none)'],
+    ['pages', failures.join('\n') || '(none)'],
+    ['browser diagnostics', tail('browser-diagnostics.txt', 25)],
+    ['api.log', tail('api.log', 25)],
+    ['web.log', tail('web.log', 25)],
+    ['sandbox.log', tail('sandbox.log', 10)],
+  ];
+  for (const [title, body] of sections) {
+    // eslint-disable-next-line no-control-regex
+    const plain = body.replace(/\x1b\[[0-9;]*m/g, '');
+    const text = plain.replaceAll(PASSWORD, '***').slice(-3500);
+    const esc = text.replaceAll('%', '%25').replaceAll('\r', '%0D').replaceAll('\n', '%0A');
+    console.log(`::error title=e2e ${title}::${esc}`);
+  }
+}
+
 let crashed = null;
 try {
   await run();
@@ -779,6 +820,10 @@ try {
 } finally {
   await browser?.close().catch(() => {});
   stopAll();
+}
+if ((failed || crashed) && process.env.GITHUB_ACTIONS) {
+  await new Promise((r) => setTimeout(r, 500)); // let the server log streams flush
+  annotateFailure();
 }
 console.log(`\n${results.length - failed}/${results.length} steps passed. Artifacts: ${OUT}`);
 process.exit(failed || crashed ? 1 : 0);

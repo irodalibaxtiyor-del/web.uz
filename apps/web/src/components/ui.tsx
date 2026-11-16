@@ -51,7 +51,7 @@ export function BackLink({ href, children }: { href: string; children: ReactNode
   );
 }
 
-/** Page title with breadcrumb and actions, used at the top of inner pages. */
+/** Blue page banner with breadcrumb, title and actions, used at the top of inner pages. */
 export function PageHeader({
   title,
   subtitle,
@@ -64,30 +64,37 @@ export function PageHeader({
   actions?: ReactNode;
 }) {
   return (
-    <header className="mb-8 border-b border-line pb-6">
-      {crumbs.length > 0 && (
-        <nav aria-label="Breadcrumb" className="mb-3">
-          <ol className="flex flex-wrap items-center gap-1 text-sm text-muted">
-            {crumbs.map((c) => (
-              <li key={c.href} className="flex items-center gap-1">
-                <Link
-                  href={c.href}
-                  className="hover:text-brand-700 hover:underline dark:hover:text-brand-300"
-                >
-                  {c.label}
-                </Link>
-                <Icon name="chevronRight" className="size-3.5" />
-              </li>
-            ))}
-          </ol>
-        </nav>
-      )}
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div className="min-w-0 space-y-2">
-          <h1 className="text-title font-bold break-words">{title}</h1>
-          {subtitle && <div className="max-w-3xl text-muted">{subtitle}</div>}
+    <header className="page-banner relative mb-8 overflow-hidden rounded-panel bg-brand-600 px-6 py-9 text-white sm:px-10">
+      <div
+        aria-hidden="true"
+        className="absolute -top-16 -right-10 size-56 rounded-full bg-brand-700/60"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute top-6 right-[38%] hidden size-10 rounded-full border-[5px] border-accent-400 sm:block"
+      />
+      <div className="relative">
+        {crumbs.length > 0 && (
+          <nav aria-label="Breadcrumb" className="mb-3">
+            <ol className="flex flex-wrap items-center gap-1 text-sm text-white">
+              {crumbs.map((c) => (
+                <li key={c.href} className="flex items-center gap-1">
+                  <Link href={c.href} className="text-white hover:underline">
+                    {c.label}
+                  </Link>
+                  <Icon name="chevronRight" className="size-3.5" />
+                </li>
+              ))}
+            </ol>
+          </nav>
+        )}
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div className="min-w-0 space-y-2">
+            <h1 className="text-title font-bold break-words text-white">{title}</h1>
+            {subtitle && <div className="max-w-3xl text-white">{subtitle}</div>}
+          </div>
+          {actions && <div className="flex flex-wrap gap-3">{actions}</div>}
         </div>
-        {actions && <div className="flex flex-wrap gap-3">{actions}</div>}
       </div>
     </header>
   );
@@ -224,10 +231,10 @@ export function ProgressBar({
       aria-valuemin={0}
       aria-valuemax={100}
       aria-label={label}
-      className="h-2 w-full overflow-hidden rounded-full bg-subtle"
+      className="h-2.5 w-full overflow-hidden rounded-full bg-brand-50 dark:bg-slate-800"
     >
       <div
-        className="h-full rounded-full bg-brand-600 transition-[width] dark:bg-brand-400"
+        className="h-full rounded-full bg-gradient-to-r from-brand-600 to-brand-400 transition-[width]"
         style={{ width: `${percent}%` }}
       />
     </div>

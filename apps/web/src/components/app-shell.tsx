@@ -221,7 +221,7 @@ export function AppShell({
           id="main"
           ref={mainRef}
           tabIndex={-1}
-          className="min-w-0 flex-1 overflow-y-auto overscroll-contain focus:outline-none"
+          className="min-w-0 flex-1 overflow-y-auto overscroll-contain bg-canvas focus:outline-none dark:bg-slate-950"
         >
           {/* Full-bleed views (the textbook reader) use the whole content area. */}
           {FULL_BLEED.test(pathname) ? (
