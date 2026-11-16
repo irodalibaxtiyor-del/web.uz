@@ -1,5 +1,6 @@
 import { readdirSync } from 'node:fs';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import type { ChoiceQuestion } from '@webdizayn/shared';
 import { CONTENT_COURSES, findContentCourse } from '../src/db/content/registry';
 import { q } from '../src/db/content/helpers';
 import { CourseExistsError, contentDirOf, prepareCourse, seedCourse } from '../src/db/content/seed';
@@ -47,7 +48,9 @@ describe.each(CONTENT_COURSES.map((c) => [c.slug, c] as const))('%s course manif
   });
 
   it('does not put the right answer first most of the time', () => {
-    const questions = c.modules.flatMap((m) => m.lessons.flatMap((l) => l.quiz?.questions ?? []));
+    const questions = c.modules
+      .flatMap((m) => m.lessons.flatMap((l) => l.quiz?.questions ?? []))
+      .filter((q): q is ChoiceQuestion => q.kind === 'SINGLE' || q.kind === 'MULTIPLE');
     const first = questions.filter((q) => q.correct.includes(q.options[0]!.id)).length;
     expect(first / questions.length).toBeLessThan(0.5);
   });

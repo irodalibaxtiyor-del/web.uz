@@ -1,0 +1,2 @@
+ALTER TABLE "quizzes" ADD COLUMN "feedback" text DEFAULT 'PER_QUESTION' NOT NULL;--> statement-breakpoint
+ALTER TABLE "quizzes" ADD CONSTRAINT "quizzes_feedback_mode" CHECK ("quizzes"."feedback" in ('PER_QUESTION', 'TOTAL_ONLY'));

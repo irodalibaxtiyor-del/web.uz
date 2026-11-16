@@ -18,6 +18,7 @@ import {
 } from '@/components/ui';
 import { send } from '@/lib/api';
 import { formatDateTime } from '@/lib/dates';
+import { useActivity } from '@/lib/use-activity';
 import { useApi } from '@/lib/use-api';
 import { Icon } from '@/components/icons';
 
@@ -30,6 +31,8 @@ export default function LessonPage() {
   }>();
   const courseBase = `/orgs/${orgId}/courses/${courseId}`;
   const { state, reload } = useApi<LessonView>(`${courseBase}/lessons/${lessonId}`);
+  // Time on task (research analytics); only once the page actually opened.
+  useActivity(courseBase, 'LESSON', state.kind === 'ready' ? lessonId : null);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 

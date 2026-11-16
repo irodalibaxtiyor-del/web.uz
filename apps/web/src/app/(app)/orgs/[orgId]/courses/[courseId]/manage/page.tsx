@@ -44,6 +44,18 @@ export default function ManageCoursePage() {
                 <Link href={`${base}/manage/analytics`} className="btn btn-outline">
                   Analitika
                 </Link>
+                <Link href={`${base}/manage/assessments`} className="btn btn-outline">
+                  Kirish va yakuniy test
+                </Link>
+                <Link href={`${base}/manage/experiment`} className="btn btn-outline">
+                  Pedagogik tajriba
+                </Link>
+                <Link href={`${base}/manage/surveys`} className="btn btn-outline">
+                  So&apos;rovnomalar
+                </Link>
+                <Link href={`${base}/manage/item-analysis`} className="btn btn-outline">
+                  Savollar tahlili
+                </Link>
                 {s.course.status !== 'PUBLISHED' && (
                   <Button onClick={() => setStatus('PUBLISHED')} disabled={lessonCount === 0}>
                     E&apos;lon qilish

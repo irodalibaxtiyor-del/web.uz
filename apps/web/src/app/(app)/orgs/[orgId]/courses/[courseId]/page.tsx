@@ -1,9 +1,10 @@
 'use client';
 
-import type { CourseMap, CourseMapLesson } from '@webdizayn/shared';
+import type { CourseMap, CourseMapLesson, LessonState } from '@webdizayn/shared';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
+import { AssessmentsBanner } from '@/components/assessment-ui';
 import { Icon, type IconName } from '@/components/icons';
 import {
   Button,
@@ -18,6 +19,14 @@ import { send } from '@/lib/api';
 import { useApi } from '@/lib/use-api';
 
 const CRUMBS = [{ href: '/dashboard', label: 'Kabinet' }];
+
+const DOT: Record<LessonState, string> = {
+  COMPLETED: 'bg-emerald-600 text-white',
+  IN_PROGRESS: 'bg-brand-600 text-white ring-4 ring-brand-100 dark:ring-brand-900',
+  AVAILABLE: 'bg-white text-brand-700 ring-2 ring-brand-600 dark:bg-slate-900 dark:text-brand-300',
+  NEEDS_IMPROVEMENT: 'bg-amber-400 text-amber-950 ring-4 ring-amber-100 dark:ring-amber-900',
+  LOCKED: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400',
+};
 
 export default function CourseMapPage() {
   const { orgId, courseId } = useParams<{ orgId: string; courseId: string }>();
@@ -72,7 +81,7 @@ export default function CourseMapPage() {
               subtitle={map.course.description}
               actions={
                 next && (
-                  <Link href={`${base}/lessons/${next.id}`} className="btn btn-primary px-6 py-3">
+                  <Link href={`${base}/lessons/${next.id}`} className="btn btn-accent px-6 py-3">
                     {map.completedLessons === 0 ? 'Boshlash' : 'Davom etish'}
                     <Icon name="arrowRight" className="size-4" />
                   </Link>
@@ -81,6 +90,7 @@ export default function CourseMapPage() {
             />
             <div className="grid gap-8 lg:grid-cols-[1fr_300px]">
               <div className="space-y-6">
+                <AssessmentsBanner base={base} />
                 {map.modules.length === 0 && (
                   <EmptyState title="Kursda hali dars yo'q">
                     Darslar qo&apos;shilganda shu yerda ko&apos;rinadi.
@@ -88,9 +98,10 @@ export default function CourseMapPage() {
                 )}
                 {map.modules.map((mod, mi) => (
                   <section key={mod.id} className="card overflow-hidden">
-                    <h2 className="border-b border-line px-5 py-4 text-lg font-semibold sm:px-6">
-                      <span className="mb-0.5 block text-xs font-semibold tracking-wide text-muted uppercase">
-                        {mi + 1}-modul
+                    <h2 className="flex items-center gap-3 border-b border-line bg-canvas px-5 py-4 text-lg font-semibold sm:px-6 dark:bg-slate-800/40">
+                      <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-brand-600 text-sm text-white">
+                        <span className="sr-only">Modul </span>
+                        {mi + 1}
                       </span>
                       {mod.title}
                     </h2>
@@ -102,9 +113,15 @@ export default function CourseMapPage() {
                         >
                           <span
                             aria-hidden="true"
-                            className="w-8 shrink-0 pt-0.5 font-mono text-sm text-muted tabular-nums"
+                            className={`grid size-9 shrink-0 place-items-center rounded-full text-sm font-semibold ${DOT[l.state]}`}
                           >
-                            {mi + 1}.{li + 1}
+                            {l.state === 'COMPLETED' ? (
+                              <Icon name="check" className="size-5" />
+                            ) : l.state === 'LOCKED' ? (
+                              <Icon name="lock" className="size-4" />
+                            ) : (
+                              li + 1
+                            )}
                           </span>
                           <div className="flex min-w-0 flex-1 flex-wrap items-start justify-between gap-x-4 gap-y-1">
                             <div className="min-w-0">
@@ -130,18 +147,18 @@ export default function CourseMapPage() {
               </div>
               <aside className="card h-fit space-y-4 p-6 lg:sticky lg:top-0">
                 <h2 className="text-lg font-semibold">Sizning progressingiz</h2>
-                <div className="font-display text-4xl font-bold text-ink dark:text-white">
+                <div className="font-display text-4xl font-bold text-brand-600 dark:text-brand-300">
                   {map.progressPercent}%
                 </div>
                 <ProgressBar percent={map.progressPercent} />
                 <dl className="grid grid-cols-2 gap-3 pt-2 text-sm">
-                  <div className="rounded-control border border-line p-3">
+                  <div className="rounded-xl bg-canvas p-3 dark:bg-slate-800">
                     <dt className="text-slate-500 dark:text-slate-400">Tugatilgan</dt>
                     <dd className="font-display text-xl font-bold text-ink dark:text-white">
                       {map.completedLessons}
                     </dd>
                   </div>
-                  <div className="rounded-control border border-line p-3">
+                  <div className="rounded-xl bg-canvas p-3 dark:bg-slate-800">
                     <dt className="text-slate-500 dark:text-slate-400">Jami dars</dt>
                     <dd className="font-display text-xl font-bold text-ink dark:text-white">
                       {map.totalLessons}

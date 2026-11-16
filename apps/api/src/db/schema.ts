@@ -2,6 +2,7 @@ import { sql } from 'drizzle-orm';
 import {
   boolean,
   check,
+  date,
   foreignKey,
   index,
   integer,
@@ -33,7 +34,15 @@ import {
   type CheckRule,
   type GradingPolicy,
   type ProjectFile,
+  type ActivityKind,
+  type AssessmentKind,
+  type ExperimentRole,
+  type SurveyItem,
+  type SurveyPhase,
+  type QuizAnswer,
+  type QuizFeedbackMode,
   type QuizQuestion,
+  type QuizQuestionResult,
   type RubricCriterion,
   type RubricScore,
 } from '@webdizayn/shared';
@@ -592,6 +601,8 @@ export const quizzes = pgTable(
     /** Includes the correct answers: staff-only, never serialized to students. */
     questions: jsonb('questions').$type<QuizQuestion[]>().notNull().default([]),
     passingPercent: integer('passing_percent').notNull().default(70),
+    /** PER_QUESTION: right/wrong + explanation per question after an attempt; TOTAL_ONLY: score. */
+    feedback: text('feedback').$type<QuizFeedbackMode>().notNull().default('PER_QUESTION'),
     isActive: boolean('is_active').notNull().default(false),
     position: integer('position').notNull(),
     createdAt: createdAt(),
@@ -602,6 +613,7 @@ export const quizzes = pgTable(
     index('quizzes_course_idx').on(t.courseId),
     check('quizzes_position_nonneg', sql`${t.position} >= 0`),
     check('quizzes_passing_range', sql`${t.passingPercent} between 1 and 100`),
+    check('quizzes_feedback_mode', sql`${t.feedback} in ('PER_QUESTION', 'TOTAL_ONLY')`),
   ],
 );
 
@@ -619,7 +631,9 @@ export const quizAttempts = pgTable(
     courseId: uuid('course_id')
       .notNull()
       .references(() => courses.id, { onDelete: 'cascade' }),
-    answers: jsonb('answers').$type<{ questionId: string; optionIds: string[] }[]>().notNull(),
+    answers: jsonb('answers').$type<QuizAnswer[]>().notNull(),
+    /** Per-question outcome (kind + right/wrong), for analytics by question type. Staff-only. */
+    results: jsonb('results').$type<QuizQuestionResult[]>().notNull().default([]),
     correct: integer('correct').notNull(),
     total: integer('total').notNull(),
     score: integer('score').notNull(),
@@ -1002,3 +1016,162 @@ export const chatContactRequests = pgTable(
     index('chat_contact_resolved_by_idx').on(t.resolvedBy),
   ],
 );
+
+/**
+ * Course pre-/post-tests (measurement instruments of the pedagogical experiment). One per kind
+ * per course. Questions include the answers: staff-only. Frozen once anyone has started.
+ */
+export const courseAssessments = pgTable(
+  'course_assessments',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    courseId: uuid('course_id')
+      .notNull()
+      .references(() => courses.id, { onDelete: 'cascade' }),
+    kind: text('kind').$type<AssessmentKind>().notNull(),
+    title: text('title').notNull(),
+    description: text('description').notNull().default(''),
+    questions: jsonb('questions').$type<QuizQuestion[]>().notNull().default([]),
+    timeLimitMinutes: integer('time_limit_minutes'),
+    passingPercent: integer('passing_percent').notNull().default(60),
+    isOpen: boolean('is_open').notNull().default(false),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (t) => [
+    uniqueIndex('course_assessments_course_kind_uq').on(t.courseId, t.kind),
+    check('course_assessments_kind', sql`${t.kind} in ('PRETEST', 'POSTTEST')`),
+    check(
+      'course_assessments_time_limit',
+      sql`${t.timeLimitMinutes} is null or ${t.timeLimitMinutes} between 1 and 180`,
+    ),
+    check('course_assessments_passing', sql`${t.passingPercent} between 1 and 100`),
+  ],
+);
+
+/** Exactly one attempt per student per assessment; graded once on submit. */
+export const assessmentAttempts = pgTable(
+  'assessment_attempts',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    assessmentId: uuid('assessment_id')
+      .notNull()
+      .references(() => courseAssessments.id, { onDelete: 'cascade' }),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    courseId: uuid('course_id')
+      .notNull()
+      .references(() => courses.id, { onDelete: 'cascade' }),
+    startedAt: timestamp('started_at', { withTimezone: true }).notNull().defaultNow(),
+    submittedAt: timestamp('submitted_at', { withTimezone: true }),
+    answers: jsonb('answers').$type<QuizAnswer[]>(),
+    results: jsonb('results').$type<QuizQuestionResult[]>(),
+    correct: integer('correct'),
+    total: integer('total'),
+    score: integer('score'),
+    /** Submitted after the time limit (+ grace): kept, but flagged for the researcher. */
+    late: boolean('late').notNull().default(false),
+  },
+  (t) => [
+    uniqueIndex('assessment_attempts_one_uq').on(t.assessmentId, t.userId),
+    index('assessment_attempts_user_idx').on(t.userId),
+    index('assessment_attempts_course_idx').on(t.courseId),
+  ],
+);
+
+/** Groups taking part in a course's pedagogical experiment, as experimental or control. */
+export const courseExperimentGroups = pgTable(
+  'course_experiment_groups',
+  {
+    courseId: uuid('course_id')
+      .notNull()
+      .references(() => courses.id, { onDelete: 'cascade' }),
+    groupId: uuid('group_id')
+      .notNull()
+      .references(() => groups.id, { onDelete: 'cascade' }),
+    role: text('role').$type<ExperimentRole>().notNull(),
+    updatedBy: uuid('updated_by').references(() => users.id, { onDelete: 'set null' }),
+    updatedAt: updatedAt(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.courseId, t.groupId] }),
+    index('course_experiment_groups_group_idx').on(t.groupId),
+    index('course_experiment_groups_updated_by_idx').on(t.updatedBy),
+    check('course_experiment_groups_role', sql`${t.role} in ('EXPERIMENT', 'CONTROL')`),
+  ],
+);
+
+/** Research questionnaires of a course. Items freeze after the first response. */
+export const courseSurveys = pgTable(
+  'course_surveys',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    courseId: uuid('course_id')
+      .notNull()
+      .references(() => courses.id, { onDelete: 'cascade' }),
+    title: text('title').notNull(),
+    description: text('description').notNull().default(''),
+    phase: text('phase').$type<SurveyPhase>().notNull().default('ANY'),
+    items: jsonb('items').$type<SurveyItem[]>().notNull().default([]),
+    anonymous: boolean('anonymous').notNull().default(true),
+    isOpen: boolean('is_open').notNull().default(false),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (t) => [
+    index('course_surveys_course_idx').on(t.courseId),
+    check('course_surveys_phase', sql`${t.phase} in ('PRE', 'POST', 'ANY')`),
+  ],
+);
+
+/** One response per student per survey. Names are never shown for anonymous surveys. */
+export const surveyResponses = pgTable(
+  'survey_responses',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    surveyId: uuid('survey_id')
+      .notNull()
+      .references(() => courseSurveys.id, { onDelete: 'cascade' }),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    answers: jsonb('answers').$type<Record<string, number | string>>().notNull(),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    uniqueIndex('survey_responses_one_uq').on(t.surveyId, t.userId),
+    index('survey_responses_user_idx').on(t.userId),
+  ],
+);
+
+/** Active seconds per student, learning item and day (time on task). */
+export const activityTime = pgTable(
+  'activity_time',
+  {
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    courseId: uuid('course_id')
+      .notNull()
+      .references(() => courses.id, { onDelete: 'cascade' }),
+    kind: text('kind').$type<ActivityKind>().notNull(),
+    targetId: uuid('target_id').notNull(),
+    day: date('day', { mode: 'string' }).notNull(),
+    seconds: integer('seconds').notNull().default(0),
+  },
+  (t) => [
+    primaryKey({ columns: [t.userId, t.targetId, t.day] }),
+    index('activity_time_course_idx').on(t.courseId, t.userId),
+    check('activity_time_kind', sql`${t.kind} in ('LESSON', 'EXERCISE', 'QUIZ', 'ASSIGNMENT')`),
+    check('activity_time_seconds', sql`${t.seconds} >= 0`),
+  ],
+);
+
+/** When each student's last ping arrived (any page): caps credited time across tabs. */
+export const activityLastPing = pgTable('activity_last_ping', {
+  userId: uuid('user_id')
+    .primaryKey()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  at: timestamp('at', { withTimezone: true }).notNull(),
+});

@@ -15,6 +15,7 @@ import { TutorPanel } from '@/components/tutor-panel';
 import { BackLink, Button, ErrorText, LoadState } from '@/components/ui';
 import { api, send } from '@/lib/api';
 import { formatDateTime } from '@/lib/dates';
+import { useActivity } from '@/lib/use-activity';
 import { useApi } from '@/lib/use-api';
 import { Icon } from '@/components/icons';
 import { confirmDialog } from '@/components/dialog';
@@ -28,6 +29,8 @@ export default function AssignmentPage() {
   }>();
   const courseBase = `/orgs/${orgId}/courses/${courseId}`;
   const { state } = useApi<AssignmentView>(`${courseBase}/assignments/${assignmentId}`);
+  // Time on task (research analytics); only once the page actually opened.
+  useActivity(courseBase, 'ASSIGNMENT', state.kind === 'ready' ? assignmentId : null);
 
   if (state.kind === 'error' && state.code === 'LESSON_LOCKED') {
     return (

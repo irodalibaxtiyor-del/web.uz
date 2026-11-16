@@ -1,4 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { eq } from 'drizzle-orm';
+import { quizAttempts } from '../src/db/schema';
 import { createMember, createOrg, setup, type TestContext } from './helpers';
 
 type Member = { userId: string; cookie: string };
@@ -239,6 +241,205 @@ describe('taking quizzes', () => {
     const res = await req(owner, 'get', `${Q(quiz1)}/edit`).expect(200);
     expect(res.body).toMatchObject({ attemptedBy: 2, passedBy: 1 });
     expect(res.body.questions[0].correct).toEqual(['a']);
+  });
+});
+
+describe('question kinds', () => {
+  const KINDS = [
+    { id: 'tf', kind: 'TRUE_FALSE', prompt: '<br> yopuvchi tegsiz yoziladi', answer: true },
+    {
+      id: 'fb',
+      kind: 'FILL_BLANK',
+      prompt: 'To‘ldiring',
+      template: 'Havola tegi {{1}}.',
+      blanks: [{ accepted: ['a', '<a>'] }],
+    },
+    {
+      id: 'cf',
+      kind: 'CODE_FILL',
+      prompt: 'Kodni to‘ldiring',
+      template: '<img {{1}}="rasm.png">',
+      blanks: [{ accepted: ['zxq-src'], caseSensitive: true }],
+    },
+    {
+      id: 'mt',
+      kind: 'MATCHING',
+      prompt: 'Moslang',
+      left: [
+        { id: 'a', text: '<ul>' },
+        { id: 'b', text: '<ol>' },
+      ],
+      right: [
+        { id: 'r1', text: 'belgili' },
+        { id: 'r2', text: 'raqamli' },
+        { id: 'r3', text: 'jadval' },
+      ],
+      pairs: [
+        ['a', 'r1'],
+        ['b', 'r2'],
+      ],
+    },
+    {
+      id: 'or',
+      kind: 'ORDERING',
+      prompt: 'Tartiblang',
+      items: [
+        { id: 'a', text: '<html>' },
+        { id: 'b', text: '<head>' },
+        { id: 'c', text: '<body>' },
+      ],
+    },
+    {
+      id: 'ct',
+      kind: 'CATEGORIZE',
+      prompt: 'Ajrating',
+      groups: [
+        { id: 'blok', text: 'Blok' },
+        { id: 'qator', text: 'Qator' },
+      ],
+      items: [
+        { id: 'div', text: '<div>', group: 'blok' },
+        { id: 'span', text: '<span>', group: 'qator' },
+      ],
+    },
+  ];
+  const RIGHT_KINDS = [
+    { questionId: 'tf', optionIds: ['true'] },
+    { questionId: 'fb', texts: [' <A> '] },
+    { questionId: 'cf', texts: ['zxq-src'] },
+    {
+      questionId: 'mt',
+      pairs: [
+        ['b', 'r2'],
+        ['a', 'r1'],
+      ],
+    },
+    { questionId: 'or', order: ['a', 'b', 'c'] },
+    {
+      questionId: 'ct',
+      placements: [
+        ['span', 'qator'],
+        ['div', 'blok'],
+      ],
+    },
+  ];
+  let mixed: string;
+
+  beforeAll(async () => {
+    mixed = await quiz(l1, { title: 'Aralash test', questions: KINDS });
+  });
+  // Keep the course-map expectations below independent of this extra quiz.
+  afterAll(async () => {
+    await req(owner, 'patch', Q(mixed), { isActive: false }).expect(200);
+  });
+
+  it('rejects malformed questions of the new kinds', async () => {
+    await req(owner, 'post', `${course()}/lessons/${l1}/quizzes`, {
+      title: 'Yomon',
+      questions: [{ ...KINDS[1], template: 'bo‘sh joysiz' }],
+    }).expect(400);
+  });
+
+  it('shows students the questions without any answers, ordering shuffled', async () => {
+    const res = await req(student, 'get', Q(mixed)).expect(200);
+    const json = JSON.stringify(res.body);
+    for (const secret of ['zxq-src', '"answer"', 'blanks', 'accepted', 'pairs', 'group"']) {
+      expect(json).not.toContain(secret);
+    }
+    const byId = Object.fromEntries(
+      res.body.questions.map((x: { id: string }) => [x.id, x]),
+    ) as Record<string, Record<string, unknown>>;
+    expect(byId.fb).toMatchObject({ kind: 'FILL_BLANK', blankCount: 1 });
+    expect(byId.mt!.right).toHaveLength(3);
+    const order = (byId.or!.items as { id: string }[]).map((x) => x.id).join('');
+    expect(order).not.toBe('abc');
+    // The same student sees the same shuffle on reload.
+    expect((await req(student, 'get', Q(mixed))).body.questions).toEqual(res.body.questions);
+  });
+
+  it('grades every kind on the server and stores per-question results', async () => {
+    const wrong = await attempt(student, mixed, [
+      { questionId: 'tf', optionIds: ['false'] },
+      { questionId: 'fb', texts: ['a'] },
+    ]).expect(201);
+    expect(wrong.body.lastAttempt).toMatchObject({ correct: 1, total: 6, passed: false });
+
+    const right = await attempt(student, mixed, RIGHT_KINDS).expect(201);
+    expect(right.body).toMatchObject({ status: 'PASSED', bestScore: 100 });
+
+    const rows = await ctx.handle.db
+      .select({ results: quizAttempts.results, score: quizAttempts.score })
+      .from(quizAttempts)
+      .where(eq(quizAttempts.quizId, mixed));
+    const best = rows.find((r) => r.score === 100)!;
+    expect(best.results.map((r) => `${r.kind}:${r.correct}`)).toEqual([
+      'TRUE_FALSE:true',
+      'FILL_BLANK:true',
+      'CODE_FILL:true',
+      'MATCHING:true',
+      'ORDERING:true',
+      'CATEGORIZE:true',
+    ]);
+  });
+
+  it('refuses answers of the wrong shape', async () => {
+    await attempt(student, mixed, [{ questionId: 'or', order: 'abc' }]).expect(400);
+    await attempt(student, mixed, [{ questionId: 'mt', pairs: [['a']] }]).expect(400);
+  });
+});
+
+describe('formative feedback', () => {
+  const EXPLAINED = [
+    { ...QUESTIONS[0], explanation: 'zxq-izoh: h1 eng katta sarlavha' },
+    { ...QUESTIONS[1], explanation: 'zxq-izoh: div va section blok' },
+  ];
+  let perQuestion: string;
+  let totalOnly: string;
+
+  beforeAll(async () => {
+    perQuestion = await quiz(l1, { title: 'Izohli test', questions: EXPLAINED });
+    totalOnly = await quiz(l1, {
+      title: 'Faqat natija',
+      questions: EXPLAINED,
+      feedback: 'TOTAL_ONLY',
+    });
+  });
+  afterAll(async () => {
+    for (const id of [perQuestion, totalOnly]) {
+      await req(owner, 'patch', Q(id), { isActive: false }).expect(200);
+    }
+  });
+
+  it('keeps explanations hidden before an attempt', async () => {
+    const res = await req(student, 'get', Q(perQuestion)).expect(200);
+    expect(res.body.feedback).toBe('PER_QUESTION');
+    expect(JSON.stringify(res.body)).not.toContain('zxq-izoh');
+  });
+
+  it('after an attempt shows right/wrong and the explanation per question, not the answers', async () => {
+    const res = await attempt(student, perQuestion, [
+      { questionId: 'q1', optionIds: ['a'] },
+      { questionId: 'q2', optionIds: ['a'] },
+    ]).expect(201);
+    expect(res.body.lastAttempt.review).toEqual([
+      { questionId: 'q1', correct: true, explanation: 'zxq-izoh: h1 eng katta sarlavha' },
+      { questionId: 'q2', correct: false, explanation: 'zxq-izoh: div va section blok' },
+    ]);
+    expect(JSON.stringify(res.body)).not.toContain('correct":[');
+    // The review survives a reload.
+    const again = await req(student, 'get', Q(perQuestion)).expect(200);
+    expect(again.body.lastAttempt.review).toHaveLength(2);
+  });
+
+  it('TOTAL_ONLY quizzes give the score only', async () => {
+    const res = await attempt(student, totalOnly, WRONG).expect(201);
+    expect(res.body.feedback).toBe('TOTAL_ONLY');
+    expect(res.body.lastAttempt.review).toBeUndefined();
+    expect(JSON.stringify(res.body)).not.toContain('zxq-izoh');
+  });
+
+  it('rejects an unknown feedback mode', async () => {
+    await req(owner, 'patch', Q(perQuestion), { feedback: 'ALL_ANSWERS' }).expect(400);
   });
 });
 

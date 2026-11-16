@@ -134,6 +134,48 @@
       "when": 1792650519095,
       "tag": "0018_chat_contact",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1794660113840,
+      "tag": "0019_quiz_results",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1794817982206,
+      "tag": "0020_quiz_feedback",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1794818268092,
+      "tag": "0021_assessments",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1794818802457,
+      "tag": "0022_experiment_groups",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1794819031678,
+      "tag": "0023_surveys",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1794819789914,
+      "tag": "0024_activity_time",
+      "breakpoints": true
     }
   ]
 }

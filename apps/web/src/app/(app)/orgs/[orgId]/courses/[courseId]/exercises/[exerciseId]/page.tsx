@@ -16,6 +16,7 @@ import {
   LoadState,
 } from '@/components/ui';
 import { api, send } from '@/lib/api';
+import { useActivity } from '@/lib/use-activity';
 import { useApi } from '@/lib/use-api';
 import { Icon } from '@/components/icons';
 import { confirmDialog } from '@/components/dialog';
@@ -29,6 +30,8 @@ export default function ExercisePage() {
   }>();
   const courseBase = `/orgs/${orgId}/courses/${courseId}`;
   const { state } = useApi<ExerciseView>(`${courseBase}/exercises/${exerciseId}`);
+  // Time on task (research analytics); only once the page actually opened.
+  useActivity(courseBase, 'EXERCISE', state.kind === 'ready' ? exerciseId : null);
 
   if (state.kind === 'error' && state.code === 'LESSON_LOCKED') {
     return (

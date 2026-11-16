@@ -66,6 +66,14 @@ import { PortfolioController } from './portfolio/portfolio.controller';
 import { PortfolioService } from './portfolio/portfolio.service';
 import { QuizzesController } from './quizzes/quizzes.controller';
 import { QuizzesService } from './quizzes/quizzes.service';
+import { AssessmentsController } from './assessments/assessments.controller';
+import { AssessmentsService } from './assessments/assessments.service';
+import { ExperimentController } from './assessments/experiment.controller';
+import { ExperimentService } from './assessments/experiment.service';
+import { ItemAnalysisController, ItemAnalysisService } from './assessments/item-analysis';
+import { SurveysController } from './surveys/surveys.controller';
+import { ActivityController, ActivityService } from './activity/activity';
+import { SurveysService } from './surveys/surveys.service';
 
 @Module({})
 export class AppModule {
@@ -89,6 +97,11 @@ export class AppModule {
         AssignmentsController,
         ReviewsController,
         QuizzesController,
+        AssessmentsController,
+        ExperimentController,
+        ItemAnalysisController,
+        SurveysController,
+        ActivityController,
         PortfolioController,
         CatalogController,
         AnalyticsController,
@@ -123,6 +136,11 @@ export class AppModule {
         AssignmentsService,
         ReviewsService,
         QuizzesService,
+        AssessmentsService,
+        ExperimentService,
+        ItemAnalysisService,
+        SurveysService,
+        ActivityService,
         PortfolioService,
         CatalogService,
         AnalyticsService,

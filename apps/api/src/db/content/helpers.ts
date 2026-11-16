@@ -1,9 +1,12 @@
-import type {
-  CheckAction,
-  CheckPseudoElement,
-  CheckRuleInput,
-  Difficulty,
-  ProjectFile,
+import {
+  seededOrder,
+  type CheckAction,
+  type CheckPseudoElement,
+  type CheckRuleInput,
+  type ChoiceQuestion,
+  type Difficulty,
+  type ProjectFile,
+  type QuizQuestion,
 } from '@webdizayn/shared';
 
 /** Authoring helpers for the bundled course manifests (`content/<course>/manifest.ts`). */
@@ -22,13 +25,7 @@ export interface QuizDef {
   title: string;
   description: string;
   passingPercent: number;
-  questions: {
-    id: string;
-    prompt: string;
-    kind: 'SINGLE' | 'MULTIPLE';
-    options: { id: string; text: string }[];
-    correct: string[];
-  }[];
+  questions: QuizQuestion[];
 }
 
 export interface LessonDef {
@@ -248,8 +245,8 @@ export function q(
   prompt: string,
   options: string[],
   correct: number[],
-): QuizDef['questions'][number] {
-  const order = shuffledIndexes(options.length, `${id}\u0000${prompt}`);
+): ChoiceQuestion {
+  const order = seededOrder(options.length, `${id}\u0000${prompt}`);
   const ids = options.map((_, i) => String.fromCharCode(97 + i));
   return {
     id,
@@ -260,20 +257,98 @@ export function q(
   };
 }
 
-/** Fisher–Yates over `0..n-1` driven by a small PRNG seeded from `seed` (FNV-1a). */
-function shuffledIndexes(n: number, seed: string): number[] {
-  let h = 2166136261;
-  for (let i = 0; i < seed.length; i++) h = Math.imul(h ^ seed.charCodeAt(i), 16777619) >>> 0;
-  const next = () => {
-    h = (Math.imul(h, 1664525) + 1013904223) >>> 0;
-    return h / 2 ** 32;
+const letters = (n: number) => Array.from({ length: n }, (_, i) => String.fromCharCode(97 + i));
+
+/** True/false statement. */
+export function tf(id: string, prompt: string, answer: boolean): QuizQuestion {
+  return { id, prompt, kind: 'TRUE_FALSE', answer };
+}
+
+/**
+ * Fill the gaps: `template` uses `{{1}}`, `{{2}}`…; `answers[i]` lists accepted spellings for
+ * gap i+1 (a string is one spelling). Case-insensitive unless `caseSensitive`.
+ */
+export function fill(
+  id: string,
+  prompt: string,
+  template: string,
+  answers: (string | string[])[],
+  opts: { code?: boolean; caseSensitive?: boolean } = {},
+): QuizQuestion {
+  return {
+    id,
+    prompt,
+    kind: opts.code ? 'CODE_FILL' : 'FILL_BLANK',
+    template,
+    blanks: answers.map((a) => ({
+      accepted: Array.isArray(a) ? a : [a],
+      caseSensitive: opts.caseSensitive ?? false,
+    })),
   };
-  const order = Array.from({ length: n }, (_, i) => i);
-  for (let i = n - 1; i > 0; i--) {
-    const j = Math.floor(next() * (i + 1));
-    [order[i], order[j]] = [order[j]!, order[i]!];
-  }
-  return order;
+}
+
+/** Gaps in a code snippet (whitespace inside answers is ignored when grading). */
+export function codeFill(
+  id: string,
+  prompt: string,
+  template: string,
+  answers: (string | string[])[],
+  caseSensitive = true,
+): QuizQuestion {
+  return fill(id, prompt, template, answers, { code: true, caseSensitive });
+}
+
+/**
+ * Matching: `pairs` are `[left, right]` texts in the right correspondence; `extra` adds
+ * distractors on the right. Students see the right column shuffled.
+ */
+export function match(
+  id: string,
+  prompt: string,
+  pairs: [string, string][],
+  extra: string[] = [],
+): QuizQuestion {
+  const l = letters(pairs.length);
+  const right = [...pairs.map((p) => p[1]), ...extra];
+  const r = right.map((_, i) => `r${i + 1}`);
+  return {
+    id,
+    prompt,
+    kind: 'MATCHING',
+    left: pairs.map((p, i) => ({ id: l[i]!, text: p[0] })),
+    right: right.map((text, i) => ({ id: r[i]!, text })),
+    pairs: pairs.map((_, i) => [l[i]!, r[i]!]),
+  };
+}
+
+/** Ordering: `items` in the correct order (students get them shuffled). */
+export function order(id: string, prompt: string, items: string[]): QuizQuestion {
+  const ids = letters(items.length);
+  return {
+    id,
+    prompt,
+    kind: 'ORDERING',
+    items: items.map((text, i) => ({ id: ids[i]!, text })),
+  };
+}
+
+/** Sort into groups: `groups` maps a group title to the item texts that belong to it. */
+export function sortInto(
+  id: string,
+  prompt: string,
+  groups: Record<string, string[]>,
+): QuizQuestion {
+  const titles = Object.keys(groups);
+  const items = titles.flatMap((t, gi) =>
+    groups[t]!.map((text) => ({ text, group: `g${gi + 1}` })),
+  );
+  return {
+    id,
+    prompt,
+    kind: 'CATEGORIZE',
+    groups: titles.map((text, i) => ({ id: `g${i + 1}`, text })),
+    items: items.map((x, i) => ({ id: `i${i + 1}`, ...x })),
+  };
 }
 
 export function quiz(title: string, questions: QuizDef['questions']): QuizDef {

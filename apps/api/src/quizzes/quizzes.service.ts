@@ -9,6 +9,8 @@ import {
 import { and, asc, count, countDistinct, desc, eq, gte, inArray, max, sql } from 'drizzle-orm';
 import {
   gradeQuiz,
+  reviewAttempt,
+  toStudentQuestion,
   type CreateQuizInput,
   type QuizAdmin,
   type QuizView,
@@ -167,7 +169,11 @@ export class QuizzesService {
         userId: auth.userId,
         courseId,
         answers: input.answers,
-        ...result,
+        correct: result.correct,
+        total: result.total,
+        score: result.score,
+        passed: result.passed,
+        results: result.results,
       });
       if (result.passed) {
         await this.learning.completeIfRequirementsMet(t, auth.userId, courseId, q.lessonId);
@@ -228,6 +234,7 @@ export class QuizzesService {
         total: quizAttempts.total,
         score: quizAttempts.score,
         passed: quizAttempts.passed,
+        results: quizAttempts.results,
         createdAt: quizAttempts.createdAt,
       })
       .from(quizAttempts)
@@ -240,13 +247,10 @@ export class QuizzesService {
       title: q.title,
       description: q.description,
       passingPercent: q.passingPercent,
-      // Answers are stripped: only ids, prompts and option texts leave the server.
-      questions: q.questions.map((x) => ({
-        id: x.id,
-        prompt: x.prompt,
-        kind: x.kind,
-        options: x.options.map((o) => ({ id: o.id, text: o.text })),
-      })),
+      feedback: q.feedback,
+      // Answers are stripped (no correct options, pairs, order or groups); shuffles are
+      // stable per student so a reload shows the same layout.
+      questions: q.questions.map((x) => toStudentQuestion(x, `${q.id}:${userId}`)),
       status:
         attempts.length === 0
           ? 'NOT_STARTED'
@@ -255,7 +259,19 @@ export class QuizzesService {
             : 'FAILED',
       bestScore: attempts.length ? Math.max(...attempts.map((a) => a.score)) : null,
       attempts: attempts.length,
-      lastAttempt: last ? { ...last, createdAt: last.createdAt.toISOString() } : null,
+      lastAttempt: last
+        ? {
+            correct: last.correct,
+            total: last.total,
+            score: last.score,
+            passed: last.passed,
+            createdAt: last.createdAt.toISOString(),
+            // Formative feedback: right/wrong and the teacher's explanation, never the answers.
+            ...(q.feedback === 'PER_QUESTION'
+              ? { review: reviewAttempt(q.questions, last.results) }
+              : {}),
+          }
+        : null,
     };
   }
 
@@ -271,6 +287,7 @@ export class QuizzesService {
       description: q.description,
       questions: q.questions,
       passingPercent: q.passingPercent,
+      feedback: q.feedback,
       isActive: q.isActive,
       position: q.position,
       attemptedBy: s?.attempted ?? 0,

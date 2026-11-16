@@ -1,12 +1,21 @@
 'use client';
 
-import type { QuizView } from '@webdizayn/shared';
+import {
+  isAnswered,
+  QUIZ_KIND_LABEL,
+  type QuizAnswer,
+  type QuizQuestionReview,
+  type QuizView,
+} from '@webdizayn/shared';
+import { Icon } from '@/components/icons';
 import { useParams, useRouter } from 'next/navigation';
 import { useState, type FormEvent } from 'react';
-import { OptionText, QuestionText } from '@/components/markdown';
+import { QuestionText } from '@/components/markdown';
+import { KIND_HINT, QuestionInput, type AnswerPatch } from '@/components/quiz-questions';
 import { QuizStatusBadge } from '@/components/quiz-ui';
 import { BackLink, Button, ErrorText, LoadState } from '@/components/ui';
 import { send } from '@/lib/api';
+import { useActivity } from '@/lib/use-activity';
 import { useApi } from '@/lib/use-api';
 import { confirmDialog } from '@/components/dialog';
 
@@ -19,6 +28,8 @@ export default function QuizPage() {
   }>();
   const courseBase = `/orgs/${orgId}/courses/${courseId}`;
   const { state } = useApi<QuizView>(`${courseBase}/quizzes/${quizId}`);
+  // Time on task (research analytics); only once the page actually opened.
+  useActivity(courseBase, 'QUIZ', state.kind === 'ready' ? quizId : null);
 
   if (state.kind === 'error' && state.code === 'LESSON_LOCKED') {
     return (
@@ -41,22 +52,28 @@ export default function QuizPage() {
 
 function Quiz({ initial, courseBase }: { initial: QuizView; courseBase: string }) {
   const [quiz, setQuiz] = useState(initial);
-  const [answers, setAnswers] = useState<Record<string, string[]>>({});
+  const [answers, setAnswers] = useState<Record<string, QuizAnswer>>({});
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const [justSubmitted, setJustSubmitted] = useState(false);
-  const answered = quiz.questions.filter((q) => (answers[q.id] ?? []).length > 0).length;
+  const answered = quiz.questions.filter((q) => isAnswered(q, answers[q.id])).length;
 
-  function choose(questionId: string, optionId: string, multiple: boolean, checked: boolean) {
+  function update(questionId: string, patch: AnswerPatch) {
     setJustSubmitted(false);
-    setAnswers((prev) => {
-      const current = prev[questionId] ?? [];
-      const next = multiple
-        ? checked
-          ? [...current, optionId]
-          : current.filter((x) => x !== optionId)
-        : [optionId];
-      return { ...prev, [questionId]: next };
+    setAnswers((prev) => ({
+      ...prev,
+      [questionId]: { optionIds: [], ...prev[questionId], ...patch, questionId },
+    }));
+  }
+
+  /** Every question is sent; an untouched ordering question keeps the order shown. */
+  function payload(): QuizAnswer[] {
+    return quiz.questions.map((q) => {
+      const a = answers[q.id] ?? { questionId: q.id, optionIds: [] };
+      if (q.kind === 'ORDERING' && (a.order?.length ?? 0) !== q.items.length) {
+        return { ...a, order: q.items.map((x) => x.id) };
+      }
+      return a;
     });
   }
 
@@ -75,10 +92,7 @@ function Quiz({ initial, courseBase }: { initial: QuizView; courseBase: string }
     setError(null);
     setPending(true);
     const res = await send<QuizView>('POST', `${courseBase}/quizzes/${quiz.id}/attempts`, {
-      answers: Object.entries(answers).map(([questionId, optionIds]) => ({
-        questionId,
-        optionIds,
-      })),
+      answers: payload(),
     });
     setPending(false);
     if (!res.ok) return setError(res.message);
@@ -87,6 +101,8 @@ function Quiz({ initial, courseBase }: { initial: QuizView; courseBase: string }
   }
 
   const last = quiz.lastAttempt;
+  const review = new Map((last?.review ?? []).map((r) => [r.questionId, r]));
+  const wrong = (last?.review ?? []).filter((r) => !r.correct).length;
   return (
     <article className="card space-y-6 p-6 sm:p-10">
       <nav className="text-sm">
@@ -119,49 +135,42 @@ function Quiz({ initial, courseBase }: { initial: QuizView; courseBase: string }
           <p className="mt-1 text-sm">
             {quiz.status === 'PASSED'
               ? 'Test bajarildi. Xohlasangiz yana mashq qilishingiz mumkin, natija saqlanib qoladi.'
-              : 'Mavzuni qayta ko‘rib chiqing va yana urinib ko‘ring. Qaysi javob noto‘g‘ri ekani ko‘rsatilmaydi.'}
+              : quiz.feedback === 'PER_QUESTION'
+                ? `${wrong} ta savolda xato bor — ular ostida izoh ko‘rsatildi. Mavzuni qayta ko‘rib chiqing va yana urinib ko‘ring.`
+                : 'Mavzuni qayta ko‘rib chiqing va yana urinib ko‘ring. Bu testda faqat umumiy natija ko‘rsatiladi.'}
           </p>
         </section>
       )}
 
       <form onSubmit={onSubmit} className="space-y-6">
         <ol className="space-y-6">
-          {quiz.questions.map((q, i) => {
-            const multiple = q.kind === 'MULTIPLE';
-            return (
-              <li key={q.id}>
-                <fieldset
-                  aria-describedby={`savol-${q.id}`}
-                  className="space-y-3 rounded-xl border border-slate-200 p-5 dark:border-slate-800"
-                >
-                  <legend className="px-1 font-semibold">{i + 1}-savol</legend>
-                  <div id={`savol-${q.id}`}>
-                    <QuestionText>{q.prompt}</QuestionText>
-                  </div>
-                  {multiple && (
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
-                      Bir nechta to&apos;g&apos;ri javob bo&apos;lishi mumkin
-                    </p>
-                  )}
-                  {q.options.map((o) => (
-                    <label key={o.id} className="flex cursor-pointer items-start gap-3">
-                      <input
-                        type={multiple ? 'checkbox' : 'radio'}
-                        name={q.id}
-                        value={o.id}
-                        checked={(answers[q.id] ?? []).includes(o.id)}
-                        onChange={(e) => choose(q.id, o.id, multiple, e.target.checked)}
-                        className="mt-1"
-                      />
-                      <span className="quiz-option">
-                        <OptionText>{o.text}</OptionText>
-                      </span>
-                    </label>
-                  ))}
-                </fieldset>
-              </li>
-            );
-          })}
+          {quiz.questions.map((q, i) => (
+            <li key={q.id}>
+              <fieldset
+                aria-describedby={`savol-${q.id}`}
+                className="space-y-3 rounded-xl border border-line bg-panel p-5"
+              >
+                <legend className="flex flex-wrap items-center gap-2 px-1 font-semibold">
+                  {i + 1}-savol
+                  <span className="rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-semibold text-brand-700 dark:bg-brand-950 dark:text-brand-300">
+                    {QUIZ_KIND_LABEL[q.kind]}
+                  </span>
+                </legend>
+                <div id={`savol-${q.id}`}>
+                  <QuestionText>{q.prompt}</QuestionText>
+                </div>
+                {KIND_HINT[q.kind] && (
+                  <p className="text-sm text-slate-600 dark:text-slate-400">{KIND_HINT[q.kind]}</p>
+                )}
+                <QuestionInput
+                  q={q}
+                  answer={answers[q.id]}
+                  onChange={(patch) => update(q.id, patch)}
+                />
+                <QuestionReview review={review.get(q.id)} />
+              </fieldset>
+            </li>
+          ))}
         </ol>
         {error && <ErrorText>{error}</ErrorText>}
         <div className="flex flex-wrap items-center gap-3">
@@ -174,5 +183,27 @@ function Quiz({ initial, courseBase }: { initial: QuizView; courseBase: string }
         </div>
       </form>
     </article>
+  );
+}
+
+/** Formative feedback for one question from the last attempt: right/wrong and the "why". */
+function QuestionReview({ review }: { review: QuizQuestionReview | undefined }) {
+  if (!review) return null;
+  return (
+    <div
+      className={`flex items-start gap-2 rounded-lg px-4 py-3 text-sm ${
+        review.correct
+          ? 'bg-emerald-50 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-200'
+          : 'bg-amber-50 text-amber-900 dark:bg-amber-950 dark:text-amber-200'
+      }`}
+    >
+      <Icon name={review.correct ? 'checkCircle' : 'alertCircle'} className="mt-0.5 size-5" />
+      <div>
+        <p className="font-semibold">
+          Oxirgi urinishda: {review.correct ? 'to‘g‘ri' : 'noto‘g‘ri'}
+        </p>
+        {review.explanation && <p className="mt-1 whitespace-pre-wrap">{review.explanation}</p>}
+      </div>
+    </div>
   );
 }

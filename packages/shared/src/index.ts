@@ -1,3 +1,10 @@
+import { z } from 'zod';
+
+// In the browser the web app's CSP forbids eval. Zod 4 probes `new Function` to decide whether
+// to JIT-compile object parsers, and every blocked probe is reported as a CSP violation.
+// The server keeps the JIT.
+if (typeof document !== 'undefined') z.config({ jitless: true });
+
 export * from './roles';
 export * from './auth';
 export * from './courses';
@@ -18,3 +25,9 @@ export * from './catalog';
 export * from './slug';
 export * from './books';
 export * from './chatbot';
+export * from './stats';
+export * from './assessments';
+export * from './experiment';
+export * from './surveys';
+export * from './item-analysis';
+export * from './activity';
