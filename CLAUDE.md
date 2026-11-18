@@ -335,3 +335,5 @@ Oldingi sessiyalar (2026-10-08 … 2026-10-27): [docs/ISH_JURNALI_ARXIV.md](docs
 - `content-courses.test.ts`: sifat tekshiruvlari (izohlar, ≥2 tur, kalitlar bilan 100%) mini-testlarga ham tatbiq etildi.
 - **HTML**: `content/html/mini-quizzes.ts` — 49 ta mini-test, `withQuizzes(..., { mini })` bilan ulandi; tekshiruvlar o'tdi (bitta qisqa izoh tuzatildi).
 - **CSS**: `content/css/mini-quizzes.ts` — 101 ta mini-test (har mashqqa). Yo'q mini-testlarni topish uchun yordamchi skript ishlatildi (`_miss.ts`, vaqtinchalik). Yordamchi “why bilan o'rash” skripti ikki blokni buzgan — qo'lda tuzatildi; bundan keyin izohlar qo'lda yoziladi.
+- Commit `7d4e3a6` — HTML va CSS mini-testlari.
+- **JS**: `content/js/mini-quizzes.ts` — 96 ta mini-test; yo'q mashq qolmadi. Barcha kurslardagi ≤10 belgili izohlarni topadigan vaqtinchalik `_short.ts` skripti bilan 10 ta qisqa izoh uzaytirildi.

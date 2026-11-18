@@ -15,6 +15,7 @@ import { HTML_MINI_QUIZZES } from './html/mini-quizzes';
 import { HTML_SOLUTIONS } from './html/solutions';
 import { JS_COURSE, JS_MODULES } from './js/manifest';
 import { JS_LESSON_QUIZZES } from './js/lesson-quizzes';
+import { JS_MINI_QUIZZES } from './js/mini-quizzes';
 import { JS_SOLUTIONS } from './js/solutions';
 import { PHP_COURSE, PHP_MODULES } from './php/manifest';
 import { PORTFOLIO_LESSON_QUIZZES } from './portfolio/lesson-quizzes';
@@ -55,7 +56,7 @@ export const CONTENT_COURSES: CourseDef[] = [
   },
   {
     ...JS_COURSE,
-    modules: withQuizzes(JS_MODULES, { lesson: JS_LESSON_QUIZZES }),
+    modules: withQuizzes(JS_MODULES, { lesson: JS_LESSON_QUIZZES, mini: JS_MINI_QUIZZES }),
     solutions: JS_SOLUTIONS,
   },
   {
