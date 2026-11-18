@@ -1,4 +1,4 @@
-import { and, eq, inArray } from 'drizzle-orm';
+import { and, asc, eq, inArray } from 'drizzle-orm';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
@@ -31,6 +31,7 @@ export interface PreparedLesson {
   title: string;
   content: string;
   exercise: CreateExerciseInput | null;
+  miniQuiz: CreateQuizInput | null;
   quiz: CreateQuizInput | null;
 }
 
@@ -74,6 +75,14 @@ export function prepareCourse(
         if (l.exercise.checks.length === 0) problems.push(`${l.slug}: exercise without checks`);
       }
 
+      let miniQuiz: CreateQuizInput | null = null;
+      if (l.miniQuiz) {
+        if (!l.exercise) problems.push(`${l.slug}: miniQuiz without an exercise`);
+        const r = createQuizSchema.safeParse({ ...l.miniQuiz, isActive: true, position: 0 });
+        if (r.success) miniQuiz = r.data;
+        else problems.push(`${l.slug}: miniQuiz ${r.error.message}`);
+      }
+
       let quiz: CreateQuizInput | null = null;
       if (l.quiz) {
         const r = createQuizSchema.safeParse({ ...l.quiz, isActive: true, position: 0 });
@@ -81,7 +90,7 @@ export function prepareCourse(
         else problems.push(`${l.slug}: quiz ${r.error.message}`);
       }
 
-      return { slug: l.slug, title: l.title, content, exercise, quiz };
+      return { slug: l.slug, title: l.title, content, exercise, miniQuiz, quiz };
     }),
   }));
 
@@ -105,6 +114,7 @@ export interface SeedCourseResult {
   lessons: number;
   exercises: number;
   quizzes: number;
+  miniQuizzes: number;
   replaced: boolean;
 }
 
@@ -166,6 +176,7 @@ export async function seedCourse(
       lessons: 0,
       exercises: 0,
       quizzes: 0,
+      miniQuizzes: 0,
       replaced: Boolean(existing),
     };
 
@@ -185,20 +196,37 @@ export async function seedCourse(
 
         if (l.exercise) {
           const e = l.exercise;
-          await tx.insert(exercises).values({
-            courseId,
-            lessonId: lesson!.id,
-            title: e.title,
-            description: e.description,
-            instructions: e.instructions,
-            expectedBehavior: e.expectedBehavior,
-            starterFiles: e.starterFiles,
-            difficulty: e.difficulty,
-            position: 0,
-            isActive: true,
-            checks: e.checks,
-          });
+          const [ex] = await tx
+            .insert(exercises)
+            .values({
+              courseId,
+              lessonId: lesson!.id,
+              title: e.title,
+              description: e.description,
+              instructions: e.instructions,
+              expectedBehavior: e.expectedBehavior,
+              starterFiles: e.starterFiles,
+              difficulty: e.difficulty,
+              position: 0,
+              isActive: true,
+              checks: e.checks,
+            })
+            .returning({ id: exercises.id });
           result.exercises++;
+          if (l.miniQuiz) {
+            await tx.insert(quizzes).values({
+              courseId,
+              lessonId: lesson!.id,
+              exerciseId: ex!.id,
+              title: l.miniQuiz.title,
+              description: l.miniQuiz.description,
+              questions: l.miniQuiz.questions,
+              passingPercent: l.miniQuiz.passingPercent,
+              isActive: true,
+              position: 0,
+            });
+            result.miniQuizzes++;
+          }
         }
         if (l.quiz) {
           const qz = l.quiz;
@@ -217,6 +245,115 @@ export async function seedCourse(
       }
     }
     await syncDirections(tx, opts.organizationId);
+    return result;
+  });
+}
+
+export interface SyncQuizzesResult {
+  courseId: string;
+  lessonQuizzes: number;
+  miniQuizzes: number;
+  /** Lessons/exercises that did not match the manifest (renamed or reordered by staff). */
+  skipped: string[];
+}
+
+/**
+ * Adds the manifest's missing quizzes to an already seeded course without touching anything
+ * else: no deletes, no updates (staff may have edited a quiz), student progress kept.
+ * Lessons are matched by module/lesson position and title; a quiz is "present" when the
+ * lesson (or the exercise, for a mini-test) already has one with the same title.
+ */
+export async function syncCourseQuizzes(
+  db: Db,
+  course: CourseDef,
+  opts: { organizationId: string; contentDir?: string },
+): Promise<SyncQuizzesResult> {
+  const prepared = prepareCourse(course, opts.contentDir);
+  return db.transaction(async (tx) => {
+    const [row] = await tx
+      .select({ id: courses.id })
+      .from(courses)
+      .where(and(eq(courses.organizationId, opts.organizationId), eq(courses.slug, course.slug)));
+    if (!row) throw new Error(`Course "${course.slug}" is not seeded; run db:seed:course first`);
+    const courseId = row.id;
+    const result: SyncQuizzesResult = { courseId, lessonQuizzes: 0, miniQuizzes: 0, skipped: [] };
+
+    const mods = await tx
+      .select({ id: modules.id })
+      .from(modules)
+      .where(eq(modules.courseId, courseId))
+      .orderBy(asc(modules.position), asc(modules.createdAt));
+    const lessonRows = await tx
+      .select({ id: lessons.id, moduleId: lessons.moduleId, title: lessons.title })
+      .from(lessons)
+      .where(eq(lessons.courseId, courseId))
+      .orderBy(asc(lessons.position), asc(lessons.createdAt));
+    const quizRows = await tx
+      .select({
+        lessonId: quizzes.lessonId,
+        exerciseId: quizzes.exerciseId,
+        title: quizzes.title,
+        position: quizzes.position,
+      })
+      .from(quizzes)
+      .where(eq(quizzes.courseId, courseId));
+    const exRows = await tx
+      .select({ id: exercises.id, lessonId: exercises.lessonId, title: exercises.title })
+      .from(exercises)
+      .where(eq(exercises.courseId, courseId));
+
+    for (const [mi, m] of prepared.entries()) {
+      const modId = mods[mi]?.id;
+      const inModule = lessonRows.filter((l) => l.moduleId === modId);
+      for (const [li, l] of m.lessons.entries()) {
+        if (!l.quiz && !l.miniQuiz) continue;
+        const lesson = inModule[li];
+        if (!lesson || lesson.title !== l.title) {
+          result.skipped.push(`${l.slug}: lesson not found at ${mi + 1}.${li + 1}`);
+          continue;
+        }
+        const own = quizRows.filter((q) => q.lessonId === lesson.id);
+        const nextPos = () => own.reduce((p, q) => Math.max(p, q.position + 1), 0);
+        if (l.quiz && !own.some((q) => q.exerciseId === null && q.title === l.quiz!.title)) {
+          const position = nextPos();
+          await tx.insert(quizzes).values({
+            courseId,
+            lessonId: lesson.id,
+            title: l.quiz.title,
+            description: l.quiz.description,
+            questions: l.quiz.questions,
+            passingPercent: l.quiz.passingPercent,
+            feedback: l.quiz.feedback,
+            isActive: true,
+            position,
+          });
+          own.push({ lessonId: lesson.id, exerciseId: null, title: l.quiz.title, position });
+          result.lessonQuizzes++;
+        }
+        if (l.miniQuiz && l.exercise) {
+          const ex = exRows.find((e) => e.lessonId === lesson.id && e.title === l.exercise!.title);
+          if (!ex) {
+            result.skipped.push(`${l.slug}: exercise "${l.exercise.title}" not found`);
+          } else if (!own.some((q) => q.exerciseId === ex.id && q.title === l.miniQuiz!.title)) {
+            const position = nextPos();
+            await tx.insert(quizzes).values({
+              courseId,
+              lessonId: lesson.id,
+              exerciseId: ex.id,
+              title: l.miniQuiz.title,
+              description: l.miniQuiz.description,
+              questions: l.miniQuiz.questions,
+              passingPercent: l.miniQuiz.passingPercent,
+              feedback: l.miniQuiz.feedback,
+              isActive: true,
+              position,
+            });
+            own.push({ lessonId: lesson.id, exerciseId: ex.id, title: l.miniQuiz.title, position });
+            result.miniQuizzes++;
+          }
+        }
+      }
+    }
     return result;
   });
 }

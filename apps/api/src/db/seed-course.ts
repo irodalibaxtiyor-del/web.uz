@@ -50,7 +50,7 @@ async function main() {
     });
     console.warn(
       `Course "${course.slug}" ${r.replaced ? 'recreated' : 'created'}: ${r.modules} modules, ` +
-        `${r.lessons} lessons, ${r.exercises} exercises, ${r.quizzes} quizzes`,
+        `${r.lessons} lessons, ${r.exercises} exercises (${r.miniQuizzes} mini-tests), ${r.quizzes} quizzes`,
     );
   } finally {
     await handle.close();

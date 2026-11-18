@@ -1,10 +1,40 @@
 import { readdirSync } from 'node:fs';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import type { ChoiceQuestion } from '@webdizayn/shared';
+import {
+  gradeQuiz,
+  type ChoiceQuestion,
+  type QuizAnswer,
+  type QuizQuestion,
+} from '@webdizayn/shared';
 import { CONTENT_COURSES, findContentCourse } from '../src/db/content/registry';
-import { q } from '../src/db/content/helpers';
-import { CourseExistsError, contentDirOf, prepareCourse, seedCourse } from '../src/db/content/seed';
+import { LESSON_QUIZ_TITLE, q } from '../src/db/content/helpers';
+import {
+  CourseExistsError,
+  contentDirOf,
+  prepareCourse,
+  seedCourse,
+  syncCourseQuizzes,
+} from '../src/db/content/seed';
 import { createMember, createOrg, setup, type TestContext } from './helpers';
+
+/** The right answer to a manifest question (test-only; students never get these). */
+function rightAnswer(x: QuizQuestion): QuizAnswer {
+  switch (x.kind) {
+    case 'TRUE_FALSE':
+      return { questionId: x.id, optionIds: [String(x.answer)] };
+    case 'FILL_BLANK':
+    case 'CODE_FILL':
+      return { questionId: x.id, optionIds: [], texts: x.blanks.map((b) => b.accepted[0]!) };
+    case 'MATCHING':
+      return { questionId: x.id, optionIds: [], pairs: x.pairs };
+    case 'ORDERING':
+      return { questionId: x.id, optionIds: [], order: x.items.map((i) => i.id) };
+    case 'CATEGORIZE':
+      return { questionId: x.id, optionIds: [], placements: x.items.map((i) => [i.id, i.group]) };
+    default:
+      return { questionId: x.id, optionIds: x.correct };
+  }
+}
 
 type Member = { userId: string; cookie: string };
 
@@ -66,13 +96,38 @@ describe.each(CONTENT_COURSES.map((c) => [c.slug, c] as const))('%s course manif
     }
     for (const m of c.modules) {
       expect(
-        m.lessons.filter((l) => l.quiz),
+        m.lessons.filter((l) => l.quiz && l.quiz.title !== LESSON_QUIZ_TITLE),
         m.title,
       ).toHaveLength(1);
     }
     const withExercise = c.modules.flatMap((m) => m.lessons.filter((l) => l.exercise));
     expect(withExercise.length).toBeGreaterThan(c.modules.length);
     expect(Object.keys(c.solutions).sort()).toEqual(withExercise.map((l) => l.slug).sort());
+  });
+});
+
+describe.each(CONTENT_COURSES.map((c) => [c.slug, c] as const))('%s lesson tests', (_, c) => {
+  const lessonTests = c.modules.flatMap((m) =>
+    m.lessons.flatMap((l) =>
+      l.quiz?.title === LESSON_QUIZ_TITLE ? [{ slug: l.slug, quiz: l.quiz }] : [],
+    ),
+  );
+
+  it.runIf(lessonTests.length > 0)('explain every answer and mix question kinds', () => {
+    for (const { slug, quiz } of lessonTests) {
+      expect(quiz.questions.length, slug).toBeGreaterThanOrEqual(3);
+      for (const x of quiz.questions)
+        expect(x.explanation?.length ?? 0, `${slug} ${x.id}`).toBeGreaterThan(10);
+      const kinds = new Set(quiz.questions.map((x) => x.kind ?? 'SINGLE'));
+      expect(kinds.size, slug).toBeGreaterThanOrEqual(2);
+    }
+  });
+
+  it.runIf(lessonTests.length > 0)('are answerable: the keyed answers score 100%', () => {
+    for (const { slug, quiz } of lessonTests) {
+      const r = gradeQuiz(quiz.questions, quiz.questions.map(rightAnswer), quiz.passingPercent);
+      expect(r.score, slug).toBe(100);
+    }
   });
 });
 
@@ -96,7 +151,8 @@ describe('HTML course seed', () => {
       organizationId: org,
       teacherId: teacher.userId,
     });
-    expect(r).toMatchObject({ modules: 12, lessons: 60, quizzes: 12, replaced: false });
+    const withQuiz = HTML.modules.flatMap((m) => m.lessons.filter((l) => l.quiz)).length;
+    expect(r).toMatchObject({ modules: 12, lessons: 60, quizzes: withQuiz, replaced: false });
     expect(r.exercises).toBe(Object.keys(HTML.solutions).length);
     courseId = r.courseId;
 
@@ -135,6 +191,19 @@ describe('HTML course seed', () => {
 
 describe('HTML course for a student', () => {
   let lessonIds: string[];
+  const manifestLessons = HTML.modules.flatMap((m) => m.lessons);
+
+  /** Passes the lesson's test (if any) with the manifest's right answers. */
+  async function passLessonTest(index: number) {
+    const lesson = await get(student, `${course()}/lessons/${lessonIds[index]}`).expect(200);
+    const def = manifestLessons[index]!.quiz;
+    if (!def) return;
+    const [quiz] = lesson.body.quizzes;
+    const res = await send(student, 'post', `${course()}/quizzes/${quiz.id}/attempts`, {
+      answers: def.questions.map(rightAnswer),
+    }).expect(201);
+    expect(res.body.status, manifestLessons[index]!.slug).toBe('PASSED');
+  }
 
   it('starts with only the first lesson open', async () => {
     await send(student, 'post', `${course()}/enroll`).expect(201);
@@ -172,17 +241,17 @@ describe('HTML course for a student', () => {
       },
     ).expect(200);
 
-    // Lesson 2 (editors) is theory only and is completed by hand.
-    await get(student, `${course()}/lessons/${lessonIds[1]}`).expect(200);
-    await send(student, 'post', `${course()}/lessons/${lessonIds[1]}/complete`).expect(201);
+    await passLessonTest(0);
+    // Lesson 2 (editors) has no exercise: its lesson test completes it.
+    await passLessonTest(1);
     const map = await get(student, `${course()}/map`).expect(200);
     const states = map.body.modules[0].lessons.map((l: { state: string }) => l.state);
     expect(states.slice(0, 3)).toEqual(['COMPLETED', 'COMPLETED', 'AVAILABLE']);
   });
 
   it('serves the module quiz without correct answers', async () => {
-    // Lessons 3-5 have exercises; pass them so the module 1 quiz (lesson 5) opens.
-    for (const id of lessonIds.slice(2, 5)) {
+    // Lessons 3-5 have exercises (3-4 also a lesson test); pass them so the module quiz opens.
+    for (const [i, id] of lessonIds.slice(2, 5).entries()) {
       const lesson = await get(student, `${course()}/lessons/${id}`).expect(200);
       const exerciseId = lesson.body.exercises[0].id;
       await send(
@@ -193,12 +262,77 @@ describe('HTML course for a student', () => {
           status: 'PASSED',
         },
       ).expect(200);
+      if (i < 2) await passLessonTest(i + 2);
     }
     const lesson = await get(student, `${course()}/lessons/${lessonIds[4]}`).expect(200);
     expect(lesson.body.quizzes).toHaveLength(1);
     const quiz = await get(student, `${course()}/quizzes/${lesson.body.quizzes[0].id}`).expect(200);
     expect(quiz.body.questions.length).toBeGreaterThanOrEqual(3);
     expect(JSON.stringify(quiz.body)).not.toContain('correct');
+  });
+});
+
+describe('quiz sync into a seeded course', () => {
+  it('adds missing lesson tests once, keeping student progress', async () => {
+    const syncOrg = await createOrg(ctx, 'sync-org');
+    const owner = await createMember(ctx, 'owner@sync.uz', syncOrg, 'TEACHER');
+    const learner = await createMember(ctx, 'learner@sync.uz', syncOrg, 'STUDENT');
+    // The course as it was seeded before lesson tests existed.
+    const old = {
+      ...HTML,
+      modules: HTML.modules.map((m) => ({
+        ...m,
+        lessons: m.lessons.map((l) => ({
+          ...l,
+          quiz: l.quiz?.title === LESSON_QUIZ_TITLE ? undefined : l.quiz,
+        })),
+      })),
+    };
+    const seeded = await seedCourse(ctx.handle.db, old, {
+      organizationId: syncOrg,
+      teacherId: owner.userId,
+    });
+    const base = `/orgs/${syncOrg}/courses/${seeded.courseId}`;
+    await send(learner, 'post', `${base}/enroll`).expect(201);
+    const before = await get(learner, `${base}/map`).expect(200);
+    const second = before.body.modules[0].lessons[1].id;
+    // "editors" had no requirements then: completed by hand.
+    const first = before.body.modules[0].lessons[0];
+    await send(
+      owner,
+      'put',
+      `${base}/exercises/${first.exercises[0].id}/students/${learner.userId}/status`,
+      { status: 'PASSED' },
+    ).expect(200);
+    await send(learner, 'post', `${base}/lessons/${second}/complete`).expect(201);
+
+    const r = await syncCourseQuizzes(ctx.handle.db, HTML, { organizationId: syncOrg });
+    const expected = HTML.modules.flatMap((m) =>
+      m.lessons.filter((l) => l.quiz?.title === LESSON_QUIZ_TITLE),
+    ).length;
+    expect(r).toMatchObject({ lessonQuizzes: expected, skipped: [] });
+    expect(
+      (await syncCourseQuizzes(ctx.handle.db, HTML, { organizationId: syncOrg })).lessonQuizzes,
+    ).toBe(0);
+
+    const after = await get(learner, `${base}/map`).expect(200);
+    const lessons = after.body.modules[0].lessons;
+    expect(lessons[1].quizzes).toEqual([
+      expect.objectContaining({ title: LESSON_QUIZ_TITLE, status: 'NOT_STARTED' }),
+    ]);
+    // Already completed lessons stay completed; the next one stays open.
+    expect(lessons.slice(0, 3).map((l: { state: string }) => l.state)).toEqual([
+      'COMPLETED',
+      'COMPLETED',
+      'AVAILABLE',
+    ]);
+  });
+
+  it('refuses a course that is not seeded', async () => {
+    const empty = await createOrg(ctx, 'sync-empty');
+    await expect(syncCourseQuizzes(ctx.handle.db, HTML, { organizationId: empty })).rejects.toThrow(
+      /not seeded/,
+    );
   });
 });
 

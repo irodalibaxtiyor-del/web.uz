@@ -233,3 +233,92 @@ Oldingi sessiyalar (2026-10-08 … 2026-10-27): [docs/ISH_JURNALI_ARXIV.md](docs
 - Regressiya: format ✅, typecheck ✅, lint ✅, build ✅, test ✅ (shared 112 + libs 3 + sandbox 16 + web 67 + check-engine 23 + api 455 = **676**), E2E **55/55** ✅. Demo bazaga `0025` qo'llandi.
 - PDF'lar uchun git'ga tushmaydigan papka: `apps/api/.data/kitoblar/`.
 - Cheklovlar: skanerlangan (rasm) PDF'larda matn yo'q — qidiruv ishlamaydi (OCR yo'q); belgilash to'rtburchagi harf enini taxminiy hisoblaydi; qidiruv orqali ko'p so'rov bilan matnni bo'laklab yig'ish nazariy jihatdan mumkin (limit 30/daq. buni sekinlashtiradi); himoya mutlaq emas — ekran rasmini to'xtatib bo'lmaydi, suv belgisi kimligini ko'rsatadi.
+
+## 2026-11-18
+
+### Qolgan ishlar 6 bosqichga bo'lindi
+
+- Foydalanuvchi: "promtni qisqartir, 6 bosqichga bo'lib qadamma-qadam qil". Reja:
+  1. mashq mini-testi uchun asos (`quizzes.exercise_id`, API, UI);
+  2. barcha kurslarga dars testlari (yangi savol turlari va izohlar bilan);
+  3. har mashqqa mini-test (kontent);
+  4. darsdagi interaktiv bloklar;
+  5. atamalar lug'ati va takrorlash;
+  6. sertifikat va Telegram xabarnomalari.
+
+### 1-bosqich — mashq mini-testi (yakunlandi)
+
+- Qaror: mini-test bu mashqqa bog'langan oddiy test (`quizzes.exercise_id`, shu darsning mashqi). U **ixtiyoriy o'zini tekshirish**: darsni tugatish sharti emas, o'tilsa ham darsni yakunlamaydi; kurs xaritasidagi test statistikasi, analitika va katalogdagi testlar sonida hisoblanmaydi. Mashq faol bo'lmasa, mini-test talabaga ko'rinmaydi (404).
+- Migratsiya `0026_exercise_mini_quiz.sql` (FK `ON DELETE cascade`, indeks). Demo bazaga qo'llandi.
+- Shared: `createQuizSchema`/`updateQuizSchema` da `exerciseId`; `QuizView`/`QuizAdmin` da `exerciseId`; `ExerciseSummary` va `ExerciseView` da `miniQuizzes`.
+- API: yaratish/tahrirlashda mashq shu darsga tegishli ekani tekshiriladi (aks holda 400); `LearningService.items` mini-testlarni mashq ostiga qo'yadi; `exerciseMiniQuizzes`; `analytics-facts` va `catalog` da `exercise_id is null` filtri.
+- Kontent: `LessonDef.miniQuiz` (+ `miniQuiz()` helper, o'tish 60%), seed mini-testni mashq bilan birga yaratadi va manifestni tekshiradi.
+- Web: o'qituvchi dars muharririda "Test turi" tanlovi (Dars testi / Mini-test: mashq) va ro'yxatda belgi; talaba dars sahifasida mashq ostida, mashq sahifasida "O'zingizni tekshiring" bloki; test sahifasida "Mashqqa qaytish" va ixtiyoriylik izohi.
+- Testlar: `quizzes.test.ts` "exercise mini-tests" (+4). Regressiya: typecheck ✅, lint ✅, format ✅, test ✅ (shared 112 + libs 3 + sandbox 16 + web 67 + check-engine 23 + api 459 = **680**).
+- Brauzer tekshiruvi (demo bazaning **nusxasida**, scratchpad'dagi `miniquiz.cjs`) **13/13**, xatolar 0: o'qituvchi UI orqali mini-test yaratadi; talaba uni darsda va mashqda ko'radi, yechadi (50%, xato savolda izoh), kurs testlari soni o'zgarmaydi, sahifada javoblar yo'q, telefon (390, dark). Nusxa o'chirildi.
+- Commit qilinmagan.
+
+### 2-bosqich — dars testlari (HTML kursi tayyor, qolgan kurslar keyin)
+
+- Hajm: 11 kursda ~560 dars, modul testlari bor ~117 dars; ~440 darsga yangi test kerak. Kursma-kurs qilinadi.
+- **Infratuzilma:**
+  - har kursda alohida `content/<kurs>/lesson-quizzes.ts` (`Record<slug, QuizDef>`); `withQuizzes(modules, { lesson, mini })` registry'da birlashtiradi (noma'lum slug — xato; modul testi bor dars o'zinikini saqlaydi);
+  - helperlar: `lessonQuiz()` (nom `LESSON_QUIZ_TITLE` = "Dars testi", o'tish 70%), `why(savol, izoh)`;
+  - `syncCourseQuizzes()` + `pnpm --filter @webdizayn/api db:sync:quizzes <slug|--all>` — seed qilingan kursga **faqat yetishmayotgan** dars testlari va mini-testlarni qo'shadi: o'chirmaydi, tahrir qilingan testlarga tegmaydi, progress saqlanadi (tugatilgan darslar tugatilgan holda qoladi). Darslar modul/dars o'rni va nomi bo'yicha moslanadi, mos kelmasa `skipped` ga yoziladi; takroriy ishga tushirish 0 qo'shadi.
+- **Kontent:** HTML kursining testi yo'q **48 ta darsiga** original o'zbekcha dars testi (har birida 4 savol, turlar aralash: bitta/bir nechta javob, to'g'ri/noto'g'ri, bo'sh joy, kod to'ldirish, moslashtirish, tartiblash, guruhlash; har savolda izoh). Savollar dars matni asosida yozildi.
+- **Testlar** (`content-courses.test.ts`): modul testi sanog'i dars testlarini hisobga olmaydi; har dars testida ≥3 savol, har savolda izoh, ≥2 tur; kalit javoblar bilan har test 100%; talaba oqimi dars testlarini o'tib boradi; sync: progressni saqlab qo'shadi, ikkinchi marta 0, seed qilinmagan kursda xato.
+- **Web tuzatishlari** (brauzer tekshiruvida topildi):
+  - telefonda kod to'ldirish savolining kartasi ekrandan chiqib ketardi — sababi `<fieldset>` ning standart `min-width: min-content`; `globals.css` da `fieldset { min-width: 0 }` (kirish/yakuniy test va so'rovnomalarga ham ta'sir qiladi);
+  - savol izohidagi `` `kod` `` xom ko'rinardi — endi `OptionText` bilan formatlanadi.
+- Brauzer tekshiruvi (demo baza **nusxasida** sync → `lessontests.cjs`, 1440 light va 390 dark) **18/18**, xatolar 0: xaritada 48 dars testi, tugatilgan darslar saqlangan, darsdan testga havola, UI orqali yechish → 50% va xato savolda izoh, sahifada javob kalitlari yo'q, gorizontal scroll yo'q. Nusxa o'chirildi.
+- Demo bazaga sync qilindi: `html: +48 lesson tests`.
+- Regressiya: format ✅, typecheck ✅, lint ✅, test ✅ (shared 112 + libs 3 + sandbox 16 + web 67 + check-engine 23 + api 463 = **684**). Birinchi to'liq ishga tushirishda `check-worker` va `tutor` kvota testlari yiqildi (demo serverlar ishlab turgan paytda), alohida va API to'liq qayta ishga tushirilganda o'tdi — vaqtga bog'liq, avvalgi kuzatuvga o'xshash.
+- Keyingi: CSS (86 dars), JS (79), Bootstrap 3/4/5 (114), RWD/UI/Figma/Portfolio (80) — jami 359 dars. PHP darslarining hammasida test bor (yangi turlarsiz).
+- Commit qilinmagan.
+
+### 2-bosqich — CSS kursi dars testlari
+
+- `content/css/lesson-quizzes.ts`: testi yo'q **86 ta darsning** hammasiga original o'zbekcha dars testi (15 modul; har birida 4 savol, turlar aralash, har savolda izoh), registry'da `withQuizzes`. Savollar har dars matnining sarlavhalari, jadvallari va xulosasi asosida yozildi.
+- Avtomatik tekshiruvlar (`content-courses.test.ts`): sxema, izohlar, ≥2 tur, kalit javoblar bilan 100% — o'tdi.
+- Brauzer tekshiruvi (demo baza **nusxasida** sync → `coursetests.cjs css 86`, 1440 light va 390 dark) **14/14**: xaritada 86 ta dars testi, darsdan testga havola, savollar ekranga sig'adi, gorizontal scroll yo'q, sahifada javob kalitlari va izohlar yo'q. Yagona konsol xatosi — skriptning o'zi kursga yozilishdan oldin xaritani so'ragani (403, kutilgan). Nusxa o'chirildi.
+- Demo bazaga sync: `css: +86 lesson tests`.
+- Regressiya: format ✅, typecheck ✅, lint ✅, test ✅ (shared 112 + libs 3 + sandbox 16 + web 67 + check-engine 23 + api 465 = **686**).
+- Qolgan: JS (79), Bootstrap 3/4/5 (114), RWD/UI/Figma/Portfolio (80) — 273 dars. Commit qilinmagan.
+
+### 2-bosqich — JavaScript kursi dars testlari
+
+- `content/js/lesson-quizzes.ts`: testi yo'q **79 ta darsning** hammasiga dars testi (18 modul; 4 savoldan, turlar aralash, izohlar). Ko'p savollar “kod nima chiqaradi?” ko'rinishida (kod bloki savol matnida).
+- “Nima chiqaradi” kalitlari Node'da haqiqatan bajarib tekshirildi (scratchpad `jscheck.cjs`, 54 ifoda va xato turi): hammasi to'g'ri. Bitta nomuvofiqlik skriptning o'zida edi (heredoc `\D` ni buzgan) — alohida tekshirilganda to'g'ri.
+- `math` testidagi juda qisqa izoh (avtomatik tekshiruv topdi) uzaytirildi; `strict-mode` kod to'ldirishda ikki xil tirnoq qabul qilinadi.
+- Avtomatik tekshiruvlar o'tdi. Brauzer tekshiruvi (nusxa bazada sync → `coursetests.cjs js 79`, 1440 light va 390 dark) **14/14**, xatolar 0. Nusxa o'chirildi.
+- Demo bazaga sync: `js: +79 lesson tests`.
+- Regressiya: format ✅, typecheck ✅, lint ✅, test ✅ (shared 112 + libs 3 + sandbox 16 + web 67 + check-engine 23 + api 467 = **688**).
+- Qolgan: Bootstrap 3/4/5 (114), RWD/UI/Figma/Portfolio (80) — 194 dars. Commit qilinmagan.
+
+### 2-bosqich — Bootstrap 3/4/5 dars testlari
+
+- `content/bootstrap3|4|5/lesson-quizzes.ts`: testi yo'q **36 + 37 + 41 = 114** darsga dars testi (4 savoldan, turlar aralash, izohlar). Savollar har versiyaning o'z klass nomlari asosida (darslardagi `class`/`data-*` qiymatlari va sarlavhalardan olingan): BS3 — `col-xs`, `panel`, `well`, `glyphicon`, `in`, jQuery; BS4 — `col-` / `xl`, `card`, `badge-pill`, `ml-*`, `show`, Popper; BS5 — `data-bs-*`, `xxl`, `ms-*`/`text-end`, `btn-check`, `d-grid`, `form-floating`, `data-bs-theme`. Versiyalar orasidagi farqlar alohida savollar sifatida.
+- Avtomatik tekshiruv ikki joyda izohsiz savolni topdi (`order` `why` siz) — tuzatildi.
+- Brauzer tekshiruvi (nusxa bazada sync → `coursetests.cjs` har kurs uchun, 1440 light va 390 dark): FAIL yo'q, brauzer xatolari 0. Nusxa o'chirildi.
+- Demo bazaga sync: `bootstrap3: +36`, `bootstrap4: +37`, `bootstrap5: +41`.
+- Regressiya: format ✅, typecheck ✅, lint ✅, test ✅ (shared 112 + libs 3 + sandbox 16 + web 67 + check-engine 23 + api 473 = **694**). Birinchi `pnpm -r test` da `check-worker` (haqiqiy Chrome bilan CHECK) testi yiqildi — demo serverlar ishlab turgan paytdagi yuklama; alohida 2 marta va API to'liq qayta ishga tushirilganda o'tdi (avvalgi kuzatuvlar bilan bir xil).
+- Qolgan: Moslashuvchan dizayn, UI asoslari, Figma'dan kodga, Portfolio — 80 dars. Commit qilinmagan.
+
+### 2-bosqich — oxirgi 4 kurs (boshlandi)
+
+- Foydalanuvchi: “davom et, hammasini CLAUDE.md ga ham saqlab bor” — har kurs tugagach shu yerga natija yoziladi.
+- Qolgan darslar: Moslashuvchan dizayn 22, UI asoslari 23, Figma'dan kodga 18, Portfolio 17 — jami 80.
+- **Moslashuvchan dizayn** (`content/rwd/lesson-quizzes.ts`): 22 ta dars testi yozildi va registry'ga ulandi; avtomatik tekshiruvlar o'tdi (sync va brauzer tekshiruvi to'rtta kurs tugagach, birga).
+- **UI asoslari** (`content/ui/lesson-quizzes.ts`): 23 ta dars testi; avtomatik tekshiruv ikki juda qisqa izohni topdi — uzaytirildi; tekshiruvlar o'tdi.
+- **Figma'dan kodga** (`content/figma/lesson-quizzes.ts`): 18 ta dars testi; modifikator savoli darsdagi nomlashga moslandi (`tugma--katta`); tekshiruvlar o'tdi.
+- **Portfolio** (`content/portfolio/lesson-quizzes.ts`): 17 ta dars testi; skip link (`#asosiy`) va `[hidden]` qoidasi kabi aniq javoblar dars matni bilan solishtirildi; barcha kurslar bo'yicha `content-courses.test.ts` 77/77 (2 tasi PHP uchun o'tkazib yuborildi — u yerda alohida dars testi yo'q).
+- Nusxa bazada `db:sync:quizzes --all`: oldin qo'shilgan 7 kursga **+0** (idempotentlik tasdiqlandi), yangi to'rttasiga +22/+23/+18/+17. Brauzer tekshiruvi (`coursetests.cjs`, 1440 light va 390 dark) har kurs uchun **14/14**, xatolar 0. Nusxa o'chirildi. Keyin demo bazaga ham sync qilindi.
+- Regressiya: format ✅, typecheck ✅, lint ✅, test ✅ (shared 112 + libs 3 + sandbox 16 + web 67 + check-engine 23 + api 481 = **702**). E2E bu bosqichda ishga tushirilmadi (demo serverlar 3000/3100/4000 portlarni band qilib turibdi; dars testlari UI ga yangi sahifa qo'shmadi).
+
+### 2-bosqich — YAKUNLANDI
+
+- Jami **407 ta dars testi** (HTML 48, CSS 86, JS 79, Bootstrap 3/4/5 — 36/37/41, Moslashuvchan dizayn 22, UI asoslari 23, Figma'dan kodga 18, Portfolio 17). Endi har bir kursda testi yo'q dars qolmadi (PHP darslarida test avvaldan bor edi).
+- Har test: 3–4 savol, kamida 2 xil tur, har savolda izoh; kalit javoblar bilan 100% (avtomatik tekshiruv). JS “nima chiqaradi” kalitlari Node'da bajarib tasdiqlandi.
+- Fayllar: `apps/api/src/db/content/<kurs>/lesson-quizzes.ts`, `helpers.ts` (`lessonQuiz`, `why`, `withQuizzes`, `LESSON_QUIZ_TITLE`), `seed.ts` (`syncCourseQuizzes`), `db/sync-quizzes.ts`, `package.json` (`db:sync:quizzes`), `test/content-courses.test.ts`.
+- Pedagogik eslatma: dars testlari darsni tugatish sharti (o'tish 70%) — bu kurslarni o'tishni qiyinlashtiradi; kerak bo'lsa o'qituvchi testni o'chirib (faol emas) qo'yishi mumkin. Allaqachon tugatilgan darslar tugatilgan holda qoladi.
+- Keyingi: **3-bosqich** — har mashqqa mini-test (kontent; `withQuizzes(..., { mini })` va `db:sync:quizzes` tayyor). Commit qilinmagan.

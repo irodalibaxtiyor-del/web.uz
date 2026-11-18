@@ -33,6 +33,8 @@ export interface LessonDef {
   slug: string;
   title: string;
   exercise?: ExerciseDef;
+  /** Optional self-check of the exercise (needs `exercise`); never gates the lesson. */
+  miniQuiz?: QuizDef;
   quiz?: QuizDef;
 }
 
@@ -358,4 +360,54 @@ export function quiz(title: string, questions: QuizDef['questions']): QuizDef {
     passingPercent: 70,
     questions,
   };
+}
+
+/** Exercise self-check: unlimited attempts, explanations after each, does not gate the lesson. */
+export function miniQuiz(questions: QuizDef['questions']): QuizDef {
+  return {
+    title: 'Mashq mini-testi',
+    description: 'O‘zingizni tekshiring: mashqdagi asosiy tushunchalar bo‘yicha qisqa savollar.',
+    passingPercent: 60,
+    questions,
+  };
+}
+
+/** Attaches the explanation students see after an attempt (never before). */
+export function why<T extends QuizQuestion>(question: T, explanation: string): T {
+  return { ...question, explanation };
+}
+
+export const LESSON_QUIZ_TITLE = 'Dars testi';
+
+/** Per-lesson test (the module `quiz` checks a whole module). */
+export function lessonQuiz(questions: QuizDef['questions']): QuizDef {
+  return {
+    title: LESSON_QUIZ_TITLE,
+    description:
+      'Dars bo‘yicha qisqa test. Javob berganingizdan keyin har savol bo‘yicha izoh ko‘rasiz. O‘tish uchun kamida 70% kerak.',
+    passingPercent: 70,
+    questions,
+  };
+}
+
+/**
+ * Merges lesson tests and exercise mini-tests kept in separate files into the manifest.
+ * A lesson that already has its own (module) quiz keeps it. Unknown slugs are an error.
+ */
+export function withQuizzes(
+  modules: ModuleDef[],
+  extra: { lesson?: Record<string, QuizDef>; mini?: Record<string, QuizDef> },
+): ModuleDef[] {
+  const slugs = new Set(modules.flatMap((m) => m.lessons.map((l) => l.slug)));
+  for (const s of [...Object.keys(extra.lesson ?? {}), ...Object.keys(extra.mini ?? {})]) {
+    if (!slugs.has(s)) throw new Error(`withQuizzes: unknown lesson slug "${s}"`);
+  }
+  return modules.map((m) => ({
+    ...m,
+    lessons: m.lessons.map((l) => ({
+      ...l,
+      quiz: l.quiz ?? extra.lesson?.[l.slug],
+      miniQuiz: l.miniQuiz ?? extra.mini?.[l.slug],
+    })),
+  }));
 }
