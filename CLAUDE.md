@@ -341,3 +341,14 @@ Oldingi sessiyalar (2026-10-08 … 2026-10-27): [docs/ISH_JURNALI_ARXIV.md](docs
 - **Bootstrap 3**: `content/bootstrap3/mini-quizzes.ts` — 43 ta mini-test. Izohsiz savollarni o'rash uchun qatorga asoslangan xavfsiz skript (scratchpad `wrapbare.cjs`) yozildi; tekshiruvlar o'tdi.
 - **Bootstrap 4**: `content/bootstrap4/mini-quizzes.ts` — 44 ta mini-test; 5 ta qisqa izoh uzaytirildi; tekshiruvlar o'tdi.
 - **Bootstrap 5**: `content/bootstrap5/mini-quizzes.ts` — 48 ta mini-test; 8 ta qisqa izoh uzaytirildi; tekshiruvlar o'tdi.
+- Commit `d178f3c` — Bootstrap 3/4/5 mini-testlari.
+- **Moslashuvchan dizayn** 28, **UI asoslari** 29 (`vizual-ierarxiya` dastlab tushib qolgan — qo'shildi), **Figma'dan kodga** 24, **Portfolio** 23 ta mini-test; qisqa izohlar uzaytirildi.
+- `content-courses.test.ts` ga doimiy tekshiruv: har kursda **har mashqning mini-testi bor**; HTML seed'ida `miniQuizzes === exercises`. Vaqtinchalik `_ex.ts`, `_miss.ts`, `_short.ts` o'chirildi. Ishlatilmagan `sortInto` importi (lint) olib tashlandi.
+- Nusxa bazada `db:sync:quizzes --all`: barcha 10 kursga jami **+485 mini-test** (mashq nomi bo'yicha moslandi, o'tkazib yuborilgan yo'q). Brauzer tekshiruvi (scratchpad `minitests.cjs`, 10 kurs × 1440 light va 390 dark) **120/120**, xatolar 0: xaritada har mashqda bitta mini-test, kurs testlari soniga qo'shilmaydi, mashq sahifasida “O'zingizni tekshiring” bloki, mini-test “Mashqqa qaytish” havolasi bilan ochiladi, savollar ekranga sig'adi, sahifada javob kalitlari yo'q. Nusxa o'chirildi. Keyin demo bazaga ham sync qilindi.
+- Regressiya: format ✅, typecheck ✅, lint ✅, test ✅ (shared 112 + libs 3 + sandbox 16 + web 67 + check-engine 23 + api 492 = **713**).
+
+### 3-bosqich — YAKUNLANDI
+
+- **485 ta mashq mini-testi** (HTML 49, CSS 101, JS 96, Bootstrap 43/44/48, RWD 28, UI 29, Figma 24, Portfolio 23) — har mashqqa bittadan, 3 savol, izohlar bilan; `content/<kurs>/mini-quizzes.ts`.
+- Mini-testlar ixtiyoriy (o'tish 60%), darsni bloklamaydi, cheksiz urinish, urinishdan keyin har savol bo'yicha izoh.
+- Keyingi: **4-bosqich** — darsdagi interaktiv bloklar.

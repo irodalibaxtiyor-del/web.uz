@@ -1,4 +1,4 @@
-import { codeFill, match, miniQuiz, order, q, sortInto, tf, why, type QuizDef } from '../helpers';
+import { codeFill, match, miniQuiz, order, q, tf, why, type QuizDef } from '../helpers';
 
 /** Exercise mini-tests of the Bootstrap 5 course: three self-check questions per exercise. */
 export const BS5_MINI_QUIZZES: Record<string, QuizDef> = {
@@ -134,7 +134,10 @@ export const BS5_MINI_QUIZZES: Record<string, QuizDef> = {
       ),
       'BS4 dagi float-right.',
     ),
-    why(q('q2', 'Chap margin (BS5)?', ['ms-3', 'ml-3', 'mstart-3', 'mx-3'], [0]), '`ms` — margin-start (chap tomon).'),
+    why(
+      q('q2', 'Chap margin (BS5)?', ['ms-3', 'ml-3', 'mstart-3', 'mx-3'], [0]),
+      '`ms` — margin-start (chap tomon).',
+    ),
     why(tf('q3', '`img-fluid` rasmni konteynerga moslaydi.', true), 'max-width: 100%.'),
   ]),
   jumbotron: miniQuiz([
@@ -212,7 +215,10 @@ export const BS5_MINI_QUIZZES: Record<string, QuizDef> = {
       ),
       'Bosish yorliq orqali.',
     ),
-    why(tf('q3', 'Guruhga `role="group"` va `aria-label`.', true), 'Ekran o‘quvchi guruhni taniydi.'),
+    why(
+      tf('q3', 'Guruhga `role="group"` va `aria-label`.', true),
+      'Ekran o‘quvchi guruhni taniydi.',
+    ),
   ]),
   badges: miniQuiz([
     why(
@@ -510,7 +516,10 @@ export const BS5_MINI_QUIZZES: Record<string, QuizDef> = {
       ),
       'jQuery’siz.',
     ),
-    why(tf('q3', '`data-bs-placement="right"` popoverni o‘ngda ochadi.', true), 'Joylashuv atributi — placement.'),
+    why(
+      tf('q3', '`data-bs-placement="right"` popoverni o‘ngda ochadi.', true),
+      'Joylashuv atributi — placement.',
+    ),
   ]),
   toast: miniQuiz([
     why(
@@ -723,7 +732,10 @@ export const BS5_MINI_QUIZZES: Record<string, QuizDef> = {
       order('q2', 'Tuzilma.', ['form-check', 'form-check-input', 'form-check-label']),
       'Har biri o‘z vazifasiga mos keladi.',
     ),
-    why(tf('q3', 'Bir qatordagi checkboxlar — `form-check-inline`.', true), 'Checkboxlar yonma-yon turadi.'),
+    why(
+      tf('q3', 'Bir qatordagi checkboxlar — `form-check-inline`.', true),
+      'Checkboxlar yonma-yon turadi.',
+    ),
   ]),
   range: miniQuiz([
     why(
@@ -887,7 +899,10 @@ export const BS5_MINI_QUIZZES: Record<string, QuizDef> = {
       ),
       'Display utilitalari.',
     ),
-    why(tf('q3', 'Ustunlar orasidagi bo‘shliq `g-*` bilan beriladi.', true), '`g-*` — gutter (ustunlar orasi).'),
+    why(
+      tf('q3', 'Ustunlar orasidagi bo‘shliq `g-*` bilan beriladi.', true),
+      '`g-*` — gutter (ustunlar orasi).',
+    ),
   ]),
   'grid-large': miniQuiz([
     why(

@@ -227,7 +227,10 @@ export const JS_MINI_QUIZZES: Record<string, QuizDef> = {
       ]),
       '2 soat 5 daqiqa.',
     ),
-    why(q('q2', '`125 % 60` natijasi?', ['5', '2', '65', '2.08'], [0]), '`%` — bo‘linmadagi qoldiq.'),
+    why(
+      q('q2', '`125 % 60` natijasi?', ['5', '2', '65', '2.08'], [0]),
+      '`%` — bo‘linmadagi qoldiq.',
+    ),
     why(
       fill('q3', 'O‘rtacha.', '(4 + 5 + 3) / 3 = {{1}}', ['4']),
       'Yig‘indi bo‘linadi sonlar soniga.',
@@ -280,7 +283,10 @@ export const JS_MINI_QUIZZES: Record<string, QuizDef> = {
       '`return` bo‘lmasa — undefined.',
     ),
     why(fill('q2', 'Hisoblang.', 'celsiy(212) = {{1}}', ['100']), '(212 − 32) × 5 / 9 = 100.'),
-    why(q('q3', '`maydon(4, 5)` natijasi?', ['20', '9', '45', 'undefined'], [0]), 'Maydon = en × bo‘y = 4 × 5.'),
+    why(
+      q('q3', '`maydon(4, 5)` natijasi?', ['20', '9', '45', 'undefined'], [0]),
+      'Maydon = en × bo‘y = 4 × 5.',
+    ),
   ]),
   objects: miniQuiz([
     why(
@@ -467,7 +473,10 @@ export const JS_MINI_QUIZZES: Record<string, QuizDef> = {
       fill('q2', 'Natija.', '(0.1 * 10 + 0.2 * 10) / 10 = {{1}}', ['0.3']),
       'Butun sonlar orqali hisoblash.',
     ),
-    why(q('q3', "`Number('abc')`?", ['NaN', '0', 'undefined', "'abc'"], [0]), 'NaN — “son emas” degan qiymat.'),
+    why(
+      q('q3', "`Number('abc')`?", ['NaN', '0', 'undefined', "'abc'"], [0]),
+      'NaN — “son emas” degan qiymat.',
+    ),
   ]),
   'number-methods': miniQuiz([
     why(
@@ -484,7 +493,10 @@ export const JS_MINI_QUIZZES: Record<string, QuizDef> = {
     ),
   ]),
   math: miniQuiz([
-    why(codeFill('q1', 'Doira maydoni.', 'const s = Math.{{1}} * r * r;', ['PI']), 'Doira maydoni: π × r².'),
+    why(
+      codeFill('q1', 'Doira maydoni.', 'const s = Math.{{1}} * r * r;', ['PI']),
+      'Doira maydoni: π × r².',
+    ),
     why(
       q(
         'q2',
@@ -812,7 +824,10 @@ export const JS_MINI_QUIZZES: Record<string, QuizDef> = {
       codeFill('q1', '1 dan 10 gacha.', 'for (let i = 1; i {{1}} 10; i++) { … }', ['<=']),
       '10 ham kiradi.',
     ),
-    why(fill('q2', 'Natija.', '1 dan 100 gacha yig‘indi = {{1}}', ['5050']), 'Formula: n(n+1)/2 = 100 × 101 / 2.'),
+    why(
+      fill('q2', 'Natija.', '1 dan 100 gacha yig‘indi = {{1}}', ['5050']),
+      'Formula: n(n+1)/2 = 100 × 101 / 2.',
+    ),
     why(
       codeFill('q3', '`<li>` yarating.', "const li = document.{{1}}('li');", ['createElement']),
       'Keyin `append`.',
@@ -1367,7 +1382,10 @@ export const JS_MINI_QUIZZES: Record<string, QuizDef> = {
       ),
       'Barcha nusxalar uchun bitta metod.',
     ),
-    why(fill('q2', 'Natija.', 'Math.round(10000 * 1.12) = {{1}}', ['11200']), 'Narxga 12% QQS qo‘shiladi.'),
+    why(
+      fill('q2', 'Natija.', 'Math.round(10000 * 1.12) = {{1}}', ['11200']),
+      'Narxga 12% QQS qo‘shiladi.',
+    ),
     why(
       tf('q3', 'Prototip metodi ichida ham `this` — metod chaqirilgan nusxa.', true),
       'Shuning uchun `this.narx`.',

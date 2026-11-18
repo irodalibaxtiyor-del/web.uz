@@ -127,6 +127,13 @@ describe.each(CONTENT_COURSES.map((c) => [c.slug, c] as const))(
       }
     });
 
+    it('give every exercise a self-check mini-test', () => {
+      const missing = c.modules.flatMap((m) =>
+        m.lessons.filter((l) => l.exercise && !l.miniQuiz).map((l) => l.slug),
+      );
+      expect(missing).toEqual([]);
+    });
+
     it.runIf(lessonTests.length > 0)('are answerable: the keyed answers score 100%', () => {
       for (const { slug, quiz } of lessonTests) {
         const r = gradeQuiz(quiz.questions, quiz.questions.map(rightAnswer), quiz.passingPercent);
@@ -158,6 +165,7 @@ describe('HTML course seed', () => {
     });
     const withQuiz = HTML.modules.flatMap((m) => m.lessons.filter((l) => l.quiz)).length;
     expect(r).toMatchObject({ modules: 12, lessons: 60, quizzes: withQuiz, replaced: false });
+    expect(r.miniQuizzes).toBe(r.exercises);
     expect(r.exercises).toBe(Object.keys(HTML.solutions).length);
     courseId = r.courseId;
 

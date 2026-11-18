@@ -22,12 +22,16 @@ import { JS_MINI_QUIZZES } from './js/mini-quizzes';
 import { JS_SOLUTIONS } from './js/solutions';
 import { PHP_COURSE, PHP_MODULES } from './php/manifest';
 import { PORTFOLIO_LESSON_QUIZZES } from './portfolio/lesson-quizzes';
+import { PORTFOLIO_MINI_QUIZZES } from './portfolio/mini-quizzes';
 import { PORTFOLIO_COURSE, PORTFOLIO_MODULES, PORTFOLIO_SOLUTIONS } from './portfolio/manifest';
 import { RWD_LESSON_QUIZZES } from './rwd/lesson-quizzes';
+import { RWD_MINI_QUIZZES } from './rwd/mini-quizzes';
 import { RWD_COURSE, RWD_MODULES, RWD_SOLUTIONS } from './rwd/manifest';
 import { UI_LESSON_QUIZZES } from './ui/lesson-quizzes';
+import { UI_MINI_QUIZZES } from './ui/mini-quizzes';
 import { UI_COURSE, UI_MODULES, UI_SOLUTIONS } from './ui/manifest';
 import { FIGMA_LESSON_QUIZZES } from './figma/lesson-quizzes';
+import { FIGMA_MINI_QUIZZES } from './figma/mini-quizzes';
 import { FIGMA_COURSE, FIGMA_MODULES, FIGMA_SOLUTIONS } from './figma/manifest';
 
 /** Bundled original courses, in the order they are meant to be taken. */
@@ -44,17 +48,17 @@ export const CONTENT_COURSES: CourseDef[] = [
   },
   {
     ...RWD_COURSE,
-    modules: withQuizzes(RWD_MODULES, { lesson: RWD_LESSON_QUIZZES }),
+    modules: withQuizzes(RWD_MODULES, { lesson: RWD_LESSON_QUIZZES, mini: RWD_MINI_QUIZZES }),
     solutions: RWD_SOLUTIONS,
   },
   {
     ...UI_COURSE,
-    modules: withQuizzes(UI_MODULES, { lesson: UI_LESSON_QUIZZES }),
+    modules: withQuizzes(UI_MODULES, { lesson: UI_LESSON_QUIZZES, mini: UI_MINI_QUIZZES }),
     solutions: UI_SOLUTIONS,
   },
   {
     ...FIGMA_COURSE,
-    modules: withQuizzes(FIGMA_MODULES, { lesson: FIGMA_LESSON_QUIZZES }),
+    modules: withQuizzes(FIGMA_MODULES, { lesson: FIGMA_LESSON_QUIZZES, mini: FIGMA_MINI_QUIZZES }),
     solutions: FIGMA_SOLUTIONS,
   },
   {
@@ -64,7 +68,10 @@ export const CONTENT_COURSES: CourseDef[] = [
   },
   {
     ...PORTFOLIO_COURSE,
-    modules: withQuizzes(PORTFOLIO_MODULES, { lesson: PORTFOLIO_LESSON_QUIZZES }),
+    modules: withQuizzes(PORTFOLIO_MODULES, {
+      lesson: PORTFOLIO_LESSON_QUIZZES,
+      mini: PORTFOLIO_MINI_QUIZZES,
+    }),
     solutions: PORTFOLIO_SOLUTIONS,
   },
   { ...PHP_COURSE, modules: PHP_MODULES, solutions: {} },
