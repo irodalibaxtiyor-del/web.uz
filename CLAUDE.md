@@ -58,7 +58,7 @@ Oldingi sessiyalar (2026-10-08 … 2026-10-27): [docs/ISH_JURNALI_ARXIV.md](docs
 
 ## Joriy holat (qisqacha)
 
-- **Bajarilgan:** roadmap fazalari F0–F2, 11–15C; kurslar HTML, CSS, JS, PHP, Bootstrap 3/4/5, Moslashuvchan dizayn, UI asoslari, Figma'dan kodga, Portfolio; guruhlar, o'qituvchi/talaba hisoblari va Excel; 8 band (dizayn, responsivlik, app-shell, kabinet menyusi, yo'nalishlar, slug, elektron darslik, chatbot); Loms dizayni qaytarilgan; 8 xil test turi; ilmiy modul (formativ fikr, kirish/yakuniy test, tajriba va nazorat guruhlari statistikasi, so'rovnomalar va Cronbach α, savollar tahlili, vaqt sarfi, normallik va parametrik bo'lmagan mezonlar).
+- **Bajarilgan:** roadmap fazalari F0–F2, 11–15C; kurslar HTML, CSS, JS, PHP, Bootstrap 3/4/5, Moslashuvchan dizayn, UI asoslari, Figma'dan kodga, Portfolio; guruhlar, o'qituvchi/talaba hisoblari va Excel; 8 band (dizayn, responsivlik, app-shell, kabinet menyusi, yo'nalishlar, slug, elektron darslik, chatbot); Loms dizayni qaytarilgan; 8 xil test turi; ilmiy modul (formativ fikr, kirish/yakuniy test, tajriba va nazorat guruhlari statistikasi, so'rovnomalar va Cronbach α, savollar tahlili, vaqt sarfi, normallik va parametrik bo'lmagan mezonlar); "Muallif kitoblari" va kitob ichidan qidiruv; 407 ta dars testi va 485 ta mashq mini-testi (izohlar bilan, `db:sync:quizzes`); darsdagi interaktiv bloklar (`tekshir`/`jonli`/`yechim`, `db:sync:lessons`) — HTML kursining 60 darsida.
 - **Muhim qoidalar (arxivdan):**
   - Tranzaksiya ichida faqat `tx` ishlatilsin (aks holda PGlite deadlock).
   - Postgres `jsonb` kalitlar tartibini saqlamaydi — taqqoslashda kanonik JSON.
@@ -67,7 +67,7 @@ Oldingi sessiyalar (2026-10-08 … 2026-10-27): [docs/ISH_JURNALI_ARXIV.md](docs
   - Talabalar ro'yxati (shaxsiy ma'lumot) repoga yozilmaydi (`apps/api/.data/` gitignore'da); repo public.
   - Git Bash: URL yo'llari uchun `MSYS_NO_PATHCONV=1`; murakkab matnli heredoc o'rniga fayl + node skript.
 - **Ochiq (infratuzilma):** Ubuntu'dagi CI E2E, Docker/haqiqiy Postgres/sandbox domeni/edge proksi/backup tekshiruvi, haqiqiy AI provayder (DPA), SMTP, Safari va haqiqiy qurilmalar, Lighthouse qayta o'lchovi.
-- **Ochiq (reja):** har darsga test va har mashqqa mini-test (izohlar bilan), darsdagi interaktiv bloklar, atamalar lug'ati, takrorlash, sertifikat, Telegram xabarnomalari.
+- **Ochiq (reja):** qolgan kurslarga interaktiv bloklar (4-bosqich davomi), atamalar lug'ati, takrorlash, sertifikat, Telegram xabarnomalari.
 
 ## 2026-11-14
 
@@ -374,3 +374,4 @@ Oldingi sessiyalar (2026-10-08 … 2026-10-27): [docs/ISH_JURNALI_ARXIV.md](docs
 - Kuzatuv: `shared` qayta build qilinganda (`dist` o'chiriladi) `pnpm dev:sandbox` yiqiladi — qayta ishga tushirish kerak (jonli misol iframe'i `chrome-error` beradi).
 - Regressiya: format ✅, typecheck ✅, lint ✅, test ✅ (shared 117 + libs 3 + sandbox 16 + web 67 + check-engine 23 + api 493 = **719**).
 - Keyingi: qolgan kurslarga (CSS, JS, Bootstrap, RWD, UI, Figma, Portfolio) interaktiv bloklar.
+- Commit'lar: `f9696a6` (infratuzilma), `f5f2818` (HTML kontenti). Push qilinmagan; `apps/web/next-env.d.ts` ataylab commit qilinmaydi.
