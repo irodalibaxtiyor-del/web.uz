@@ -1,8 +1,11 @@
 import { BS3_LESSON_QUIZZES } from './bootstrap3/lesson-quizzes';
+import { BS3_MINI_QUIZZES } from './bootstrap3/mini-quizzes';
 import { BS3_COURSE, BS3_MODULES, BS3_SOLUTIONS } from './bootstrap3/manifest';
 import { BS4_LESSON_QUIZZES } from './bootstrap4/lesson-quizzes';
+import { BS4_MINI_QUIZZES } from './bootstrap4/mini-quizzes';
 import { BS4_COURSE, BS4_MODULES, BS4_SOLUTIONS } from './bootstrap4/manifest';
 import { BS5_LESSON_QUIZZES } from './bootstrap5/lesson-quizzes';
+import { BS5_MINI_QUIZZES } from './bootstrap5/mini-quizzes';
 import { BS5_COURSE, BS5_MODULES, BS5_SOLUTIONS } from './bootstrap5/manifest';
 import { CSS_COURSE, CSS_MODULES } from './css/manifest';
 import { CSS_LESSON_QUIZZES } from './css/lesson-quizzes';
@@ -67,17 +70,17 @@ export const CONTENT_COURSES: CourseDef[] = [
   { ...PHP_COURSE, modules: PHP_MODULES, solutions: {} },
   {
     ...BS3_COURSE,
-    modules: withQuizzes(BS3_MODULES, { lesson: BS3_LESSON_QUIZZES }),
+    modules: withQuizzes(BS3_MODULES, { lesson: BS3_LESSON_QUIZZES, mini: BS3_MINI_QUIZZES }),
     solutions: BS3_SOLUTIONS,
   },
   {
     ...BS4_COURSE,
-    modules: withQuizzes(BS4_MODULES, { lesson: BS4_LESSON_QUIZZES }),
+    modules: withQuizzes(BS4_MODULES, { lesson: BS4_LESSON_QUIZZES, mini: BS4_MINI_QUIZZES }),
     solutions: BS4_SOLUTIONS,
   },
   {
     ...BS5_COURSE,
-    modules: withQuizzes(BS5_MODULES, { lesson: BS5_LESSON_QUIZZES }),
+    modules: withQuizzes(BS5_MODULES, { lesson: BS5_LESSON_QUIZZES, mini: BS5_MINI_QUIZZES }),
     solutions: BS5_SOLUTIONS,
   },
 ];

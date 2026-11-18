@@ -337,3 +337,7 @@ Oldingi sessiyalar (2026-10-08 … 2026-10-27): [docs/ISH_JURNALI_ARXIV.md](docs
 - **CSS**: `content/css/mini-quizzes.ts` — 101 ta mini-test (har mashqqa). Yo'q mini-testlarni topish uchun yordamchi skript ishlatildi (`_miss.ts`, vaqtinchalik). Yordamchi “why bilan o'rash” skripti ikki blokni buzgan — qo'lda tuzatildi; bundan keyin izohlar qo'lda yoziladi.
 - Commit `7d4e3a6` — HTML va CSS mini-testlari.
 - **JS**: `content/js/mini-quizzes.ts` — 96 ta mini-test; yo'q mashq qolmadi. Barcha kurslardagi ≤10 belgili izohlarni topadigan vaqtinchalik `_short.ts` skripti bilan 10 ta qisqa izoh uzaytirildi.
+- Commit `ff740e2` — JS mini-testlari.
+- **Bootstrap 3**: `content/bootstrap3/mini-quizzes.ts` — 43 ta mini-test. Izohsiz savollarni o'rash uchun qatorga asoslangan xavfsiz skript (scratchpad `wrapbare.cjs`) yozildi; tekshiruvlar o'tdi.
+- **Bootstrap 4**: `content/bootstrap4/mini-quizzes.ts` — 44 ta mini-test; 5 ta qisqa izoh uzaytirildi; tekshiruvlar o'tdi.
+- **Bootstrap 5**: `content/bootstrap5/mini-quizzes.ts` — 48 ta mini-test; 8 ta qisqa izoh uzaytirildi; tekshiruvlar o'tdi.
