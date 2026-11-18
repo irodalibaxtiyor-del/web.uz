@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { validateLessonBlocks } from './lesson-blocks';
 import { courseSlugSchema } from './slug';
 import type { ExerciseSummary } from './exercises';
 import type { AssignmentSummary } from './assignments';
@@ -25,6 +26,14 @@ export type LessonState = (typeof LESSON_STATES)[number];
 export const LESSON_CONTENT_MAX = 100_000;
 
 const title = z.string().trim().min(2).max(200);
+
+/** Lesson Markdown; its interactive blocks (`tekshir`, `jonli`, `yechim`) must be well formed. */
+const lessonContent = z
+  .string()
+  .max(LESSON_CONTENT_MAX)
+  .superRefine((text, ctx) => {
+    for (const message of validateLessonBlocks(text)) ctx.addIssue({ code: 'custom', message });
+  });
 
 export const createCourseSchema = z.object({
   title,
@@ -59,7 +68,7 @@ export type UpdateModuleInput = z.infer<typeof updateModuleSchema>;
 
 export const createLessonSchema = z.object({
   title,
-  content: z.string().max(LESSON_CONTENT_MAX).default(''),
+  content: lessonContent.default(''),
   position: position.optional(),
 });
 export type CreateLessonInput = z.infer<typeof createLessonSchema>;
@@ -67,7 +76,7 @@ export type CreateLessonInput = z.infer<typeof createLessonSchema>;
 export const updateLessonSchema = z
   .object({
     title: title.optional(),
-    content: z.string().max(LESSON_CONTENT_MAX).optional(),
+    content: lessonContent.optional(),
     position: position.optional(),
   })
   .refine((v) => Object.keys(v).length > 0, { message: 'empty' });

@@ -1,10 +1,11 @@
 'use client';
 
-import { LESSON_CONTENT_MAX } from '@webdizayn/shared';
+import { LESSON_CONTENT_MAX, validateLessonBlocks } from '@webdizayn/shared';
 import { useParams } from 'next/navigation';
-import { useId, useState, type FormEvent } from 'react';
+import { useId, useMemo, useRef, useState, type FormEvent } from 'react';
 import { AssignmentsPanel } from '@/components/assignments-panel';
 import { ExercisesPanel } from '@/components/exercises-panel';
+import { LESSON_BLOCK_TEMPLATES } from '@/components/lesson-block-templates';
 import { Markdown } from '@/components/markdown';
 import { QuizzesPanel } from '@/components/quizzes-panel';
 import { BackLink, Button, ErrorText, inputClass, LoadState } from '@/components/ui';
@@ -49,6 +50,25 @@ function Editor({ lesson, base }: { lesson: EditableLesson; base: string }) {
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   const [pending, setPending] = useState(false);
+  const area = useRef<HTMLTextAreaElement>(null);
+  // Same checks as the server, shown while typing.
+  const blockProblems = useMemo(() => validateLessonBlocks(content), [content]);
+
+  /** Inserts an interactive block template at the cursor (on its own paragraph). */
+  function insertBlock(text: string) {
+    setPreview(false);
+    const el = area.current;
+    const at = el ? el.selectionStart : content.length;
+    const before = content.slice(0, at).replace(/\s*$/, '');
+    const after = content.slice(at).replace(/^\s*/, '');
+    const next = [before, text, after].filter(Boolean).join('\n\n');
+    setContent(next);
+    requestAnimationFrame(() => {
+      const pos = (before ? before.length + 2 : 0) + text.length;
+      area.current?.focus();
+      area.current?.setSelectionRange(pos, pos);
+    });
+  }
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -91,6 +111,7 @@ function Editor({ lesson, base }: { lesson: EditableLesson; base: string }) {
           </div>
         ) : (
           <textarea
+            ref={area}
             id={`${id}-content`}
             value={content}
             onChange={(e) => setContent(e.target.value)}
@@ -102,6 +123,31 @@ function Editor({ lesson, base }: { lesson: EditableLesson; base: string }) {
         <p className="text-xs text-slate-500 dark:text-slate-400">
           {content.length.toLocaleString()} / {LESSON_CONTENT_MAX.toLocaleString()} belgi
         </p>
+        <div
+          className="flex flex-wrap items-center gap-2"
+          role="group"
+          aria-label="Interaktiv blok qo‘shish"
+        >
+          <span className="text-sm font-medium">Interaktiv blok:</span>
+          {LESSON_BLOCK_TEMPLATES.map((t) => (
+            <Button key={t.label} variant="secondary" onClick={() => insertBlock(t.text)}>
+              {t.label}
+            </Button>
+          ))}
+        </div>
+        {blockProblems.length > 0 && (
+          <div
+            role="alert"
+            className="rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:bg-amber-950 dark:text-amber-200"
+          >
+            <p className="font-semibold">Interaktiv bloklarda xato bor (saqlab bo‘lmaydi):</p>
+            <ul className="mt-1 list-disc pl-5">
+              {blockProblems.map((p) => (
+                <li key={p}>{p}</li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
       {error && <ErrorText>{error}</ErrorText>}
       {saved && (

@@ -3,6 +3,8 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
   LESSON_CONTENT_MAX,
+  stripLessonBlocks,
+  validateLessonBlocks,
   createExerciseSchema,
   createQuizSchema,
   type CreateExerciseInput,
@@ -66,6 +68,7 @@ export function prepareCourse(
       else content = readFileSync(file, 'utf8').trim();
       if (existsSync(file) && content.length === 0) problems.push(`${l.slug}: empty lesson`);
       if (content.length > LESSON_CONTENT_MAX) problems.push(`${l.slug}: lesson too long`);
+      for (const p of validateLessonBlocks(content)) problems.push(`${l.slug}: ${p}`);
 
       let exercise: CreateExerciseInput | null = null;
       if (l.exercise) {
@@ -245,6 +248,81 @@ export async function seedCourse(
       }
     }
     await syncDirections(tx, opts.organizationId);
+    return result;
+  });
+}
+
+export interface SyncLessonsResult {
+  courseId: string;
+  updated: number;
+  unchanged: number;
+  /** Lessons a teacher has edited (text differs apart from interactive blocks): left alone. */
+  edited: string[];
+  skipped: string[];
+}
+
+/**
+ * Brings bundled lesson texts (new interactive blocks) into an already seeded course. A lesson is
+ * updated only when its stored text equals the file once interactive blocks are removed from
+ * both — i.e. nobody has edited it — so teachers' changes are never overwritten.
+ */
+export async function syncCourseLessons(
+  db: Db,
+  course: CourseDef,
+  opts: { organizationId: string; contentDir?: string },
+): Promise<SyncLessonsResult> {
+  const prepared = prepareCourse(course, opts.contentDir);
+  return db.transaction(async (tx) => {
+    const [row] = await tx
+      .select({ id: courses.id })
+      .from(courses)
+      .where(and(eq(courses.organizationId, opts.organizationId), eq(courses.slug, course.slug)));
+    if (!row) throw new Error(`Course "${course.slug}" is not seeded; run db:seed:course first`);
+    const courseId = row.id;
+    const result: SyncLessonsResult = {
+      courseId,
+      updated: 0,
+      unchanged: 0,
+      edited: [],
+      skipped: [],
+    };
+    const mods = await tx
+      .select({ id: modules.id })
+      .from(modules)
+      .where(eq(modules.courseId, courseId))
+      .orderBy(asc(modules.position), asc(modules.createdAt));
+    const lessonRows = await tx
+      .select({
+        id: lessons.id,
+        moduleId: lessons.moduleId,
+        title: lessons.title,
+        content: lessons.content,
+      })
+      .from(lessons)
+      .where(eq(lessons.courseId, courseId))
+      .orderBy(asc(lessons.position), asc(lessons.createdAt));
+
+    for (const [mi, m] of prepared.entries()) {
+      const inModule = lessonRows.filter((l) => l.moduleId === mods[mi]?.id);
+      for (const [li, l] of m.lessons.entries()) {
+        const lesson = inModule[li];
+        if (!lesson || lesson.title !== l.title) {
+          result.skipped.push(`${l.slug}: lesson not found at ${mi + 1}.${li + 1}`);
+          continue;
+        }
+        if (lesson.content === l.content) {
+          result.unchanged++;
+        } else if (stripLessonBlocks(lesson.content) === stripLessonBlocks(l.content)) {
+          await tx
+            .update(lessons)
+            .set({ content: l.content, updatedAt: new Date() })
+            .where(eq(lessons.id, lesson.id));
+          result.updated++;
+        } else {
+          result.edited.push(l.slug);
+        }
+      }
+    }
     return result;
   });
 }

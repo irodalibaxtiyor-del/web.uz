@@ -202,6 +202,13 @@ describe('sequential learning', () => {
     await patch(owner, `${base()}/${courseId}/lessons/${l2}`, { position: 2 }).expect(200);
     await patch(owner, `${base()}/${courseId}/lessons/${l0}`, { position: 0 }).expect(200);
 
+    // Interactive blocks are validated on save: a self-check without a right option is rejected.
+    const broken = 'Matn\n\n```tekshir\nSavol?\n- a\n- b\n> izoh\n```';
+    await patch(owner, `${base()}/${courseId}/lessons/${l0}`, { content: broken }).expect(400);
+    const valid =
+      'Matn\n\n```tekshir\nSavol?\n- a\n+ b\n> izoh\n```\n\n```jonli\n<p>Salom</p>\n```';
+    await patch(owner, `${base()}/${courseId}/lessons/${l0}`, { content: valid }).expect(200);
+
     const map = await get(student, `${base()}/${courseId}/map`).expect(200);
     expect(states(map.body)).toEqual(['AVAILABLE', 'COMPLETED', 'COMPLETED', 'LOCKED']);
     await get(student, `${base()}/${courseId}/lessons/${l3}`).expect(403);

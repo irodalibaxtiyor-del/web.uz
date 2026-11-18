@@ -352,3 +352,15 @@ Oldingi sessiyalar (2026-10-08 … 2026-10-27): [docs/ISH_JURNALI_ARXIV.md](docs
 - **485 ta mashq mini-testi** (HTML 49, CSS 101, JS 96, Bootstrap 43/44/48, RWD 28, UI 29, Figma 24, Portfolio 23) — har mashqqa bittadan, 3 savol, izohlar bilan; `content/<kurs>/mini-quizzes.ts`.
 - Mini-testlar ixtiyoriy (o'tish 60%), darsni bloklamaydi, cheksiz urinish, urinishdan keyin har savol bo'yicha izoh.
 - Keyingi: **4-bosqich** — darsdagi interaktiv bloklar.
+
+### 4-bosqich — darsdagi interaktiv bloklar (infratuzilma)
+
+- Qaror: bloklar dars Markdown'ining ichida, maxsus “fenced” bloklar ko'rinishida — o'qituvchi ularni oddiy muharrirda o'zi yoza oladi:
+  - ` ```tekshir ` — o'zini tekshirish savoli: savol, `- ` noto'g'ri / `+ ` to'g'ri variantlar (bir nechta `+` — bir nechta javob), `> ` izoh (majburiy). Javob darhol tekshiriladi, baho qo'yilmaydi va saqlanmaydi; to'g'ri bo'lsa izoh, xato bo'lsa “Qayta urinish” va “Javobni ko'rsatish”.
+  - ` ```jonli ` — tahrirlanadigan HTML misol; mavjud sandbox runner'da (alohida sayt, `sandbox="allow-scripts"` iframe, 3 s watchdog) ishga tushadi; “Ishga tushirish” va “Asl holiga”.
+  - ` ```yechim Sarlavha ` — yopiq “Javobni ko'rish” bloki (ichi Markdown; ichida kod bo'lsa ```` uzunroq fence).
+- Shared `lesson-blocks.ts`: `findLessonBlocks`, `parseCheckBlock`, `validateLessonBlocks` (qator raqamli o'zbekcha xatolar), `stripLessonBlocks`. Dars sxemasi (`createLessonSchema`/`updateLessonSchema`) noto'g'ri blokli matnni rad etadi; `prepareCourse` ham tekshiradi. 5 ta unit test.
+- Web: `Markdown` `pre` ni almashtiradi → `components/lesson-blocks.tsx` (SelfCheck, LiveExample, Reveal); dars muharririda “Interaktiv blok” tugmalari (shablonni kursor joyiga qo'yadi) va bloklardagi xatolar jonli ko'rsatiladi.
+- `syncCourseLessons` + `pnpm --filter @webdizayn/api db:sync:lessons <slug|--all>`: seed qilingan kursdagi dars matnini fayldan yangilaydi, **faqat** bloklarni olib tashlaganda saqlangan matn fayldagiga teng bo'lsa (ya'ni o'qituvchi tahrirlamagan); tahrirlangan darslar saqlanib qoladi va hisobotda ko'rsatiladi.
+- Testlar: API — noto'g'ri blokli dars 400, to'g'risi 200; kontent — sync bitta darsni yangilaydi, o'qituvchi tahrirlaganini saqlaydi, takroriy ishga tushirish 0.
+- Cheklov: o'zini tekshirish javoblari ataylab dars matnida (formativ mashq, baholanmaydi); jonli misolda konsol ko'rsatilmaydi (faqat natija).

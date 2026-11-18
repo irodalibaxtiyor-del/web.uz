@@ -1,4 +1,6 @@
-import { readdirSync } from 'node:fs';
+import { cpSync, mkdtempSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import {
   gradeQuiz,
@@ -13,6 +15,7 @@ import {
   contentDirOf,
   prepareCourse,
   seedCourse,
+  syncCourseLessons,
   syncCourseQuizzes,
 } from '../src/db/content/seed';
 import { createMember, createOrg, setup, type TestContext } from './helpers';
@@ -346,6 +349,55 @@ describe('quiz sync into a seeded course', () => {
     await expect(syncCourseQuizzes(ctx.handle.db, HTML, { organizationId: empty })).rejects.toThrow(
       /not seeded/,
     );
+  });
+});
+
+describe('lesson text sync', () => {
+  it('adds new interactive blocks but never overwrites a lesson a teacher edited', async () => {
+    const syncOrg = await createOrg(ctx, 'lesson-sync-org');
+    const owner = await createMember(ctx, 'owner@lessonsync.uz', syncOrg, 'TEACHER');
+    // "Old" files: what the course was seeded from.
+    const oldDir = mkdtempSync(join(tmpdir(), 'wd-old-'));
+    cpSync(contentDirOf(HTML), oldDir, { recursive: true });
+    const seeded = await seedCourse(ctx.handle.db, HTML, {
+      organizationId: syncOrg,
+      teacherId: owner.userId,
+      contentDir: oldDir,
+    });
+    // "New" files: two lessons gain a self-check block.
+    const newDir = mkdtempSync(join(tmpdir(), 'wd-new-'));
+    cpSync(oldDir, newDir, { recursive: true });
+    const block = '\n\n```tekshir\nSavol?\n- yo‘q\n+ ha\n> Izoh.\n```\n';
+    for (const slug of ['introduction', 'editors']) {
+      const f = join(newDir, `${slug}.md`);
+      writeFileSync(f, readFileSync(f, 'utf8') + block);
+    }
+    // A teacher edits "editors" in the meantime.
+    const base = `/orgs/${syncOrg}/courses/${seeded.courseId}`;
+    const map = await get(owner, `${base}/structure`).expect(200);
+    const editorsId = map.body.modules[0].lessons[1].id;
+    await ctx
+      .http()
+      .patch(`${base}/lessons/${editorsId}`)
+      .set('Cookie', owner.cookie)
+      .send({ content: 'O‘qituvchi yozgan matn.' })
+      .expect(200);
+
+    const r = await syncCourseLessons(ctx.handle.db, HTML, {
+      organizationId: syncOrg,
+      contentDir: newDir,
+    });
+    expect(r).toMatchObject({ updated: 1, edited: ['editors'], skipped: [] });
+    const intro = await get(owner, `${base}/lessons/${map.body.modules[0].lessons[0].id}/edit`);
+    expect(intro.body.content).toContain('```tekshir');
+    const editors = await get(owner, `${base}/lessons/${editorsId}/edit`);
+    expect(editors.body.content).toBe('O‘qituvchi yozgan matn.');
+    // Running again changes nothing.
+    const again = await syncCourseLessons(ctx.handle.db, HTML, {
+      organizationId: syncOrg,
+      contentDir: newDir,
+    });
+    expect(again.updated).toBe(0);
   });
 });
 

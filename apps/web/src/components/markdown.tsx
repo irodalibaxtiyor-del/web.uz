@@ -1,6 +1,8 @@
 import { Fragment, type ReactNode } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { isLessonBlockKind } from '@webdizayn/shared';
+import { LessonBlock } from './lesson-blocks';
 
 /**
  * Lesson content renderer. react-markdown does not render raw HTML, so author-supplied
@@ -12,6 +14,26 @@ export function Markdown({ children }: { children: string }) {
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
+          // Interactive blocks are fenced code with a block kind as the language.
+          pre: ({ node, children }) => {
+            const code = node?.children[0];
+            if (code?.type === 'element' && code.tagName === 'code') {
+              const cls = code.properties.className;
+              const lang = (Array.isArray(cls) ? String(cls[0] ?? '') : '').replace(
+                /^language-/,
+                '',
+              );
+              if (isLessonBlockKind(lang)) {
+                const body = code.children
+                  .map((c) => (c.type === 'text' ? c.value : ''))
+                  .join('')
+                  .replace(/\n$/, '');
+                const meta = (code.data as { meta?: string } | undefined)?.meta ?? '';
+                return <LessonBlock kind={lang} meta={meta} body={body} />;
+              }
+            }
+            return <pre>{children}</pre>;
+          },
           // Lesson images: never block the first paint, keep their aspect ratio.
           img: ({ src, alt }) =>
             typeof src === 'string' ? (

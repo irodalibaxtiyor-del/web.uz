@@ -32,3 +32,4 @@ export * from './surveys';
 export * from './item-analysis';
 export * from './activity';
 export * from './book-search';
+export * from './lesson-blocks';
