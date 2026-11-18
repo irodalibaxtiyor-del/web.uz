@@ -8,7 +8,7 @@ import {
   type PublicCourseDetail,
   type PublicCourseSummary,
 } from '@webdizayn/shared';
-import { and, asc, count, eq, inArray } from 'drizzle-orm';
+import { and, asc, count, eq, inArray, isNull } from 'drizzle-orm';
 import { APP_CONFIG, type AppConfig } from '../config';
 import { DbService } from '../db/db.module';
 import {
@@ -97,7 +97,13 @@ export class CatalogService {
       this.db
         .select({ id: quizzes.courseId, n: count() })
         .from(quizzes)
-        .where(and(inArray(quizzes.courseId, courseIds), eq(quizzes.isActive, true)))
+        .where(
+          and(
+            inArray(quizzes.courseId, courseIds),
+            eq(quizzes.isActive, true),
+            isNull(quizzes.exerciseId),
+          ),
+        )
         .groupBy(quizzes.courseId),
     ]);
     for (const r of m) out.get(r.id)!.modules = r.n;

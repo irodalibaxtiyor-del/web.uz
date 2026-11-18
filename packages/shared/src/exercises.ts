@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { checkRulesSchema, type CheckRule } from './checks';
+import type { QuizSummary } from './quizzes';
 
 export const DIFFICULTIES = ['EASY', 'MEDIUM', 'HARD'] as const;
 export type Difficulty = (typeof DIFFICULTIES)[number];
@@ -104,6 +105,8 @@ export interface ExerciseSummary {
   title: string;
   difficulty: Difficulty;
   status: ExerciseStatus;
+  /** Active self-check mini-tests of this exercise (optional, never gate the lesson). */
+  miniQuizzes?: QuizSummary[];
 }
 
 /** Student-facing exercise. Contains no hidden CHECK data. */
@@ -121,6 +124,8 @@ export interface ExerciseView {
   updatedAt: string | null;
   /** Whether a server-side CHECK is configured. The rules themselves are never included. */
   checkAvailable: boolean;
+  /** Active self-check mini-tests (present on the exercise view). */
+  miniQuizzes?: QuizSummary[];
 }
 
 export interface ExerciseAdmin {

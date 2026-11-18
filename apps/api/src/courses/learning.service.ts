@@ -188,6 +188,12 @@ export class LearningService {
     }
   }
 
+  /** The learner's view of an exercise's active mini-tests (empty when there are none). */
+  async exerciseMiniQuizzes(db: Db, userId: string, lessonId: string, exerciseId: string) {
+    const it = (await this.items(db, userId, { lessonId })).get(lessonId);
+    return it?.exercises.find((e) => e.id === exerciseId)?.miniQuizzes ?? [];
+  }
+
   async requireEnrollment(db: Db, userId: string, courseId: string) {
     const [row] = await db
       .select({ id: enrollments.id })
@@ -247,7 +253,12 @@ export class LearningService {
     }
 
     const qs = await db
-      .select({ lessonId: quizzes.lessonId, id: quizzes.id, title: quizzes.title })
+      .select({
+        lessonId: quizzes.lessonId,
+        exerciseId: quizzes.exerciseId,
+        id: quizzes.id,
+        title: quizzes.title,
+      })
       .from(quizzes)
       .where(
         and(
@@ -278,12 +289,23 @@ export class LearningService {
     const byQuiz = new Map(attempts.map((a) => [a.quizId, a]));
     for (const q of qs) {
       const a = byQuiz.get(q.id);
-      slot(q.lessonId).quizzes.push({
+      const summary = {
         id: q.id,
         title: q.title,
-        status: !a ? 'NOT_STARTED' : a.passed ? 'PASSED' : 'FAILED',
+        status: !a
+          ? ('NOT_STARTED' as const)
+          : a.passed
+            ? ('PASSED' as const)
+            : ('FAILED' as const),
         bestScore: a?.best ?? null,
-      });
+      };
+      if (q.exerciseId === null) {
+        slot(q.lessonId).quizzes.push(summary);
+        continue;
+      }
+      // Exercise mini-test: a self-check shown with its exercise; never a lesson requirement.
+      const ex = out.get(q.lessonId)?.exercises.find((e) => e.id === q.exerciseId);
+      if (ex) (ex.miniQuizzes ??= []).push(summary);
     }
 
     // Published and closed assignments only; drafts stay invisible to learners.

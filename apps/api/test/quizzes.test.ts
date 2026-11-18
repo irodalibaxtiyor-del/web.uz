@@ -470,3 +470,88 @@ describe('course map', () => {
     expect(JSON.stringify(res.body)).not.toMatch(/Qoralama|correct/);
   });
 });
+
+describe('exercise mini-tests', () => {
+  let mc: string;
+  let lessonA: string;
+  let lessonB: string;
+  let ex: string;
+  let mini: string;
+  const base = () => `/orgs/${orgA}/courses/${mc}`;
+
+  beforeAll(async () => {
+    const c = await req(owner, 'post', `/orgs/${orgA}/courses`, { title: 'Mini', slug: 'mini' });
+    mc = c.body.course.id;
+    const mod = await req(owner, 'post', `${base()}/modules`, { title: '1-modul' });
+    const lesson = async (title: string) =>
+      (await req(owner, 'post', `${base()}/modules/${mod.body.id}/lessons`, { title })).body.id;
+    lessonA = await lesson('Ranglar');
+    lessonB = await lesson('Shriftlar');
+    ex = (
+      await req(owner, 'post', `${base()}/lessons/${lessonA}/exercises`, {
+        title: 'Rang mashqi',
+      }).expect(201)
+    ).body.id;
+  });
+
+  it('belongs to an exercise of the same lesson', async () => {
+    const wrong = await req(owner, 'post', `${base()}/lessons/${lessonB}/quizzes`, {
+      title: 'Mini',
+      questions: QUESTIONS,
+      isActive: true,
+      exerciseId: ex,
+    });
+    expect(wrong.status).toBe(400);
+    const res = await req(owner, 'post', `${base()}/lessons/${lessonA}/quizzes`, {
+      title: 'Mashq mini-testi',
+      questions: QUESTIONS,
+      passingPercent: 100,
+      isActive: true,
+      exerciseId: ex,
+    }).expect(201);
+    expect(res.body.exerciseId).toBe(ex);
+    mini = res.body.id;
+    await req(owner, 'patch', base(), { status: 'PUBLISHED' }).expect(200);
+    await req(student, 'post', `${base()}/enroll`).expect(201);
+  });
+
+  it('is shown with its exercise, not as a lesson quiz', async () => {
+    const map = await req(student, 'get', `${base()}/map`).expect(200);
+    const first = map.body.modules[0].lessons[0];
+    expect(first.quizzes).toEqual([]);
+    expect(first.exercises[0].miniQuizzes).toEqual([
+      { id: mini, title: 'Mashq mini-testi', status: 'NOT_STARTED', bestScore: null },
+    ]);
+    expect(map.body.stats.quizzes).toEqual({ done: 0, total: 0 });
+    const view = await req(student, 'get', `${base()}/exercises/${ex}`).expect(200);
+    expect(view.body.miniQuizzes).toEqual([expect.objectContaining({ id: mini })]);
+    const quiz = await req(student, 'get', `${base()}/quizzes/${mini}`).expect(200);
+    expect(quiz.body.exerciseId).toBe(ex);
+    expect(JSON.stringify(quiz.body)).not.toMatch(/correct"/);
+  });
+
+  it('never gates or completes the lesson', async () => {
+    const passed = await req(student, 'post', `${base()}/quizzes/${mini}/attempts`, {
+      answers: RIGHT,
+    }).expect(201);
+    expect(passed.body.status).toBe('PASSED');
+    const statesOf = async () =>
+      (await req(student, 'get', `${base()}/map`)).body.modules[0].lessons.map(
+        (l: { state: string }) => l.state,
+      );
+    // Passing the mini-test alone does not complete the lesson (the exercise does).
+    expect((await statesOf())[0]).not.toBe('COMPLETED');
+    await req(student, 'post', `${base()}/quizzes/${mini}/attempts`, { answers: WRONG }).expect(
+      201,
+    );
+    await req(owner, 'put', `${base()}/exercises/${ex}/students/${student.userId}/status`, {
+      status: 'PASSED',
+    }).expect(200);
+    expect(await statesOf()).toEqual(['COMPLETED', 'AVAILABLE']);
+  });
+
+  it('disappears with its exercise', async () => {
+    await req(owner, 'patch', `${base()}/exercises/${ex}`, { isActive: false }).expect(200);
+    await req(student, 'get', `${base()}/quizzes/${mini}`).expect(404);
+  });
+});

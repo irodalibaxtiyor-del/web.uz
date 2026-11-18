@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { SubmissionStatusBadge } from '@/components/assignment-ui';
-import { QuizStatusBadge } from '@/components/quiz-ui';
+import { MiniQuizLinks, QuizStatusBadge } from '@/components/quiz-ui';
 import { Markdown } from '@/components/markdown';
 import {
   BackLink,
@@ -93,6 +93,7 @@ export default function LessonPage() {
                       </span>
                     </div>
                     <ExerciseStatusBadge status={ex.status} />
+                    <MiniQuizLinks quizzes={ex.miniQuizzes} courseBase={courseBase} compact />
                   </li>
                 ))}
               </ul>

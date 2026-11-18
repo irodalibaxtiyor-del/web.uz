@@ -23,7 +23,7 @@ import { CourseAccessService } from '../courses/course-access.service';
 import { LearningService, LOCKED } from '../courses/learning.service';
 import type { Db } from '../db/client';
 import { DbService } from '../db/db.module';
-import { quizAttempts, quizzes } from '../db/schema';
+import { exercises, quizAttempts, quizzes } from '../db/schema';
 
 type QuizRow = typeof quizzes.$inferSelect;
 
@@ -55,6 +55,7 @@ export class QuizzesService {
     await this.access.manageableCourse(auth, m, courseId);
     await this.access.lessonInCourse(courseId, lessonId);
     const db = this.dbs.db;
+    if (input.exerciseId) await this.exerciseInLesson(db, courseId, lessonId, input.exerciseId);
     let position = input.position;
     if (position === undefined) {
       const [row] = await db
@@ -114,6 +115,9 @@ export class QuizzesService {
   ): Promise<QuizAdmin> {
     await this.access.manageableCourse(auth, m, courseId);
     const q = await this.quizInCourse(this.dbs.db, courseId, quizId);
+    if (input.exerciseId) {
+      await this.exerciseInLesson(this.dbs.db, courseId, q.lessonId, input.exerciseId);
+    }
     // An active quiz gates its lesson, so it must stay answerable.
     if ((input.isActive ?? q.isActive) && (input.questions ?? q.questions).length === 0) {
       throw new BadRequestException('Faol testda kamida bitta savol bo‘lishi kerak');
@@ -175,7 +179,8 @@ export class QuizzesService {
         passed: result.passed,
         results: result.results,
       });
-      if (result.passed) {
+      // Mini-tests are self-checks: they never complete (or gate) the lesson.
+      if (result.passed && q.exerciseId === null) {
         await this.learning.completeIfRequirementsMet(t, auth.userId, courseId, q.lessonId);
       }
     });
@@ -195,6 +200,15 @@ export class QuizzesService {
     const db = this.dbs.db;
     const q = await this.quizInCourse(db, courseId, quizId);
     if (!q.isActive) throw new NotFoundException('Test topilmadi');
+    if (q.exerciseId !== null) {
+      // A mini-test is visible only while its exercise is.
+      const [ex] = await db
+        .select({ isActive: exercises.isActive })
+        .from(exercises)
+        .where(eq(exercises.id, q.exerciseId))
+        .limit(1);
+      if (!ex?.isActive) throw new NotFoundException('Test topilmadi');
+    }
     await this.learning.requireEnrollment(db, auth.userId, courseId);
     const state = await this.learning.lessonState(db, auth.userId, courseId, q.lessonId);
     if (state === 'LOCKED') throw new ForbiddenException(LOCKED);
@@ -209,6 +223,22 @@ export class QuizzesService {
       .limit(1);
     if (!row) throw new NotFoundException('Test topilmadi');
     return row;
+  }
+
+  /** A mini-test belongs to an exercise of the same lesson. */
+  private async exerciseInLesson(db: Db, courseId: string, lessonId: string, exerciseId: string) {
+    const [row] = await db
+      .select({ id: exercises.id })
+      .from(exercises)
+      .where(
+        and(
+          eq(exercises.id, exerciseId),
+          eq(exercises.courseId, courseId),
+          eq(exercises.lessonId, lessonId),
+        ),
+      )
+      .limit(1);
+    if (!row) throw new BadRequestException('Mashq shu darsda topilmadi');
   }
 
   private async stats(ids: string[]) {
@@ -244,6 +274,7 @@ export class QuizzesService {
     return {
       id: q.id,
       lessonId: q.lessonId,
+      exerciseId: q.exerciseId,
       title: q.title,
       description: q.description,
       passingPercent: q.passingPercent,
@@ -283,6 +314,7 @@ export class QuizzesService {
     return {
       id: q.id,
       lessonId: q.lessonId,
+      exerciseId: q.exerciseId,
       title: q.title,
       description: q.description,
       questions: q.questions,

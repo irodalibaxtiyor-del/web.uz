@@ -597,6 +597,8 @@ export const quizzes = pgTable(
     courseId: uuid('course_id')
       .notNull()
       .references(() => courses.id, { onDelete: 'cascade' }),
+    /** Set: a self-check mini-test of this exercise (same lesson); it never gates the lesson. */
+    exerciseId: uuid('exercise_id').references(() => exercises.id, { onDelete: 'cascade' }),
     title: text('title').notNull(),
     description: text('description').notNull().default(''),
     /** Includes the correct answers: staff-only, never serialized to students. */
@@ -612,6 +614,7 @@ export const quizzes = pgTable(
   (t) => [
     index('quizzes_lesson_pos_idx').on(t.lessonId, t.position),
     index('quizzes_course_idx').on(t.courseId),
+    index('quizzes_exercise_idx').on(t.exerciseId),
     check('quizzes_position_nonneg', sql`${t.position} >= 0`),
     check('quizzes_passing_range', sql`${t.passingPercent} between 1 and 100`),
     check('quizzes_feedback_mode', sql`${t.feedback} in ('PER_QUESTION', 'TOTAL_ONLY')`),

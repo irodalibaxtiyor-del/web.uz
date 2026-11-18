@@ -232,8 +232,15 @@ export class ExercisesService {
     exerciseId: string,
   ): Promise<ExerciseView> {
     const exercise = await this.accessibleExercise(auth, m, courseId, exerciseId);
-    const row = await this.ensureWorkspace(this.dbs.db, auth.userId, courseId, exercise);
-    return this.toView(exercise, row);
+    const db = this.dbs.db;
+    const row = await this.ensureWorkspace(db, auth.userId, courseId, exercise);
+    const miniQuizzes = await this.learning.exerciseMiniQuizzes(
+      db,
+      auth.userId,
+      exercise.lessonId,
+      exercise.id,
+    );
+    return { ...this.toView(exercise, row), miniQuizzes };
   }
 
   async saveWorkspace(

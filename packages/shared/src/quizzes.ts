@@ -242,6 +242,11 @@ export const createQuizSchema = z
     questions: quizQuestionsSchema.default([]),
     passingPercent: z.number().int().min(1).max(100).default(70),
     feedback: z.enum(QUIZ_FEEDBACK_MODES).default('PER_QUESTION'),
+    /**
+     * Set: an optional self-check mini-test of that exercise (same lesson). It never gates the
+     * lesson; null/absent: a lesson quiz.
+     */
+    exerciseId: z.string().uuid().nullable().optional(),
     /** New quizzes start inactive so a half-written quiz never blocks students. */
     isActive: z.boolean().default(false),
     position: z.number().int().min(0).max(10_000).optional(),
@@ -256,6 +261,7 @@ export const updateQuizSchema = z
     questions: quizQuestionsSchema.optional(),
     passingPercent: z.number().int().min(1).max(100).optional(),
     feedback: z.enum(QUIZ_FEEDBACK_MODES).optional(),
+    exerciseId: z.string().uuid().nullable().optional(),
     isActive: z.boolean().optional(),
     position: z.number().int().min(0).max(10_000).optional(),
   })
@@ -537,6 +543,8 @@ export interface QuizAttemptResult {
 export interface QuizView {
   id: string;
   lessonId: string;
+  /** Set for an exercise mini-test (self-check; does not gate the lesson). */
+  exerciseId: string | null;
   title: string;
   description: string;
   passingPercent: number;
@@ -551,6 +559,7 @@ export interface QuizView {
 export interface QuizAdmin {
   id: string;
   lessonId: string;
+  exerciseId: string | null;
   title: string;
   description: string;
   questions: QuizQuestion[];

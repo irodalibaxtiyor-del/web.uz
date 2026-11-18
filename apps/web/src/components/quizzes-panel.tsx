@@ -1,6 +1,6 @@
 'use client';
 
-import type { QuizAdmin } from '@webdizayn/shared';
+import type { ExerciseAdmin, QuizAdmin } from '@webdizayn/shared';
 import Link from 'next/link';
 import { useId, useState, type FormEvent } from 'react';
 import { send } from '@/lib/api';
@@ -12,17 +12,22 @@ import { Icon } from './icons';
 export function QuizzesPanel({ base, lessonId }: { base: string; lessonId: string }) {
   const id = useId();
   const { state, reload } = useApi<QuizAdmin[]>(`${base}/lessons/${lessonId}/quizzes`);
+  const exercises = useApi<ExerciseAdmin[]>(`${base}/lessons/${lessonId}/exercises`);
+  const exerciseList = exercises.state.kind === 'ready' ? exercises.state.data : [];
+  const exerciseTitle = (id: string) => exerciseList.find((x) => x.id === id)?.title ?? 'mashq';
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
-    const title = String(new FormData(form).get('title') ?? '').trim();
+    const data = new FormData(form);
+    const title = String(data.get('title') ?? '').trim();
+    const exerciseId = String(data.get('exerciseId') ?? '') || null;
     if (title.length < 2) return setError("Nom kamida 2 belgidan iborat bo'lsin");
     setError(null);
     setPending(true);
-    const res = await send('POST', `${base}/lessons/${lessonId}/quizzes`, { title });
+    const res = await send('POST', `${base}/lessons/${lessonId}/quizzes`, { title, exerciseId });
     setPending(false);
     if (!res.ok) return setError(res.message);
     form.reset();
@@ -38,6 +43,11 @@ export function QuizzesPanel({ base, lessonId }: { base: string; lessonId: strin
         Test server tomonida avtomatik tekshiriladi, to&apos;g&apos;ri javoblar talabaga
         yuborilmaydi. Faol test, xuddi mashq kabi, darsni tugatish sharti bo&apos;ladi. Yangi test
         faol emas holda yaratiladi.
+      </p>
+      <p className="text-sm text-slate-500 dark:text-slate-400">
+        <strong className="font-semibold">Mashq mini-testi</strong> — mashqqa bog&apos;langan
+        o&apos;zini tekshirish testi: talaba uni mashq sahifasida ko&apos;radi, cheksiz urinish
+        mumkin, darsni tugatish sharti emas.
       </p>
       <LoadState state={state}>
         {(list) =>
@@ -58,6 +68,11 @@ export function QuizzesPanel({ base, lessonId }: { base: string; lessonId: strin
                     >
                       {q.title}
                     </span>
+                    {q.exerciseId && (
+                      <span className="rounded-full bg-brand-50 px-2 py-0.5 text-xs font-medium text-brand-700 dark:bg-brand-950 dark:text-brand-300">
+                        Mini-test: {exerciseTitle(q.exerciseId)}
+                      </span>
+                    )}
                     <span className="text-xs text-slate-500 dark:text-slate-400">
                       {q.questions.length} ta savol · o&apos;tish {q.passingPercent}%
                       {!q.isActive && ' · faol emas'}
@@ -88,6 +103,26 @@ export function QuizzesPanel({ base, lessonId }: { base: string; lessonId: strin
             placeholder="Yangi test nomi"
             className={inputClass}
           />
+          {exerciseList.length > 0 && (
+            <>
+              <label htmlFor={`${id}-kind`} className="sr-only">
+                Test turi
+              </label>
+              <select
+                id={`${id}-kind`}
+                name="exerciseId"
+                defaultValue=""
+                className={`${inputClass} w-auto max-w-[45%]`}
+              >
+                <option value="">Dars testi</option>
+                {exerciseList.map((x) => (
+                  <option key={x.id} value={x.id}>
+                    Mini-test: {x.title}
+                  </option>
+                ))}
+              </select>
+            </>
+          )}
           <Button type="submit" variant="secondary" disabled={pending} className="shrink-0">
             <Icon name="plus" className="size-4" />
             Test

@@ -10,7 +10,7 @@ import {
 import { Icon } from '@/components/icons';
 import { useParams, useRouter } from 'next/navigation';
 import { useState, type FormEvent } from 'react';
-import { QuestionText } from '@/components/markdown';
+import { OptionText, QuestionText } from '@/components/markdown';
 import { KIND_HINT, QuestionInput, type AnswerPatch } from '@/components/quiz-questions';
 import { QuizStatusBadge } from '@/components/quiz-ui';
 import { BackLink, Button, ErrorText, LoadState } from '@/components/ui';
@@ -106,7 +106,11 @@ function Quiz({ initial, courseBase }: { initial: QuizView; courseBase: string }
   return (
     <article className="card space-y-6 p-6 sm:p-10">
       <nav className="text-sm">
-        <BackLink href={`${courseBase}/lessons/${quiz.lessonId}`}>Darsga qaytish</BackLink>
+        {quiz.exerciseId ? (
+          <BackLink href={`${courseBase}/exercises/${quiz.exerciseId}`}>Mashqqa qaytish</BackLink>
+        ) : (
+          <BackLink href={`${courseBase}/lessons/${quiz.lessonId}`}>Darsga qaytish</BackLink>
+        )}
       </nav>
       <header className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-3xl font-bold">{quiz.title}</h1>
@@ -116,6 +120,7 @@ function Quiz({ initial, courseBase }: { initial: QuizView; courseBase: string }
       <p className="text-sm text-slate-500 dark:text-slate-400">
         {quiz.questions.length} ta savol · o&apos;tish uchun kamida {quiz.passingPercent}% ·
         urinishlar: {quiz.attempts}
+        {quiz.exerciseId && ' · mashq mini-testi: ixtiyoriy, darsni tugatishga ta‘sir qilmaydi'}
       </p>
 
       {last && (
@@ -148,7 +153,7 @@ function Quiz({ initial, courseBase }: { initial: QuizView; courseBase: string }
             <li key={q.id}>
               <fieldset
                 aria-describedby={`savol-${q.id}`}
-                className="space-y-3 rounded-xl border border-line bg-panel p-5"
+                className="min-w-0 space-y-3 rounded-xl border border-line bg-panel p-5"
               >
                 <legend className="flex flex-wrap items-center gap-2 px-1 font-semibold">
                   {i + 1}-savol
@@ -202,7 +207,11 @@ function QuestionReview({ review }: { review: QuizQuestionReview | undefined }) 
         <p className="font-semibold">
           Oxirgi urinishda: {review.correct ? 'to‘g‘ri' : 'noto‘g‘ri'}
         </p>
-        {review.explanation && <p className="mt-1 whitespace-pre-wrap">{review.explanation}</p>}
+        {review.explanation && (
+          <p className="quiz-option mt-1 whitespace-pre-wrap">
+            <OptionText>{review.explanation}</OptionText>
+          </p>
+        )}
       </div>
     </div>
   );

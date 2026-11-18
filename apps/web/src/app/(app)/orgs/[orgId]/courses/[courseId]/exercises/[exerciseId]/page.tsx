@@ -19,6 +19,7 @@ import { api, send } from '@/lib/api';
 import { useActivity } from '@/lib/use-activity';
 import { useApi } from '@/lib/use-api';
 import { Icon } from '@/components/icons';
+import { MiniQuizLinks } from '@/components/quiz-ui';
 import { confirmDialog } from '@/components/dialog';
 
 export default function ExercisePage() {
@@ -87,7 +88,8 @@ function Workspace({ initial, courseBase }: { initial: ExerciseView; courseBase:
       setError(res.message);
       return false;
     }
-    setEx(res.data);
+    // Save/reset responses omit the mini-tests; keep the ones loaded with the page.
+    setEx((prev) => ({ ...res.data, miniQuizzes: prev.miniQuizzes }));
     setFiles(res.data.files);
     setDirty(false);
     setNotice(done);
@@ -159,6 +161,21 @@ function Workspace({ initial, courseBase }: { initial: ExerciseView; courseBase:
             </section>
           )}
         </div>
+        {ex.miniQuizzes && ex.miniQuizzes.length > 0 && (
+          <section
+            aria-labelledby="mini-quiz"
+            className="space-y-2 rounded-xl border border-brand-100 bg-brand-50/50 p-5 dark:border-brand-900 dark:bg-brand-950/40"
+          >
+            <h2 id="mini-quiz" className="text-lg font-semibold">
+              O&apos;zingizni tekshiring
+            </h2>
+            <p className="text-sm text-slate-600 dark:text-slate-400">
+              Mashqdagi asosiy tushunchalar bo&apos;yicha qisqa test. Ixtiyoriy, urinishlar soni
+              cheklanmagan, darsni tugatishga ta&apos;sir qilmaydi.
+            </p>
+            <MiniQuizLinks quizzes={ex.miniQuizzes} courseBase={courseBase} />
+          </section>
+        )}
       </div>
 
       <section aria-label="Kod muharriri" className="space-y-3">

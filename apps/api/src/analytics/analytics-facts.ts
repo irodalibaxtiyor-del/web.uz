@@ -1,4 +1,4 @@
-import { and, eq, inArray, max, ne, sql, type SQL } from 'drizzle-orm';
+import { and, eq, inArray, isNull, max, ne, sql, type SQL } from 'drizzle-orm';
 import type {
   AssignmentStatus,
   CheckRule,
@@ -197,7 +197,10 @@ export async function loadFacts(db: Db, scope: Scope): Promise<Facts> {
     db
       .select({ id: quizzes.id, courseId: quizzes.courseId, lessonId: quizzes.lessonId })
       .from(quizzes)
-      .where(and(inArray(quizzes.courseId, ids), eq(quizzes.isActive, true))),
+      // Lesson quizzes only: exercise mini-tests are optional self-checks.
+      .where(
+        and(inArray(quizzes.courseId, ids), eq(quizzes.isActive, true), isNull(quizzes.exerciseId)),
+      ),
     db
       .select({
         userId: quizAttempts.userId,
