@@ -322,3 +322,16 @@ Oldingi sessiyalar (2026-10-08 … 2026-10-27): [docs/ISH_JURNALI_ARXIV.md](docs
 - Fayllar: `apps/api/src/db/content/<kurs>/lesson-quizzes.ts`, `helpers.ts` (`lessonQuiz`, `why`, `withQuizzes`, `LESSON_QUIZ_TITLE`), `seed.ts` (`syncCourseQuizzes`), `db/sync-quizzes.ts`, `package.json` (`db:sync:quizzes`), `test/content-courses.test.ts`.
 - Pedagogik eslatma: dars testlari darsni tugatish sharti (o'tish 70%) — bu kurslarni o'tishni qiyinlashtiradi; kerak bo'lsa o'qituvchi testni o'chirib (faol emas) qo'yishi mumkin. Allaqachon tugatilgan darslar tugatilgan holda qoladi.
 - Keyingi: **3-bosqich** — har mashqqa mini-test (kontent; `withQuizzes(..., { mini })` va `db:sync:quizzes` tayyor). Commit qilinmagan.
+
+### Commit: 1–2-bosqich
+
+- `58b5234` — mashq mini-testi asosi (migratsiya 0026, API, web), `fieldset { min-width: 0 }`, izohlarda inline kod.
+- `f80405e` — 407 ta dars testi, `db:sync:quizzes`, kontent testlari, jurnal. Push qilinmagan; `apps/web/next-env.d.ts` commit qilinmadi.
+
+### 3-bosqich — har mashqqa mini-test (boshlandi)
+
+- Mashqlar soni: HTML 49, CSS 101, JS 96, Bootstrap 3/4/5 43/44/48, RWD 28, UI 29, Figma 24, Portfolio 23 — jami **485**.
+- Har mini-test: `miniQuiz()` (nom “Mashq mini-testi”, o'tish 60%), 3 savol — aynan mashq topshirig'idagi tushunchalar bo'yicha, turlar aralash, har savolda izoh. Ixtiyoriy, darsni bloklamaydi.
+- `content-courses.test.ts`: sifat tekshiruvlari (izohlar, ≥2 tur, kalitlar bilan 100%) mini-testlarga ham tatbiq etildi.
+- **HTML**: `content/html/mini-quizzes.ts` — 49 ta mini-test, `withQuizzes(..., { mini })` bilan ulandi; tekshiruvlar o'tdi (bitta qisqa izoh tuzatildi).
+- **CSS**: `content/css/mini-quizzes.ts` — 101 ta mini-test (har mashqqa). Yo'q mini-testlarni topish uchun yordamchi skript ishlatildi (`_miss.ts`, vaqtinchalik). Yordamchi “why bilan o'rash” skripti ikki blokni buzgan — qo'lda tuzatildi; bundan keyin izohlar qo'lda yoziladi.

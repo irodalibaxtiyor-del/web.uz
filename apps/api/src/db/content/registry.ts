@@ -6,10 +6,12 @@ import { BS5_LESSON_QUIZZES } from './bootstrap5/lesson-quizzes';
 import { BS5_COURSE, BS5_MODULES, BS5_SOLUTIONS } from './bootstrap5/manifest';
 import { CSS_COURSE, CSS_MODULES } from './css/manifest';
 import { CSS_LESSON_QUIZZES } from './css/lesson-quizzes';
+import { CSS_MINI_QUIZZES } from './css/mini-quizzes';
 import { CSS_SOLUTIONS } from './css/solutions';
 import { withQuizzes, type CourseDef } from './helpers';
 import { HTML_COURSE, HTML_MODULES } from './html/manifest';
 import { HTML_LESSON_QUIZZES } from './html/lesson-quizzes';
+import { HTML_MINI_QUIZZES } from './html/mini-quizzes';
 import { HTML_SOLUTIONS } from './html/solutions';
 import { JS_COURSE, JS_MODULES } from './js/manifest';
 import { JS_LESSON_QUIZZES } from './js/lesson-quizzes';
@@ -28,12 +30,12 @@ import { FIGMA_COURSE, FIGMA_MODULES, FIGMA_SOLUTIONS } from './figma/manifest';
 export const CONTENT_COURSES: CourseDef[] = [
   {
     ...HTML_COURSE,
-    modules: withQuizzes(HTML_MODULES, { lesson: HTML_LESSON_QUIZZES }),
+    modules: withQuizzes(HTML_MODULES, { lesson: HTML_LESSON_QUIZZES, mini: HTML_MINI_QUIZZES }),
     solutions: HTML_SOLUTIONS,
   },
   {
     ...CSS_COURSE,
-    modules: withQuizzes(CSS_MODULES, { lesson: CSS_LESSON_QUIZZES }),
+    modules: withQuizzes(CSS_MODULES, { lesson: CSS_LESSON_QUIZZES, mini: CSS_MINI_QUIZZES }),
     solutions: CSS_SOLUTIONS,
   },
   {

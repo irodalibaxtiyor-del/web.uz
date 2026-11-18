@@ -106,30 +106,35 @@ describe.each(CONTENT_COURSES.map((c) => [c.slug, c] as const))('%s course manif
   });
 });
 
-describe.each(CONTENT_COURSES.map((c) => [c.slug, c] as const))('%s lesson tests', (_, c) => {
-  const lessonTests = c.modules.flatMap((m) =>
-    m.lessons.flatMap((l) =>
-      l.quiz?.title === LESSON_QUIZ_TITLE ? [{ slug: l.slug, quiz: l.quiz }] : [],
-    ),
-  );
+describe.each(CONTENT_COURSES.map((c) => [c.slug, c] as const))(
+  '%s lesson tests and exercise mini-tests',
+  (_, c) => {
+    // Lesson tests and exercise mini-tests follow the same quality rules.
+    const lessonTests = c.modules.flatMap((m) =>
+      m.lessons.flatMap((l) => [
+        ...(l.quiz?.title === LESSON_QUIZ_TITLE ? [{ slug: l.slug, quiz: l.quiz }] : []),
+        ...(l.miniQuiz ? [{ slug: `${l.slug} (mini)`, quiz: l.miniQuiz }] : []),
+      ]),
+    );
 
-  it.runIf(lessonTests.length > 0)('explain every answer and mix question kinds', () => {
-    for (const { slug, quiz } of lessonTests) {
-      expect(quiz.questions.length, slug).toBeGreaterThanOrEqual(3);
-      for (const x of quiz.questions)
-        expect(x.explanation?.length ?? 0, `${slug} ${x.id}`).toBeGreaterThan(10);
-      const kinds = new Set(quiz.questions.map((x) => x.kind ?? 'SINGLE'));
-      expect(kinds.size, slug).toBeGreaterThanOrEqual(2);
-    }
-  });
+    it.runIf(lessonTests.length > 0)('explain every answer and mix question kinds', () => {
+      for (const { slug, quiz } of lessonTests) {
+        expect(quiz.questions.length, slug).toBeGreaterThanOrEqual(3);
+        for (const x of quiz.questions)
+          expect(x.explanation?.length ?? 0, `${slug} ${x.id}`).toBeGreaterThan(10);
+        const kinds = new Set(quiz.questions.map((x) => x.kind ?? 'SINGLE'));
+        expect(kinds.size, slug).toBeGreaterThanOrEqual(2);
+      }
+    });
 
-  it.runIf(lessonTests.length > 0)('are answerable: the keyed answers score 100%', () => {
-    for (const { slug, quiz } of lessonTests) {
-      const r = gradeQuiz(quiz.questions, quiz.questions.map(rightAnswer), quiz.passingPercent);
-      expect(r.score, slug).toBe(100);
-    }
-  });
-});
+    it.runIf(lessonTests.length > 0)('are answerable: the keyed answers score 100%', () => {
+      for (const { slug, quiz } of lessonTests) {
+        const r = gradeQuiz(quiz.questions, quiz.questions.map(rightAnswer), quiz.passingPercent);
+        expect(r.score, slug).toBe(100);
+      }
+    });
+  },
+);
 
 describe('HTML course manifest', () => {
   it('has 12 modules and 60 lessons', () => {
