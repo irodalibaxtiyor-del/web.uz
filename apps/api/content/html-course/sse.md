@@ -64,6 +64,14 @@ Ulanishni yopish: `manba.close()`.
 
 > **Platformada:** Ishga tushirish oynasi tarmoqqa ulanmaydi, shuning uchun SSE u yerda ishlamaydi. Uni sinab ko‘rish uchun `text/event-stream` qaytaradigan server kerak.
 
+```tekshir
+SSE’da ma’lumot qaysi yo‘nalishda oqadi?
++ faqat serverdan brauzerga
+- faqat brauzerdan serverga
+- ikki tomonga teng
+> Ikki tomonlama aloqa kerak bo‘lsa WebSocket ishlatiladi.
+```
+
 ## Xulosa
 
 - SSE — serverdan brauzerga bir tomonlama xabarlar oqimi.

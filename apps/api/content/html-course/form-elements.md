@@ -82,6 +82,22 @@ Matn maydoniga avtomatik takliflar beradi, lekin erkin yozishga ham ruxsat berad
 </form>
 ```
 
+```tekshir
+Bir nechta maydonni sarlavha bilan guruhlash uchun qaysi teglar ishlatiladi?
++ `<fieldset>` va `<legend>`
+- `<group>` va `<title>`
+- `<div>` va `<label>`
+> `<legend>` guruh nomi bo‘ladi va ekran o‘quvchilar uni har bir maydon bilan birga o‘qiydi.
+```
+
+```jonli
+<fieldset>
+  <legend>Yetkazib berish</legend>
+  <select><option>Toshkent</option><option>Samarqand</option></select>
+  <textarea rows="2" placeholder="Manzil"></textarea>
+</fieldset>
+```
+
 ## Xulosa
 
 - `<select>`/`<option>` — tanlov, `<textarea>` — uzun matn.

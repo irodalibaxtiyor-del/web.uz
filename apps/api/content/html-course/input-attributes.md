@@ -66,6 +66,21 @@ Qiymat muntazam ifodaga (regular expression) mos kelishi kerak:
 <input type="email" name="mehmonlar" multiple placeholder="a@x.uz, b@x.uz">
 ```
 
+```tekshir
+Maydonni to‘ldirmasdan forma yuborilmasligi uchun qaysi atribut kerak?
++ `required`
+- `readonly`
+- `placeholder`
+> `required` bo‘lsa, brauzer bo‘sh maydon bilan formani yubormaydi va ogohlantiradi.
+```
+
+```jonli
+<form onsubmit="event.preventDefault(); alert('Yuborildi')">
+  <input name="kod" required pattern="[0-9]{4}" placeholder="4 xonali kod">
+  <button>Yuborish</button>
+</form>
+```
+
 ## Xulosa
 
 - `value` — qiymat, `placeholder` — ko‘rsatma (yorliq o‘rnini bosmaydi).

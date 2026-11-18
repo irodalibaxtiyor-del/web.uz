@@ -85,6 +85,23 @@ h1 {
 
 Bir element uchun bir nechta qoida bo‘lsa, odatda **eng yaqini** ustun bo‘ladi: inline uslub ichki va tashqi uslubdan kuchliroq. Shu ma’noda CSS “kaskad” deb ataladi.
 
+```tekshir
+Bir nechta sahifa uchun eng qulay CSS ulash usuli qaysi?
+- `style` atributi
+- har sahifada `<style>`
++ tashqi fayl va `<link rel="stylesheet">`
+> Tashqi fayl barcha sahifalarda bir marta yoziladi va brauzer uni keshlaydi.
+```
+
+```jonli
+<style>
+  h1 { color: navy; }
+  .izoh { color: gray; font-style: italic; }
+</style>
+<h1>CSS bilan sarlavha</h1>
+<p class="izoh">Bu paragraf klass orqali bezatilgan.</p>
+```
+
 ## Xulosa
 
 - CSS ko‘rinish uchun javob beradi.

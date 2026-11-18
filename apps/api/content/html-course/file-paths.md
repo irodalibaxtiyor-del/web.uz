@@ -67,6 +67,14 @@ Sayt ichidagi fayllar uchun **nisbiy yo‘llar** afzal: sayt boshqa domenga yoki
 - Windows uslubidagi teskari chiziq: `images\logo.png` emas, `images/logo.png`.
 - Bo‘sh joyli fayl nomlari: `mening rasmim.png` o‘rniga `mening-rasmim.png`.
 
+```tekshir
+`pages/about.html` sahifasidan ildizdagi `images/logo.png` ga nisbiy yo‘l qaysi?
++ `../images/logo.png`
+- `images/logo.png`
+- `./images/logo.png`
+> `..` bir papka yuqoriga chiqadi: `pages` dan ildizga, keyin `images` ga.
+```
+
 ## Xulosa
 
 - Nisbiy yo‘l joriy faylga nisbatan, `../` — bitta yuqori papka.

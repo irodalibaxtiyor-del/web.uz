@@ -71,6 +71,23 @@ JavaScript ham klass orqali elementlarni topadi:
 - Kichik harflar va chiziqcha ishlating: `.mahsulot-kartochkasi`.
 - Klass nomi registrga sezgir: `.Eslatma` va `.eslatma` — boshqa-boshqa klasslar.
 
+```tekshir
+Bitta elementga ikki klass qanday beriladi?
++ `class="karta katta"`
+- `class="karta, katta"`
+- `class="karta" class="katta"`
+> Klasslar bitta `class` atributida bo‘sh joy bilan ajratiladi.
+```
+
+```jonli
+<style>
+  .karta { border: 1px solid #ccc; padding: 8px; }
+  .katta { font-size: 24px; }
+</style>
+<p class="karta">Oddiy karta</p>
+<p class="karta katta">Katta karta</p>
+```
+
 ## Xulosa
 
 - `class` — elementlar guruhi uchun nom; bitta klass ko‘p elementda ishlatiladi.

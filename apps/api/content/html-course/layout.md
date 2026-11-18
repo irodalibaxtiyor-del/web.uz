@@ -92,6 +92,27 @@ header {
 
 Eski usullar (jadval bilan maket, `float`) endi tavsiya etilmaydi.
 
+```tekshir
+Sahifaning asosiy navigatsiya menyusi uchun qaysi teg to‘g‘ri?
++ `<nav>`
+- `<menu-bar>`
+- `<aside>`
+> `<nav>` asosiy havolalar guruhini bildiradi; `<aside>` — yon (qo‘shimcha) mazmun.
+```
+
+```jonli
+<style>
+  body { display: grid; grid-template-columns: 120px 1fr; gap: 8px; }
+  header, footer { grid-column: 1 / -1; background: #cde; padding: 8px; }
+  nav { background: #fde; padding: 8px; }
+  main { background: #efe; padding: 8px; }
+</style>
+<header>Sarlavha</header>
+<nav>Menyu</nav>
+<main>Asosiy mazmun</main>
+<footer>Pastki qism</footer>
+```
+
 ## Xulosa
 
 - `<header>`, `<nav>`, `<main>`, `<section>`, `<article>`, `<aside>`, `<footer>` — sahifa maketining qismlari.

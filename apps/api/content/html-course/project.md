@@ -79,6 +79,14 @@ img {
 
 Ushbu darsning mashqida xuddi shunday sahifani o‘zingiz haqingizda yasaysiz.
 
+```tekshir
+Sahifani topshirishdan oldin tekshirish ro‘yxatiga nimalar kiradi?
++ har bir rasmda `alt` bor
++ `<title>` va `lang` yozilgan
+- barcha matnlar `<div>` ichida
+> Semantik teglar, `alt`, `title` va `lang` — sifatli sahifaning asosiy belgilaridan.
+```
+
 ## Xulosa
 
 Haqiqiy sahifa bir nechta oddiy elementlar birikmasidan iborat. Tuzilmani HTML’da to‘g‘ri yozib, ko‘rinishni CSS faylga chiqarsangiz, sahifani kengaytirish va o‘zgartirish oson bo‘ladi.

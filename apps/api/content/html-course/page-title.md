@@ -39,6 +39,14 @@
 
 Ikkalasi o‘xshash bo‘lishi mumkin, lekin bir xil bo‘lishi shart emas.
 
+```tekshir
+`<title>` matni qayerda ko‘rinadi?
++ brauzer tabida va qidiruv natijalarida
+- sahifaning eng yuqorisida katta harflarda
+- faqat kod ichida
+> Sahifadagi ko‘rinadigan asosiy sarlavha `<h1>`, tab va qidiruvdagi nom esa `<title>`.
+```
+
 ## Xulosa
 
 - `<title>` `<head>` ichida bo‘ladi va har bir sahifada bo‘lishi kerak.

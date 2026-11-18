@@ -75,6 +75,14 @@ Fayl bilan yuboradigan tugma uchun kodlash turini belgilaydi:
 | `formnovalidate` | `novalidate`                      |
 | `formenctype`    | `enctype`                         |
 
+```tekshir
+Formadan tashqaridagi maydonni formaga bog‘lash uchun nima yoziladi?
++ `form="forma-id"`
+- `for="forma-id"`
+- `parent="forma-id"`
+> `form` atributi formaning `id` sini oladi va maydon o‘sha forma bilan yuboriladi.
+```
+
 ## Xulosa
 
 - `form="id"` — maydonni tashqaridan formaga bog‘laydi.

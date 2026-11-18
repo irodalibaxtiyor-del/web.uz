@@ -49,6 +49,22 @@ Matematik yoki dasturiy o‘zgaruvchi:
 </p>
 ```
 
+```tekshir
+Klaviatura tugmasini (masalan, Ctrl) ko‘rsatish uchun qaysi teg mos?
++ `<kbd>`
+- `<code>`
+- `<samp>`
+> `<kbd>` — foydalanuvchi bosadigan tugma, `<code>` — kod bo‘lagi, `<samp>` — dastur chiqargan natija.
+```
+
+```jonli
+<p>Saqlash uchun <kbd>Ctrl</kbd> + <kbd>S</kbd> bosing.</p>
+<p><code>let x = 5;</code> — kod, <var>x</var> — o‘zgaruvchi.</p>
+<pre><code>function salom() {
+  return 'Salom';
+}</code></pre>
+```
+
 ## Xulosa
 
 - `<code>` — kod, `<pre>` — formatni saqlovchi blok, `<kbd>` — klaviatura tugmasi.

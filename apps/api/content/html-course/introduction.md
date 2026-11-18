@@ -52,6 +52,19 @@ Brauzer faylni yuqoridan pastga o‘qiydi, teglarni tahlil qiladi va ulardan **D
 
 > **Eslatma:** Bu kursdagi har bir dars amaliy mashq bilan tugaydi. Mashqni server haqiqiy brauzerda tekshiradi va siz o‘tganingizdan keyin keyingi dars ochiladi.
 
+```tekshir
+HTML qanday til?
+- dasturlash tili
++ belgilash tili
+- ma’lumotlar bazasi tili
+> HTML mazmunning tuzilmasini teglar bilan belgilaydi, hisob-kitob yoki mantiq yozmaydi.
+```
+
+```jonli
+<h1>Assalomu alaykum!</h1>
+<p>Bu mening birinchi veb-sahifam.</p>
+```
+
 ## Xulosa
 
 - HTML — sahifaning tuzilmasini tasvirlaydigan belgilash tili.

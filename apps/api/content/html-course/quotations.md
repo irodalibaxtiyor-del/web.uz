@@ -54,6 +54,20 @@ Matn yo‘nalishini majburan o‘zgartiradi (`dir="rtl"` — o‘ngdan chapga):
 <bdo dir="rtl">Bu matn teskari ko‘rinadi</bdo>
 ```
 
+```tekshir
+Qisqartmaning to‘liq nomi qaysi atribut bilan beriladi?
++ `<abbr title="...">`
+- `<abbr alt="...">`
+- `<abbr name="...">`
+> `title` dagi to‘liq nom sichqoncha ustiga olib kelinganda ko‘rinadi.
+```
+
+```jonli
+<p><abbr title="HyperText Markup Language">HTML</abbr> — veb tili.</p>
+<p>U aytdi: <q>Bilim — kuch</q>.</p>
+<blockquote>Uzun iqtibos alohida blok bo‘lib turadi.</blockquote>
+```
+
 ## Xulosa
 
 - `<blockquote>` — katta iqtibos, `<q>` — qisqa iqtibos.

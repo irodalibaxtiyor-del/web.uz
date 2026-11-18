@@ -45,6 +45,14 @@ Keyingi darslarda ular qanday ishlatilishini ko‘ramiz.
 - Ovozni avtomatik ijro etmang: bu foydalanuvchini bezovta qiladi va ko‘p brauzerlar uni bloklaydi.
 - Katta media fayllar sahifani sekinlashtiradi — hajmini siqib, mos o‘lchamda tayyorlang.
 
+```tekshir
+MIME turi nimani bildiradi?
++ faylning turi va formatini (masalan, `video/mp4`)
+- faylning hajmini
+- videoning davomiyligini
+> Brauzer MIME turiga qarab faylni o‘ynata olish-olmasligini biladi.
+```
+
 ## Xulosa
 
 - HTML5’da `<video>` va `<audio>` plaginsiz ishlaydi.

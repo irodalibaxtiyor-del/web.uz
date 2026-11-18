@@ -67,6 +67,19 @@ Forma ichidagi tugmaga har doim `type` yozing — aks holda u `submit` bo‘lib,
 
 Havolani tugmaga o‘xshatib bezash mumkin, lekin ma’nosi bo‘yicha to‘g‘ri tegni tanlang — klaviatura va ekran o‘qiydigan dasturlar shunga qarab ishlaydi.
 
+```tekshir
+Forma ichidagi `<button>` ning standart `type` qiymati qaysi?
++ `submit`
+- `button`
+- `reset`
+> Shuning uchun forma ichida oddiy tugma kerak bo‘lsa `type="button"` deb aniq yozing.
+```
+
+```jonli
+<button type="button" onclick="this.textContent = 'Bosildi!'">Meni bosing</button>
+<button disabled>Faolsiz</button>
+```
+
 ## Xulosa
 
 - `<button>` — harakat uchun; `type` atributini (`button`, `submit`, `reset`) ko‘rsating.

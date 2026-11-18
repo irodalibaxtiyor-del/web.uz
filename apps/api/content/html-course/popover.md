@@ -65,6 +65,19 @@ Ochiq popover `:popover-open` psevdoklassi bilan, uning ortidagi fon `::backdrop
 </style>
 ```
 
+```tekshir
+Tugma bosilganda popover ochilishi uchun tugmaga nima yoziladi?
++ `popovertarget="popover-id"`
+- `onclick="popover"`
+- `target="popover-id"`
+> `popovertarget` JavaScript’siz popoverni ochib-yopadi.
+```
+
+```jonli
+<button popovertarget="info">Ma’lumot</button>
+<div id="info" popover>Bu popover. Tashqariga bosing yoki Esc.</div>
+```
+
 ## Xulosa
 
 - `popover` atributi + `popovertarget` li tugma = JavaScript’siz ochiladigan oyna.

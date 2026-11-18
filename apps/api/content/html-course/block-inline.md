@@ -56,6 +56,20 @@ span {
 
 Lekin e’tibor bering: `display` faqat ko‘rinishni o‘zgartiradi. Inline element ichiga blok elementni (masalan, `<span>` ichiga `<div>`) joylashtirmang — bu noto‘g‘ri HTML.
 
+```tekshir
+Qaysi elementlar satr ichida (inline) joylashadi?
++ `<span>`
++ `<a>`
+- `<div>`
+- `<p>`
+> Inline elementlar yangi qatordan boshlanmaydi va faqat kerakli kenglikni egallaydi.
+```
+
+```jonli
+<div style="background: #def">div — blok</div>
+<p>Matn ichida <span style="background: #fd9">span — inline</span> element.</p>
+```
+
 ## Xulosa
 
 - Blok elementlar yangi qatordan boshlanadi va to‘liq kenglikni egallaydi.

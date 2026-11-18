@@ -122,6 +122,22 @@ tbody tr:nth-child(even) {
 
 `border-collapse: collapse` qo‘sh chiziqlarni bitta chiziqqa aylantiradi.
 
+```tekshir
+Ikki ustunni bitta katakka birlashtirish uchun nima yoziladi?
++ `<td colspan="2">`
+- `<td rowspan="2">`
+- `<td merge="2">`
+> `colspan` ustunlarni, `rowspan` esa qatorlarni birlashtiradi.
+```
+
+```jonli
+<table border="1" cellpadding="6">
+  <tr><th>Ism</th><th>Ball</th></tr>
+  <tr><td>Ali</td><td>90</td></tr>
+  <tr><td colspan="2">Jami: 1 talaba</td></tr>
+</table>
+```
+
 ## Xulosa
 
 - Jadval: `<table>` → `<tr>` → `<th>`/`<td>`.

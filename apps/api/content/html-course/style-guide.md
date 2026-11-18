@@ -84,6 +84,14 @@ Teg va atribut nomlari — kichik harflar bilan:
 
 Kodni W3C validatorida (validator.w3.org) tekshirib turish yaxshi odat — u yopilmagan teglar va noto‘g‘ri atributlarni topadi.
 
+```tekshir
+Tavsiya etilgan HTML uslubiga mos keladiganlar qaysi?
++ teg va atributlar kichik harflarda
++ atribut qiymatlari tirnoq ichida
+- `alt` ixtiyoriy, yozmasa ham bo‘ladi
+> Bir xil uslub kodni o‘qishni osonlashtiradi; `alt` esa qulaylik uchun majburiy.
+```
+
 ## Xulosa
 
 Kichik harflar, yopilgan elementlar, tirnoqli atributlar, aniq chekinish, `alt` va `lang` — toza HTML’ning asosiy qoidalari. Ular kodingizni professional va oson qo‘llab-quvvatlanadigan qiladi.

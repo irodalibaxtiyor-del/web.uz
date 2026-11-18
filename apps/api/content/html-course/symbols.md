@@ -64,6 +64,20 @@ Matematik belgilar, strelkalar, valyuta va yunon harflari ko‘pincha klaviatura
 
 > O‘zbek so‘mining alohida Unicode belgisi yo‘q, shuning uchun odatda “so‘m” deb yoziladi.
 
+```tekshir
+`&rarr;` qaysi belgini chiqaradi?
++ o‘ngga strelka (→)
+- chapga strelka (←)
+- teng emas belgisi (≠)
+> `rarr` — right arrow. Chapga — `&larr;`, teng emas — `&ne;`.
+```
+
+```jonli
+<p>&larr; &uarr; &rarr; &darr;</p>
+<p>&ne; &le; &ge; &infin; &sum;</p>
+<p>&alpha; &beta; &pi; &Omega;</p>
+```
+
 ## Xulosa
 
 - Klaviaturada yo‘q belgilar entity nomi (`&pi;`) yoki kodi (`&#960;`) bilan yoziladi.

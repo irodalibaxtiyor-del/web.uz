@@ -79,6 +79,21 @@ SVG to‘g‘ridan-to‘g‘ri HTML ichiga yozilishi mumkin:
 </svg>
 ```
 
+```tekshir
+SVG va Canvas farqi to‘g‘ri aytilgan variant qaysi?
++ SVG vektor (kattalashtirganda xiralashmaydi), Canvas piksellarda chiziladi
+- SVG faqat JavaScript bilan ishlaydi
+- Canvas shakllari DOM elementlari bo‘ladi
+> SVG shakllari DOM elementi bo‘lgani uchun ularga CSS va hodisalarni ulash mumkin.
+```
+
+```jonli
+<svg width="220" height="120" viewBox="0 0 220 120">
+  <rect x="10" y="10" width="80" height="60" fill="teal" />
+  <circle cx="160" cy="60" r="40" fill="orange" stroke="black" stroke-width="3" />
+</svg>
+```
+
 ## Xulosa
 
 - SVG — HTML ichida yoziladigan vektor grafika, har qanday o‘lchamda tiniq.

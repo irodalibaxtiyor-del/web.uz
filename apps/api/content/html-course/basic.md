@@ -71,6 +71,24 @@ Istalgan saytda:
 
 Boshqa saytlarning kodini ko‘rish — o‘rganishning juda yaxshi usuli.
 
+```tekshir
+Havola qaysi teg bilan yoziladi?
+- `<link>`
++ `<a>`
+- `<href>`
+> Havola `<a>` tegi, manzil esa uning `href` atributi bilan beriladi.
+```
+
+```jonli
+<h1>Sarlavha</h1>
+<p>Paragraf va <a href="https://example.com">havola</a>.</p>
+<button>Tugma</button>
+<ul>
+  <li>Birinchi</li>
+  <li>Ikkinchi</li>
+</ul>
+```
+
 ## Xulosa
 
 - Sarlavha — `<h1>`…`<h6>`, paragraf — `<p>`, havola — `<a href>`, rasm — `<img src alt>`.

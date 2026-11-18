@@ -54,6 +54,22 @@ Yana bir usul — **CSS Grid**:
 
 Agar qism aniq ma’noga ega bo‘lsa (sarlavha qismi, menyu, maqola, pastki qism), `<header>`, `<nav>`, `<article>`, `<footer>` kabi **semantik teglarni** ishlating. `<div>` esa ma’nosi yo‘q, faqat uslub yoki joylashuv uchun kerak bo‘lgan guruhlar uchun qoladi. Semantik teglar alohida darsda o‘rganiladi.
 
+```tekshir
+Mazmuni ma’noga ega bo‘lmagan (faqat bezash yoki guruhlash uchun) konteyner qaysi?
++ `<div>`
+- `<article>`
+- `<nav>`
+> Agar mos semantik teg bo‘lsa (`<nav>`, `<article>` …), avval o‘shani tanlang; `<div>` — umumiy konteyner.
+```
+
+```jonli
+<div style="display: flex; gap: 8px">
+  <div style="background: #cde; padding: 12px">1</div>
+  <div style="background: #fdc; padding: 12px">2</div>
+  <div style="background: #dfc; padding: 12px">3</div>
+</div>
+```
+
 ## Xulosa
 
 - `<div>` — elementlarni guruhlovchi blok konteyner.

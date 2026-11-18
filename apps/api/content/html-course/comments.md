@@ -36,6 +36,14 @@ Izoh bir nechta qatorni egallashi mumkin — oxirgi `-->` gacha hammasi izoh his
 
 Izohlar sahifada ko‘rinmaydi, lekin **sahifa kodida bor**. Har kim Ctrl + U orqali ularni o‘qiy oladi. Shuning uchun izohlarga parol, maxfiy manzil yoki shaxsiy ma’lumot yozmang.
 
+```tekshir
+HTML izohi to‘g‘ri yozilgan variant qaysi?
+- `// izoh`
++ `<!-- izoh -->`
+- `/* izoh */`
+> HTML izohi `<!--` bilan boshlanib `-->` bilan tugaydi. Izohlar sahifa kodida hammaga ko‘rinadi — maxfiy narsa yozmang.
+```
+
 ## Xulosa
 
 - Izoh: `<!-- matn -->`.

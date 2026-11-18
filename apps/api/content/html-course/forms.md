@@ -62,6 +62,23 @@ Brauzer `action` dagi manzilga ma’lumotni jo‘natadi. Uni server tomonidagi d
 
 > **Eslatma:** Platformamizdagi xavfsiz muharrir formani haqiqatda hech qayerga yubormaydi. Mashqlarda forma tuzilishi tekshiriladi.
 
+```tekshir
+Forma maydoni qiymati serverga qaysi nom bilan yuboriladi?
++ `name` atributidagi nom bilan
+- `id` bilan
+- `<label>` matni bilan
+> `name` bo‘lmagan maydon serverga umuman yuborilmaydi.
+```
+
+```jonli
+<form onsubmit="event.preventDefault(); natija.textContent = 'Salom, ' + this.ism.value">
+  <label for="ism">Ismingiz:</label>
+  <input id="ism" name="ism" required>
+  <button>Yuborish</button>
+</form>
+<p id="natija"></p>
+```
+
 ## Xulosa
 
 - Forma: `<form>` + `<label>` + `<input>` + yuborish tugmasi.

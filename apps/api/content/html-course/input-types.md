@@ -69,6 +69,23 @@ Brauzer kalendar yoki soat tanlagichini o‘zi ko‘rsatadi.
 
 > **Xavfsizlik:** brauzer tekshiruvi (masalan, `type="email"`) faqat qulaylik uchun. Haqiqiy tekshiruv har doim serverda bo‘lishi kerak — uni chetlab o‘tish oson.
 
+```tekshir
+Bir nechta variantdan **faqat bittasini** tanlash uchun qaysi tur?
++ `radio`
+- `checkbox`
+- `select-multiple`
+> Bir xil `name` ga ega `radio` lardan faqat bittasi tanlanadi; `checkbox` — bir nechta.
+```
+
+```jonli
+<input type="email" placeholder="email"><br>
+<input type="number" min="1" max="10"><br>
+<input type="date"><br>
+<input type="color" value="#3366ff"><br>
+<input type="range">
+<p><label><input type="radio" name="t"> Ha</label> <label><input type="radio" name="t"> Yo‘q</label></p>
+```
+
 ## Xulosa
 
 - `type` maydon turini belgilaydi: `text`, `email`, `password`, `number`, `date`, `checkbox`, `radio`, `color`, `file`...

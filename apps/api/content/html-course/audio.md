@@ -56,6 +56,14 @@ audio.volume = 0.5;    // ovoz balandligi: 0 dan 1 gacha
 
 > **Platformada:** Ishga tushirish oynasi tashqi audio fayllarni yuklamaydi. Pleerni ishlatib ko‘rish uchun misolni kompyuteringizda sinab ko‘ring.
 
+```tekshir
+Audio pleer tugmalari ko‘rinishi uchun qaysi atribut kerak?
++ `controls`
+- `autoplay`
+- `buttons`
+> `controls` bo‘lmasa, pleer ekranda umuman ko‘rinmaydi.
+```
+
 ## Xulosa
 
 - `<audio controls>` + `<source type="audio/mpeg">`.

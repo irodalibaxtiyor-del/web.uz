@@ -364,3 +364,13 @@ Oldingi sessiyalar (2026-10-08 … 2026-10-27): [docs/ISH_JURNALI_ARXIV.md](docs
 - `syncCourseLessons` + `pnpm --filter @webdizayn/api db:sync:lessons <slug|--all>`: seed qilingan kursdagi dars matnini fayldan yangilaydi, **faqat** bloklarni olib tashlaganda saqlangan matn fayldagiga teng bo'lsa (ya'ni o'qituvchi tahrirlamagan); tahrirlangan darslar saqlanib qoladi va hisobotda ko'rsatiladi.
 - Testlar: API — noto'g'ri blokli dars 400, to'g'risi 200; kontent — sync bitta darsni yangilaydi, o'qituvchi tahrirlaganini saqlaydi, takroriy ishga tushirish 0.
 - Cheklov: o'zini tekshirish javoblari ataylab dars matnida (formativ mashq, baholanmaydi); jonli misolda konsol ko'rsatilmaydi (faqat natija).
+
+### 4-bosqich — HTML kursiga interaktiv bloklar
+
+- `apps/api/content/html-course/*.md`: **60 ta darsning** har biriga ` ```tekshir ` (o'zini tekshirish savoli, izoh bilan) va belgilash bilan bog'liq **34 ta** darsga ` ```jonli ` misol (sarlavhalar, ro'yxatlar, jadval, forma, canvas, SVG, popover, localStorage va h.k.). Bloklar `## Xulosa` dan oldin qo'yildi; blokdan tashqariga matn qo'shilmadi (komponentlarning o'z sarlavhasi bor) — aks holda `db:sync:lessons` darsni "o'qituvchi tahrirlagan" deb hisoblardi (birinchi urinishda shunday bo'ldi, tuzatildi).
+- Barcha bloklar `validateLessonBlocks` dan o'tdi (0 xato); `content-courses.test.ts` o'tdi.
+- Nusxa bazada `db:sync:lessons html`: 60 yangilandi, takroriy ishga tushirishda 0. Keyin demo bazaga ham sync qilindi.
+- Brauzer tekshiruvi (nusxa baza, scratchpad `blocks.cjs`, 1440 light va 390 dark) **26/26**: tekshiruv bloki ko'rinadi, xom fence yo'q, tanlovsiz "Tekshirish" faol emas, xato javobda izoh yashirin → "Javobni ko'rsatish" izoh va to'g'ri variantni ko'rsatadi, "Qayta urinish" → to'g'ri javob; jonli misol yuklanganda ishlaydi, tahrirlangan kod ishlaydi, "Asl holiga"; gorizontal scroll yo'q; admin muharririda blok tugmasi kursor joyiga qo'yadi, buzuq blokda jonli xato, API 400. Yagona konsol xatosi — ataylab yuborilgan buzuq blokning 400 javobi. Nusxa o'chirildi.
+- Kuzatuv: `shared` qayta build qilinganda (`dist` o'chiriladi) `pnpm dev:sandbox` yiqiladi — qayta ishga tushirish kerak (jonli misol iframe'i `chrome-error` beradi).
+- Regressiya: format ✅, typecheck ✅, lint ✅, test ✅ (shared 117 + libs 3 + sandbox 16 + web 67 + check-engine 23 + api 493 = **719**).
+- Keyingi: qolgan kurslarga (CSS, JS, Bootstrap, RWD, UI, Figma, Portfolio) interaktiv bloklar.

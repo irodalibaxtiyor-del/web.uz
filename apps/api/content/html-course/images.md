@@ -62,6 +62,22 @@ Agar rasm faqat bezak bo‘lsa (masalan, chiziq yoki naqsh), bo‘sh `alt=""` qo
 </figure>
 ```
 
+```tekshir
+`alt` atributi nima uchun kerak?
++ rasm ko‘rinmasa yoki ekran o‘quvchi ishlatilsa, rasm mazmunini aytadi
+- rasmni kattalashtiradi
+- rasmga havola qo‘yadi
+> `alt` qulaylik uchun majburiy: ko‘zi ojiz foydalanuvchilar va yuklanmagan rasmlar uchun matnli muqobil.
+```
+
+```jonli
+<figure>
+  <img src="https://picsum.photos/300/180" alt="Tasodifiy manzara" width="300" height="180">
+  <figcaption>Rasm ostidagi izoh</figcaption>
+</figure>
+<img src="yoq.png" alt="Bu rasm topilmadi — alt matni ko‘rinadi">
+```
+
 ## Xulosa
 
 - Rasm: `<img src alt width height>`.

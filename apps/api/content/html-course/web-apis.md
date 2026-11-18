@@ -48,6 +48,14 @@ if ('geolocation' in navigator) {
 }
 ```
 
+```tekshir
+API brauzerda borligini qanday tekshirish mumkin?
++ `if ('geolocation' in navigator)`
+- `if (navigator == true)`
+- `try { import('geolocation') }`
+> Xususiyat mavjudligini tekshirish eski brauzerlarda xatoning oldini oladi.
+```
+
 ## Xulosa
 
 - API — tayyor imkoniyatlardan foydalanish uchun interfeys.

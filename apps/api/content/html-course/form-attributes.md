@@ -73,6 +73,14 @@ Formaga nom berish (JavaScript’da murojaat uchun):
 <form name="royxat">
 ```
 
+```tekshir
+Fayl yuboradigan forma uchun qaysi sozlamalar kerak?
++ `method="post"`
++ `enctype="multipart/form-data"`
+- `method="get"`
+> Fayl faqat POST va `multipart/form-data` kodlashda yuboriladi.
+```
+
 ## Xulosa
 
 - `action` — qayerga, `method` — `get` yoki `post`.

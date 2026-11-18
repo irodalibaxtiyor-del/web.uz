@@ -56,6 +56,14 @@ Subtitr fayli `.vtt` (WebVTT) formatida bo‘ladi.
 
 > **Platformada:** Ishga tushirish oynasi tashqi fayllarni yuklamaydi, shuning uchun video o‘ynamaydi. Elementlarni yozib, natijani tekshirishingiz mumkin. Videoni ko‘rish uchun misolni kompyuteringizda `index.html` sifatida, video fayl bilan bitta papkada sinab ko‘ring.
 
+```tekshir
+Video uchun subtitr qaysi teg bilan qo‘shiladi?
++ `<track>`
+- `<caption>`
+- `<subtitle>`
+> `<track kind="subtitles" src="...vtt">` `<video>` ichiga yoziladi.
+```
+
 ## Xulosa
 
 - `<video controls>` + bir nechta `<source>` — eng ishonchli usul.

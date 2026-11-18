@@ -77,6 +77,19 @@ Sichqoncha element ustida turganda chiqadigan qo‘shimcha ma’lumot:
 
 - Qiymat ichida qo‘shtirnoq bo‘lsa, tashqarisiga bittalik tirnoq qo‘ying: `title='"Alpomish" dostoni'`.
 
+```tekshir
+Atribut qayerga yoziladi?
++ ochuvchi tegning ichiga
+- yopuvchi tegning ichiga
+- teglar orasidagi matnga
+> Atributlar har doim ochuvchi tegda `nom="qiymat"` ko‘rinishida beriladi.
+```
+
+```jonli
+<p title="Sichqonchani ustiga olib keling">Ustiga olib keling</p>
+<img src="https://picsum.photos/200/120" alt="Tasodifiy rasm" width="200" height="120">
+```
+
 ## Xulosa
 
 - Atributlar ochuvchi tegda `nom="qiymat"` shaklida yoziladi.

@@ -44,6 +44,18 @@ HTML’da matn qismini alohida ma’noga ega qilib belgilaydigan teglar bor. Muh
 <p><small>Aksiya 31-dekabrgacha amal qiladi.</small></p>
 ```
 
+```tekshir
+Muhim matnni ma’no jihatdan ajratish uchun qaysi teg to‘g‘ri?
++ `<strong>`
+- `<b>`
+- `<big>`
+> `<strong>` matnning muhimligini bildiradi (ekran o‘quvchilar ham buni sezadi), `<b>` esa faqat ko‘rinishni qalin qiladi.
+```
+
+```jonli
+<p><strong>Muhim</strong>, <em>urg‘uli</em>, <mark>belgilangan</mark>, <del>eski</del> <ins>yangi</ins>, H<sub>2</sub>O, x<sup>2</sup></p>
+```
+
 ## Xulosa
 
 - `<strong>` — muhimlik, `<em>` — urg‘u; ular ma’no beradi.

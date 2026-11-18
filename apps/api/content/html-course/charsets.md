@@ -43,6 +43,14 @@ UTF-8 bitta sahifada bir nechta yozuvni aralashtirish imkonini beradi:
 
 “O‘” va “G‘” harflaridagi belgi uchun to‘g‘ri Unicode belgisi — **‘** (U+2018, chap bittalik tirnoq) yoki **ʻ** (U+02BB). Oddiy apostrof `'` ham ko‘p ishlatiladi, lekin u HTML atributlarida tirnoq bilan chalkashishi mumkin.
 
+```tekshir
+Bugungi veb uchun tavsiya etilgan kodirovka qaysi?
++ UTF-8
+- ASCII
+- Windows-1251
+> UTF-8 barcha tillar belgilarini (o‘zbekcha `o‘`, `g‘` ham) qo‘llaydi.
+```
+
 ## Xulosa
 
 - Kodirovka belgilar va raqamlar orasidagi moslik jadvali.

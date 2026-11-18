@@ -52,6 +52,14 @@ Iframe’ni ekran kengligiga moslashtirish uchun CSS’dagi `aspect-ratio` qulay
 
 > **Platformada:** Ishga tushirish oynasi tashqi saytlarga ulanmaydi, shuning uchun YouTube video u yerda ko‘rinmaydi. Misolni kompyuteringizda `index.html` sifatida sinab ko‘ring.
 
+```tekshir
+YouTube videosini sahifaga joylash uchun qaysi element ishlatiladi?
++ `<iframe>`
+- `<video>`
+- `<object>`
+> YouTube “Embed” kodi `<iframe src="https://www.youtube.com/embed/...">` ko‘rinishida bo‘ladi.
+```
+
 ## Xulosa
 
 - YouTube video `<iframe src="https://www.youtube.com/embed/ID">` orqali joylashtiriladi.

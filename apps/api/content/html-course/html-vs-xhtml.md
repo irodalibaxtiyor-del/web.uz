@@ -56,6 +56,14 @@ HTML5 ishlating, lekin XHTML’dan foydali odatlarni saqlang:
 
 Bu odatlar “Uslub qo‘llanmasi” darsidagi tavsiyalar bilan bir xil.
 
+```tekshir
+XHTML’da qaysi yozuv xato hisoblanadi?
++ `<br>`
+- `<br />`
+- `<p>matn</p>`
+> XHTML XML qoidalariga bo‘ysunadi: har bir element yopilishi shart, bo‘sh element `<br />` ko‘rinishida yoziladi.
+```
+
 ## Xulosa
 
 - XHTML — HTML’ning qat’iy, XML’ga asoslangan varianti.

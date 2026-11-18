@@ -49,6 +49,19 @@ Harfga qo‘shiladigan belgilar ham kod bilan yozilishi mumkin:
 
 Amalda UTF-8 kodirovkasi ishlatilsa, ko‘p belgilarni (o‘, g‘, ñ, é) to‘g‘ridan-to‘g‘ri yozish mumkin. Entity faqat `<`, `>`, `&` kabi maxsus belgilar va klaviaturada yo‘q belgilar uchun kerak.
 
+```tekshir
+Sahifada `<` belgisini matn sifatida ko‘rsatish uchun nima yoziladi?
++ `&lt;`
+- `&gt;`
+- `&amp;`
+> `<` belgisini brauzer teg boshlanishi deb o‘ylaydi, shuning uchun `&lt;` (less than) yoziladi.
+```
+
+```jonli
+<p>&lt;p&gt; tegi paragraf yaratadi.</p>
+<p>Narxi:&nbsp;100&nbsp;000 so‘m &copy; 2026</p>
+```
+
 ## Xulosa
 
 - `<`, `>` va `&` matnda `&lt;`, `&gt;`, `&amp;` bo‘lib yoziladi.

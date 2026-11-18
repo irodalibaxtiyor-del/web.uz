@@ -67,6 +67,14 @@ Havola Telegram yoki Facebook’da ulashilganda chiqadigan kartochka uchun Open 
 <meta property="og:image" content="https://example.uz/preview.png">
 ```
 
+```tekshir
+Telefonlarda sahifa to‘g‘ri masshtablanishi uchun qaysi teg kerak?
++ `<meta name="viewport" content="width=device-width, initial-scale=1">`
+- `<meta charset="utf-8">`
+- `<meta name="description">`
+> viewport bo‘lmasa, telefon sahifani kichraytirilgan kompyuter ko‘rinishida chizadi.
+```
+
 ## Xulosa
 
 - `<head>` — ko‘rinmaydigan, lekin muhim metama’lumotlar joyi.

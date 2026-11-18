@@ -42,6 +42,14 @@ Teglar orasidagi kontent — **zaxira**: resurs ochilmasa, shu ko‘rinadi.
 
 > **Maslahat:** Yangi loyihada `<embed>` deyarli kerak bo‘lmaydi. Uni eski kodlarda uchratganingizda nima ekanini bilsangiz yetarli.
 
+```tekshir
+Bugun video va audio uchun qaysi yo‘l tavsiya etiladi?
++ `<video>` va `<audio>` elementlari
+- Flash plagini
+- `<embed>` orqali Java applet
+> Plaginlar eskirgan va xavfsiz emas; HTML5 media elementlari hamma brauzerda ishlaydi.
+```
+
 ## Xulosa
 
 - Plaginlar (Flash, Java) tarixda qoldi — xavfsiz emas va telefonlarda ishlamas edi.

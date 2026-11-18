@@ -103,6 +103,28 @@ nav ul {
 }
 ```
 
+```tekshir
+Tartiblangan (raqamli) ro‘yxat qaysi teg bilan boshlanadi?
+- `<ul>`
++ `<ol>`
+- `<dl>`
+> `<ol>` — ordered list (raqamli), `<ul>` — belgili, `<dl>` — ta’riflar ro‘yxati.
+```
+
+```jonli
+<ol>
+  <li>Birinchi</li>
+  <li>Ikkinchi</li>
+</ol>
+<ul>
+  <li>Olma</li>
+  <li>Nok</li>
+</ul>
+<dl>
+  <dt>HTML</dt><dd>Belgilash tili</dd>
+</dl>
+```
+
 ## Xulosa
 
 - `<ul>` — tartibsiz, `<ol>` — tartiblangan, `<dl>` — ta’riflar ro‘yxati.

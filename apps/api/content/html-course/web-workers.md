@@ -70,6 +70,14 @@ Oddiy sahifalarda worker deyarli kerak bo‘lmaydi.
 
 > **Platformada:** Ishga tushirish oynasida Web Worker’lar o‘chirilgan. Ikki faylni (`index.html` va `hisob.js`) kompyuteringizda bitta papkaga qo‘yib, mahalliy server (`localhost`) orqali sinab ko‘ring — fayl to‘g‘ridan-to‘g‘ri ochilsa, brauzer workerni yuklamasligi mumkin.
 
+```tekshir
+Web Worker nima uchun kerak?
++ og‘ir hisoblarni sahifani qotirmasdan fonda bajarish uchun
+- DOM elementlarini tezroq o‘zgartirish uchun
+- server bilan ulanish uchun
+> Worker alohida oqimda ishlaydi va DOM’ga to‘g‘ridan-to‘g‘ri kira olmaydi — natijani `postMessage` bilan yuboradi.
+```
+
 ## Xulosa
 
 - Worker og‘ir JavaScript’ni fonda bajaradi, sahifa qotmaydi.

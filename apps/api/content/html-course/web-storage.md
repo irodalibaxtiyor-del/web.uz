@@ -53,6 +53,23 @@ console.log(oqilgan.shrift); // 18
 
 > **Platformada:** Ishga tushirish oynasi xavfsizlik uchun alohida izolyatsiya qilingan muhitda ishlaydi va u yerda `localStorage` mavjud emas (xato beradi). Misollarni kompyuteringizda `index.html` sifatida sinab ko‘ring.
 
+```tekshir
+Brauzer yopilgandan keyin ham saqlanib qoladigan xotira qaysi?
++ `localStorage`
+- `sessionStorage`
+- oddiy o‘zgaruvchi
+> `sessionStorage` tab yopilganda o‘chadi, `localStorage` esa qoladi.
+```
+
+```jonli
+<p id="son"></p>
+<script>
+  let n = Number(localStorage.getItem('tashrif') || 0) + 1;
+  try { localStorage.setItem('tashrif', n); } catch (e) {}
+  document.getElementById('son').textContent = 'Tashriflar: ' + n;
+</script>
+```
+
 ## Xulosa
 
 - `localStorage` — doimiy, `sessionStorage` — tab yopilguncha.

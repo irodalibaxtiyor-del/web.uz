@@ -75,6 +75,27 @@ ctx.fillRect(0, 0, 300, 150);
 
 Canvas ichidagi chizma ekran o‘qiydigan dasturlar uchun ko‘rinmaydi. Muhim ma’lumotni (masalan, diagramma qiymatlarini) matn yoki jadval sifatida ham bering.
 
+```tekshir
+Canvas’da chizish uchun avval nima olinadi?
++ `canvas.getContext('2d')`
+- `canvas.draw()`
+- `canvas.style`
+> Barcha chizish metodlari (`fillRect`, `arc` …) 2D kontekst obyektida bo‘ladi.
+```
+
+```jonli
+<canvas id="c" width="220" height="120" style="border: 1px solid #ccc"></canvas>
+<script>
+  const ctx = document.getElementById('c').getContext('2d');
+  ctx.fillStyle = 'teal';
+  ctx.fillRect(10, 10, 80, 60);
+  ctx.beginPath();
+  ctx.arc(160, 60, 40, 0, Math.PI * 2);
+  ctx.fillStyle = 'orange';
+  ctx.fill();
+</script>
+```
+
 ## Xulosa
 
 - `<canvas width height>` — JavaScript bilan chiziladigan maydon.

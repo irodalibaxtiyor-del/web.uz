@@ -62,6 +62,14 @@ Boshqa sahifadagi bo‘limga ham havola qilish mumkin: `kurs.html#savollar`.
 - Raqam bilan boshlamang (CSS’da noqulay).
 - Registrga sezgir: `Menu` va `menu` — har xil.
 
+```tekshir
+`id` va `class` farqi to‘g‘ri aytilgan variant qaysi?
++ `id` sahifada yagona bo‘ladi, `class` ko‘p elementda takrorlanishi mumkin
+- ikkalasi ham yagona bo‘lishi shart
+- `class` faqat JavaScript uchun
+> Bir xil `id` ikki marta ishlatilsa, havola va JavaScript noto‘g‘ri ishlaydi.
+```
+
 ## Xulosa
 
 - `id` — sahifada yagona nom; CSS’da `#nom`.

@@ -60,6 +60,22 @@ HSL qulayligi: bir rangning ochroq yoki to‘qroq variantini olish uchun faqat o
 
 Matn va fon rangi orasida yetarli farq bo‘lsin. Och kulrang fonda och kulrang matnni ko‘pchilik o‘qiy olmaydi. Bu ayniqsa ko‘rish qobiliyati past foydalanuvchilar uchun muhim.
 
+```tekshir
+Qaysi yozuvlar bir xil (qizil) rangni beradi?
++ `red`
++ `#ff0000`
++ `rgb(255, 0, 0)`
+- `hsl(120, 100%, 50%)`
+> `hsl(120, …)` — yashil rang; qolganlari qizilning turli yozilishi.
+```
+
+```jonli
+<p style="color: red">nom: red</p>
+<p style="color: #ff0000">HEX: #ff0000</p>
+<p style="color: rgb(0, 128, 128)">RGB: teal</p>
+<p style="color: hsl(220, 80%, 50%)">HSL: ko‘k</p>
+```
+
 ## Xulosa
 
 - Rang nomi, `rgb()`, `#hex` yoki `hsl()` bilan beriladi.

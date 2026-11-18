@@ -45,6 +45,23 @@ Ko‘rinishni CSS bilan o‘zgartirish mumkin. Bunda ma’no (daraja) saqlanib q
 <h2>Asosiy qism</h2>
 ```
 
+```tekshir
+Sahifada odatda nechta `<h1>` bo‘lishi tavsiya etiladi?
++ bitta
+- oltita
+- har bo‘limda bittadan
+> `<h1>` — sahifaning asosiy sarlavhasi; qolgan bo‘limlar `<h2>`–`<h6>` bilan tuziladi.
+```
+
+```jonli
+<h1>1-daraja</h1>
+<h2>2-daraja</h2>
+<h3>3-daraja</h3>
+<h4>4-daraja</h4>
+<hr>
+<h6>6-daraja</h6>
+```
+
 ## Xulosa
 
 - `<h1>`…`<h6>` — sarlavhalarning olti darajasi.

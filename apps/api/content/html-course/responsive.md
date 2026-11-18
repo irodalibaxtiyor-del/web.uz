@@ -83,6 +83,23 @@ Ko‘p dizaynerlar avval kichik ekran uchun uslub yozib, keyin `min-width` bilan
 
 Brauzerda F12 → **qurilma rejimi** (Ctrl + Shift + M) — sahifani turli telefon o‘lchamlarida ko‘rish mumkin. Bu darsning mashqida ham server sahifangizni telefon o‘lchamida ochib tekshiradi.
 
+```tekshir
+Rasm o‘z konteyneridan kengayib ketmasligi uchun qaysi CSS yoziladi?
++ `max-width: 100%; height: auto;`
+- `width: 100px;`
+- `overflow: scroll;`
+> `max-width: 100%` rasmni konteynerdan katta bo‘lishiga yo‘l qo‘ymaydi, `height: auto` esa nisbatni saqlaydi.
+```
+
+```jonli
+<style>
+  .kartalar { display: flex; flex-wrap: wrap; gap: 8px; }
+  .kartalar div { flex: 1 1 140px; background: #cde; padding: 12px; }
+  @media (max-width: 400px) { .kartalar div { background: #fdc; } }
+</style>
+<div class="kartalar"><div>1</div><div>2</div><div>3</div></div>
+```
+
 ## Xulosa
 
 - `viewport` meta tegi — moslashuvchanlikning birinchi sharti.

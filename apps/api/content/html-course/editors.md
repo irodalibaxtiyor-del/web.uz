@@ -48,6 +48,14 @@ Faylni **UTF-8** kodirovkasida saqlang. Aks holda o‘zbekcha harflar (o‘, g�
 - Fayl va papka nomlarida bo‘sh joy va o‘zbekcha harflardan qoching: `mening-sahifam.html` yaxshi, `Mening sahifam.html` yomon.
 - O‘zgarishdan keyin brauzerda sahifani yangilang (F5).
 
+```tekshir
+Sayt papkasidagi bosh sahifa fayli odatda qanday nomlanadi?
+- main.htm
++ index.html
+- home.txt
+> Server papka so‘ralganda avtomatik ravishda `index.html` faylini qaytaradi.
+```
+
 ## Xulosa
 
 - HTML har qanday matn muharririda yoziladi, lekin VS Code kabi muharrirlar qulayroq.

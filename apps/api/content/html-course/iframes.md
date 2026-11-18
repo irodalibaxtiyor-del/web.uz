@@ -50,6 +50,14 @@ Aytgancha, platformamizdagi “Ishga tushirish” oynasi ham aynan `sandbox` li 
 
 > **Eslatma:** Ko‘p saytlar (masalan, banklar) o‘zini iframe ichida ko‘rsatishni taqiqlaydi. Bunday sahifa iframe’da bo‘sh yoki xato bo‘lib ko‘rinadi.
 
+```tekshir
+Iframe ichidagi sahifa imkoniyatlarini cheklash uchun qaysi atribut ishlatiladi?
++ `sandbox`
+- `secure`
+- `frameborder`
+> `sandbox` skriptlar, formalar va boshqa imkoniyatlarni o‘chiradi; keraklilarini qiymat bilan ruxsat berasiz.
+```
+
 ## Xulosa
 
 - `<iframe src title>` — sahifa ichiga boshqa sahifani joylashtiradi.

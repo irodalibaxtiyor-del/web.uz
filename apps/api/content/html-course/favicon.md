@@ -41,6 +41,14 @@ Odatda 180×180 pikselli PNG tayyorlanadi.
 - Favicon oddiy bo‘lsin: kichik o‘lchamda mayda detallar ko‘rinmaydi. Ko‘pincha logotipning bosh harfi yoki belgisi ishlatiladi.
 - Favicon brauzer keshida saqlanadi. Uni almashtirganingizdan keyin ham eskisi ko‘rinsa, sahifani Ctrl + F5 bilan yangilang.
 
+```tekshir
+Favicon `<head>` ichida qaysi teg bilan ulanadi?
++ `<link rel="icon" href="...">`
+- `<img rel="icon">`
+- `<meta name="icon">`
+> Favicon — brauzer tabidagi kichik belgi; u `<link rel="icon">` orqali ulanadi.
+```
+
 ## Xulosa
 
 - Favicon `<head>` ichida `<link rel="icon" href="...">` bilan ulanadi.

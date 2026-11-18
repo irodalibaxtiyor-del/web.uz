@@ -50,6 +50,19 @@ Bezak uchun ishlatilgan emoji’ni yashirish mumkin:
 <span aria-hidden="true">🎉</span> Tabriklaymiz!
 ```
 
+```tekshir
+Emoji sahifada to‘g‘ri ko‘rinishi uchun asosiy shart qaysi?
++ `<meta charset="utf-8">`
+- maxsus shrift o‘rnatish
+- rasm sifatida yuklash
+> Emoji — Unicode belgisi; UTF-8 kodirovkasi barcha Unicode belgilarini ifodalaydi.
+```
+
+```jonli
+<p style="font-size: 40px">&#128512; &#127775; &#128640;</p>
+<p>😀 to‘g‘ridan-to‘g‘ri ham yoziladi.</p>
+```
+
 ## Xulosa
 
 - Emoji — Unicode belgisi, UTF-8 sahifada to‘g‘ridan-to‘g‘ri yoziladi.

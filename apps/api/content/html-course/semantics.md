@@ -65,6 +65,21 @@
 
 JavaScript’siz ishlaydi!
 
+```tekshir
+Mustaqil ma’noga ega, alohida tarqatish mumkin bo‘lgan mazmun (blog posti, yangilik) uchun qaysi teg?
++ `<article>`
+- `<section>`
+- `<div>`
+> `<article>` o‘z-o‘zidan tushunarli mazmun; `<section>` — mavzu bo‘yicha bo‘lim.
+```
+
+```jonli
+<details>
+  <summary>Batafsil (bosing)</summary>
+  <p>Bu matn ochilganda ko‘rinadi.</p>
+</details>
+```
+
 ## Xulosa
 
 - Semantik teglar mazmunni bildiradi: `<header>`, `<nav>`, `<main>`, `<article>`, `<section>`, `<aside>`, `<footer>`.

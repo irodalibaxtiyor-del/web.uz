@@ -59,6 +59,15 @@ Ba’zi elementlarda mazmun bo‘lmaydi, shuning uchun yopuvchi tegi ham yo‘q:
 
 HTML teglari registrga sezgir emas: `<P>` va `<p>` bir xil. Lekin hamma joyda **kichik harflar** bilan yozish qabul qilingan.
 
+```tekshir
+Qaysi elementlar bo‘sh (yopuvchi tegsiz) element?
++ `<br>`
++ `<img>`
+- `<p>`
+- `<h1>`
+> Bo‘sh elementlarning ichida mazmun bo‘lmaydi, shuning uchun ular yopuvchi tegsiz yoziladi.
+```
+
 ## Xulosa
 
 - Element = ochuvchi teg + mazmun + yopuvchi teg.

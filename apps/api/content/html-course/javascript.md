@@ -72,6 +72,21 @@ Brauzer HTML’ni yuqoridan pastga o‘qiydi. Skript elementlardan **oldin** ish
 
 Platformamizdagi muharrirda “Konsol” bo‘limi bor. `console.log('...')` bilan chiqargan barcha ma’lumotlar va xatolar shu yerda ko‘rinadi — dasturchilarning eng yaxshi do‘sti.
 
+```tekshir
+Tashqi JavaScript fayli qanday ulanadi?
++ `<script src="app.js"></script>`
+- `<link href="app.js">`
+- `<script href="app.js">`
+> Tashqi skript `src` atributi bilan ulanadi va `<script>` har doim yopuvchi tegga ega.
+```
+
+```jonli
+<p id="vaqt">...</p>
+<script>
+  document.getElementById('vaqt').textContent = 'Hozir: ' + new Date().toLocaleTimeString();
+</script>
+```
+
 ## Xulosa
 
 - JavaScript `<script>` ichida yoki `<script src>` orqali tashqi fayldan ulanadi.

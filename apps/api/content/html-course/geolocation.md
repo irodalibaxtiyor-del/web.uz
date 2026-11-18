@@ -69,6 +69,14 @@ navigator.geolocation.clearWatch(id);
 
 > **Platformada:** Ishga tushirish oynasida Geolocation o‘chirilgan. Misolni kompyuteringizda `index.html` sifatida sinab ko‘ring (fayl `localhost` orqali ochilsa ishonchliroq ishlaydi).
 
+```tekshir
+Geolocation API ishlashi uchun qaysi shartlar kerak?
++ foydalanuvchi ruxsat berishi
++ sahifa xavfsiz (HTTPS) manzilda ochilishi
+- sahifada `<map>` tegi bo‘lishi
+> Joylashuv shaxsiy ma’lumot: brauzer ruxsat so‘raydi va faqat xavfsiz kontekstda beradi.
+```
+
 ## Xulosa
 
 - `navigator.geolocation.getCurrentPosition(ok, xato)` joylashuvni bir marta oladi.

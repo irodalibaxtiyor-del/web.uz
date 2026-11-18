@@ -57,6 +57,22 @@ Paragraf ichida yangi qatordan davom etish kerak bo‘lsa (masalan, manzil yoki 
 <p>Endi ikkinchi mavzu.</p>
 ```
 
+```tekshir
+Kodda bir nechta bo‘sh joy va yangi qator yozilsa, brauzer `<p>` ichida ularni qanday ko‘rsatadi?
++ bitta bo‘sh joy qilib
+- aynan yozilganidek
+- butunlay olib tashlaydi
+> Oddiy matnda ketma-ket bo‘sh joylar bittaga birlashadi; yozilganidek saqlash uchun `<pre>` kerak.
+```
+
+```jonli
+<p>Bu     matnda    ko‘p
+   bo‘sh    joy bor.</p>
+<pre>Bu     matnda    ko‘p
+   bo‘sh    joy bor.</pre>
+<p>Birinchi qator<br>Ikkinchi qator</p>
+```
+
 ## Xulosa
 
 - Matn bloklari `<p>` bilan yoziladi.

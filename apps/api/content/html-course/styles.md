@@ -35,6 +35,19 @@ Yozilish shakli: `style="xususiyat: qiymat;"`. Bir nechta xususiyat nuqta-vergul
 
 `style` atributi bitta elementni tez sozlash uchun qulay. Lekin katta loyihada har bir elementga alohida uslub yozish noqulay va takrorlanuvchi bo‘ladi. Shu sababli uslublar odatda alohida CSS faylga yoziladi — bu haqda “HTML va CSS” darsida batafsil gaplashamiz.
 
+```tekshir
+`style` atributida bir nechta xususiyat qanday ajratiladi?
+- vergul bilan
++ nuqtali vergul bilan
+- bo‘sh joy bilan
+> Masalan: `style="color: red; font-size: 20px"` — har xususiyat `;` bilan tugaydi.
+```
+
+```jonli
+<p style="color: teal; font-size: 24px; text-align: center">Rangli va katta matn</p>
+<p style="background-color: #ffe08a; padding: 8px">Fonli matn</p>
+```
+
 ## Xulosa
 
 - `style="xususiyat: qiymat;"` — elementga to‘g‘ridan-to‘g‘ri uslub beradi.

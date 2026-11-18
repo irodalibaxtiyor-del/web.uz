@@ -78,6 +78,21 @@ a:visited {
 }
 ```
 
+```tekshir
+Havolani yangi tabda ochish uchun nima yoziladi?
++ `target="_blank"`
+- `target="_new"`
+- `href="_blank"`
+> `_blank` qiymati havolani yangi tab yoki oynada ochadi.
+```
+
+```jonli
+<a href="https://example.com" target="_blank">Yangi tabda ochish</a><br>
+<a href="mailto:info@example.com">Email yozish</a><br>
+<a href="#pastda">Pastga o‘tish</a>
+<p style="margin-top: 400px" id="pastda">Shu yerdasiz!</p>
+```
+
 ## Xulosa
 
 - Havola: `<a href="manzil">matn</a>`.

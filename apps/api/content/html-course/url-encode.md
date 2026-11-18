@@ -52,6 +52,14 @@ encodeURIComponent('HTML & CSS'); // "HTML%20%26%20CSS"
 decodeURIComponent('HTML%20%26%20CSS'); // "HTML & CSS"
 ```
 
+```tekshir
+URL’dagi bo‘sh joy qanday kodlanadi?
++ `%20`
+- `%2F`
+- `_`
+> URL’da bo‘sh joy bo‘lishi mumkin emas; u `%20` (formalarda ba’zan `+`) bilan almashtiriladi.
+```
+
 ## Xulosa
 
 - URL qismlari: sxema, domen, yo‘l, so‘rov (`?`) va fragment (`#`).

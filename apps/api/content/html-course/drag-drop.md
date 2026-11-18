@@ -66,6 +66,14 @@ quti.addEventListener('dragleave', () => quti.classList.remove('faol'));
 
 Sudrash faqat sichqoncha bilan qulay. Klaviatura va ekran o‘qiydigan dastur foydalanuvchilari uchun **muqobil yo‘l** qoldiring — masalan, “Ko‘chirish” tugmasi.
 
+```tekshir
+Element ustiga tashlashga ruxsat berish uchun `dragover` hodisasida nima qilinadi?
++ `event.preventDefault()` chaqiriladi
+- `draggable="false"` qo‘yiladi
+- `event.stopPropagation()` yetarli
+> Standart holatda tashlash taqiqlangan; `preventDefault()` buni bekor qiladi.
+```
+
 ## Xulosa
 
 - `draggable="true"` + `dragstart` da `dataTransfer.setData()`.
