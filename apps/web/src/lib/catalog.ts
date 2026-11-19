@@ -1,4 +1,5 @@
 import type {
+  CertificateView,
   CourseMoved,
   DirectionDetail,
   DirectionSummary,
@@ -70,3 +71,7 @@ export const getAuthorBook = (id: string) =>
   /^[0-9a-f-]{36}$/i.test(id)
     ? publicGet<PublicBook>(`/public/books/${id}`)
     : Promise.resolve(null);
+
+/** Public certificate verification (`null` = no certificate with this code). */
+export const getCertificate = (code: string) =>
+  publicGet<CertificateView>(`/public/certificates/${encodeURIComponent(code)}`);

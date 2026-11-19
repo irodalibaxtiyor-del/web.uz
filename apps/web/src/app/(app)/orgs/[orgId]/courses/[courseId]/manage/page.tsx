@@ -59,6 +59,9 @@ export default function ManageCoursePage() {
                 <Link href={`${base}/manage/glossary`} className="btn btn-outline">
                   Atamalar lug&apos;ati
                 </Link>
+                <Link href={`${base}/manage/certificates`} className="btn btn-outline">
+                  Sertifikatlar
+                </Link>
                 {s.course.status !== 'PUBLISHED' && (
                   <Button onClick={() => setStatus('PUBLISHED')} disabled={lessonCount === 0}>
                     E&apos;lon qilish

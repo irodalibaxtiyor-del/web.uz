@@ -58,7 +58,7 @@ Oldingi sessiyalar (2026-10-08 … 2026-10-27): [docs/ISH_JURNALI_ARXIV.md](docs
 
 ## Joriy holat (qisqacha)
 
-- **Bajarilgan:** roadmap fazalari F0–F2, 11–15C; kurslar HTML, CSS, JS, PHP, Bootstrap 3/4/5, Moslashuvchan dizayn, UI asoslari, Figma'dan kodga, Portfolio; guruhlar, o'qituvchi/talaba hisoblari va Excel; 8 band (dizayn, responsivlik, app-shell, kabinet menyusi, yo'nalishlar, slug, elektron darslik, chatbot); Loms dizayni qaytarilgan; 8 xil test turi; ilmiy modul (formativ fikr, kirish/yakuniy test, tajriba va nazorat guruhlari statistikasi, so'rovnomalar va Cronbach α, savollar tahlili, vaqt sarfi, normallik va parametrik bo'lmagan mezonlar); "Muallif kitoblari" va kitob ichidan qidiruv; 407 ta dars testi va 485 ta mashq mini-testi (izohlar bilan, `db:sync:quizzes`); darsdagi interaktiv bloklar (`tekshir`/`jonli`/`yechim`, `db:sync:lessons`) — HTML kursining 60 darsida; atamalar lug'ati va oraliqli takrorlash (SM-2, `db:sync:glossary`) — HTML kursida 91 atama.
+- **Bajarilgan:** roadmap fazalari F0–F2, 11–15C; kurslar HTML, CSS, JS, PHP, Bootstrap 3/4/5, Moslashuvchan dizayn, UI asoslari, Figma'dan kodga, Portfolio; guruhlar, o'qituvchi/talaba hisoblari va Excel; 8 band (dizayn, responsivlik, app-shell, kabinet menyusi, yo'nalishlar, slug, elektron darslik, chatbot); Loms dizayni qaytarilgan; 8 xil test turi; ilmiy modul (formativ fikr, kirish/yakuniy test, tajriba va nazorat guruhlari statistikasi, so'rovnomalar va Cronbach α, savollar tahlili, vaqt sarfi, normallik va parametrik bo'lmagan mezonlar); "Muallif kitoblari" va kitob ichidan qidiruv; 407 ta dars testi va 485 ta mashq mini-testi (izohlar bilan, `db:sync:quizzes`); darsdagi interaktiv bloklar (`tekshir`/`jonli`/`yechim`, `db:sync:lessons`) — HTML kursining 60 darsida; atamalar lug'ati va oraliqli takrorlash (SM-2, `db:sync:glossary`) — HTML kursida 91 atama; sertifikatlar (ochiq tekshirish sahifasi bilan) va Telegram xabarnomalari (bot sozlansa).
 - **Muhim qoidalar (arxivdan):**
   - Tranzaksiya ichida faqat `tx` ishlatilsin (aks holda PGlite deadlock).
   - Postgres `jsonb` kalitlar tartibini saqlamaydi — taqqoslashda kanonik JSON.
@@ -66,8 +66,8 @@ Oldingi sessiyalar (2026-10-08 … 2026-10-27): [docs/ISH_JURNALI_ARXIV.md](docs
   - Kurs kontenti: W3Schools'dan faqat mavzular tartibi, matn/misol/mashq original o'zbekcha; har mashq `content:verify` da haqiqiy Chrome'da tekshiriladi.
   - Talabalar ro'yxati (shaxsiy ma'lumot) repoga yozilmaydi (`apps/api/.data/` gitignore'da); repo public.
   - Git Bash: URL yo'llari uchun `MSYS_NO_PATHCONV=1`; murakkab matnli heredoc o'rniga fayl + node skript.
-- **Ochiq (infratuzilma):** Next.js 16.4.2 xavfsizlik zaifligi tufayli `next dev`/`next build` to'xtaydi — yangilash kerak (foydalanuvchi qarori); Ubuntu'dagi CI E2E, Docker/haqiqiy Postgres/sandbox domeni/edge proksi/backup tekshiruvi, haqiqiy AI provayder (DPA), SMTP, Safari va haqiqiy qurilmalar, Lighthouse qayta o'lchovi.
-- **Ochiq (reja):** qolgan kurslarga interaktiv bloklar va lug'at, sertifikat, Telegram xabarnomalari.
+- **Ochiq (infratuzilma):** haqiqiy Telegram bot (token, webhook); Ubuntu'dagi CI E2E, Docker/haqiqiy Postgres/sandbox domeni/edge proksi/backup tekshiruvi, haqiqiy AI provayder (DPA), SMTP, Safari va haqiqiy qurilmalar, Lighthouse qayta o'lchovi.
+- **Ochiq (reja):** qolgan kurslarga interaktiv bloklar va lug'at.
 
 ## 2026-11-14
 
@@ -395,3 +395,38 @@ Oldingi sessiyalar (2026-10-08 … 2026-10-27): [docs/ISH_JURNALI_ARXIV.md](docs
 - Regressiya: format ✅, typecheck ✅, lint ✅, test ✅ (shared 128 + libs 3 + sandbox 16 + web 67 + check-engine 23 + api 506 = **743**).
 - **Muhim kuzatuv (infratuzilma):** Next.js 16.4.2 endi "known security vulnerability" sababli `next dev` ni ishga tushgach to'xtatadi va `next build` ni (build tugagach) xato bilan yakunlaydi — ya'ni `pnpm -r build` va CI build yiqiladi. Brauzer sinovi uchun build natijasi bilan `next start` ishlatildi. Next.js'ni yangilash foydalanuvchi qaroriga qoldirildi (bog'liqlik o'zgarishi).
 - Cheklovlar: lug'at hozircha faqat HTML kursida (qolgan kurslar keyin); takrorlash statistikasi o'qituvchi analitikasida hali ko'rsatilmaydi.
+
+### Yangilanishlar va xavfsizlik
+
+- Foydalanuvchi: "kamchiliklarni qil, yangilanishlarni ham, xavfsizlikni ham qil, davom et".
+- `pnpm audit`: 12 ta zaiflik (3 jiddiy, 9 o'rtacha) yopildi, endi 0 ta ochiq (2 tasi — avvaldan hujjatlashtirilgan Bootstrap 3 istisnosi):
+  - `next`/`eslint-config-next` 16.4.2 → **16.4.6** (root params orqali kesh sizib chiqishi). 16.4.2 da `next dev` to'xtab qolar, `next build` xato bilan tugardi — endi ikkalasi ham normal ishlaydi;
+  - `zod` ^4.6.7 (katta to'plamlarni tekshirishda xotira tugashi; `eslint-plugin-react-hooks` ichida ham), `vitest` ^4.1.12 va `@vitest/mocker`;
+  - `pnpm-workspace.yaml` `overrides` (tranzitiv paketlar, ularga bog'liq paketlar qabul qiladigan diapazon ichida): `body-parser` ≥2.4.0, `multer` ≥2.5.0, `qs` ≥6.16.1 (DoS), `typescript-estree` ichidagi `minimatch` ^11.0.1, `drizzle-kit` yuklagichidagi `esbuild` ^0.25. Major yangilanishlar (Vitest 5, NestJS 12) ataylab qilinmadi.
+  - `drizzle-kit check` toza, `pnpm -r build` ✅, to'liq E2E **55/55** ✅.
+- Kod ko'rib chiqildi: Markdown xom HTML'ni o'tkazmaydi (`rehype-raw` yo'q, havolalar react-markdown filtridan o'tadi), loyihada `dangerouslySetInnerHTML` yo'q. Topilgan kamchilik: takrorlash javoblarida so'rov chegarasi yo'q edi → talabaga daqiqasiga 120 ta (Postgres asosidagi umumiy limiter, 429 `REVIEW_RATE_LIMITED`) + test.
+- Commit'lar: `94a4d59` (bog'liqliklar), `5e8cd14` (rate limit).
+
+### Kamchilik: takrorlash statistikasi o'qituvchiga
+
+- `GET glossary/stats` (kurs xodimi): takrorlayotgan talabalar / yozilganlar, jami javoblar, boshlangan kartalar, oxirgi javobda esda qolganlar ulushi, eng ko'p unutilgan 10 ta atama (unutishlar + hozir esda yo'q). O'qituvchining lug'at sahifasida "Takrorlash natijalari" paneli. Test +1. Commit `452fecc`.
+
+### 6-bosqich — sertifikatlar
+
+- Qaror: kursning **barcha darslarini** tugatgan talaba sertifikatni o'zi oladi (idempotent, bitta talaba + kurs uchun bitta). Ism, kurs nomi, tashkilot va darslar soni berilgan paytdagi holatida saqlanadi (keyin nom o'zgarsa ham sertifikat o'zgarmaydi). Kod — `crypto.randomBytes` dan 12 belgi (`ABCD-EFGH-JKMN`, 0/O, 1/I/L kabi o'xshash belgilar yo'q).
+- Shared `certificates.ts` (kod generatori, normalizatsiya, regex, ko'rinishlar, bekor qilish sxemasi) + 2 test. Migratsiya `0028_certificates.sql` (kod unique, talaba+kurs unique, `lessons > 0`, bekor qilish maydonlari).
+- API: talaba — `GET/POST /orgs/:orgId/courses/:courseId/certificate` (tugatilmagan bo'lsa 409 `CERTIFICATE_NOT_ELIGIBLE` va progress), `GET /me/certificates`; kurs xodimi — `GET .../certificates`, `POST .../certificates/:id/revoke` (sabab majburiy, takroran 409, audit `certificate.issue|revoke`); ochiq `GET /public/certificates/:code` (IP limiti, kod normalizatsiyasi, faqat ism/kurs/sana/holat — email va id yo'q). Testlar `certificates.test.ts` 5 ta.
+- Web: kurs xaritasida `CertificateBanner` ("Sertifikat olish" / "Sertifikatni ochish"); ochiq `/sertifikat` (kod kiritish formasi) va `/sertifikat/[kod]` (holat bandi, A4 landshaft dizayn, "Chop etish yoki PDF saqlash", bekor qilinganida "BEKOR QILINGAN" belgisi va sabab; `noindex`); footer'da "Sertifikatni tekshirish"; o'qituvchi `/manage/certificates` (ro'yxat, sabab so'rab bekor qilish).
+
+### 6-bosqich — Telegram xabarnomalari
+
+- Qaror: bot faqat server sozlamasi bilan yoqiladi — `TELEGRAM_BOT_TOKEN`, `TELEGRAM_BOT_USERNAME`, `TELEGRAM_WEBHOOK_SECRET` (uchalasi yoki hech biri; qisman sozlama ishga tushishda xato; `.env.example` da webhook'ni ro'yxatdan o'tkazish ko'rsatmasi). Sozlanmagan bo'lsa funksiya o'zini "yoqilmagan" deb ko'rsatadi, hech narsa navbatga qo'yilmaydi va "yuborildi" deb soxtalashtirilmaydi.
+- Xavfsizlik: token faqat Bot API so'rov URL'ida (log va javoblarda yo'q); webhook `X-Telegram-Bot-Api-Secret-Token` ni doimiy vaqtli taqqoslash bilan tekshiradi (aks holda 401); ulash — bir martalik, 15 daqiqalik deep-link tokeni (bazada SHA-256 xeshi), faqat shaxsiy chatlar; bitta chat — bitta hisob; xabarlar oddiy matn (`parse_mode` yo'q — kurs nomi orqali markup kiritib bo'lmaydi); bot bloklansa (403) ulanish o'chiriladi.
+- Turlar: `REVIEW_DUE` (Toshkent vaqti bilan 9:00 dan keyin kuniga bitta eslatma, kurslar bo'yicha muddati kelgan kartalar soni va havola — `dedupe_key`), `ASSIGNMENT` (topshiriq tuzatishga qaytarildi / baholandi / yakuniy baholandi, ball bilan), `CERTIFICATE` (sertifikat havolasi). Har turni talaba o'zi yoqadi yoki o'chiradi.
+- Migratsiya `0029_telegram_notifications.sql`: `telegram_links`, `telegram_link_tokens`, `notification_outbox` (PENDING/SENT/FAILED, urinishlar, 1-2-4-8 daqiqa kutish, 5 urinishdan keyin FAILED). Yuborish va kunlik eslatma — API ichidagi taymerlar (15 s / 10 daq., `unref`); xabarnoma xatosi asosiy amalni buzmaydi (`notify` hech qachon xato tashlamaydi).
+- API: `GET/PATCH/DELETE /me/telegram`, `POST /me/telegram/link`, `POST /telegram/webhook` (`/start <token>`, `/stop`). Testlar `notifications.test.ts` 9 ta (soxta Telegram mijozi bilan: o'chiq holat, qisman sozlama, noto'g'ri sir, guruh chati e'tiborsiz, token bir martalik va xeshlangan, muddati o'tgan token, sozlamalar, sertifikat xabari havolasi bilan, kunlik eslatma vaqti va bir martaligi, qayta urinish, bloklanganda uzish, `/stop` va DELETE).
+- Web: yangi shaxsiy `/sozlamalar` sahifasi (yon menyu va hisob menyusida): Telegram kartasi (o'chiq / ulash / havola / ulangan + xabar turlari) va "Mening sertifikatlarim".
+- Brauzer tekshiruvi (demo baza **nusxasida**, talabaning HTML darslari nusxada tugatilgan deb belgilandi; scratchpad `certs.cjs`) **19/19**, xatolar 0: xaritada sertifikat taklifi → olish → sertifikat sahifasi (ism, kurs, "haqiqiy", chop etish tugmasi) → xaritada "Sertifikatni ochish"; sozlamalar (Telegram o'chiq xabari, sertifikat ro'yxatda, yon menyuda havola); mehmon (390, dark): noto'g'ri kod izohi, kichik harf va bo'sh joy bilan yozilgan kod ochiladi, ekranga sig'adi, `noindex`, noma'lum kod 404, footer havolasi; admin: ro'yxat, dialog orqali bekor qilish, ochiq sahifada sabab, chop etish tugmasi yo'q. Tekshiruvda topilib tuzatildi: chop etishda sayt tugmasi chiqib qolardi va sertifikat varaqni to'ldirmasdi; telefonda dark rejimda "SERTIFIKAT" sarlavhasi ko'rinmasdi va qat'iy A4 nisbati matnni kesardi (telefonda nisbat olib tashlandi); bezak sana yozuvini yopardi. Nusxa o'chirildi.
+- Demo bazaga `0028`, `0029` qo'llandi.
+- Regressiya: format ✅, typecheck ✅, lint ✅, test ✅ (shared 130 + libs 3 + sandbox 16 + web 67 + check-engine 23 + api 522 = **761**), audit ✅.
+- Cheklovlar: haqiqiy Telegram bot bilan tekshirilmagan (token yo'q — infratuzilma); sertifikat sharti faqat darslar (yakuniy test talab qilinmaydi); QR-kod yo'q (tekshirish havolasi va kod bor); bir nechta API nusxasida yuborish taymerlari parallel ishlashi mumkin (navbatni qulflash keyin).

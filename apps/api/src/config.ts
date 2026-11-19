@@ -102,6 +102,23 @@ const envSchema = z.object({
     .transform((v) => v === 'true'),
   /** Platform-wide cap on AI-phrased chatbot answers per 24 hours (cost guard; guests too). */
   CHATBOT_AI_DAILY: z.coerce.number().int().min(1).default(500),
+  /**
+   * Telegram notifications. All three must be set to enable them: the bot token from
+   * @BotFather (never sent to clients or logs), the bot's username for deep links, and the
+   * secret Telegram echoes in `X-Telegram-Bot-Api-Secret-Token` on webhook calls.
+   */
+  TELEGRAM_BOT_TOKEN: z
+    .string()
+    .regex(/^\d+:[A-Za-z0-9_-]{30,}$/)
+    .optional(),
+  TELEGRAM_BOT_USERNAME: z
+    .string()
+    .regex(/^[A-Za-z][A-Za-z0-9_]{3,31}$/)
+    .optional(),
+  TELEGRAM_WEBHOOK_SECRET: z
+    .string()
+    .regex(/^[A-Za-z0-9_-]{32,256}$/)
+    .optional(),
   /** Enables GET /metrics (Prometheus) for `Authorization: Bearer <token>`; >= 32 chars. */
   METRICS_TOKEN: z.string().min(32).optional(),
 });
@@ -109,6 +126,8 @@ const envSchema = z.object({
 export type AppConfig = Omit<z.infer<typeof envSchema>, 'LOG_LEVEL' | 'LOG_FORMAT'> & {
   webOrigins: string[];
   cookieSecure: boolean;
+  /** Telegram bot configured (token, username and webhook secret all present). */
+  telegramEnabled: boolean;
   /** The provider actually used: `http` only when every precondition holds. */
   aiMode: 'mock' | 'http';
   /** Value for Express "trust proxy". */
@@ -154,6 +173,16 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   if (aiHttp && cfg.NODE_ENV === 'production' && !cfg.AI_PROVIDER_URL!.startsWith('https://')) {
     throw new Error('Invalid environment configuration: AI_PROVIDER_URL (https required)');
   }
+  const telegramVars = [
+    cfg.TELEGRAM_BOT_TOKEN,
+    cfg.TELEGRAM_BOT_USERNAME,
+    cfg.TELEGRAM_WEBHOOK_SECRET,
+  ].filter(Boolean).length;
+  if (telegramVars !== 0 && telegramVars !== 3) {
+    throw new Error(
+      'Invalid environment configuration: TELEGRAM_BOT_TOKEN, TELEGRAM_BOT_USERNAME, TELEGRAM_WEBHOOK_SECRET',
+    );
+  }
   const webOrigins = cfg.WEB_ORIGINS.split(',')
     .map((o) => o.trim())
     .filter(Boolean);
@@ -167,6 +196,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   return {
     ...cfg,
     aiMode: aiHttp ? 'http' : 'mock',
+    telegramEnabled: telegramVars === 3,
     LOG_LEVEL: cfg.LOG_LEVEL ?? (cfg.NODE_ENV === 'test' ? 'silent' : 'info'),
     LOG_FORMAT: cfg.LOG_FORMAT ?? (cfg.NODE_ENV === 'production' ? 'json' : 'text'),
     trustProxy: parseTrustProxy(cfg.TRUST_PROXY),

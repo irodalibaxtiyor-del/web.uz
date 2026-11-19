@@ -75,7 +75,23 @@ import { AssessmentsService } from './assessments/assessments.service';
 import { ExperimentController } from './assessments/experiment.controller';
 import { ExperimentService } from './assessments/experiment.service';
 import { ItemAnalysisController, ItemAnalysisService } from './assessments/item-analysis';
+import {
+  CourseCertificatesController,
+  MyCertificatesController,
+  PublicCertificatesController,
+} from './certificates/certificates.controller';
+import { CertificatesService } from './certificates/certificates.service';
 import { GlossaryController } from './glossary/glossary.controller';
+import {
+  MyTelegramController,
+  TelegramWebhookController,
+} from './notifications/notifications.controller';
+import { NotificationsService } from './notifications/notifications.service';
+import {
+  TELEGRAM_CLIENT,
+  telegramClientFor,
+  type TelegramClient,
+} from './notifications/telegram-client';
 import { GlossaryService } from './glossary/glossary.service';
 import { SurveysController } from './surveys/surveys.controller';
 import { ActivityController, ActivityService } from './activity/activity';
@@ -89,6 +105,7 @@ export class AppModule {
     checkExecutor: CheckExecutor = createCheckExecutor(config),
     aiProvider: AiProvider = createAiProvider(config),
     contactNotifier: ContactNotifier = new NoopContactNotifier(),
+    telegramClient: TelegramClient = telegramClientFor(config),
   ): DynamicModule {
     return {
       module: AppModule,
@@ -108,6 +125,11 @@ export class AppModule {
         ItemAnalysisController,
         SurveysController,
         GlossaryController,
+        CourseCertificatesController,
+        MyCertificatesController,
+        PublicCertificatesController,
+        MyTelegramController,
+        TelegramWebhookController,
         ActivityController,
         PortfolioController,
         CatalogController,
@@ -149,6 +171,8 @@ export class AppModule {
         ItemAnalysisService,
         SurveysService,
         GlossaryService,
+        CertificatesService,
+        NotificationsService,
         ActivityService,
         PortfolioService,
         CatalogService,
@@ -162,6 +186,7 @@ export class AppModule {
         KnowledgeBase,
         ChatbotService,
         { provide: CONTACT_NOTIFIER, useValue: contactNotifier },
+        { provide: TELEGRAM_CLIENT, useValue: telegramClient },
         // Order matters: authenticate first, then resolve org role.
         { provide: APP_GUARD, useClass: AuthGuard },
         { provide: APP_GUARD, useClass: OrgRoleGuard },
@@ -187,6 +212,8 @@ export interface CreateAppOptions {
   aiProvider?: AiProvider;
   /** Where new chatbot contact requests are announced (default: nowhere; tests). */
   contactNotifier?: ContactNotifier;
+  /** Replaces the Telegram Bot API client (tests). */
+  telegramClient?: TelegramClient;
 }
 
 export async function createApp(
@@ -200,7 +227,14 @@ export async function createApp(
 
   const logger = new AppLogger(config);
   const app = await NestFactory.create<NestExpressApplication>(
-    AppModule.forRoot(config, handle, opts.checkExecutor, opts.aiProvider, opts.contactNotifier),
+    AppModule.forRoot(
+      config,
+      handle,
+      opts.checkExecutor,
+      opts.aiProvider,
+      opts.contactNotifier,
+      opts.telegramClient,
+    ),
     {
       logger:
         config.LOG_LEVEL === 'silent'

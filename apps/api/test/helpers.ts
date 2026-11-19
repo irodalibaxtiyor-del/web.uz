@@ -3,6 +3,7 @@ import type { NestExpressApplication } from '@nestjs/platform-express';
 import type { Role } from '@webdizayn/shared';
 import request from 'supertest';
 import { createApp } from '../src/app';
+import type { TelegramClient } from '../src/notifications/telegram-client';
 import type { AiProvider } from '../src/ai/provider';
 import type { CheckExecutor } from '../src/checks/check-executor';
 import type { ContactNotifier } from '../src/chatbot/notifier';
@@ -26,6 +27,7 @@ export async function setup(
     checkExecutor?: CheckExecutor;
     aiProvider?: AiProvider;
     contactNotifier?: ContactNotifier;
+    telegramClient?: TelegramClient;
   } = {},
 ): Promise<TestContext> {
   const config = loadConfig({ NODE_ENV: 'test', DATABASE_URL: 'pglite://memory', ...env });

@@ -34,3 +34,5 @@ export * from './activity';
 export * from './book-search';
 export * from './lesson-blocks';
 export * from './glossary';
+export * from './certificates';
+export * from './notifications';

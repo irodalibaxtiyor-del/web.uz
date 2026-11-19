@@ -18,6 +18,7 @@ const COLUMNS = [
       { href: '/#qanday', label: "Qanday o'qiladi" },
       { href: '/#afzalliklar', label: 'Afzalliklar' },
       { href: '/muallif-kitoblari', label: 'Muallif kitoblari' },
+      { href: '/sertifikat', label: 'Sertifikatni tekshirish' },
       { href: '/register', label: "Ro'yxatdan o'tish" },
       { href: '/login', label: 'Kirish' },
     ],

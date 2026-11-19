@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import { AssessmentsBanner } from '@/components/assessment-ui';
+import { CertificateBanner } from '@/components/certificate-ui';
 import { ReviewBanner } from '@/components/glossary-ui';
 import { Icon, type IconName } from '@/components/icons';
 import {
@@ -91,6 +92,7 @@ export default function CourseMapPage() {
             />
             <div className="grid gap-8 lg:grid-cols-[1fr_300px]">
               <div className="space-y-6">
+                <CertificateBanner base={base} />
                 <AssessmentsBanner base={base} />
                 <ReviewBanner base={base} />
                 {map.modules.length === 0 && (

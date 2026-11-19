@@ -18,6 +18,7 @@ import {
 import { AuditService } from '../audit/audit.service';
 import type { AuthContext, MembershipContext } from '../common/types';
 import { CourseAccessService } from '../courses/course-access.service';
+import { NotificationsService } from '../notifications/notifications.service';
 import type { Db } from '../db/client';
 import { DbService } from '../db/db.module';
 import {
@@ -44,6 +45,13 @@ const FROM: Record<'start' | ReviewAction, readonly SubmissionStatus[]> = {
   FINALIZED: ['GRADED'],
 };
 
+/** What the student is told on Telegram after each review action. */
+const NOTICE: Record<ReviewAction, string> = {
+  REVISION_REQUESTED: 'o‘qituvchi tuzatish so‘radi',
+  GRADED: 'baholandi',
+  FINALIZED: 'yakuniy baholandi',
+};
+
 const AUDIT: Record<'start' | ReviewAction, string> = {
   start: 'submission.review_start',
   REVISION_REQUESTED: 'submission.revision_request',
@@ -61,6 +69,7 @@ export class ReviewsService {
     private readonly dbs: DbService,
     private readonly access: CourseAccessService,
     private readonly audit: AuditService,
+    private readonly notifications: NotificationsService,
   ) {}
 
   async get(
@@ -292,9 +301,11 @@ export class ReviewsService {
   ): Promise<SubmissionReviewView> {
     await this.access.manageableCourse(auth, m, courseId);
     let score: number | null = null;
+    let title = '';
     await this.dbs.db.transaction(async (tx) => {
       const db = tx as unknown as Db;
       const a = await this.assignmentInCourse(db, courseId, assignmentId);
+      title = a.title;
       const sub = await this.submissionOf(db, a.id, studentId, true);
       if (!FROM[action].includes(sub.status)) {
         throw conflict('INVALID_TRANSITION', `Bu amal ${sub.status} holatida mumkin emas`);
@@ -349,6 +360,16 @@ export class ReviewsService {
       targetId: assignmentId,
       metadata: { studentId, version: seen.version, ...(score !== null ? { score } : {}) },
     });
+    if (action !== 'start') {
+      const path = `/orgs/${m.organizationId}/courses/${courseId}/assignments/${assignmentId}`;
+      await this.notifications.notify(
+        studentId,
+        'ASSIGNMENT',
+        `«${title}» topshirig‘ingiz ${NOTICE[action]}` +
+          (score !== null ? ` — ${score} ball` : '') +
+          `.\nKo‘rish: ${this.notifications.siteUrl(path)}`,
+      );
+    }
     return this.get(auth, m, courseId, assignmentId, studentId);
   }
 

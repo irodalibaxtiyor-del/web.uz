@@ -40,6 +40,8 @@ import {
   type BookCollection,
   type ExperimentRole,
   type ReviewGrade,
+  type NotificationKind,
+  type NotificationPrefs,
   type SurveyItem,
   type SurveyPhase,
   type QuizAnswer,
@@ -1263,5 +1265,95 @@ export const termReviews = pgTable(
     index('term_reviews_course_idx').on(t.courseId),
     check('term_reviews_grade', sql`${t.lastGrade} in ('AGAIN', 'HARD', 'GOOD', 'EASY')`),
     check('term_reviews_interval', sql`${t.intervalDays} >= 0`),
+  ],
+);
+
+/**
+ * Course completion certificates. Name and titles are snapshots taken at issue time; the
+ * random code is the public verification key. One certificate per student and course.
+ */
+export const certificates = pgTable(
+  'certificates',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    code: text('code').notNull(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    courseId: uuid('course_id')
+      .notNull()
+      .references(() => courses.id, { onDelete: 'cascade' }),
+    fullName: text('full_name').notNull(),
+    courseTitle: text('course_title').notNull(),
+    organizationName: text('organization_name').notNull(),
+    lessons: integer('lessons').notNull(),
+    issuedAt: timestamp('issued_at', { withTimezone: true }).notNull().defaultNow(),
+    revokedAt: timestamp('revoked_at', { withTimezone: true }),
+    revokedBy: uuid('revoked_by').references(() => users.id, { onDelete: 'set null' }),
+    revokedReason: text('revoked_reason'),
+  },
+  (t) => [
+    uniqueIndex('certificates_code_uq').on(t.code),
+    uniqueIndex('certificates_user_course_uq').on(t.userId, t.courseId),
+    index('certificates_course_idx').on(t.courseId),
+    index('certificates_revoked_by_idx').on(t.revokedBy),
+    check('certificates_lessons', sql`${t.lessons} > 0`),
+  ],
+);
+
+/** A user's linked Telegram chat and which notifications they want there. */
+export const telegramLinks = pgTable(
+  'telegram_links',
+  {
+    userId: uuid('user_id')
+      .primaryKey()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    chatId: text('chat_id').notNull(),
+    prefs: jsonb('prefs').$type<NotificationPrefs>().notNull(),
+    linkedAt: timestamp('linked_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex('telegram_links_chat_uq').on(t.chatId)],
+);
+
+/** One-time deep-link tokens (stored as SHA-256 hashes). */
+export const telegramLinkTokens = pgTable(
+  'telegram_link_tokens',
+  {
+    tokenHash: text('token_hash').primaryKey(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+  },
+  (t) => [index('telegram_link_tokens_user_idx').on(t.userId)],
+);
+
+/** Messages waiting to be (or already) sent. `dedupe_key` keeps daily reminders to one. */
+export const notificationOutbox = pgTable(
+  'notification_outbox',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    kind: text('kind').$type<NotificationKind>().notNull(),
+    text: text('text').notNull(),
+    dedupeKey: text('dedupe_key'),
+    status: text('status').$type<'PENDING' | 'SENT' | 'FAILED'>().notNull().default('PENDING'),
+    attempts: integer('attempts').notNull().default(0),
+    nextAttemptAt: timestamp('next_attempt_at', { withTimezone: true }).notNull().defaultNow(),
+    lastError: text('last_error'),
+    createdAt: createdAt(),
+    sentAt: timestamp('sent_at', { withTimezone: true }),
+  },
+  (t) => [
+    uniqueIndex('notification_outbox_dedupe_uq').on(t.dedupeKey),
+    index('notification_outbox_pending_idx').on(t.status, t.nextAttemptAt),
+    index('notification_outbox_user_idx').on(t.userId),
+    check('notification_outbox_status', sql`${t.status} in ('PENDING', 'SENT', 'FAILED')`),
+    check(
+      'notification_outbox_kind',
+      sql`${t.kind} in ('REVIEW_DUE', 'ASSIGNMENT', 'CERTIFICATE')`,
+    ),
   ],
 );

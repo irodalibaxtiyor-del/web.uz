@@ -197,6 +197,20 @@
       "when": 1795063240691,
       "tag": "0027_glossary_reviews",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1795066081925,
+      "tag": "0028_certificates",
+      "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1795066384973,
+      "tag": "0029_telegram_notifications",
+      "breakpoints": true
     }
   ]
 }

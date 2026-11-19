@@ -19,6 +19,7 @@ const ITEMS: { href: string; label: string; icon: IconName }[] = [
   { href: '/dashboard', label: 'Kabinet', icon: 'dashboard' },
   { href: '/analytics', label: 'Natija', icon: 'chart' },
   { href: '/portfolio', label: 'Portfolio', icon: 'briefcase' },
+  { href: '/sozlamalar', label: 'Sozlamalar', icon: 'settings' },
 ];
 
 const HOVER_CLOSE_MS = 180;

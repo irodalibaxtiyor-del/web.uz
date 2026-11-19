@@ -19,6 +19,7 @@ const PERSONAL: NavItem[] = [
   { href: '/portfolio', label: 'Portfolio', icon: 'briefcase' },
   { href: '/kitoblar', label: 'Elektron darslik', icon: 'book' },
   { href: '/playground', label: 'Playground', icon: 'code' },
+  { href: '/sozlamalar', label: 'Sozlamalar', icon: 'settings' },
 ];
 
 /** Sidebar sections: personal pages first, then staff tools per organization. */
