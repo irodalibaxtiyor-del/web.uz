@@ -1,7 +1,8 @@
 import { REVIEW_NEW_PER_DAY } from '@webdizayn/shared';
 import { eq } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { tashkentDayStart } from '../src/glossary/glossary.service';
+import { RateLimiter } from '../src/common/rate-limiter';
+import { REVIEW_ANSWERS_PER_MINUTE, tashkentDayStart } from '../src/glossary/glossary.service';
 import { termReviews } from '../src/db/schema';
 import { createMember, createOrg, setup, type TestContext } from './helpers';
 
@@ -186,6 +187,16 @@ describe('spaced repetition', () => {
     const q = await req(student, 'get', `${G()}/review`).expect(200);
     // Two new cards were already seen today.
     expect(q.body.cards).toHaveLength(REVIEW_NEW_PER_DAY - 2);
+  });
+
+  it('review answers are rate limited per student', async () => {
+    const limiter = ctx.app.get(RateLimiter);
+    const key = `review-answer:${student.userId}`;
+    for (let i = 0; i < REVIEW_ANSWERS_PER_MINUTE; i++) await limiter.record(key);
+    await req(student, 'post', `${G()}/review/${ids.html}`, { grade: 'GOOD' })
+      .expect(429)
+      .expect((r) => expect(r.body.code).toBe('REVIEW_RATE_LIMITED'));
+    await limiter.clear(key);
   });
 
   it('deleting a term removes its reviews; outsiders cannot review', async () => {

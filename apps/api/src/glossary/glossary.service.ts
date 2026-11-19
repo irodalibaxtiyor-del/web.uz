@@ -19,6 +19,7 @@ import {
   type UpsertTermInput,
 } from '@webdizayn/shared';
 import { AuditService } from '../audit/audit.service';
+import { RateLimiter } from '../common/rate-limiter';
 import type { AuthContext, MembershipContext } from '../common/types';
 import { CourseAccessService } from '../courses/course-access.service';
 import { LearningService } from '../courses/learning.service';
@@ -29,6 +30,8 @@ import { courseTerms, lessonProgress, termReviews } from '../db/schema';
 type TermRow = typeof courseTerms.$inferSelect;
 
 const NOT_FOUND = 'Atama topilmadi';
+/** Review answers per student per minute: far above a real pace (about one card a second). */
+export const REVIEW_ANSWERS_PER_MINUTE = 120;
 const DUPLICATE = { message: 'Bu kursda shunday atama bor', code: 'TERM_EXISTS' };
 
 /** Start of the current Asia/Tashkent day (UTC+5, no DST). */
@@ -45,6 +48,7 @@ export class GlossaryService {
     private readonly access: CourseAccessService,
     private readonly learning: LearningService,
     private readonly audit: AuditService,
+    private readonly limiter: RateLimiter,
   ) {}
 
   // ---- Glossary -----------------------------------------------------------
@@ -243,6 +247,13 @@ export class GlossaryService {
     const db = this.dbs.db;
     await this.learning.requireEnrollment(db, auth.userId, courseId);
     const term = await this.termInCourse(db, courseId, termId);
+    await this.limiter.consume(
+      `review-answer:${auth.userId}`,
+      REVIEW_ANSWERS_PER_MINUTE,
+      60_000,
+      'REVIEW_RATE_LIMITED',
+      now,
+    );
     if (term.lessonId) {
       const learned = await this.completedLessons(db, auth.userId, courseId);
       if (!learned.has(term.lessonId)) {
