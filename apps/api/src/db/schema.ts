@@ -10,6 +10,7 @@ import {
   pgEnum,
   pgTable,
   primaryKey,
+  real,
   text,
   timestamp,
   uniqueIndex,
@@ -38,6 +39,7 @@ import {
   type AssessmentKind,
   type BookCollection,
   type ExperimentRole,
+  type ReviewGrade,
   type SurveyItem,
   type SurveyPhase,
   type QuizAnswer,
@@ -1207,3 +1209,59 @@ export const activityLastPing = pgTable('activity_last_ping', {
     .references(() => users.id, { onDelete: 'cascade' }),
   at: timestamp('at', { withTimezone: true }).notNull(),
 });
+
+/** Course glossary. `term_key` (normalized term) is unique per course. */
+export const courseTerms = pgTable(
+  'course_terms',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    courseId: uuid('course_id')
+      .notNull()
+      .references(() => courses.id, { onDelete: 'cascade' }),
+    lessonId: uuid('lesson_id').references(() => lessons.id, { onDelete: 'set null' }),
+    term: text('term').notNull(),
+    termKey: text('term_key').notNull(),
+    definition: text('definition').notNull(),
+    example: text('example').notNull().default(''),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (t) => [
+    uniqueIndex('course_terms_key_uq').on(t.courseId, t.termKey),
+    index('course_terms_lesson_idx').on(t.lessonId),
+  ],
+);
+
+/** Spaced-repetition state of one glossary term for one student. */
+export const termReviews = pgTable(
+  'term_reviews',
+  {
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    termId: uuid('term_id')
+      .notNull()
+      .references(() => courseTerms.id, { onDelete: 'cascade' }),
+    courseId: uuid('course_id')
+      .notNull()
+      .references(() => courses.id, { onDelete: 'cascade' }),
+    ease: real('ease').notNull(),
+    intervalDays: integer('interval_days').notNull(),
+    reps: integer('reps').notNull(),
+    lapses: integer('lapses').notNull().default(0),
+    dueAt: timestamp('due_at', { withTimezone: true }).notNull(),
+    lastGrade: text('last_grade').$type<ReviewGrade>().notNull(),
+    reviewCount: integer('review_count').notNull().default(1),
+    reviewedAt: timestamp('reviewed_at', { withTimezone: true }).notNull(),
+    /** First review: counts the card as "new" on that day. */
+    createdAt: createdAt(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.userId, t.termId] }),
+    index('term_reviews_due_idx').on(t.userId, t.courseId, t.dueAt),
+    index('term_reviews_term_idx').on(t.termId),
+    index('term_reviews_course_idx').on(t.courseId),
+    check('term_reviews_grade', sql`${t.lastGrade} in ('AGAIN', 'HARD', 'GOOD', 'EASY')`),
+    check('term_reviews_interval', sql`${t.intervalDays} >= 0`),
+  ],
+);

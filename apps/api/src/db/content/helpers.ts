@@ -60,8 +60,17 @@ export interface CourseMeta {
   directions?: string[];
 }
 
+/** Glossary entry; `lesson` is the slug of the lesson that introduces the term. */
+export interface GlossaryDef {
+  term: string;
+  definition: string;
+  example?: string;
+  lesson?: string;
+}
+
 export interface CourseDef extends CourseMeta {
   modules: ModuleDef[];
+  glossary?: GlossaryDef[];
   /** Reference solutions by lesson slug; used only by `content:verify`, never seeded. */
   solutions: Record<string, ProjectFile[]>;
 }

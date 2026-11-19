@@ -56,6 +56,9 @@ export default function ManageCoursePage() {
                 <Link href={`${base}/manage/item-analysis`} className="btn btn-outline">
                   Savollar tahlili
                 </Link>
+                <Link href={`${base}/manage/glossary`} className="btn btn-outline">
+                  Atamalar lug&apos;ati
+                </Link>
                 {s.course.status !== 'PUBLISHED' && (
                   <Button onClick={() => setStatus('PUBLISHED')} disabled={lessonCount === 0}>
                     E&apos;lon qilish

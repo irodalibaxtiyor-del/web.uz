@@ -12,6 +12,7 @@ import { CSS_LESSON_QUIZZES } from './css/lesson-quizzes';
 import { CSS_MINI_QUIZZES } from './css/mini-quizzes';
 import { CSS_SOLUTIONS } from './css/solutions';
 import { withQuizzes, type CourseDef } from './helpers';
+import { HTML_GLOSSARY } from './html/glossary';
 import { HTML_COURSE, HTML_MODULES } from './html/manifest';
 import { HTML_LESSON_QUIZZES } from './html/lesson-quizzes';
 import { HTML_MINI_QUIZZES } from './html/mini-quizzes';
@@ -40,6 +41,7 @@ export const CONTENT_COURSES: CourseDef[] = [
     ...HTML_COURSE,
     modules: withQuizzes(HTML_MODULES, { lesson: HTML_LESSON_QUIZZES, mini: HTML_MINI_QUIZZES }),
     solutions: HTML_SOLUTIONS,
+    glossary: HTML_GLOSSARY,
   },
   {
     ...CSS_COURSE,

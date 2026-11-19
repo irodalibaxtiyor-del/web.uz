@@ -75,6 +75,8 @@ import { AssessmentsService } from './assessments/assessments.service';
 import { ExperimentController } from './assessments/experiment.controller';
 import { ExperimentService } from './assessments/experiment.service';
 import { ItemAnalysisController, ItemAnalysisService } from './assessments/item-analysis';
+import { GlossaryController } from './glossary/glossary.controller';
+import { GlossaryService } from './glossary/glossary.service';
 import { SurveysController } from './surveys/surveys.controller';
 import { ActivityController, ActivityService } from './activity/activity';
 import { SurveysService } from './surveys/surveys.service';
@@ -105,6 +107,7 @@ export class AppModule {
         ExperimentController,
         ItemAnalysisController,
         SurveysController,
+        GlossaryController,
         ActivityController,
         PortfolioController,
         CatalogController,
@@ -145,6 +148,7 @@ export class AppModule {
         ExperimentService,
         ItemAnalysisService,
         SurveysService,
+        GlossaryService,
         ActivityService,
         PortfolioService,
         CatalogService,

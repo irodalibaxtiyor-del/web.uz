@@ -58,7 +58,7 @@ Oldingi sessiyalar (2026-10-08 … 2026-10-27): [docs/ISH_JURNALI_ARXIV.md](docs
 
 ## Joriy holat (qisqacha)
 
-- **Bajarilgan:** roadmap fazalari F0–F2, 11–15C; kurslar HTML, CSS, JS, PHP, Bootstrap 3/4/5, Moslashuvchan dizayn, UI asoslari, Figma'dan kodga, Portfolio; guruhlar, o'qituvchi/talaba hisoblari va Excel; 8 band (dizayn, responsivlik, app-shell, kabinet menyusi, yo'nalishlar, slug, elektron darslik, chatbot); Loms dizayni qaytarilgan; 8 xil test turi; ilmiy modul (formativ fikr, kirish/yakuniy test, tajriba va nazorat guruhlari statistikasi, so'rovnomalar va Cronbach α, savollar tahlili, vaqt sarfi, normallik va parametrik bo'lmagan mezonlar); "Muallif kitoblari" va kitob ichidan qidiruv; 407 ta dars testi va 485 ta mashq mini-testi (izohlar bilan, `db:sync:quizzes`); darsdagi interaktiv bloklar (`tekshir`/`jonli`/`yechim`, `db:sync:lessons`) — HTML kursining 60 darsida.
+- **Bajarilgan:** roadmap fazalari F0–F2, 11–15C; kurslar HTML, CSS, JS, PHP, Bootstrap 3/4/5, Moslashuvchan dizayn, UI asoslari, Figma'dan kodga, Portfolio; guruhlar, o'qituvchi/talaba hisoblari va Excel; 8 band (dizayn, responsivlik, app-shell, kabinet menyusi, yo'nalishlar, slug, elektron darslik, chatbot); Loms dizayni qaytarilgan; 8 xil test turi; ilmiy modul (formativ fikr, kirish/yakuniy test, tajriba va nazorat guruhlari statistikasi, so'rovnomalar va Cronbach α, savollar tahlili, vaqt sarfi, normallik va parametrik bo'lmagan mezonlar); "Muallif kitoblari" va kitob ichidan qidiruv; 407 ta dars testi va 485 ta mashq mini-testi (izohlar bilan, `db:sync:quizzes`); darsdagi interaktiv bloklar (`tekshir`/`jonli`/`yechim`, `db:sync:lessons`) — HTML kursining 60 darsida; atamalar lug'ati va oraliqli takrorlash (SM-2, `db:sync:glossary`) — HTML kursida 91 atama.
 - **Muhim qoidalar (arxivdan):**
   - Tranzaksiya ichida faqat `tx` ishlatilsin (aks holda PGlite deadlock).
   - Postgres `jsonb` kalitlar tartibini saqlamaydi — taqqoslashda kanonik JSON.
@@ -66,8 +66,8 @@ Oldingi sessiyalar (2026-10-08 … 2026-10-27): [docs/ISH_JURNALI_ARXIV.md](docs
   - Kurs kontenti: W3Schools'dan faqat mavzular tartibi, matn/misol/mashq original o'zbekcha; har mashq `content:verify` da haqiqiy Chrome'da tekshiriladi.
   - Talabalar ro'yxati (shaxsiy ma'lumot) repoga yozilmaydi (`apps/api/.data/` gitignore'da); repo public.
   - Git Bash: URL yo'llari uchun `MSYS_NO_PATHCONV=1`; murakkab matnli heredoc o'rniga fayl + node skript.
-- **Ochiq (infratuzilma):** Ubuntu'dagi CI E2E, Docker/haqiqiy Postgres/sandbox domeni/edge proksi/backup tekshiruvi, haqiqiy AI provayder (DPA), SMTP, Safari va haqiqiy qurilmalar, Lighthouse qayta o'lchovi.
-- **Ochiq (reja):** qolgan kurslarga interaktiv bloklar (4-bosqich davomi), atamalar lug'ati, takrorlash, sertifikat, Telegram xabarnomalari.
+- **Ochiq (infratuzilma):** Next.js 16.4.2 xavfsizlik zaifligi tufayli `next dev`/`next build` to'xtaydi — yangilash kerak (foydalanuvchi qarori); Ubuntu'dagi CI E2E, Docker/haqiqiy Postgres/sandbox domeni/edge proksi/backup tekshiruvi, haqiqiy AI provayder (DPA), SMTP, Safari va haqiqiy qurilmalar, Lighthouse qayta o'lchovi.
+- **Ochiq (reja):** qolgan kurslarga interaktiv bloklar va lug'at, sertifikat, Telegram xabarnomalari.
 
 ## 2026-11-14
 
@@ -375,3 +375,23 @@ Oldingi sessiyalar (2026-10-08 … 2026-10-27): [docs/ISH_JURNALI_ARXIV.md](docs
 - Regressiya: format ✅, typecheck ✅, lint ✅, test ✅ (shared 117 + libs 3 + sandbox 16 + web 67 + check-engine 23 + api 493 = **719**).
 - Keyingi: qolgan kurslarga (CSS, JS, Bootstrap, RWD, UI, Figma, Portfolio) interaktiv bloklar.
 - Commit'lar: `f9696a6` (infratuzilma), `f5f2818` (HTML kontenti). Push qilinmagan; `apps/web/next-env.d.ts` ataylab commit qilinmaydi.
+
+## 2026-11-19
+
+### 5-bosqich — atamalar lug'ati va oraliqli takrorlash
+
+- Qaror: atama kursga tegishli va ixtiyoriy ravishda u kiritilgan **darsga** bog'lanadi. Talaba atamani faqat shu darsni **tugatgandan keyin** takrorlaydi (darsga bog'lanmagan atama darhol ochiq) — takrorlash o'rganilganni mustahkamlaydi, oldindan o'rgatmaydi. Lug'atning o'zi (ma'lumotnoma) yozilgan talabaga to'liq ko'rinadi, o'rganilganlari belgilanadi.
+- Shared `glossary.ts`: `upsertTermSchema`, `termKey` (katta-kichik harf, bo'sh joy va apostrof farqsiz), `filterTerms` (avval atama, keyin ta'rif bo'yicha; lotin/kirill farqsiz), `termLetter` va `compareTerms` (O‘, G‘, Sh, Ch bitta harf; boshidagi `<`, `&` kabi belgilar hisobga olinmaydi; o'zbek alifbosi tartibi); takrorlash — SM-2 ning 4 tugmali varianti `scheduleReview` (Eslay olmadim → 10 daq., Qiyin, Esladim → 1, 3, keyin × ease, Juda oson → 4 kun; ease ≥ 1,3; oraliq ≤ 365 kun), `formatInterval`, kuniga 10 ta yangi karta, so'rovda 30 tagacha. 11 ta test.
+- Migratsiya `0027_glossary_reviews.sql`: `course_terms` (kurs + `term_key` unique, dars o'chsa `set null`) va `term_reviews` (PK talaba+atama; ease, oraliq, takrorlar, unutishlar, `due_at`, oxirgi baho CHECK, takrorlar soni; birinchi takrorlash sanasi — "bugungi yangi kartalar" uchun).
+- API `/orgs/:orgId/courses/:courseId/glossary`: `GET` (kurs xodimi — barcha atamalar va darslar ro'yxati; talaba — e'lon qilingan kurs, yozilgan, `learned` belgisi), `POST`/`PATCH :termId`/`DELETE :termId` (kurs xodimi, boshqa kurs darsi 404, takror atama 409 `TERM_EXISTS`, audit `glossary.term_*`); `GET review` (muddati kelgan kartalar, keyin yangi kartalar kurs tartibida; bugungi limit Toshkent kuni bo'yicha; hech narsa bo'lmasa `nextDueAt`), `POST review/:termId` (`AGAIN|HARD|GOOD|EASY`; tugatilmagan dars atamasi 403 `TERM_LOCKED`). Testlar `test/glossary.test.ts` 10 ta (RBAC, boshqa org, takror va qayta nomlash 409, learned belgilari, yopiq atama, rejalashtirish, muddati kelgan karta holati bilan qaytadi, kunlik limit, o'chirishda takrorlash tarixi ham o'chadi, Toshkent kuni chegarasi).
+- Kontent: `CourseDef.glossary` (`GlossaryDef`: atama, ta'rif, misol, dars slug'i); `prepareCourse` lug'atni ham tekshiradi (sxema, noma'lum dars, takror atama); `seedCourse` atamalarni yaratadi; `syncCourseGlossary` + `pnpm --filter @webdizayn/api db:sync:glossary <slug|--all>` — faqat yetishmayotgan atamalarni qo'shadi, o'qituvchi tahrirlaganiga tegmaydi. HTML kursi: **91 ta atama** (`content/html/glossary.ts`), har biri o'z darsiga bog'langan, kerakli joyda kod misoli bilan. Kontent testlari +3.
+- Web:
+  - talaba `/glossary`: qidiruv (`aria-live` natijalar soni), harflar ko'rsatkichi, atama kartasi (ta'rif ichidagi `kod` formatlanadi, kod misoli, darsga havola, "o'rganilgan" belgisi);
+  - talaba `/review`: kartochka (avval atama, "Javobni ko'rish" yoki Probel), 4 ta baho tugmasi navbatdagi oraliq bilan (1–4 tugmalari), unutilgan karta sessiya oxiriga qaytadi, jarayon chizig'i, yakuniy va bo'sh holatlar (keyingi takrorlash vaqti);
+  - kurs xaritasida `ReviewBanner` (o'rganilgan/jami, bugungi kartalar, "Lug'at" va "Takrorlash (N)");
+  - o'qituvchi `/manage/glossary` (kurs boshqaruvidan "Atamalar lug'ati"): qo'shish formasi (darslar modul bo'yicha guruhlangan), qidiruv, joyida tahrirlash, tasdiqlash oynasi bilan o'chirish.
+- Brauzer tekshiruvi (demo baza **nusxasida**, scratchpad `glossary.cjs`, 1440 light va 390 dark) **30/30**, xatolar 0: xaritadagi karta; 91 atama, harflar, o'rganilgan belgilari soni, qidiruv (katta harf bilan ham), "Hech narsa topilmadi"; karta old tomonida ta'rif yo'q, Probel bilan ochiladi, 4 tugma (10 daq. / 1 kun / 1 kun / 4 kun), "Eslay olmadim" kartani navbat oxiriga qaytaradi (8 → 9), sessiya tugaydi va javoblar saqlanadi; tugatilmagan dars atamasi 403; talabaga darslar ro'yxati berilmaydi; telefon — bo'sh holat va keyingi vaqt; admin — UI orqali qo'shish, takror atama xabari, tahrirlash, o'chirish. Gorizontal scroll yo'q. Tekshiruvda topilgan va tuzatilgan: harflar tartibi (`&nbsp;`, `<nav>` kabi atamalar tufayli "N" birinchi turardi) → `compareTerms`; kartochkadagi dars nomi savolga o'xshardi → "Dars:" yorlig'i. Nusxa o'chirildi.
+- Demo bazaga `0027` qo'llandi va `db:sync:glossary html` (+91).
+- Regressiya: format ✅, typecheck ✅, lint ✅, test ✅ (shared 128 + libs 3 + sandbox 16 + web 67 + check-engine 23 + api 506 = **743**).
+- **Muhim kuzatuv (infratuzilma):** Next.js 16.4.2 endi "known security vulnerability" sababli `next dev` ni ishga tushgach to'xtatadi va `next build` ni (build tugagach) xato bilan yakunlaydi — ya'ni `pnpm -r build` va CI build yiqiladi. Brauzer sinovi uchun build natijasi bilan `next start` ishlatildi. Next.js'ni yangilash foydalanuvchi qaroriga qoldirildi (bog'liqlik o'zgarishi).
+- Cheklovlar: lug'at hozircha faqat HTML kursida (qolgan kurslar keyin); takrorlash statistikasi o'qituvchi analitikasida hali ko'rsatilmaydi.

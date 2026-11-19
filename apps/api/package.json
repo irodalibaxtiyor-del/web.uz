@@ -21,6 +21,7 @@
     "db:seed:course": "node -r @swc-node/register src/db/seed-course.ts",
     "db:sync:quizzes": "node -r @swc-node/register src/db/sync-quizzes.ts",
     "db:sync:lessons": "node -r @swc-node/register src/db/sync-lessons.ts",
+    "db:sync:glossary": "node -r @swc-node/register src/db/sync-glossary.ts",
     "db:seed:directions": "node -r @swc-node/register src/db/seed-directions.ts",
     "db:seed:directions:prod": "node dist/db/seed-directions.js",
     "db:seed:html": "node -r @swc-node/register src/db/seed-course.ts html",

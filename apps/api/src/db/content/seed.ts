@@ -3,6 +3,8 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
   LESSON_CONTENT_MAX,
+  termKey,
+  upsertTermSchema,
   stripLessonBlocks,
   validateLessonBlocks,
   createExerciseSchema,
@@ -13,6 +15,7 @@ import {
 import type { Db } from '../client';
 import {
   courseTeachers,
+  courseTerms,
   courses,
   exercises,
   lessons,
@@ -20,7 +23,7 @@ import {
   modules,
   quizzes,
 } from '../schema';
-import type { CourseDef } from './helpers';
+import type { CourseDef, GlossaryDef } from './helpers';
 import { DIRECTION_SLUGS, syncDirections } from './directions';
 
 /** `apps/api/content`; works from both `src/db/content` and `dist/db/content`. */
@@ -97,6 +100,7 @@ export function prepareCourse(
     }),
   }));
 
+  problems.push(...glossaryProblems(course.glossary ?? [], slugs));
   if (problems.length > 0) {
     throw new Error(`Course "${course.slug}" manifest is invalid:\n${problems.join('\n')}`);
   }
@@ -118,6 +122,7 @@ export interface SeedCourseResult {
   exercises: number;
   quizzes: number;
   miniQuizzes: number;
+  terms: number;
   replaced: boolean;
 }
 
@@ -180,9 +185,11 @@ export async function seedCourse(
       exercises: 0,
       quizzes: 0,
       miniQuizzes: 0,
+      terms: 0,
       replaced: Boolean(existing),
     };
 
+    const lessonIds = new Map<string, string>();
     for (const [mi, m] of prepared.entries()) {
       const [mod] = await tx
         .insert(modules)
@@ -196,6 +203,7 @@ export async function seedCourse(
           .values({ courseId, moduleId: mod!.id, title: l.title, content: l.content, position: li })
           .returning({ id: lessons.id });
         result.lessons++;
+        lessonIds.set(l.slug, lesson!.id);
 
         if (l.exercise) {
           const e = l.exercise;
@@ -247,6 +255,7 @@ export async function seedCourse(
         }
       }
     }
+    result.terms = await insertGlossary(tx, courseId, course.glossary ?? [], lessonIds);
     await syncDirections(tx, opts.organizationId);
     return result;
   });
@@ -433,5 +442,104 @@ export async function syncCourseQuizzes(
       }
     }
     return result;
+  });
+}
+
+/** Problems in a glossary manifest: schema, unknown lesson slugs, duplicate terms. */
+export function glossaryProblems(entries: GlossaryDef[], lessonSlugs: Set<string>): string[] {
+  const problems: string[] = [];
+  const keys = new Set<string>();
+  for (const g of entries) {
+    const r = upsertTermSchema.safeParse({ ...g, lessonId: null });
+    if (!r.success)
+      problems.push(`glossary "${g.term}": ${r.error.issues[0]?.message ?? 'invalid'}`);
+    if (g.lesson && !lessonSlugs.has(g.lesson)) {
+      problems.push(`glossary "${g.term}": unknown lesson "${g.lesson}"`);
+    }
+    const key = termKey(g.term);
+    if (keys.has(key)) problems.push(`glossary "${g.term}": duplicate term`);
+    keys.add(key);
+  }
+  return problems;
+}
+
+/** Inserts glossary terms that are not in the course yet (matched by normalized term). */
+async function insertGlossary(
+  db: Db,
+  courseId: string,
+  entries: GlossaryDef[],
+  lessonIds: Map<string, string>,
+): Promise<number> {
+  if (entries.length === 0) return 0;
+  const rows = await db
+    .insert(courseTerms)
+    .values(
+      entries.map((g) => ({
+        courseId,
+        lessonId: g.lesson ? (lessonIds.get(g.lesson) ?? null) : null,
+        term: g.term.trim(),
+        termKey: termKey(g.term),
+        definition: g.definition.trim(),
+        example: (g.example ?? '').replace(/\s+$/, ''),
+      })),
+    )
+    .onConflictDoNothing()
+    .returning({ id: courseTerms.id });
+  return rows.length;
+}
+
+export interface SyncGlossaryResult {
+  courseId: string;
+  added: number;
+  /** Terms already in the course (possibly edited by staff): left alone. */
+  existing: number;
+  skipped: string[];
+}
+
+/**
+ * Adds the manifest's missing glossary terms to an already seeded course. Existing terms are
+ * never changed (staff may have edited them); lessons are matched by position and title.
+ */
+export async function syncCourseGlossary(
+  db: Db,
+  course: CourseDef,
+  opts: { organizationId: string; contentDir?: string },
+): Promise<SyncGlossaryResult> {
+  const prepared = prepareCourse(course, opts.contentDir);
+  return db.transaction(async (tx) => {
+    const [row] = await tx
+      .select({ id: courses.id })
+      .from(courses)
+      .where(and(eq(courses.organizationId, opts.organizationId), eq(courses.slug, course.slug)));
+    if (!row) throw new Error(`Course "${course.slug}" is not seeded; run db:seed:course first`);
+    const courseId = row.id;
+    const mods = await tx
+      .select({ id: modules.id })
+      .from(modules)
+      .where(eq(modules.courseId, courseId))
+      .orderBy(asc(modules.position), asc(modules.createdAt));
+    const lessonRows = await tx
+      .select({ id: lessons.id, moduleId: lessons.moduleId, title: lessons.title })
+      .from(lessons)
+      .where(eq(lessons.courseId, courseId))
+      .orderBy(asc(lessons.position), asc(lessons.createdAt));
+    const lessonIds = new Map<string, string>();
+    const skipped: string[] = [];
+    for (const [mi, m] of prepared.entries()) {
+      const inModule = lessonRows.filter((l) => l.moduleId === mods[mi]?.id);
+      for (const [li, l] of m.lessons.entries()) {
+        const lesson = inModule[li];
+        if (lesson && lesson.title === l.title) lessonIds.set(l.slug, lesson.id);
+      }
+    }
+    const entries = (course.glossary ?? []).filter((g) => {
+      if (g.lesson && !lessonIds.has(g.lesson)) {
+        skipped.push(`${g.term}: lesson "${g.lesson}" not found`);
+        return false;
+      }
+      return true;
+    });
+    const added = await insertGlossary(tx, courseId, entries, lessonIds);
+    return { courseId, added, existing: entries.length - added, skipped };
   });
 }

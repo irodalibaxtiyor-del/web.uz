@@ -15,6 +15,7 @@ import {
   contentDirOf,
   prepareCourse,
   seedCourse,
+  syncCourseGlossary,
   syncCourseLessons,
   syncCourseQuizzes,
 } from '../src/db/content/seed';
@@ -398,6 +399,65 @@ describe('lesson text sync', () => {
       contentDir: newDir,
     });
     expect(again.updated).toBe(0);
+  });
+});
+
+describe('course glossary', () => {
+  it('every bundled glossary is valid (manifest check runs in prepareCourse)', () => {
+    for (const c of CONTENT_COURSES) {
+      if (!c.glossary) continue;
+      expect(() => prepareCourse(c)).not.toThrow();
+      for (const g of c.glossary) expect(g.definition.length).toBeGreaterThan(15);
+    }
+    expect(HTML.glossary?.length).toBeGreaterThanOrEqual(60);
+  });
+
+  it('a broken glossary entry fails the manifest', () => {
+    expect(() =>
+      prepareCourse({ ...HTML, glossary: [{ term: 'X', definition: 'Ta’rif', lesson: 'yoq' }] }),
+    ).toThrow(/unknown lesson "yoq"/);
+    expect(() =>
+      prepareCourse({
+        ...HTML,
+        glossary: [
+          { term: 'Teg', definition: 'Birinchi ta’rif' },
+          { term: ' teg', definition: 'Ikkinchi ta’rif' },
+        ],
+      }),
+    ).toThrow(/duplicate term/);
+  });
+
+  it('seeding creates terms tied to lessons; sync adds only missing ones', async () => {
+    const org = await createOrg(ctx, 'glossary-org');
+    const owner = await createMember(ctx, 'owner@glossary.uz', org, 'TEACHER');
+    const few = { ...HTML, glossary: HTML.glossary!.slice(0, 5) };
+    const seeded = await seedCourse(ctx.handle.db, few, {
+      organizationId: org,
+      teacherId: owner.userId,
+    });
+    expect(seeded.terms).toBe(5);
+    const base = `/orgs/${org}/courses/${seeded.courseId}`;
+    const list = await get(owner, `${base}/glossary`).expect(200);
+    expect(list.body.terms).toHaveLength(5);
+    const html = list.body.terms.find((t: { term: string }) => t.term === 'HTML');
+    expect(html.lessonTitle).toBeTruthy();
+
+    // A teacher edits a term; sync must not overwrite it.
+    await ctx
+      .http()
+      .patch(`${base}/glossary/${html.id}`)
+      .set('Cookie', owner.cookie)
+      .send({ term: 'HTML', definition: 'O‘qituvchi yozgan ta’rif' })
+      .expect(200);
+    const r = await syncCourseGlossary(ctx.handle.db, HTML, { organizationId: org });
+    expect(r).toMatchObject({ added: HTML.glossary!.length - 5, existing: 5, skipped: [] });
+    const after = await get(owner, `${base}/glossary`).expect(200);
+    expect(after.body.terms).toHaveLength(HTML.glossary!.length);
+    expect(after.body.terms.find((t: { id: string }) => t.id === html.id).definition).toBe(
+      'O‘qituvchi yozgan ta’rif',
+    );
+    const again = await syncCourseGlossary(ctx.handle.db, HTML, { organizationId: org });
+    expect(again.added).toBe(0);
   });
 });
 
