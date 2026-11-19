@@ -9,8 +9,18 @@ allowBuilds:
   sharp: true
 
 # Security: Monaco bundles DOMPurify; force a patched copy (GHSA-c6gr-qvv4-5v3f and friends, fixed in 3.4.17).
+# Transitive packages with known advisories (pnpm audit, 2026-11-19); the direct
+# dependants (Nest 11, Express 5, typescript-eslint 8, drizzle-kit) accept these versions.
 overrides:
   dompurify: '>=3.4.17'
+  body-parser: '>=2.4.0'
+  multer: '>=2.5.0'
+  qs: '>=6.16.1'
+  '@esbuild-kit/core-utils>esbuild': '^0.25.0'
+  '@typescript-eslint/typescript-estree>minimatch': '^11.0.1'
+  '@vitest/mocker': '>=4.1.12 <5'
+  'eslint-plugin-react-hooks>zod': '^4.6.7'
+  'zod-validation-error>zod': '^4.6.7'
 
 # Bootstrap 3.4.1 is end-of-life and has no patched release. It is served only to student
 # projects inside the RUN/CHECK sandboxes (opaque origin, no network, no platform cookies)
