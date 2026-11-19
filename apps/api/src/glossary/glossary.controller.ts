@@ -37,6 +37,16 @@ export class GlossaryController {
     return this.glossary.create(auth, m, courseId, body);
   }
 
+  @Get('stats')
+  @OrgRoles('TEACHER', 'ORG_ADMIN')
+  stats(
+    @CurrentAuth() auth: AuthContext,
+    @CurrentMembership() m: MembershipContext,
+    @Param('courseId', Id) courseId: string,
+  ) {
+    return this.glossary.stats(auth, m, courseId);
+  }
+
   @Get('review')
   @OrgRoles('STUDENT', 'TEACHER', 'ORG_ADMIN')
   queue(

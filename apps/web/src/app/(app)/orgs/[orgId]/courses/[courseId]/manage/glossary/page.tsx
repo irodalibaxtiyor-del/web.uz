@@ -5,6 +5,7 @@ import {
   filterTerms,
   TERM_EXAMPLE_MAX,
   TERM_MAX,
+  type GlossaryStats,
   type GlossaryView,
   type TermView,
 } from '@webdizayn/shared';
@@ -14,7 +15,15 @@ import { useId, useMemo, useState, type FormEvent } from 'react';
 import { confirmDialog } from '@/components/dialog';
 import { TermBody } from '@/components/glossary-ui';
 import { Icon } from '@/components/icons';
-import { Button, EmptyState, ErrorText, inputClass, LoadState, PageHeader } from '@/components/ui';
+import {
+  Button,
+  EmptyState,
+  ErrorText,
+  inputClass,
+  LoadState,
+  PageHeader,
+  TableScroll,
+} from '@/components/ui';
 import { send } from '@/lib/api';
 import { useApi } from '@/lib/use-api';
 
@@ -41,6 +50,7 @@ export default function ManageGlossaryPage() {
           </Link>
         }
       />
+      <ReviewStats base={base} />
       <LoadState state={state}>{(g) => <Editor g={g} base={base} reload={reload} />}</LoadState>
     </>
   );
@@ -295,5 +305,72 @@ function TermForm({
         )}
       </div>
     </form>
+  );
+}
+
+function ReviewStats({ base }: { base: string }) {
+  const { state } = useApi<GlossaryStats>(`${base}/glossary/stats`);
+  if (state.kind !== 'ready' || state.data.cardsStarted === 0) return null;
+  const s = state.data;
+  const cards = [
+    { label: 'Takrorlayotgan talabalar', value: `${s.reviewers} / ${s.enrolled}` },
+    { label: 'Jami javoblar', value: String(s.reviews) },
+    { label: 'Boshlangan kartalar', value: String(s.cardsStarted) },
+    {
+      label: 'Esda qolgan (oxirgi javob)',
+      value: s.retained === null ? '—' : `${Math.round(s.retained * 100)}%`,
+    },
+  ];
+  return (
+    <section aria-labelledby="rs-h" className="card mb-6 space-y-4 p-6">
+      <h2 id="rs-h" className="text-lg font-semibold">
+        Takrorlash natijalari
+      </h2>
+      <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {cards.map((c) => (
+          <div key={c.label} className="rounded-xl bg-subtle p-4">
+            <dt className="text-sm text-slate-600 dark:text-slate-400">{c.label}</dt>
+            <dd className="text-2xl font-bold">{c.value}</dd>
+          </div>
+        ))}
+      </dl>
+      {s.hardest.length > 0 && (
+        <TableScroll label="Eng ko‘p unutilgan atamalar">
+          <table className="w-full text-left text-sm">
+            <caption className="mb-2 text-left font-semibold">
+              Eng ko‘p unutilgan atamalar — darsda qayta tushuntirishga arziydi
+            </caption>
+            <thead>
+              <tr className="border-b border-line">
+                <th scope="col" className="py-2 pr-4">
+                  Atama
+                </th>
+                <th scope="col" className="py-2 pr-4">
+                  Talabalar
+                </th>
+                <th scope="col" className="py-2 pr-4">
+                  Unutishlar
+                </th>
+                <th scope="col" className="py-2">
+                  Hozir esda yo‘q
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {s.hardest.map((h) => (
+                <tr key={h.termId} className="border-b border-line last:border-0">
+                  <th scope="row" className="py-2 pr-4 font-medium">
+                    {h.term}
+                  </th>
+                  <td className="py-2 pr-4">{h.students}</td>
+                  <td className="py-2 pr-4">{h.lapses}</td>
+                  <td className="py-2">{h.forgotten}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </TableScroll>
+      )}
+    </section>
   );
 }

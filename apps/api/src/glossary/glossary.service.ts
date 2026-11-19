@@ -11,6 +11,7 @@ import {
   REVIEW_NEW_PER_DAY,
   scheduleReview,
   termKey,
+  type GlossaryStats,
   type GlossaryView,
   type ReviewAnswerInput,
   type ReviewCard,
@@ -25,7 +26,7 @@ import { CourseAccessService } from '../courses/course-access.service';
 import { LearningService } from '../courses/learning.service';
 import type { Db } from '../db/client';
 import { DbService } from '../db/db.module';
-import { courseTerms, lessonProgress, termReviews } from '../db/schema';
+import { courseTerms, enrollments, lessonProgress, termReviews } from '../db/schema';
 
 type TermRow = typeof courseTerms.$inferSelect;
 
@@ -151,6 +152,48 @@ export class GlossaryService {
       targetType: 'course_term',
       targetId: id,
     });
+  }
+
+  /** Course staff: usage of spaced repetition and the terms students forget most. */
+  async stats(auth: AuthContext, m: MembershipContext, courseId: string): Promise<GlossaryStats> {
+    await this.access.manageableCourse(auth, m, courseId);
+    const db = this.dbs.db;
+    const [enrolled] = await db
+      .select({ n: sql<number>`count(*)::int` })
+      .from(enrollments)
+      .where(eq(enrollments.courseId, courseId));
+    const rows = await db
+      .select({
+        userId: termReviews.userId,
+        termId: termReviews.termId,
+        lapses: termReviews.lapses,
+        reviewCount: termReviews.reviewCount,
+        lastGrade: termReviews.lastGrade,
+      })
+      .from(termReviews)
+      .where(eq(termReviews.courseId, courseId));
+    const names = new Map((await this.rows(db, courseId)).map((t) => [t.id, t.term]));
+    const perTerm = new Map<string, { students: number; lapses: number; forgotten: number }>();
+    for (const r of rows) {
+      const t = perTerm.get(r.termId) ?? { students: 0, lapses: 0, forgotten: 0 };
+      t.students++;
+      t.lapses += r.lapses;
+      if (r.lastGrade === 'AGAIN') t.forgotten++;
+      perTerm.set(r.termId, t);
+    }
+    const forgotten = rows.filter((r) => r.lastGrade === 'AGAIN').length;
+    return {
+      enrolled: enrolled?.n ?? 0,
+      reviewers: new Set(rows.map((r) => r.userId)).size,
+      reviews: rows.reduce((n, r) => n + r.reviewCount, 0),
+      cardsStarted: rows.length,
+      retained: rows.length ? (rows.length - forgotten) / rows.length : null,
+      hardest: [...perTerm.entries()]
+        .filter(([, t]) => t.lapses + t.forgotten > 0)
+        .sort(([, a], [, b]) => b.lapses + b.forgotten - (a.lapses + a.forgotten))
+        .slice(0, 10)
+        .map(([termId, t]) => ({ termId, term: names.get(termId) ?? '—', ...t })),
+    };
   }
 
   // ---- Spaced repetition --------------------------------------------------

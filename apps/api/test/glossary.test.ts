@@ -189,6 +189,15 @@ describe('spaced repetition', () => {
     expect(q.body.cards).toHaveLength(REVIEW_NEW_PER_DAY - 2);
   });
 
+  it('staff see review statistics; students do not', async () => {
+    await req(student, 'get', `${G()}/stats`).expect(403);
+    await req(otherTeacher, 'get', `${G()}/stats`).expect(403);
+    const r = await req(owner, 'get', `${G()}/stats`).expect(200);
+    expect(r.body).toMatchObject({ enrolled: 1, reviewers: 1, cardsStarted: 2, reviews: 3 });
+    expect(r.body.retained).toBe(0.5); // "Teg" was last answered AGAIN
+    expect(r.body.hardest[0]).toMatchObject({ term: 'Teg', forgotten: 1 });
+  });
+
   it('review answers are rate limited per student', async () => {
     const limiter = ctx.app.get(RateLimiter);
     const key = `review-answer:${student.userId}`;

@@ -211,3 +211,18 @@ export function compareTerms(a: string, b: string): number {
     a.localeCompare(b)
   );
 }
+
+/** Staff view of how a course's students use spaced repetition. */
+export interface GlossaryStats {
+  enrolled: number;
+  /** Students who answered at least one card. */
+  reviewers: number;
+  /** All answers given. */
+  reviews: number;
+  /** Student × term pairs ever reviewed. */
+  cardsStarted: number;
+  /** Share of started cards whose latest answer was not "forgot" (null when none started). */
+  retained: number | null;
+  /** Terms students forget most (by lapses), at most 10. */
+  hardest: { termId: string; term: string; students: number; lapses: number; forgotten: number }[];
+}
