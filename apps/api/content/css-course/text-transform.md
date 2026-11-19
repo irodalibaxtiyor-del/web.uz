@@ -56,6 +56,20 @@ Juda uzun havola yoki so‘z blokdan chiqib ketsa:
 }
 ```
 
+```tekshir
+`text-transform: uppercase` HTML’dagi matnni o‘zgartiradimi?
+- ha, matn bazada ham katta harfga o‘tadi
++ yo‘q, faqat ko‘rinish o‘zgaradi
+- faqat birinchi harfni o‘zgartiradi
+> Asl matn o‘zgarmaydi; nusxa olinganda yoki ekran o‘quvchida asl matn ishlatilishi mumkin.
+```
+
+```jonli
+<p style="text-transform: uppercase">katta harflar</p>
+<p style="text-transform: capitalize">har so‘z bosh harfda</p>
+<p style="text-transform: lowercase">KICHIK HARFLAR</p>
+```
+
 ## Xulosa
 
 - `text-transform` faqat ko‘rinishni o‘zgartiradi, HTML matni o‘zgarmaydi.

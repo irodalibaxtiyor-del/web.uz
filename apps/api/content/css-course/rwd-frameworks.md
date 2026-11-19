@@ -66,6 +66,14 @@ Bugun ko‘p narsani freymvorksiz qilish oson:
 
 Tabriklaymiz! Siz CSS’ning asosiy qismini o‘rgandingiz: selektorlar, quti modeli, matn, ranglar, joylashuv, Flexbox, Grid, animatsiyalar va moslashuvchan dizayn. Keyingi qadam — o‘z loyihalaringizni qurish va ularni portfolioga qo‘shish.
 
+```tekshir
+Utility freymvorkdagi `.mt-4` kabi klass nima?
++ bitta xususiyatli oddiy CSS qoidasi (masalan, yuqori margin)
+- JavaScript funksiyasi
+- HTML tegining yangi turi
+> Utility klasslar CSS bilimini almashtirmaydi — ularning ortida oddiy CSS turadi.
+```
+
 ## Xulosa
 
 - Komponent freymvorklari tayyor bloklar beradi, utility freymvorklar — bitta xususiyatli klasslar.

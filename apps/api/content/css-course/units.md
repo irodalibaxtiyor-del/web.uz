@@ -71,6 +71,23 @@ html {
 
 Telefon brauzerlarida manzil paneli yashirinib-chiqadi, shuning uchun `100vh` ekrandan sal kattaroq bo‘lib qolishi mumkin. Yangi birliklar bu muammoni hal qiladi: `svh` (kichik), `lvh` (katta), `dvh` (dinamik).
 
+```tekshir
+`padding: 10%` qiymati nimadan hisoblanadi?
+- elementning balandligidan
++ ota elementning kengligidan (hatto vertikal padding ham)
+- ekran balandligidan
+> Foizli padding va margin har doim ota kengligidan olinadi.
+```
+
+```jonli
+<style>
+  div { background: #eef4fb; margin: 4px 0; padding: 4px; }
+</style>
+<div style="width: 50%">50% — ota kengligining yarmi</div>
+<div style="width: 30vw">30vw — oyna kengligining 30%</div>
+<div style="font-size: 1.25rem">1.25rem shrift</div>
+```
+
 ## Xulosa
 
 - Shrift — `rem`, komponent ichidagi bo‘shliq — `em`, chegaralar — `px`.

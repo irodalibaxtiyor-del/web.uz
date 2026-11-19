@@ -82,6 +82,23 @@ Bir qatordagi kartochkalar bir xil balandlikda (`stretch`), lekin matni har xil 
 }
 ```
 
+```tekshir
+Kartochkani pastiga tugmani itarish uchun (flex ustunli kartochkada) tugmaga nima yoziladi?
++ `margin-top: auto`
+- `vertical-align: bottom`
+- `position: bottom`
+> `auto` margin qolgan bo‘sh joyni egallab, tugmani pastga suradi.
+```
+
+```jonli
+<style>
+  .q { display: flex; flex-wrap: wrap; gap: 10px; }
+  .k { flex: 1 1 160px; display: flex; flex-direction: column; background: #eef4fb; padding: 10px; border-radius: 8px; }
+  .k button { margin-top: auto; }
+</style>
+<div class="q"><div class="k"><b>Qisqa</b><button>Ochish</button></div><div class="k"><b>Uzun</b><p>Bu kartochkada matn ko‘proq, lekin tugmalar bir xil chiziqda turadi.</p><button>Ochish</button></div></div>
+```
+
 ## Xulosa
 
 - `flex-wrap: wrap` + `flex: 1 1 240px` — media so‘rovsiz moslashuvchan qator.

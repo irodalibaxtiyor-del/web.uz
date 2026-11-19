@@ -71,6 +71,22 @@ Uch ustunli to‘rda **to‘rtta** ustun chizig‘i bor.
 
 Brauzer DevTools’ida grid konteyner yonida “grid” belgisi chiqadi. Uni bossangiz, chiziqlar va raqamlar sahifa ustida ko‘rinadi — o‘rganishda juda foydali.
 
+```tekshir
+`grid-template-columns: 1fr 2fr` qanday ustunlar beradi?
++ ikkinchi ustun birinchisidan ikki marta keng
+- birinchi ustun 1px, ikkinchisi 2px
+- ikkala ustun teng
+> `fr` — bo‘sh joyning ulushi: jami 3 ulush, 1 va 2.
+```
+
+```jonli
+<style>
+  .g { display: grid; grid-template-columns: 1fr 2fr; gap: 8px; }
+  .g div { background: #0071dc; color: white; padding: 12px; }
+</style>
+<div class="g"><div>1fr</div><div>2fr</div><div>1fr</div><div>2fr</div></div>
+```
+
 ## Xulosa
 
 - Grid — ikki o‘lchamli maket: qatorlar va ustunlar.

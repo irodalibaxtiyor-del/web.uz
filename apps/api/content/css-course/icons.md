@@ -65,6 +65,23 @@ Nomi yo‘q tugmani ekran o‘quvchi faqat “tugma” deb o‘qiydi — foydala
 
 Ilgari ikonkalar maxsus shriftlar orqali qo‘shilardi (`<i class="icon-home">`). Ular hali ham uchraydi, lekin kamchiliklari bor: shrift yuklanmasa kvadratlar chiqadi, ekran o‘quvchi g‘alati belgilarni o‘qishi mumkin. Yangi loyihalarda SVG’ni tanlang.
 
+```tekshir
+SVG ikonka matn rangini olishi uchun nima yoziladi?
++ `fill: currentColor`
+- `fill: inherit-text`
+- `color: svg`
+> `currentColor` ikonkaga elementning `color` qiymatini uzatadi — hover’da ham birga o‘zgaradi.
+```
+
+```jonli
+<style>
+  a { color: #0071dc; font-size: 20px; display: inline-flex; gap: .4em; align-items: center; }
+  a:hover { color: crimson; }
+  svg { width: 1em; height: 1em; fill: currentColor; }
+</style>
+<a href="#"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7z"/></svg>Sevimlilar</a>
+```
+
 ## Xulosa
 
 - Inline SVG + `fill: currentColor` — rang matndan olinadi.

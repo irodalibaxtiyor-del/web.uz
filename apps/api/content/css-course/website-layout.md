@@ -84,6 +84,24 @@ body {
 - **Konteyner:** kontent juda keng ekranlarda cho‘zilib ketmasligi uchun `max-width`.
 - **Tartib:** HTML’dagi tartib mantiqiy bo‘lsin (asosiy kontent oldin). CSS ko‘rinishdagi tartibni o‘zgartirishi mumkin, lekin klaviatura va ekran o‘quvchi HTML tartibiga ergashadi.
 
+```tekshir
+Kontent kam bo‘lganda ham footer ekran pastida turishi uchun qaysi usul?
++ `body { min-height: 100vh; display: flex; flex-direction: column; }` va `main { flex: 1; }`
+- `footer { position: absolute; }`
+- `footer { margin-top: 500px; }`
+> `main` bo‘sh joyni egallab, footerni pastga itaradi.
+```
+
+```jonli
+<style>
+  .sahifa { min-height: 220px; display: flex; flex-direction: column; border: 1px solid #ccc; }
+  .sahifa > * { padding: 8px; }
+  header, footer { background: #123; color: white; }
+  main { flex: 1; }
+</style>
+<div class="sahifa"><header>header</header><main>Kontent kam</main><footer>footer — pastda</footer></div>
+```
+
 ## Xulosa
 
 - `header`, `nav`, `main`, `aside`, `footer` — semantik qismlar.

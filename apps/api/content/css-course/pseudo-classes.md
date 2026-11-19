@@ -83,6 +83,25 @@ label:has(input:checked) {
 
 `:has()` yillar davomida “ota selektori” deb kutilgan imkoniyat — u hozir barcha zamonaviy brauzerlarda ishlaydi.
 
+```tekshir
+Ro‘yxatning oxirgi bandi qaysi selektor bilan tanlanadi?
++ `li:last-child`
+- `li::last`
+- `li:end`
+> Tuzilmaviy psevdoklasslar: `:first-child`, `:last-child`, `:nth-child()`.
+```
+
+```jonli
+<style>
+  li:first-child { font-weight: bold; }
+  li:last-child { color: crimson; }
+  li:nth-child(2n) { background: #eef4fb; }
+  input:checked + label { color: seagreen; }
+</style>
+<ul><li>Bir</li><li>Ikki</li><li>Uch</li><li>To‘rt</li></ul>
+<input type="checkbox" id="c"><label for="c">Belgilang</label>
+```
+
 ## Xulosa
 
 - Holat: `:hover`, `:focus-visible`, `:checked`, `:disabled`.

@@ -85,6 +85,24 @@ Brauzer keyingi kichik elementlar bilan bo‘sh joylarni to‘ldiradi. Esda tuti
 
 Flexbox’dagidek, `order` grid’da ham ishlaydi — va xuddi shunday faqat vizual.
 
+```tekshir
+Element to‘rning butun kengligini egallashi uchun nima yoziladi?
++ `grid-column: 1 / -1`
+- `grid-column: all`
+- `width: 100vw`
+> `-1` — oxirgi chiziq; 1-chiziqdan oxirgisigacha.
+```
+
+```jonli
+<style>
+  .g { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .g div { background: #eef4fb; padding: 10px; }
+  .keng { grid-column: 1 / -1; background: #ffe08a !important; }
+  .ikki { grid-column: span 2; background: #b7ebc6 !important; }
+</style>
+<div class="g"><div class="keng">1 / -1</div><div class="ikki">span 2</div><div>1</div><div>2</div><div>3</div><div>4</div></div>
+```
+
 ## Xulosa
 
 - `grid-column: 1 / 3`, `grid-row: 2 / 4` — chiziqlar bo‘yicha.

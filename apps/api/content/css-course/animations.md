@@ -102,6 +102,24 @@ Faqat `from` yozilsa, `to` sifatida elementning odatiy uslubi olinadi.
 }
 ```
 
+```tekshir
+Animatsiya cheksiz takrorlanishi uchun qaysi qiymat?
++ `infinite`
+- `forever`
+- `loop`
+> Masalan: `animation: aylan 2s linear infinite;`.
+```
+
+```jonli
+<style>
+  @keyframes aylan { to { transform: rotate(360deg); } }
+  @keyframes puls { from { transform: scale(1); } to { transform: scale(1.15); } }
+  .s { width: 40px; height: 40px; border: 4px solid #ddd; border-top-color: #0071dc; border-radius: 50%; animation: aylan 1s linear infinite; display: inline-block; }
+  .p { display: inline-block; margin-left: 20px; animation: puls .8s ease-in-out infinite alternate; }
+</style>
+<div class="s"></div><span class="p">❤</span>
+```
+
 ## Xulosa
 
 - `@keyframes nom { from {…} to {…} }` — kadrlar.

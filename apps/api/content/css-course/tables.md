@@ -83,6 +83,23 @@ td {
 
 Jadval bilan sahifa maketini (ustunlarni) qurish eskirgan usul. Maket uchun Flexbox va Grid bor — ular keyingi modullarda. Jadval — faqat jadval ko‘rinishidagi **ma’lumot** uchun.
 
+```tekshir
+Jadval kataklari orasidagi ikki qavat chegarani bitta qilish uchun nima yoziladi?
++ `border-collapse: collapse`
+- `border-spacing: none`
+- `border: single`
+> `collapse` qo‘shni kataklar chegaralarini birlashtiradi.
+```
+
+```jonli
+<style>
+  table { border-collapse: collapse; }
+  th, td { border: 1px solid #999; padding: 6px 10px; }
+  td:last-child { text-align: right; }
+</style>
+<table><tr><th>Mahsulot</th><th>Narx</th></tr><tr><td>Daftar</td><td>5 000</td></tr><tr><td>Ruchka</td><td>12 500</td></tr></table>
+```
+
 ## Xulosa
 
 - `border-collapse: collapse` ikki qavat chegarani bitta qiladi.

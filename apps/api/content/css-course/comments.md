@@ -74,6 +74,14 @@ p {
 - Izohlar ichma-ich yozilmaydi: birinchi `*/` izohni tugatadi.
 - HTML izohi `<!-- -->` CSS ichida ishlamaydi.
 
+```tekshir
+CSS’dagi to‘g‘ri izoh qaysi?
+- `// izoh`
++ `/* izoh */`
+- `<!-- izoh -->`
+> CSS’da faqat `/* … */` izoh bo‘ladi; `//` dan keyingi qator xato sifatida tashlab yuboriladi.
+```
+
 ## Xulosa
 
 - CSS izohi: `/* ... */`, bir yoki ko‘p qatorli.

@@ -75,6 +75,22 @@ Element oddiy turadi, lekin aylantirilganda ekranning yuqorisiga yetgach “yopi
 
 Ota elementni to‘liq qoplaydigan qatlam uchun qulay.
 
+```tekshir
+`position: absolute` element nimaga nisbatan joylashadi?
+- har doim sahifaning chap-yuqori burchagiga
++ eng yaqin joylashtirilgan (`position` i `static` bo‘lmagan) ajdodiga
+- o‘zining odatdagi joyiga
+> Shuning uchun otaga odatda `position: relative` beriladi.
+```
+
+```jonli
+<style>
+  .ota { position: relative; height: 120px; background: #eef4fb; }
+  .nishon { position: absolute; top: 8px; right: 8px; background: crimson; color: white; padding: 2px 8px; border-radius: 999px; }
+</style>
+<div class="ota">Karta <span class="nishon">Yangi</span></div>
+```
+
 ## Xulosa
 
 - `relative` — o‘z joyidan siljish va absolute bolalar uchun tayanch.

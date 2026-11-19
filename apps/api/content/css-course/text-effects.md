@@ -82,6 +82,23 @@ p {
 }
 ```
 
+```tekshir
+Gradientli matn uchun qaysi ikki xususiyat birga ishlatiladi?
++ `background-clip: text`
++ `color: transparent`
+- `text-gradient: linear`
+- `font-color: gradient`
+> Fon matn shakli bo‘yicha kesiladi, matn rangi esa shaffof qilinadi.
+```
+
+```jonli
+<style>
+  .g { font: 800 40px sans-serif; background: linear-gradient(90deg, #0071dc, #f5a623);
+       background-clip: text; -webkit-background-clip: text; color: transparent; }
+</style>
+<p class="g">Gradient matn</p>
+```
+
 ## Xulosa
 
 - `background-clip: text` + `color: transparent` — gradientli matn.

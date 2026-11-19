@@ -7,6 +7,7 @@ import { BS4_COURSE, BS4_MODULES, BS4_SOLUTIONS } from './bootstrap4/manifest';
 import { BS5_LESSON_QUIZZES } from './bootstrap5/lesson-quizzes';
 import { BS5_MINI_QUIZZES } from './bootstrap5/mini-quizzes';
 import { BS5_COURSE, BS5_MODULES, BS5_SOLUTIONS } from './bootstrap5/manifest';
+import { CSS_GLOSSARY } from './css/glossary';
 import { CSS_COURSE, CSS_MODULES } from './css/manifest';
 import { CSS_LESSON_QUIZZES } from './css/lesson-quizzes';
 import { CSS_MINI_QUIZZES } from './css/mini-quizzes';
@@ -47,6 +48,7 @@ export const CONTENT_COURSES: CourseDef[] = [
     ...CSS_COURSE,
     modules: withQuizzes(CSS_MODULES, { lesson: CSS_LESSON_QUIZZES, mini: CSS_MINI_QUIZZES }),
     solutions: CSS_SOLUTIONS,
+    glossary: CSS_GLOSSARY,
   },
   {
     ...RWD_COURSE,

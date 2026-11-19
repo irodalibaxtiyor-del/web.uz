@@ -86,6 +86,23 @@ Yo‘q. Ko‘p hollarda oddiyroq yechim yetarli:
 
 To‘r — vosita, maqsad emas. Murakkab saytlarda izchillik uchun foydali, kichik sahifada esa ortiqcha bo‘lishi mumkin.
 
+```tekshir
+12 ustunli to‘rda element yarim kenglikni egallashi uchun nima yoziladi?
++ `grid-column: span 6`
+- `grid-column: span 2`
+- `width: 6fr`
+> 12 ning yarmi — 6 ustun.
+```
+
+```jonli
+<style>
+  .g { display: grid; grid-template-columns: repeat(12, 1fr); gap: 6px; }
+  .g div { grid-column: span 12; background: #eef4fb; padding: 8px; }
+  @media (min-width: 500px) { .a { grid-column: span 8 !important; } .b { grid-column: span 4 !important; } }
+</style>
+<div class="g"><div class="a">span 8</div><div class="b">span 4</div></div>
+```
+
 ## Xulosa
 
 - 12 ustunli to‘r: `repeat(12, 1fr)` + `grid-column: span N`.

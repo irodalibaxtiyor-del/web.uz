@@ -48,6 +48,23 @@ Ichida aylantirish (`overflow: auto`) bo‘lgan blokda `local` fonni kontent bil
 }
 ```
 
+```tekshir
+Fon rasmi sahifa aylantirilganda ekranga mahkamlangandek turishi uchun qaysi qiymat?
+- `scroll`
++ `fixed`
+- `local`
+> `fixed` fonni ko‘rish oynasiga mahkamlaydi (parallaks); mobil brauzerlarda ishlamasligi mumkin.
+```
+
+```jonli
+<style>
+  .box { height: 150px; overflow: auto; border: 1px solid #ccc;
+        background: url(https://picsum.photos/300/200) center / cover local; }
+  .box p { height: 400px; margin: 0; padding: 10px; color: white; }
+</style>
+<div class="box"><p>Ichini aylantiring: local rejimida fon kontent bilan siljiydi.</p></div>
+```
+
 ## Xulosa
 
 - `scroll` — standart, fon element bilan siljiydi.

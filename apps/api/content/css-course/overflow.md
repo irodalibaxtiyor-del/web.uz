@@ -66,6 +66,24 @@ Ko‘p qatorli kesish uchun `line-clamp` ishlatiladi:
 }
 ```
 
+```tekshir
+Bir qatorli matn sig‘masa “…” bilan tugashi uchun qaysi uchtasi kerak?
++ `white-space: nowrap`
++ `overflow: hidden`
++ `text-overflow: ellipsis`
+- `overflow: scroll`
+> Uchalasi birga ishlaydi: qator bo‘linmaydi, ortig‘i yashiriladi va “…” qo‘yiladi.
+```
+
+```jonli
+<style>
+  .e { width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border: 1px solid #ccc; padding: 6px; }
+  .s { height: 70px; overflow: auto; border: 1px solid #ccc; padding: 6px; }
+</style>
+<p class="e">Bu juda uzun sarlavha bitta qatorga sig‘maydi</p>
+<div class="s">overflow: auto — kerak bo‘lsa aylantirish chizig‘i chiqadi. Qator 2. Qator 3. Qator 4. Qator 5.</div>
+```
+
 ## Xulosa
 
 - `overflow: auto` — kerak bo‘lsagina aylantirish.

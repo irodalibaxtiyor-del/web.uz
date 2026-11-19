@@ -77,6 +77,23 @@ Telefonda gorizontal menyu sig‘masligi mumkin. Oddiy yechimlar:
 - menyu gorizontal aylantirilsin: `overflow-x: auto`;
 - “☰” tugmasi bilan ochiladigan menyu (bunga ozgina JavaScript kerak).
 
+```tekshir
+Gorizontal menyuda bitta bandni (masalan, “Kirish”) o‘ng chetga surish uchun nima yoziladi?
++ o‘sha bandga `margin-left: auto`
+- o‘sha bandga `float: right` (flex ichida)
+- konteynerga `text-align: right`
+> Flex ichida `auto` margin bo‘sh joyning hammasini egallaydi va bandni chetga itaradi.
+```
+
+```jonli
+<style>
+  nav { display: flex; gap: 12px; background: #123; padding: 10px; }
+  nav a { color: white; text-decoration: none; }
+  nav .kirish { margin-left: auto; }
+</style>
+<nav><a href="#">Logo</a><a href="#">Kurslar</a><a href="#">Blog</a><a class="kirish" href="#">Kirish</a></nav>
+```
+
 ## Xulosa
 
 - `display: flex` + `gap` — gorizontal menyu.

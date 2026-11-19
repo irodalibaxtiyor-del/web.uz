@@ -70,6 +70,22 @@ Fotosurat ustiga matn yozilganda o‘qilishi uchun yarim shaffof qatlam qo‘yil
 
 `opacity: 0` elementni ko‘rinmas qiladi, lekin u **joyida qoladi** va hali ham bosiladi, fokus oladi, ekran o‘quvchi uni o‘qiydi. Elementni haqiqatan yashirish kerak bo‘lsa, `display: none` yoki `visibility: hidden` ishlating.
 
+```tekshir
+`opacity: 0` bo‘lgan tugma haqida to‘g‘ri gap qaysi?
++ u ko‘rinmaydi, lekin joy egallaydi va bosilishi mumkin
+- u sahifadan butunlay olib tashlanadi
+- u avtomatik `disabled` bo‘ladi
+> Ko‘rinmas, lekin faol element foydalanuvchini chalg‘itadi — kerak bo‘lsa `visibility: hidden` yoki `display: none`.
+```
+
+```jonli
+<style>
+  img { transition: opacity .3s; }
+  img:hover { opacity: 0.4; }
+</style>
+<img src="https://picsum.photos/200/120" alt="" width="200" height="120"> <span>Rasm ustiga olib keling</span>
+```
+
 ## Xulosa
 
 - `opacity` 0 dan 1 gacha, butun elementga ta’sir qiladi.

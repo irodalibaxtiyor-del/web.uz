@@ -62,6 +62,14 @@ Birinchi qiymat — gorizontal, ikkinchisi — vertikal.
 
 Sprayt fon rasmi bo‘lgani uchun ekran o‘quvchi uni ko‘rmaydi. Ikonka ma’no tashisa, yoniga matn yoki `aria-label` qo‘shing.
 
+```tekshir
+Spraytda kerakli rasm qismi qaysi xususiyat bilan ko‘rsatiladi?
++ `background-position`
+- `object-fit`
+- `clip`
+> Element o‘lchami “oyna”, `background-position` (odatda manfiy) esa rasmni suradi.
+```
+
 ## Xulosa
 
 - Sprayt — bir faylda ko‘p rasm, kerakli qism `background-position` bilan ko‘rsatiladi.

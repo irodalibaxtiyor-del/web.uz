@@ -69,6 +69,21 @@ Chiroyli rang yetarli emas — matn fonda **aniq o‘qilishi** kerak. Och kulran
 - Brauzer DevTools’i rangni tanlaganda kontrast nisbatini ko‘rsatadi.
 - Faqat rang bilan ma’no bermang (masalan, xatoni faqat qizil bilan): matn yoki ikonka ham qo‘shing.
 
+```tekshir
+Matn rangini qaysi xususiyat beradi?
++ `color`
+- `text-color`
+- `font-color`
+> Matn — `color`, fon — `background-color`, chegara — `border-color`.
+```
+
+```jonli
+<style>
+  .k { color: white; background-color: #0071dc; border: 3px solid navy; padding: 10px; }
+</style>
+<p class="k">Oq matn, ko‘k fon, to‘q ko‘k chegara</p>
+```
+
 ## Xulosa
 
 - `color` — matn, `background-color` — fon, `border-color` — chegara rangi.

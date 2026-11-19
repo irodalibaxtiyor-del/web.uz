@@ -84,6 +84,23 @@ Birinchi sahifada “Oldingi” havolasi ishlamasligi kerak. Uni havola emas, od
 
 100 ta sahifani hammasini ko‘rsatmang: `1 … 4 5 6 … 100`. “…” uchun ham `span` ishlating.
 
+```tekshir
+Sahifalashda joriy sahifa ekran o‘quvchiga qanday bildiriladi?
++ `aria-current="page"`
+- `class="active"` yetarli
+- `disabled`
+> Klass faqat ko‘rinishni beradi; `aria-current` ma’noni yetkazadi.
+```
+
+```jonli
+<style>
+  .p { display: flex; gap: 6px; list-style: none; padding: 0; }
+  .p a { display: grid; place-items: center; min-width: 40px; height: 40px; border: 1px solid #ccc; border-radius: 8px; text-decoration: none; color: #123; }
+  .p a[aria-current="page"] { background: #0071dc; color: white; border-color: #0071dc; }
+</style>
+<nav aria-label="Sahifalar"><ul class="p"><li><a href="#">1</a></li><li><a href="#" aria-current="page">2</a></li><li><a href="#">3</a></li></ul></nav>
+```
+
 ## Xulosa
 
 - `nav` ichida ro‘yxat, joriy sahifa `aria-current="page"`.

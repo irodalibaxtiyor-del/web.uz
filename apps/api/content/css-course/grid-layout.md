@@ -85,6 +85,24 @@ Ichki grid otaning chiziqlaridan foydalanishi mumkin:
 
 Yonma-yon kartochkalarning sarlavhasi, matni va tugmasi — matn uzunligi har xil bo‘lsa ham — bir chiziqda turadi.
 
+```tekshir
+Elementni `grid-template-areas` dagi “sidebar” hududiga joylash uchun nima yoziladi?
++ `grid-area: sidebar`
+- `grid-template: sidebar`
+- `area: "sidebar"`
+> Hudud nomi qo‘shtirnoqsiz `grid-area` da beriladi.
+```
+
+```jonli
+<style>
+  .s { display: grid; gap: 6px; grid-template-columns: 120px 1fr;
+       grid-template-areas: "header header" "sidebar main" "footer footer"; }
+  .s > * { padding: 10px; background: #eef4fb; }
+  header { grid-area: header; } aside { grid-area: sidebar; } main { grid-area: main; } footer { grid-area: footer; }
+</style>
+<div class="s"><header>header</header><aside>sidebar</aside><main>main</main><footer>footer</footer></div>
+```
+
 ## Xulosa
 
 - `grid-template-areas` — maketni nomlar bilan chizish.

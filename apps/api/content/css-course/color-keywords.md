@@ -74,6 +74,22 @@ Bu so‘zlar har qanday xususiyatda ishlaydi:
 
 Brauzerga sahifa ikkala rejimni qo‘llab-quvvatlashini aytadi: qorong‘i rejimda forma maydonlari, aylantirish paneli va standart fon avtomatik qorong‘i bo‘ladi.
 
+```tekshir
+`border: 2px solid currentColor` dagi chegara rangi qayerdan olinadi?
++ elementning `color` qiymatidan
+- ota elementning fonidan
+- har doim qora bo‘ladi
+> `currentColor` — elementning joriy matn rangi.
+```
+
+```jonli
+<style>
+  .t { color: crimson; border: 2px solid currentColor; padding: 8px; }
+  .t:hover { color: seagreen; }
+</style>
+<p class="t">Ustiga olib keling — chegara ham rangini o‘zgartiradi</p>
+```
+
 ## Xulosa
 
 - `transparent` — shaffof, o‘lcham sakramasligi uchun qulay.

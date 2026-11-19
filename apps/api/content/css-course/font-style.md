@@ -79,6 +79,21 @@ Shu sababli shrift o‘lchami uchun `rem` xavfsizroq. `em` esa elementning o‘z
 
 `font-variant: small-caps` kichik harflarni kichraytirilgan bosh harflar shaklida ko‘rsatadi.
 
+```tekshir
+Matn o‘lchamini foydalanuvchining brauzer sozlamasiga mos qilish uchun qaysi birlik yaxshiroq?
++ `rem`
+- `px`
+- `cm`
+> `rem` ildiz shrift o‘lchamiga bog‘liq; foydalanuvchi uni kattalashtirsa, matn ham kattalashadi.
+```
+
+```jonli
+<p style="font-style: italic">italic</p>
+<p style="font-weight: 700">700 — qalin</p>
+<p style="font-weight: 300">300 — ingichka</p>
+<p style="font-size: 1.5rem">1.5rem</p>
+```
+
 ## Xulosa
 
 - `font-style: italic` — kursiv, `font-weight: 700` — qalin.

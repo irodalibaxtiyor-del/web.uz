@@ -73,6 +73,21 @@ body {
 }
 ```
 
+```tekshir
+Kengligi berilgan blokni gorizontal markazga qo‘yish uchun nima yoziladi?
++ `margin: 0 auto`
+- `margin: auto 0`
+- `text-align: center`
+> Chap va o‘ng marginlar `auto` bo‘lsa, bo‘sh joy teng bo‘linadi.
+```
+
+```jonli
+<style>
+  .m { width: 200px; margin: 0 auto; background: #ffe08a; padding: 10px; text-align: center; }
+</style>
+<div class="m">margin: 0 auto</div>
+```
+
 ## Xulosa
 
 - `margin` — chegaradan tashqaridagi shaffof bo‘shliq.

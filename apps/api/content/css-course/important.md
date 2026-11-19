@@ -75,6 +75,14 @@ Zamonaviy CSS’da kod qismlarining ustuvorligini `!important` siz boshqarish uc
 
 Keyin e’lon qilingan qatlam ustun turadi — selektor maxsusligidan qat’i nazar. Katta loyihalarda bu `!important` ga bo‘lgan ehtiyojni ancha kamaytiradi.
 
+```tekshir
+`!important` dan qachon foydalanish o‘rinli?
++ har doim ishlashi kerak bo‘lgan yordamchi klasslarda (masalan, `.hidden`)
+- maxsuslik muammosini tez yashirish uchun
+- har bir qoidada, ishonch uchun
+> Avval qoida nega ishlamayotganini toping; `!important` faqat ongli istisno.
+```
+
 ## Xulosa
 
 - `!important` hamma oddiy qoidalardan kuchli.

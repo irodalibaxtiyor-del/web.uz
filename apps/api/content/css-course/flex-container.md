@@ -81,6 +81,23 @@ space-evenly     [1]     [2]     [3]
 }
 ```
 
+```tekshir
+`flex-direction: column` bo‘lsa, `justify-content` qaysi yo‘nalishni boshqaradi?
+- gorizontalni
++ vertikalni
+- hech qaysini
+> Ustun yo‘nalishida asosiy o‘q vertikal bo‘ladi; `justify-content` doim asosiy o‘q bo‘ylab ishlaydi.
+```
+
+```jonli
+<style>
+  .k { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; background: #eef4fb; padding: 8px; }
+  .k div { width: 90px; background: #0071dc; color: white; padding: 10px; }
+</style>
+<div class="k"><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div></div>
+<p>Oynani toraytiring — flex-wrap: wrap elementlarni keyingi qatorga o‘tkazadi.</p>
+```
+
 ## Xulosa
 
 - `flex-direction` — yo‘nalish, `flex-wrap` — qatorga o‘tish.

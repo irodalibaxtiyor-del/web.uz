@@ -82,6 +82,23 @@ input::placeholder {
 
 Eski CSS’da psevdoelementlar ham bitta ikki nuqta bilan yozilardi (`:before`). Brauzerlar buni hali ham qabul qiladi, lekin to‘g‘ri yozuv — `::before`. Ikki nuqta psevdoklassni, ikki juft nuqta psevdoelementni bildiradi.
 
+```tekshir
+`::before` ko‘rinishi uchun nima albatta kerak?
++ `content` xususiyati (hatto `content: ""`)
+- `display: block`
+- `position: absolute`
+> `content` siz psevdoelement yaratilmaydi.
+```
+
+```jonli
+<style>
+  .yangi::before { content: "★ "; color: #f5a623; }
+  p::first-letter { font-size: 2em; color: #0071dc; }
+  ::selection { background: #ffe08a; }
+</style>
+<p class="yangi">Yulduzcha CSS bilan qo‘shildi. Matnni belgilab ham ko‘ring.</p>
+```
+
 ## Xulosa
 
 - `::before`/`::after` — `content` bilan bezak qo‘shadi.

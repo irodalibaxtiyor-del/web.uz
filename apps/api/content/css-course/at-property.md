@@ -77,6 +77,23 @@ Noto‘g‘ri qiymat `initial-value` bilan almashtiriladi, maket buzilmaydi.
 
 Agar o‘zgaruvchi faqat shu elementning o‘ziga tegishli bo‘lsa (masalan, animatsiya burchagi), meros o‘chiriladi — bolalarga bexosdan o‘tib ketmaydi va brauzer tezroq ishlaydi.
 
+```tekshir
+Gradient burchagini animatsiya qilish uchun `@property` nima beradi?
++ o‘zgaruvchiga tur (`<angle>`), shunda brauzer oraliq qiymatlarni hisoblay oladi
+- o‘zgaruvchini global qiladi
+- animatsiyani tezlashtiradi
+> Turi noma’lum o‘zgaruvchi matn sifatida sakrab almashadi; tur berilsa — silliq.
+```
+
+```jonli
+<style>
+  @property --burchak { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+  @keyframes bur { to { --burchak: 360deg; } }
+  .g { width: 140px; height: 140px; border-radius: 16px; background: conic-gradient(from var(--burchak), #0071dc, #f5a623, #0071dc); animation: bur 3s linear infinite; }
+</style>
+<div class="g"></div>
+```
+
 ## Xulosa
 
 - `@property` o‘zgaruvchiga tur, boshlang‘ich qiymat va meros qoidasini beradi.

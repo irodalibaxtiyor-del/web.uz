@@ -69,6 +69,23 @@ Qiymatlar: `left`, `right`, `top`, `bottom`, `center`, foiz yoki piksel.
 
 `top`/`left` yoki `margin` ni o‘zgartirish butun sahifa maketini qayta hisoblatadi. `transform` esa faqat chizishga ta’sir qiladi va videokarta yordamida bajariladi — animatsiyalar silliq bo‘ladi.
 
+```tekshir
+`transform: translateX(50px)` dan keyin qo‘shni elementlar suriladimi?
+- ha, ular ham 50px suriladi
++ yo‘q, element faqat chizilishda siljiydi, joyi saqlanadi
+- element oqimdan chiqib ketadi
+> Transformatsiya maketga ta’sir qilmaydi — shuning uchun animatsiya uchun qulay.
+```
+
+```jonli
+<style>
+  .b { display: inline-block; width: 70px; height: 70px; margin: 18px; background: teal; transition: transform .3s; }
+  .b:hover { transform: rotate(20deg) scale(1.2); }
+</style>
+<div class="b"></div><div class="b" style="transform-origin: top left"></div><div class="b"></div>
+<p>Kvadratlar ustiga olib keling.</p>
+```
+
 ## Xulosa
 
 - `translate`, `rotate`, `scale`, `skew` — joyni o‘zgartirmasdan chizishni o‘zgartiradi.

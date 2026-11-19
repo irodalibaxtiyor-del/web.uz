@@ -76,6 +76,18 @@ Vergul bilan bir nechta fon qatlami beriladi — birinchisi eng ustda:
 
 Bu yerda rasm ustiga yarim shaffof qora qatlam qo‘yilgan — matn o‘qilishi osonlashadi. Rang faqat **oxirgi** qatlamda yozilishi mumkin.
 
+```tekshir
+`background` qisqa yozuvida `size` qanday yoziladi?
++ `position` dan keyin `/` bilan: `center / cover`
+- vergul bilan: `center, cover`
+- har doim birinchi qiymat bo‘lib
+> Masalan: `background: #234 url(f.jpg) center / cover no-repeat;`.
+```
+
+```jonli
+<div style="height: 120px; background: #234 url(https://picsum.photos/500/200) center / cover no-repeat"></div>
+```
+
 ## Xulosa
 
 - `background` — fon xususiyatlarining qisqa yozuvi.

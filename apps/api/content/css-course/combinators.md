@@ -71,6 +71,22 @@ body div.konteyner > ul li a span { … }
 
 Bunday selektor HTML tuzilmasi sal o‘zgarsa buziladi va juda “kuchli” bo‘lib qoladi (maxsuslik darsida ko‘ramiz). Ko‘p hollarda bitta klass yetarli: `.menyu-havola`.
 
+```tekshir
+`ul > li` selektori nimani tanlaydi?
+- `ul` ichidagi istalgan chuqurlikdagi `li` ni
++ faqat `ul` ning bevosita bolasi bo‘lgan `li` ni
+- `ul` dan keyingi qo‘shni `li` ni
+> `>` — bevosita bola, bo‘sh joy — istalgan chuqurlikdagi avlod.
+```
+
+```jonli
+<style>
+  .m > li { color: crimson; }
+  li + li { margin-top: 6px; }
+</style>
+<ul class="m"><li>Bevosita bola<ul><li>Nevara — rangi o‘zgarmaydi</li></ul></li><li>Bevosita bola</li></ul>
+```
+
 ## Xulosa
 
 - `A B` — ichidagi, `A > B` — bevosita bola.

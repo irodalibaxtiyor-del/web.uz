@@ -66,6 +66,23 @@ Har qatlam uchun alohida qiymat ham berish mumkin:
 
 `background-clip: text` matn harflari ichiga fon chizadi — buni matn effektlari darsida ko‘ramiz.
 
+```tekshir
+Bir nechta fon qatlami yozilganda qaysi biri ustda turadi?
++ birinchi yozilgani
+- oxirgi yozilgani
+- eng kattasi
+> Vergul bilan yozilgan fonlarning birinchisi eng yuqori qatlam.
+```
+
+```jonli
+<style>
+  .b { height: 140px; background:
+      linear-gradient(rgb(0 0 0 / 0.6), transparent),
+      url(https://picsum.photos/500/200) center / cover; color: white; padding: 10px; }
+</style>
+<div class="b">Gradient rasm ustida — matn o‘qiladi</div>
+```
+
 ## Xulosa
 
 - `cover` — to‘liq qoplash, `contain` — to‘liq ko‘rsatish.

@@ -75,6 +75,23 @@ Perspektiva **ota elementga** beriladi va barcha bolalar uchun umumiy bo‘ladi.
 - 3D effektlar bezak uchun. Muhim ma’lumot faqat ag‘darilgandagina ko‘rinsa, klaviatura va sensorli ekran foydalanuvchilari uni ko‘rmasligi mumkin.
 - Ba’zi foydalanuvchilarda kuchli harakat bosh aylanishiga sabab bo‘ladi — animatsiyalar darsida `prefers-reduced-motion` ni ko‘ramiz.
 
+```tekshir
+3D aylanish chuqur ko‘rinishi uchun ota elementga nima beriladi?
++ `perspective`
+- `z-index`
+- `transform-style: flat`
+> `perspective` kuzatuvchi masofasini beradi; usiz 3D aylanish yassi ko‘rinadi.
+```
+
+```jonli
+<style>
+  .sahna { perspective: 600px; display: inline-block; }
+  .k { width: 120px; height: 80px; background: #0071dc; color: white; display: grid; place-items: center; transition: transform .6s; }
+  .sahna:hover .k { transform: rotateY(60deg); }
+</style>
+<div class="sahna"><div class="k">rotateY</div></div>
+```
+
 ## Xulosa
 
 - 3D uchun `rotateX`, `rotateY`, `translateZ`.

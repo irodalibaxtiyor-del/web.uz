@@ -65,6 +65,24 @@ Alfa qiymati `/` dan keyin yoziladi (yoki eski `hsla()`):
 }
 ```
 
+```tekshir
+`hsl()` da qaysi qiymatni o‘zgartirsangiz, bitta rangning och yoki to‘q varianti chiqadi?
+- tus (hue)
+- to‘yinganlik (saturation)
++ yorqinlik (lightness)
+> Tus o‘zgarmasa, rang o‘sha bo‘lib qoladi; yorqinlik uni ochroq yoki to‘qroq qiladi.
+```
+
+```jonli
+<style>
+  div { padding: 8px; color: white; }
+</style>
+<div style="background: hsl(210 100% 25%)">yorqinlik 25%</div>
+<div style="background: hsl(210 100% 43%)">yorqinlik 43%</div>
+<div style="background: hsl(210 100% 65%)">yorqinlik 65%</div>
+<div style="background: hsl(210 100% 85%); color: black">yorqinlik 85%</div>
+```
+
 ## Xulosa
 
 - `hsl(tus, to‘yinganlik, yorqinlik)`: tus 0–360, qolganlari foizda.

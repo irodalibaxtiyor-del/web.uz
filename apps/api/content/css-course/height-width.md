@@ -70,6 +70,23 @@ Shuning uchun moslashuvchan sahifalarda `max-width` afzal.
 }
 ```
 
+```tekshir
+Moslashuvchan blokda kenglikni cheklash uchun qaysi biri yaxshiroq?
+- `width: 900px`
++ `max-width: 900px`
+- `height: 900px`
+> `max-width` kichik ekranda torayishga ruxsat beradi, `width` esa gorizontal aylantirishga olib keladi.
+```
+
+```jonli
+<style>
+  div { background: #ffe08a; padding: 8px; margin: 6px 0; }
+</style>
+<div style="max-width: 300px">max-width: 300px</div>
+<div style="width: 50%">width: 50%</div>
+<div style="min-height: 80px">min-height: 80px</div>
+```
+
 ## Xulosa
 
 - `width`/`height` — kontent o‘lchami; blok elementlar standart holda to‘liq kenglikda.

@@ -80,6 +80,23 @@ Matematik funksiyalar CSS o‘zgaruvchilari bilan ayniqsa kuchli (keyingi dars):
 }
 ```
 
+```tekshir
+`clamp(1rem, 4vw, 2rem)` qanday ishlaydi?
++ qiymat 4vw, lekin 1rem dan kichik va 2rem dan katta bo‘lmaydi
+- uchta qiymatning o‘rtachasi olinadi
+- har doim 2rem bo‘ladi
+> `clamp(min, ideal, max)` — suyuq o‘lcham chegaralar bilan.
+```
+
+```jonli
+<style>
+  h2 { font-size: clamp(1rem, 6vw, 2.5rem); margin: 6px 0; }
+  .c { width: calc(100% - 40px); background: #eef4fb; padding: 6px; }
+  .m { width: min(100%, 300px); background: #ffe08a; padding: 6px; margin-top: 6px; }
+</style>
+<h2>clamp() sarlavha</h2><div class="c">calc(100% - 40px)</div><div class="m">min(100%, 300px)</div>
+```
+
 ## Xulosa
 
 - `calc()` har xil birliklarni aralashtiradi; `+`/`-` atrofida bo‘sh joy.

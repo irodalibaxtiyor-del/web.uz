@@ -92,6 +92,22 @@ Bir qatorda bitta element chapda, boshqasi o‘ngda turishi kerak bo‘lsa:
 | Har ikki yo‘nalishda markazda   | `display: grid; place-items: center`   |
 | Ustiga chiqqan element markazda | `absolute` + `translate(-50%, -50%)`   |
 
+```tekshir
+Blokni gorizontal va vertikal markazga qo‘yishning eng qisqa usuli qaysi?
++ otaga `display: grid; place-items: center;`
+- `text-align: center` bolaga
+- `vertical-align: middle` otaga
+> Grid (yoki flex + `justify-content` va `align-items`) ikki yo‘nalishda markazlaydi.
+```
+
+```jonli
+<style>
+  .o { display: grid; place-items: center; height: 140px; background: #eef4fb; }
+  .b { background: #0071dc; color: white; padding: 10px 16px; border-radius: 8px; }
+</style>
+<div class="o"><div class="b">Markazda</div></div>
+```
+
 ## Xulosa
 
 - Matn — `text-align`, blok — `margin: 0 auto`.

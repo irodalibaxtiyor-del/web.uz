@@ -88,6 +88,22 @@ Katta saytlarda uslublar bir nechta faylga bo‘linadi:
 <link rel="stylesheet" href="css/formalar.css">
 ```
 
+```tekshir
+Bir xil kuchdagi ikkita qoida bitta elementga to‘qnashsa, qaysi biri ishlaydi?
+- birinchi yozilgani
++ keyinroq yozilgani
+- qisqaroq yozilgani
+> Kaskadda kuchi teng qoidalardan oxirgisi ustun keladi.
+```
+
+```jonli
+<style>
+  p { color: blue; }
+  p { color: green; } /* keyinroq — shu ishlaydi */
+</style>
+<p>Men qaysi rangdaman?</p>
+```
+
 ## Xulosa
 
 - Asosiy usul — tashqi fayl va `<link rel="stylesheet">`.

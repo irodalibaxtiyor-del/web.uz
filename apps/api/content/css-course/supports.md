@@ -71,6 +71,22 @@ Brauzer tushunmagan xususiyatni **e’tiborsiz qoldiradi**. Shuning uchun ko‘p
 
 “Can I use” kabi ma’lumotnoma saytlari va MDN sahifalaridagi moslik jadvallari har bir xususiyat qaysi brauzer versiyasidan ishlashini ko‘rsatadi.
 
+```tekshir
+`@supports (display: grid) { … }` ichidagi qoidalar qachon qo‘llanadi?
++ brauzer `display: grid` ni tushunsa
+- faqat eski brauzerlarda
+- har doim, shart e’tiborga olinmaydi
+> Bu progressiv yaxshilash: asos hamma uchun, qo‘shimcha imkoniyat — qo‘llab-quvvatlanganda.
+```
+
+```jonli
+<style>
+  .x { padding: 10px; background: #ffe08a; }
+  @supports (aspect-ratio: 1) { .x { background: #b7ebc6; } .x::after { content: " — aspect-ratio qo‘llab-quvvatlanadi"; } }
+</style>
+<div class="x">Brauzer tekshiruvi</div>
+```
+
 ## Xulosa
 
 - `@supports (xususiyat: qiymat)` — brauzer tushunsa qo‘llanadi.

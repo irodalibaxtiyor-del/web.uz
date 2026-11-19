@@ -66,6 +66,22 @@ Soyalarni vergul bilan ajratib, ketma-ket qo‘yish mumkin. Birinchisi eng ustda
 - `text-shadow` joy egallamaydi: qo‘shni elementlar surilmaydi.
 - Soyani o‘chirish: `text-shadow: none`.
 
+```tekshir
+`text-shadow: 2px 2px 4px gray` dagi `4px` nima?
+- gorizontal siljish
+- vertikal siljish
++ xiralik radiusi
+> Tartib: x, y, xiralik, rang.
+```
+
+```jonli
+<style>
+  h2 { font: 700 32px sans-serif; margin: 8px 0; }
+</style>
+<h2 style="text-shadow: 2px 2px 4px gray">Oddiy soya</h2>
+<h2 style="color: white; background: #123; text-shadow: 0 0 12px #4cf">Nur effekti</h2>
+```
+
 ## Xulosa
 
 - Tartib: x, y, xiralik, rang.

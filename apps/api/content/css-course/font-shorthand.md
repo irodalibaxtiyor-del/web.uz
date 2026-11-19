@@ -68,6 +68,19 @@ textarea {
 
 Bu forma elementlarini sahifaning qolgan qismidagi shrift, o‘lcham va qator balandligi bilan tenglashtiradi.
 
+```tekshir
+`font` qisqa yozuvida qaysi qiymatlar majburiy?
++ `font-size`
++ `font-family`
+- `font-weight`
+- `line-height`
+> Masalan: `font: italic 700 18px/1.5 Georgia, serif;` — o‘lcham va oila majburiy, oila doim oxirida.
+```
+
+```jonli
+<p style="font: italic 700 20px/1.5 Georgia, serif">italic 700 20px/1.5 Georgia, serif</p>
+```
+
 ## Xulosa
 
 - `font: style weight size/line-height family`.

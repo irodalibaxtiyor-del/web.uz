@@ -88,6 +88,25 @@ h1,
 
 Murakkabroq selektorlar (ichki elementlar, holatlar, atributlar) alohida modulda o‘rganiladi.
 
+```tekshir
+`.karta` selektori qaysi elementlarni tanlaydi?
+- `id="karta"` bo‘lgan elementni
++ `class="karta"` bo‘lgan barcha elementlarni
+- barcha `<karta>` teglarini
+> Nuqta klassni, panjara (`#`) esa id’ni bildiradi.
+```
+
+```jonli
+<style>
+  p { color: gray; }
+  .muhim { color: crimson; font-weight: bold; }
+  #yagona { background: #ffe08a; }
+</style>
+<p>Oddiy paragraf</p>
+<p class="muhim">Klass bilan</p>
+<p id="yagona">Id bilan</p>
+```
+
 ## Xulosa
 
 - Element selektori — teg nomi, klass — `.nom`, id — `#nom`.

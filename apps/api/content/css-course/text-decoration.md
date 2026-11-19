@@ -65,6 +65,22 @@ Menyu va tugmalardagi havolalarda tagchiziq shart emas — ular shaklidan tanib 
 
 Havola bo‘lmagan matnga tagchiziq bermang: foydalanuvchi uni bosishga urinadi. Ajratib ko‘rsatish uchun qalin yozuv yoki rangdan foydalaning.
 
+```tekshir
+Havoladan tagchiziqni olib tashlash uchun nima yoziladi?
++ `text-decoration: none`
+- `text-underline: off`
+- `font-style: none`
+> Matn ichidagi havolalarda esa tagchiziqni qoldirgan ma’qul — faqat rang bilan ajratish yetarli emas.
+```
+
+```jonli
+<style>
+  a { color: #0071dc; }
+  .o { text-underline-offset: 4px; text-decoration-thickness: 2px; }
+</style>
+<p><a href="#">oddiy</a> · <a href="#" style="text-decoration: none">chiziqsiz</a> · <a class="o" href="#">uzoqlashtirilgan</a> · <span style="text-decoration: line-through">eski narx</span></p>
+```
+
 ## Xulosa
 
 - `text-decoration: none` havoladan tagchiziqni olib tashlaydi.

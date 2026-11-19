@@ -51,6 +51,24 @@ Bitta elementga bir nechta qoida tegishli bo‘lishi mumkin: brauzerning standar
 
 > **Eslatma:** CSS dasturlash tili emas. U shartlar va sikllar bilan ishlamaydi — faqat “qaysi elementga qanday ko‘rinish” degan qoidalardan iborat.
 
+```tekshir
+CSS nimani belgilaydi?
+- sahifaning mazmuni va tuzilmasini
++ sahifaning ko‘rinishini: rang, shrift, joylashuv
+- server bilan aloqani
+> Mazmun va tuzilma — HTML’ning, ko‘rinish — CSS’ning vazifasi.
+```
+
+```jonli
+<style>
+  h1 { color: #0071dc; font-family: sans-serif; }
+  p { color: #555; line-height: 1.6; }
+</style>
+<h1>CSS bilan sarlavha</h1>
+<p>Bitta qoida sahifadagi barcha paragraflarga ta’sir qiladi.</p>
+<p>Bu paragraf ham xuddi shunday ko‘rinadi.</p>
+```
+
 ## Xulosa
 
 - CSS sahifaning ko‘rinishini belgilaydi, HTML esa mazmunini.

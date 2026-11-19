@@ -98,6 +98,23 @@ Hisoblagich ko‘pincha chiroyli doiracha ichidagi raqamlar uchun ishlatiladi:
 
 > Raqamlar ma’noli bo‘lsa (masalan, ko‘rsatma qadamlari), HTML’da `<ol>` ishlating. `<ol>` o‘zi raqamlanadi va ekran o‘quvchi buni biladi — CSS hisoblagichi faqat ko‘rinishni o‘zgartiradi.
 
+```tekshir
+CSS hisoblagichining to‘g‘ri ketma-ketligi qaysi?
++ `counter-reset` → `counter-increment` → `content: counter(nom)`
+- `counter-start` → `counter-add` → `counter-show`
+- `content: counter(nom)` → `counter-reset`
+> Ota hisoblagichni nolga qo‘yadi, har element uni oshiradi, `::before` qiymatni chiqaradi.
+```
+
+```jonli
+<style>
+  .q { counter-reset: savol; }
+  .q h3 { counter-increment: savol; font: 600 16px sans-serif; }
+  .q h3::before { content: counter(savol) "-savol. "; color: #0071dc; }
+</style>
+<div class="q"><h3>HTML nima?</h3><h3>CSS nima?</h3><h3>JS nima?</h3></div>
+```
+
 ## Xulosa
 
 - `counter-reset` → `counter-increment` → `content: counter(nom)`.

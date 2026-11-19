@@ -69,6 +69,23 @@ Bu bitta qator ko‘p ishni bajaradi: ekranga nechta 180px lik ustun sig‘sa, s
 
 Galereyadagi har bir rasmga ma’noli `alt` yozing. Agar izoh (`figcaption`) rasmni to‘liq tasvirlasa ham, `alt` rasmning **o‘zida** nima borligini aytadi.
 
+```tekshir
+Galereyadagi har xil o‘lchamli rasmlar bir xil kvadrat ko‘rinishi uchun qaysi ikkitasi?
++ `aspect-ratio: 1`
++ `object-fit: cover`
+- `float: left`
+- `height: auto`
+> Nisbat ramkani beradi, `cover` rasmni cho‘zmasdan to‘ldiradi.
+```
+
+```jonli
+<style>
+  .g { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 6px; }
+  .g img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
+</style>
+<div class="g"><img src="https://picsum.photos/300/200" alt=""><img src="https://picsum.photos/200/300" alt=""><img src="https://picsum.photos/400/200" alt=""><img src="https://picsum.photos/250/250" alt=""></div>
+```
+
 ## Xulosa
 
 - `figure` + `figcaption` — rasm va izoh.

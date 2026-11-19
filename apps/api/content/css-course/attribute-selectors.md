@@ -73,6 +73,24 @@ a[href$=".pdf" i] {
 }
 ```
 
+```tekshir
+`a[href^="https"]` qaysi havolalarni tanlaydi?
++ `href` qiymati `https` bilan boshlanadiganlarni
+- `href` qiymati `https` bilan tugaydiganlarni
+- `href` ichida istalgan joyda `https` borlarni
+> `^=` — boshlanadi, `$=` — tugaydi, `*=` — ichida bor.
+```
+
+```jonli
+<style>
+  a[href^="https"] { color: seagreen; }
+  a[href$=".pdf"]::after { content: " (PDF)"; color: crimson; }
+  input[required] { border: 2px solid #f5a623; }
+</style>
+<p><a href="https://example.com">xavfsiz</a> · <a href="hujjat.pdf">hujjat</a></p>
+<input required placeholder="majburiy maydon">
+```
+
 ## Xulosa
 
 - `[atr]` — bor, `[atr="q"]` — aynan teng.

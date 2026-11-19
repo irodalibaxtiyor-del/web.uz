@@ -59,6 +59,26 @@ Loyihada tasodifiy 999, 10000 kabi qiymatlar o‘rniga oz sonli darajalar ishlat
 
 Bularni CSS o‘zgaruvchilarida saqlash qulay (9-modul).
 
+```tekshir
+`z-index: 999` bo‘lsa ham element ustga chiqmayapti. Eng ehtimolli sabab?
++ element joylashtirilmagan (`position: static`) yoki otasi o‘z qatlam kontekstini yaratgan
+- `z-index` 1000 dan katta bo‘lishi kerak
+- `z-index` faqat rasmlarda ishlaydi
+> `z-index` joylashtirilgan va flex/grid elementlarda ishlaydi, bola esa otasining kontekstidan chiqa olmaydi.
+```
+
+```jonli
+<style>
+  div { position: absolute; width: 90px; height: 70px; color: white; padding: 4px; }
+  .w { position: relative; height: 130px; }
+</style>
+<div class="w">
+  <div style="background: teal; left: 0; top: 0; z-index: 2">z 2</div>
+  <div style="background: crimson; left: 40px; top: 30px; z-index: 1">z 1</div>
+  <div style="background: navy; left: 80px; top: 60px; z-index: 3">z 3</div>
+</div>
+```
+
 ## Xulosa
 
 - `z-index` katta bo‘lsa, element ustda.

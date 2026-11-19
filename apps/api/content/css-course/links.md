@@ -79,6 +79,25 @@ Ko‘p saytlarda havola tugma ko‘rinishida bo‘ladi:
 
 `cursor: pointer` sichqoncha ko‘rsatkichini qo‘l shakliga keltiradi. Havolalarda bu standart; uni oddiy matnga bermang — foydalanuvchini chalg‘itadi.
 
+```tekshir
+Havola holatlarining tavsiya etilgan tartibi qaysi?
++ `:link`, `:visited`, `:hover`, `:active`
+- `:hover`, `:link`, `:active`, `:visited`
+- `:active`, `:hover`, `:visited`, `:link`
+> LVHA: keyinroq yozilgan holat oldingisini bosib o‘tishi uchun shu tartib kerak.
+```
+
+```jonli
+<style>
+  a { color: #0071dc; }
+  a:hover { color: crimson; }
+  a:focus-visible { outline: 2px solid #f5a623; }
+  a:active { color: green; }
+  .btn { display: inline-block; padding: 8px 14px; background: #0071dc; color: white; text-decoration: none; border-radius: 8px; }
+</style>
+<p><a href="#">Oddiy havola</a> · <a class="btn" href="#">Havola-tugma</a></p>
+```
+
 ## Xulosa
 
 - Havola holatlari: `:link`, `:visited`, `:hover`, `:focus-visible`, `:active`.

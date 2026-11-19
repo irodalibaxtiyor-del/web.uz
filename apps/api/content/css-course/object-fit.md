@@ -77,6 +77,23 @@ Rasm har qanday kenglikda 16:9 bo‘lib qoladi.
 
 `background-size: cover` (10-modul) — **fon** rasmi uchun. `object-fit: cover` — HTML’dagi `<img>` va `<video>` uchun. Ma’noli rasm (`alt` kerak) uchun `<img>` + `object-fit` to‘g‘ri tanlov.
 
+```tekshir
+Rasm o‘lchamli ramkani cho‘zilmasdan to‘ldirishi (ortiqcha qismi kesilishi) uchun nima yoziladi?
++ `object-fit: cover`
+- `object-fit: fill`
+- `object-fit: contain`
+> `fill` cho‘zadi, `contain` to‘liq ko‘rsatadi, `cover` nisbatni saqlab to‘ldiradi.
+```
+
+```jonli
+<style>
+  img { width: 120px; height: 120px; border: 1px solid #ccc; margin: 4px; }
+</style>
+<img src="https://picsum.photos/300/150" alt="" style="object-fit: fill">
+<img src="https://picsum.photos/300/150" alt="" style="object-fit: contain">
+<img src="https://picsum.photos/300/150" alt="" style="object-fit: cover">
+```
+
 ## Xulosa
 
 - `object-fit: cover` — cho‘zmasdan to‘ldirish, `contain` — to‘liq ko‘rsatish.

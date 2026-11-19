@@ -54,6 +54,15 @@ Uchta qoida — to‘r, sarlavha va konteyner har qanday ekranga moslashadi.
 
 Brauzer DevTools’idagi “qurilma rejimi” (Ctrl+Shift+M) turli ekran o‘lchamlarini ko‘rsatadi. Lekin imkon bo‘lsa, haqiqiy telefonda ham sinab ko‘ring: barmoq bilan bosish, klaviatura ochilishi kabi narsalar emulyatorda boshqacha.
 
+```tekshir
+Moslashuvchan dizaynning uchta asosi qaysilar?
++ suyuq maket
++ moslashuvchan media (rasm, video)
++ media so‘rovlar
+- har qurilma uchun alohida sayt
+> Bitta sahifa har xil ekranga moslashadi; alohida mobil sayt shart emas.
+```
+
 ## Xulosa
 
 - Moslashuvchan dizayn: suyuq maket, moslashuvchan media, media so‘rovlar.

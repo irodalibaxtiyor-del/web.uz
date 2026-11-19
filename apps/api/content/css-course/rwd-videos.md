@@ -78,6 +78,21 @@ Juda katta monitorda video ekran kengligida bo‘lsa, uni ko‘rish uchun boshni
 
 > WEBDIZAYN.UZ sandbox’ida tashqi video va iframe’lar bloklangan. Mashqda video o‘rnini bo‘sh `iframe` egallaydi — muhimi CSS.
 
+```tekshir
+YouTube `iframe` ni moslashuvchan qilishning zamonaviy usuli qaysi?
++ `width: 100%; height: auto; aspect-ratio: 16 / 9;`
+- `width: 560px; height: 315px;`
+- `zoom: 50%`
+> `aspect-ratio` nisbatni saqlaydi, kenglik esa konteynerga moslashadi.
+```
+
+```jonli
+<style>
+  .v { width: 100%; max-width: 480px; aspect-ratio: 16 / 9; background: #123; color: white; display: grid; place-items: center; }
+</style>
+<div class="v">16 : 9 — oynani o‘zgartiring</div>
+```
+
 ## Xulosa
 
 - `<video>`: `max-width: 100%` yoki `width: 100%` + `aspect-ratio`.

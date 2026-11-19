@@ -78,6 +78,24 @@ Ba’zi foydalanuvchilar tizim sozlamalarida harakatni kamaytirishni yoqqan. Ula
 }
 ```
 
+```tekshir
+`transition` qayerga yoziladi?
++ elementning boshlang‘ich (oddiy) holatiga
+- faqat `:hover` qoidasiga
+- `@keyframes` ichiga
+> Boshlang‘ich holatga yozilsa, o‘tish ikki tomonga (kirish va chiqish) silliq bo‘ladi.
+```
+
+```jonli
+<style>
+  button { font: inherit; padding: 10px 18px; border: 0; border-radius: 8px; background: #0071dc; color: white;
+           transition: transform .2s ease, background-color .2s ease; }
+  button:hover { transform: translateY(-3px); background: #005bb0; }
+  @media (prefers-reduced-motion: reduce) { button { transition: none; } }
+</style>
+<button>Ustiga olib keling</button>
+```
+
 ## Xulosa
 
 - `transition` boshlang‘ich holatga yoziladi.

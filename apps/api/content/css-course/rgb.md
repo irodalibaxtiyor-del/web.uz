@@ -59,6 +59,23 @@ Eski yozuv `rgba()` ham hamon ishlaydi:
 }
 ```
 
+```tekshir
+`rgb(255, 255, 255)` qaysi rang?
+- qora
++ oq
+- qizil
+> Uchala kanal eng katta qiymatda (255) — oq, hammasi 0 — qora.
+```
+
+```jonli
+<style>
+  div { padding: 10px; margin: 4px 0; }
+</style>
+<div style="background: rgb(255 0 0)">rgb(255 0 0)</div>
+<div style="background: rgb(0 128 0); color: white">rgb(0 128 0)</div>
+<div style="background: rgb(0 0 0 / 0.3)">rgb(0 0 0 / 0.3)</div>
+```
+
 ## Xulosa
 
 - `rgb(qizil, yashil, ko‘k)` — har biri 0–255.

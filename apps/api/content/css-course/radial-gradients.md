@@ -82,6 +82,22 @@ Natija — doiraviy diagramma: 60% ko‘k, 25% sariq, 15% kulrang.
 
 > Diagrammadagi ma’lumotlarni faqat rang bilan bermang: yoniga matn yoki jadval ham qo‘shing.
 
+```tekshir
+Doiraviy diagramma (pirog) uchun qaysi gradient qulay?
+- `linear-gradient`
+- `radial-gradient`
++ `conic-gradient`
+> `conic-gradient` ranglarni markaz atrofida aylana bo‘ylab taqsimlaydi.
+```
+
+```jonli
+<style>
+  div { width: 120px; height: 120px; display: inline-block; margin: 6px; border-radius: 50%; }
+</style>
+<div style="background: radial-gradient(circle at 30% 30%, white, #0071dc)"></div>
+<div style="background: conic-gradient(seagreen 0 60%, gold 60% 85%, crimson 85%)"></div>
+```
+
 ## Xulosa
 
 - `radial-gradient(shakl o‘lcham at markaz, ranglar)`.

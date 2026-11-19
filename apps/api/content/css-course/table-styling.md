@@ -84,6 +84,26 @@ table {
 }
 ```
 
+```tekshir
+“Zebra” qatorlar uchun qaysi selektor?
++ `tbody tr:nth-child(even)`
+- `tr:zebra`
+- `tbody tr + tr`
+> `:nth-child(even)` juft qatorlarni tanlaydi.
+```
+
+```jonli
+<style>
+  table { border-collapse: collapse; width: 100%; }
+  td, th { padding: 6px; text-align: left; }
+  tbody tr:nth-child(even) { background: #eef4fb; }
+  tbody tr:hover { background: #ffe08a; }
+</style>
+<table><thead><tr><th>Ism</th><th>Ball</th></tr></thead><tbody>
+<tr><td>Ali</td><td>90</td></tr><tr><td>Vali</td><td>85</td></tr><tr><td>Lola</td><td>97</td></tr><tr><td>Sardor</td><td>78</td></tr>
+</tbody></table>
+```
+
 ## Xulosa
 
 - `tbody tr:nth-child(even)` — zebra qatorlar.

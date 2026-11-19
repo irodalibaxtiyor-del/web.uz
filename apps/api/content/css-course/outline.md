@@ -64,6 +64,22 @@ Elementlar qayerda joylashganini tez ko‘rish uchun vaqtincha outline qo‘shis
 }
 ```
 
+```tekshir
+`outline` va `border` farqi nima?
++ `outline` joy egallamaydi va maketni surmaydi
+- `outline` faqat bitta tomonga chiziladi
+- `outline` element ichida chiziladi
+> Kontur chegaradan tashqarida chiziladi, shuning uchun fokus konturi elementlarni siljitmaydi.
+```
+
+```jonli
+<style>
+  button { font: inherit; padding: 8px 14px; }
+  button:focus-visible { outline: 3px solid #f5a623; outline-offset: 3px; }
+</style>
+<button>Tab bilan fokuslang</button> <button>Ikkinchi</button>
+```
+
 ## Xulosa
 
 - `outline` chegaradan tashqarida chiziladi va joy egallamaydi.

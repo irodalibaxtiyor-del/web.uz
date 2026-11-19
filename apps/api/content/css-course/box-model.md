@@ -57,6 +57,21 @@ Brauzerda elementni tekshirganda (Inspect) “Computed” bo‘limida rangli qut
 
 `span`, `a`, `strong` kabi satr (inline) elementlarda `width` va `height` ishlamaydi, yuqori va pastki margin esa qo‘shni qatorlarni surmaydi. Ularni quti kabi boshqarish uchun `display: inline-block` yoki `block` beriladi (keyingi modulda).
 
+```tekshir
+Standart holda (`content-box`) `width: 200px; padding: 10px; border: 5px solid` bo‘lgan elementning ko‘rinadigan kengligi qancha?
+- 200px
+- 215px
++ 230px
+> 200 + 2×10 (padding) + 2×5 (chegara) = 230px.
+```
+
+```jonli
+<style>
+  .q { width: 200px; padding: 10px; border: 5px solid navy; margin: 10px; background: #cde; }
+</style>
+<div class="q">Kontent 200px — DevTools’da qutini ko‘ring</div>
+```
+
 ## Xulosa
 
 - Quti: content → padding → border → margin.

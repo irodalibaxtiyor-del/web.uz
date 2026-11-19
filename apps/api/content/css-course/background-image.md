@@ -86,6 +86,22 @@ Rasm topilmasa yoki sekin yuklansa, matn o‘qilishi uchun har doim mos `backgro
 
 > **Platformada:** Ishga tushirish oynasi tashqi rasmlarni yuklamaydi. Mashqlarda gradient yoki `data:` manzilli rasmlardan foydalaning.
 
+```tekshir
+Fon rasmi butun maydonni qoplashi (kerak bo‘lsa kesilishi) uchun qaysi qiymat?
++ `background-size: cover`
+- `background-size: contain`
+- `background-repeat: cover`
+> `cover` maydonni to‘liq qoplaydi, `contain` esa rasmni to‘liq ko‘rsatadi (bo‘sh joy qolishi mumkin).
+```
+
+```jonli
+<style>
+  .h { height: 140px; color: white; padding: 12px; background-color: #234;
+      background-image: url(https://picsum.photos/600/300); background-size: cover; background-position: center; }
+</style>
+<div class="h">Fon rasmi + zaxira rang</div>
+```
+
 ## Xulosa
 
 - `background-image: url(...)` — fon rasmi, ma’noli rasmlar uchun esa `<img>`.

@@ -103,6 +103,26 @@ textarea {
 }
 ```
 
+```tekshir
+Forma maydoni `width: 100%` bo‘lib, padding qo‘shilganda ham chetdan chiqmasligi uchun nima kerak?
++ `box-sizing: border-box`
+- `overflow: hidden`
+- `max-width: none`
+> `border-box` padding va chegarani 100% ichida hisoblaydi.
+```
+
+```jonli
+<style>
+  label { display: block; margin-top: 8px; }
+  input { width: 100%; box-sizing: border-box; padding: 8px; font: inherit; border: 1px solid #999; border-radius: 6px; }
+  input:focus-visible { outline: 3px solid #0071dc55; border-color: #0071dc; }
+  input:user-invalid { border-color: crimson; }
+  [type=checkbox] { width: auto; accent-color: seagreen; }
+</style>
+<label for="e">Email</label><input id="e" type="email" required>
+<label><input type="checkbox" checked> Eslab qolish</label>
+```
+
 ## Xulosa
 
 - Maydonlar: `width: 100%`, `box-sizing: border-box`, `padding`, `font: inherit`.

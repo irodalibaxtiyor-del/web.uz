@@ -74,6 +74,23 @@ Bo‘sh elementning to‘rtta shaffof chegarasidan faqat yuqorisi rangli — u u
 - Tooltipda faqat **qo‘shimcha** ma’lumot bo‘lsin. Muhim ma’lumot telefonda (hover yo‘q) ko‘rinmay qolishi mumkin.
 - `title` atributi ham tooltip chiqaradi, lekin uni bezab bo‘lmaydi va klaviaturada ishlamaydi.
 
+```tekshir
+Tooltip matni ekran o‘quvchiga ham bog‘lanishi uchun nima ishlatiladi?
++ `aria-describedby`
+- `title` va `alt` birga
+- `role="hidden"`
+> `aria-describedby` element va uning tavsifini bog‘laydi.
+```
+
+```jonli
+<style>
+  .t { position: relative; }
+  .tip { position: absolute; bottom: 120%; left: 0; background: #123; color: white; padding: 4px 8px; border-radius: 4px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity .2s; }
+  .t:hover .tip, .t:focus-visible .tip { opacity: 1; }
+</style>
+<p style="margin-top: 40px"><button class="t" aria-describedby="tp">Saqlash<span class="tip" id="tp" role="tooltip">Ctrl + S</span></button></p>
+```
+
 ## Xulosa
 
 - `relative` ota + `absolute` tooltip.

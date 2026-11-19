@@ -99,6 +99,23 @@ JavaScript bitta o‘zgaruvchini o‘zgartirsa, uni ishlatgan barcha elementlar 
 
 O‘zgaruvchida noto‘g‘ri qiymat bo‘lsa (masalan, rang kerak joyda `20px`), brauzer xato bermaydi — xususiyat standart qiymatiga qaytadi. Bunday xatolarni DevTools’da qidiring.
 
+```tekshir
+CSS o‘zgaruvchisi qanday ishlatiladi?
++ `color: var(--asosiy);`
+- `color: $asosiy;`
+- `color: @asosiy;`
+> E’lon: `--asosiy: #0071dc;`, ishlatish: `var(--asosiy, zaxira)`.
+```
+
+```jonli
+<style>
+  :root { --asosiy: #0071dc; --radius: 10px; }
+  .q { --asosiy: crimson; }
+  .btn { background: var(--asosiy); color: white; border-radius: var(--radius); padding: 8px 14px; display: inline-block; }
+</style>
+<span class="btn">Global rang</span> <span class="q"><span class="btn">Qayta e’lon qilingan</span></span>
+```
+
 ## Xulosa
 
 - `--nom: qiymat` e’lon qiladi, `var(--nom, zaxira)` ishlatadi.

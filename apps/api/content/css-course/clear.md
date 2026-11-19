@@ -51,6 +51,23 @@ U ota ichining oxiriga ko‘rinmas element qo‘shib, unga `clear: both` beradi.
 
 Yana bir eski usul — `overflow: hidden`. U ham BFC yaratadi, lekin chiqib turgan kontentni (soya, menyu) kesib tashlaydi.
 
+```tekshir
+Ichidagi bolalari suzayotgan ota balandligini yo‘qotmasligi uchun zamonaviy usul qaysi?
++ `display: flow-root`
+- `float: none` otaga
+- `height: auto !important`
+> `flow-root` yangi blok formatlash kontekstini yaratadi va suzayotgan bolalarni o‘raydi.
+```
+
+```jonli
+<style>
+  .o { border: 2px dashed #0071dc; margin-bottom: 30px; }
+  .f { float: left; width: 80px; height: 60px; background: #f5a623; margin: 4px; }
+</style>
+<div class="o"><div class="f"></div>flow-root yo‘q</div>
+<div class="o" style="display: flow-root"><div class="f"></div>display: flow-root</div>
+```
+
 ## Xulosa
 
 - `clear: both` — element suzayotganlar ostidan boshlanadi.

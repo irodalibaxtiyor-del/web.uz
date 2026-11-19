@@ -70,6 +70,22 @@ Faqat esda tuting: tartib **ustun bo‘ylab** — yuqoridan pastga, keyin keying
 
 Ekranda uzun matnni ustunlarga bo‘lish ko‘pincha noqulay: o‘quvchi birinchi ustun oxiriga yetib, yana yuqoriga aylantirishi kerak. Ko‘p ustunli matn qisqa bloklar (ro‘yxatlar, izohlar, kartochkalar) uchun yaxshiroq.
 
+```tekshir
+Ko‘p ustunli matnda sarlavha barcha ustunlar bo‘ylab cho‘zilishi uchun nima yoziladi?
++ `column-span: all`
+- `column-count: 1`
+- `grid-column: 1 / -1`
+> `column-span: all` elementni ustunlar ustidan to‘liq kenglikda joylaydi.
+```
+
+```jonli
+<style>
+  .m { column-width: 160px; column-gap: 24px; column-rule: 1px solid #ccc; }
+  .m h3 { column-span: all; margin: 0 0 8px; }
+</style>
+<div class="m"><h3>Gazeta sarlavhasi</h3>Bu matn oyna kengligiga qarab bir yoki bir nechta ustunga bo‘linadi. Ustun kengligi taxminan 160 piksel bo‘lib, oraliqda ingichka chiziq bor. Oynani toraytirib ko‘ring: ustunlar soni kamayadi, matn esa o‘qilishi qulay bo‘lib qoladi.</div>
+```
+
 ## Xulosa
 
 - `column-count` — soni, `column-width` — moslashuvchan kenglik.

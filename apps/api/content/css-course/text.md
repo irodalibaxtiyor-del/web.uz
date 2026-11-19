@@ -76,6 +76,19 @@ Kichik bosh harfli yorliqlarda biroz `letter-spacing` chiroyli ko‘rinadi. Oddi
 
 `direction: rtl` arab yoki ivrit kabi o‘ngdan chapga yoziladigan tillar uchun. Odatda buni HTML’dagi `dir="rtl"` atributi bilan berish to‘g‘riroq.
 
+```tekshir
+`line-height` uchun qaysi qiymat eng qulay?
++ birliksiz son, masalan `1.6`
+- `16px`
+- `200%` ichma-ich elementlar uchun
+> Birliksiz qiymat har elementning o‘z shrift o‘lchamiga ko‘paytiriladi va to‘g‘ri meros bo‘ladi.
+```
+
+```jonli
+<p style="line-height: 1; max-width: 320px">line-height: 1 — qatorlar bir-biriga juda yaqin, uzun matnni o‘qish qiyinlashadi va ko‘z charchaydi.</p>
+<p style="line-height: 1.6; max-width: 320px">line-height: 1.6 — qatorlar orasida yetarli joy bor, matnni o‘qish ancha qulay.</p>
+```
+
 ## Xulosa
 
 - `color` va fon orasida yetarli kontrast bo‘lsin.

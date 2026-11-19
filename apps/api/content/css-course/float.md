@@ -49,6 +49,19 @@ Suzayotgan element oqimdan qisman chiqadi. Agar ota elementda faqat suzayotgan b
 
 Bu muammoning yechimi keyingi darsda.
 
+```tekshir
+Bugun sahifa maketini (ustunlarni) qurish uchun nima tavsiya etiladi?
+- `float`
++ Flexbox yoki Grid
+- `position: absolute`
+> `float` matnni rasm atrofidan oqizish uchun qoldi; maket uchun Flexbox va Grid.
+```
+
+```jonli
+<img src="https://picsum.photos/120/90" alt="" width="120" height="90" style="float: left; margin: 0 12px 6px 0">
+<p>Rasm chapga suzmoqda, matn esa uning atrofidan oqib o‘tadi. Bu `float` ning asl vazifasi: gazeta va jurnallardagi kabi rasm atrofida matn. Matn yetarlicha uzun bo‘lsa, rasm ostidan to‘liq kenglikda davom etadi.</p>
+```
+
 ## Xulosa
 
 - `float` matnni element atrofidan oqizadi.

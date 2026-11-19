@@ -123,6 +123,23 @@ Hamma `rem` qiymatlar avtomatik kattalashadi.
 
 Chop etilgan sahifada menyular kerak emas, havolalarning manzili esa ko‘rinib turadi.
 
+```tekshir
+Kichik ekranda kontentni nima qilish tavsiya etiladi?
++ uni qayta joylashtirish (masalan, ustunlarni ustma-ust qilish)
+- muhim bo‘limlarni `display: none` bilan yashirish
+- shriftni 8px gacha kichraytirish
+> Mobil foydalanuvchi ham to‘liq kontentga ega bo‘lishi kerak.
+```
+
+```jonli
+<style>
+  nav { display: flex; flex-direction: column; gap: 6px; }
+  @media (min-width: 500px) { nav { flex-direction: row; } }
+  @media (prefers-color-scheme: dark) { nav a { color: #9cf; } }
+</style>
+<nav><a href="#">Bosh</a><a href="#">Kurslar</a><a href="#">Aloqa</a></nav>
+```
+
 ## Xulosa
 
 - Menyu yo‘nalishi, ustunlar soni, shrift o‘lchami — eng ko‘p uchraydigan o‘zgarishlar.

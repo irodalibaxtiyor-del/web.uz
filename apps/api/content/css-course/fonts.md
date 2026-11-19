@@ -56,6 +56,20 @@ h2 {
 
 > **Eslatma:** `button`, `input` va `textarea` shriftni meros olmaydi. Ularga `font-family: inherit` bering.
 
+```tekshir
+`font-family` ro‘yxati nima bilan tugashi kerak?
++ umumiy oila (`sans-serif`, `serif`, `monospace`)
+- eng chiroyli shrift bilan
+- `!important` bilan
+> Ro‘yxatdagi shriftlarning hech biri bo‘lmasa, brauzer umumiy oiladan mosini oladi.
+```
+
+```jonli
+<p style="font-family: Georgia, serif">Georgia, serif</p>
+<p style="font-family: system-ui, sans-serif">system-ui, sans-serif</p>
+<p style="font-family: Consolas, monospace">Consolas, monospace</p>
+```
+
 ## Xulosa
 
 - `font-family` — zaxira ro‘yxati, birinchi mavjud shrift ishlatiladi.

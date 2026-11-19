@@ -63,6 +63,22 @@ nav a {
 }
 ```
 
+```tekshir
+`inline-block` elementning `inline` dan farqi nima?
++ unga `width`, `height` va vertikal `padding` to‘liq ishlaydi
+- u har doim yangi qatordan boshlanadi
+- u matn qatorida tura olmaydi
+> `inline-block` qatorda turadi, lekin blokdek o‘lchanadi.
+```
+
+```jonli
+<style>
+  span { width: 90px; height: 40px; padding: 6px; background: #ffe08a; margin: 2px; }
+</style>
+<p>inline: <span>A</span><span>B</span></p>
+<p>inline-block: <span style="display: inline-block">A</span><span style="display: inline-block">B</span></p>
+```
+
 ## Xulosa
 
 - `inline-block` — qatorda turadi, o‘lcham va padding ishlaydi.

@@ -70,6 +70,22 @@ o‘q  ↓   └─────┴─────┴─────┘
 
 `display: inline-flex` — konteynerning o‘zi matn qatorida turadi (masalan, ikonkali tugma), ichi esa flex.
 
+```tekshir
+`display: flex` qaysi elementlarga ta’sir qiladi?
++ konteynerning bevosita bolalariga
+- konteyner ichidagi barcha avlodlarga
+- faqat konteynerning o‘ziga
+> Faqat bevosita bolalar flex elementga aylanadi; nevaralar odatdagidek qoladi.
+```
+
+```jonli
+<style>
+  .k { display: flex; justify-content: space-between; align-items: center; gap: 12px; height: 100px; background: #eef4fb; padding: 8px; }
+  .k div { background: #0071dc; color: white; padding: 10px; }
+</style>
+<div class="k"><div>1</div><div>2</div><div>3</div></div>
+```
+
 ## Xulosa
 
 - `display: flex` — bevosita bolalar bir qatorga tiziladi.

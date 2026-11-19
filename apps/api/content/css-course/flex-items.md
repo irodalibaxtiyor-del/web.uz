@@ -89,6 +89,22 @@ Flex elementdagi `auto` margin qolgan bo‘sh joyning hammasini egallaydi:
 }
 ```
 
+```tekshir
+Uch elementga `flex: 1` berilsa nima bo‘ladi?
++ bo‘sh joyni teng bo‘lib, bir xil kenglikda bo‘lishadi
+- har biri 1px kenglikda bo‘ladi
+- faqat birinchisi o‘sadi
+> `flex: 1` — `1 1 0%`: hammasi teng ulush oladi.
+```
+
+```jonli
+<style>
+  .k { display: flex; gap: 6px; }
+  .k div { background: #0071dc; color: white; padding: 10px; }
+</style>
+<div class="k"><div style="flex: 1">flex: 1</div><div style="flex: 2">flex: 2</div><div style="flex: none">flex: none</div></div>
+```
+
 ## Xulosa
 
 - `flex-grow` — o‘sish, `flex-shrink` — siqilish, `flex-basis` — boshlang‘ich o‘lcham.

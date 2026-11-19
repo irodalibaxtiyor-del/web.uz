@@ -81,6 +81,23 @@ Har 20px da takrorlanadigan qiya chiziqlar.
 
 Rasm pastki qismi qorayadi — u yerdagi oq matn o‘qiladi.
 
+```tekshir
+Gradient qaysi xususiyatga yoziladi?
++ `background-image` (yoki `background`)
+- `background-color`
+- `color`
+> Gradient — rasm turi, shuning uchun `background-color` uni qabul qilmaydi.
+```
+
+```jonli
+<style>
+  div { height: 50px; margin: 6px 0; }
+</style>
+<div style="background: linear-gradient(to right, #0071dc, #f5a623)"></div>
+<div style="background: linear-gradient(90deg, teal 50%, gold 50%)"></div>
+<div style="background: repeating-linear-gradient(45deg, #eee 0 10px, #ccc 10px 20px)"></div>
+```
+
 ## Xulosa
 
 - `linear-gradient(yo‘nalish, rang1, rang2, …)` — `background-image` da.

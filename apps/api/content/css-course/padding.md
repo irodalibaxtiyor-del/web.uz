@@ -69,6 +69,23 @@ Ko‘p loyihalar buni butun sahifaga qo‘llaydi:
 
 Foizli padding **ota elementning kengligidan** hisoblanadi — hatto yuqori va pastki padding ham. Bu xususiyatdan ilgari doimiy nisbatli bloklar yasash uchun foydalanilgan.
 
+```tekshir
+`padding` haqida to‘g‘ri gap qaysi?
++ kontent va chegara orasidagi bo‘shliq, element fonini oladi
+- chegaradan tashqaridagi shaffof bo‘shliq
+- manfiy qiymat qabul qiladi
+> Tashqi bo‘shliq — margin; padding esa ichki va fonli.
+```
+
+```jonli
+<style>
+  p { background: #0071dc; color: white; border: 3px solid navy; }
+</style>
+<p style="padding: 0">padding: 0</p>
+<p style="padding: 20px">padding: 20px</p>
+<p style="padding: 4px 30px">padding: 4px 30px</p>
+```
+
 ## Xulosa
 
 - `padding` — kontent va chegara orasidagi bo‘shliq, fonni oladi.

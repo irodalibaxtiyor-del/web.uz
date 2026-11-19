@@ -71,6 +71,14 @@ Google Fonts kabi xizmatlar `<link>` orqali tayyor `@font-face` qoidalarini bera
 
 > **WEBDIZAYN.UZ sandbox’ida** tashqi fayllar bloklangan. Mashqlarda `local()` va zaxira shriftlardan foydalanamiz.
 
+```tekshir
+`font-display: swap` nima qiladi?
++ shrift yuklanguncha matnni zaxira shriftda darhol ko‘rsatadi
+- shriftni umuman yuklamaydi
+- shriftni boshqa fayl bilan almashtiradi
+> Foydalanuvchi bo‘sh joy o‘rniga darhol matnni ko‘radi, keyin shrift almashadi.
+```
+
 ## Xulosa
 
 - `@font-face` shriftga nom beradi va faylini ko‘rsatadi.

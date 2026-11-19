@@ -71,6 +71,23 @@ Xiraliksiz, faqat yoyilishli soya — joy egallamaydigan qo‘shimcha chegara:
 
 Juda katta xiralikdagi ko‘p soyalarni animatsiya qilish sahifani sekinlashtirishi mumkin. Animatsiyada soyaning o‘zini emas, `opacity` sini o‘zgartirish tezroq (11-modul).
 
+```tekshir
+`box-shadow: 0 4px 12px rgb(0 0 0 / .15)` dagi `12px` nima?
+- vertikal siljish
++ xiralik radiusi
+- yoyilish (spread)
+> Tartib: x, y, xiralik, yoyilish, rang.
+```
+
+```jonli
+<style>
+  .k { display: inline-block; width: 140px; padding: 16px; margin: 10px; border-radius: 12px; background: white; }
+</style>
+<div class="k" style="box-shadow: 0 4px 12px rgb(0 0 0 / .15)">Yumshoq soya</div>
+<div class="k" style="box-shadow: inset 0 2px 6px rgb(0 0 0 / .3)">inset</div>
+<div class="k" style="box-shadow: 0 0 0 3px #0071dc">halqa</div>
+```
+
 ## Xulosa
 
 - Tartib: x, y, xiralik, yoyilish, rang; `inset` — ichki soya.

@@ -82,6 +82,24 @@ Zamonaviy CSS’da ekran emas, **ota konteyner** kengligiga qarab ham uslub beri
 
 Kartochka yon panelda tor, asosiy qismda keng bo‘lsa — har joyda o‘ziga mos ko‘rinadi.
 
+```tekshir
+Mobil birinchi yondashuvda qaysi media so‘rov ishlatiladi?
++ `@media (min-width: 768px)`
+- `@media (max-width: 768px)` faqat
+- `@media screen-only`
+> Oddiy uslub kichik ekran uchun, kattaroq ekranlar uchun `min-width` bilan qo‘shimcha.
+```
+
+```jonli
+<style>
+  .k { display: grid; gap: 8px; }
+  .k div { background: #eef4fb; padding: 12px; }
+  @media (min-width: 500px) { .k { grid-template-columns: 1fr 1fr 1fr; } }
+</style>
+<div class="k"><div>1</div><div>2</div><div>3</div></div>
+<p>Oyna 500px dan keng bo‘lsa, uch ustun.</p>
+```
+
 ## Xulosa
 
 - `@media (min-width: …)` — mobil birinchi yondashuvning asosi.

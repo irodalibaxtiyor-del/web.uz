@@ -42,6 +42,14 @@ Viewport tegi bo‘lsa ham, sahifa gorizontal aylantirilib qolishi mumkin — ag
 
 Sahifaning telefon kengligida yon tomonga aylanmasligini doim tekshiring.
 
+```tekshir
+Mobil qurilmada sahifa to‘g‘ri o‘lchamda ko‘rinishi uchun `<head>` ga nima yoziladi?
++ `<meta name="viewport" content="width=device-width, initial-scale=1">`
+- `<meta name="mobile" content="yes">`
+- `<meta name="viewport" content="user-scalable=no">`
+> `user-scalable=no` kattalashtirishni taqiqlaydi — bu qulaylikka zid.
+```
+
 ## Xulosa
 
 - `<meta name="viewport" content="width=device-width, initial-scale=1">` — har bir sahifada.

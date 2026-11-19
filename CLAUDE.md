@@ -58,7 +58,7 @@ Oldingi sessiyalar (2026-10-08 … 2026-10-27): [docs/ISH_JURNALI_ARXIV.md](docs
 
 ## Joriy holat (qisqacha)
 
-- **Bajarilgan:** roadmap fazalari F0–F2, 11–15C; kurslar HTML, CSS, JS, PHP, Bootstrap 3/4/5, Moslashuvchan dizayn, UI asoslari, Figma'dan kodga, Portfolio; guruhlar, o'qituvchi/talaba hisoblari va Excel; 8 band (dizayn, responsivlik, app-shell, kabinet menyusi, yo'nalishlar, slug, elektron darslik, chatbot); Loms dizayni qaytarilgan; 8 xil test turi; ilmiy modul (formativ fikr, kirish/yakuniy test, tajriba va nazorat guruhlari statistikasi, so'rovnomalar va Cronbach α, savollar tahlili, vaqt sarfi, normallik va parametrik bo'lmagan mezonlar); "Muallif kitoblari" va kitob ichidan qidiruv; 407 ta dars testi va 485 ta mashq mini-testi (izohlar bilan, `db:sync:quizzes`); darsdagi interaktiv bloklar (`tekshir`/`jonli`/`yechim`, `db:sync:lessons`) — HTML kursining 60 darsida; atamalar lug'ati va oraliqli takrorlash (SM-2, `db:sync:glossary`) — HTML kursida 91 atama; sertifikatlar (ochiq tekshirish sahifasi bilan) va Telegram xabarnomalari (bot sozlansa).
+- **Bajarilgan:** roadmap fazalari F0–F2, 11–15C; kurslar HTML, CSS, JS, PHP, Bootstrap 3/4/5, Moslashuvchan dizayn, UI asoslari, Figma'dan kodga, Portfolio; guruhlar, o'qituvchi/talaba hisoblari va Excel; 8 band (dizayn, responsivlik, app-shell, kabinet menyusi, yo'nalishlar, slug, elektron darslik, chatbot); Loms dizayni qaytarilgan; 8 xil test turi; ilmiy modul (formativ fikr, kirish/yakuniy test, tajriba va nazorat guruhlari statistikasi, so'rovnomalar va Cronbach α, savollar tahlili, vaqt sarfi, normallik va parametrik bo'lmagan mezonlar); "Muallif kitoblari" va kitob ichidan qidiruv; 407 ta dars testi va 485 ta mashq mini-testi (izohlar bilan, `db:sync:quizzes`); darsdagi interaktiv bloklar (`tekshir`/`jonli`/`yechim`, `db:sync:lessons`) — HTML (60 dars) va CSS (101 dars); atamalar lug'ati va oraliqli takrorlash (SM-2, `db:sync:glossary`) — HTML 91 va CSS 108 atama; sertifikatlar (ochiq tekshirish sahifasi bilan) va Telegram xabarnomalari (bot sozlansa).
 - **Muhim qoidalar (arxivdan):**
   - Tranzaksiya ichida faqat `tx` ishlatilsin (aks holda PGlite deadlock).
   - Postgres `jsonb` kalitlar tartibini saqlamaydi — taqqoslashda kanonik JSON.
@@ -67,7 +67,7 @@ Oldingi sessiyalar (2026-10-08 … 2026-10-27): [docs/ISH_JURNALI_ARXIV.md](docs
   - Talabalar ro'yxati (shaxsiy ma'lumot) repoga yozilmaydi (`apps/api/.data/` gitignore'da); repo public.
   - Git Bash: URL yo'llari uchun `MSYS_NO_PATHCONV=1`; murakkab matnli heredoc o'rniga fayl + node skript.
 - **Ochiq (infratuzilma):** haqiqiy Telegram bot (token, webhook); Ubuntu'dagi CI E2E, Docker/haqiqiy Postgres/sandbox domeni/edge proksi/backup tekshiruvi, haqiqiy AI provayder (DPA), SMTP, Safari va haqiqiy qurilmalar, Lighthouse qayta o'lchovi.
-- **Ochiq (reja):** qolgan kurslarga interaktiv bloklar va lug'at.
+- **Ochiq (reja):** qolgan kurslarga (JS, Bootstrap 3/4/5, RWD, UI, Figma, Portfolio, PHP) interaktiv bloklar va lug'at.
 
 ## 2026-11-14
 
@@ -430,3 +430,12 @@ Oldingi sessiyalar (2026-10-08 … 2026-10-27): [docs/ISH_JURNALI_ARXIV.md](docs
 - Demo bazaga `0028`, `0029` qo'llandi.
 - Regressiya: format ✅, typecheck ✅, lint ✅, test ✅ (shared 130 + libs 3 + sandbox 16 + web 67 + check-engine 23 + api 522 = **761**), audit ✅.
 - Cheklovlar: haqiqiy Telegram bot bilan tekshirilmagan (token yo'q — infratuzilma); sertifikat sharti faqat darslar (yakuniy test talab qilinmaydi); QR-kod yo'q (tekshirish havolasi va kod bor); bir nechta API nusxasida yuborish taymerlari parallel ishlashi mumkin (navbatni qulflash keyin).
+
+### Kamchilik: CSS kursiga interaktiv bloklar va lug'at
+
+- Foydalanuvchi: "davom et". Navbatdagi ochiq ish — qolgan kurslarga darsdagi interaktiv bloklar va atamalar lug'ati; CSS kursidan boshlandi.
+- `apps/api/content/css-course/*.md`: **101 ta darsning** hammasiga ` ```tekshir ` (o'zini tekshirish savoli, izoh bilan) va **93 tasiga** ` ```jonli ` misol (`<style>` + HTML: quti modeli, ranglar, gradientlar, flex/grid, transformatsiya, animatsiya, `@property`, media so'rov va h.k.). Bloklar `## Xulosa` dan oldin, blokdan tashqariga matn qo'shilmadi (`db:sync:lessons` uchun). Barcha bloklar `validateLessonBlocks` dan o'tdi.
+- `src/db/content/css/glossary.ts`: **108 ta atama**, har biri o'z darsiga bog'langan, kerakli joyda kod misoli bilan; registry'ga ulandi. `content-courses.test.ts` da CSS lug'ati hajmi tekshiriladi.
+- Nusxa bazada `db:sync:lessons css` (101 yangilandi, takroriy — 0) va `db:sync:glossary css` (+108). Brauzer tekshiruvi (scratchpad `css-check.cjs`) **23/23**, xatolar 0: 93 ta jonli misolning har biri Chrome'da alohida xatosiz render qilinadi; darsda tekshiruv bloki (xato → "Hali emas", to'g'ri → izoh), jonli misol CSS'ni qo'llaydi va tahrirlangan rang darhol o'zgaradi; lug'at sahifasida 108 atama, qidiruv (katta harf bilan), 1440 light va 390 dark — gorizontal scroll yo'q. Nusxa o'chirildi. Keyin demo bazaga ham sync qilindi.
+- Regressiya: format ✅, typecheck ✅, lint ✅, test ✅ (shared 130 + libs 3 + sandbox 16 + web 67 + check-engine 23 + api 522 = **761**).
+- Qolgan: JS, Bootstrap 3/4/5, RWD, UI, Figma, Portfolio, PHP.

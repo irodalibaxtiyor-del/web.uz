@@ -56,6 +56,24 @@ Brauzer `.tugma` qoidasini `.karta` ning ichida deb o‘ylaydi va uni noto‘g�
 
 W3C CSS Validator kabi xizmatlar faylni tekshirib, xatolarni qator raqami bilan ko‘rsatadi.
 
+```tekshir
+`width: 200;` deb yozilsa nima bo‘ladi?
+- kenglik 200px bo‘ladi
++ brauzer bu e’lonni tushunmaydi va tashlab yuboradi
+- butun CSS fayl ishlamay qoladi
+> Noldan boshqa uzunliklarga birlik kerak; brauzer faqat xato e’lonni o‘tkazib yuboradi.
+```
+
+```jonli
+<style>
+  .a { width: 200; background: tomato; }   /* birliksiz — e’tiborsiz */
+  .b { width: 200px; background: seagreen; }
+  div { color: white; padding: 6px; margin: 4px 0; }
+</style>
+<div class="a">width: 200</div>
+<div class="b">width: 200px</div>
+```
+
 ## Xulosa
 
 - Brauzer tushunmagan e’lonni jimgina tashlab yuboradi.

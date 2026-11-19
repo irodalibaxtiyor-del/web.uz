@@ -72,6 +72,23 @@ SVG ikonka shaklida kesilgan rangli quti — rang `color` bilan boshqariladi.
 
 Kesilgan qism ko‘rinmaydi, lekin element **joyi o‘zgarmaydi** va sichqoncha hodisalari faqat ko‘rinadigan qismda ishlaydi.
 
+```tekshir
+Elementni olti burchak shaklida kesish uchun qaysi xususiyat?
++ `clip-path: polygon(...)`
+- `border-radius: polygon`
+- `mask-shape: hexagon`
+> `clip-path` aniq shakllar (`circle`, `polygon`, `inset`) bo‘yicha kesadi.
+```
+
+```jonli
+<style>
+  img { width: 140px; height: 140px; object-fit: cover; margin: 4px; }
+</style>
+<img src="https://picsum.photos/300" alt="" style="clip-path: circle(45%)">
+<img src="https://picsum.photos/301" alt="" style="clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%)">
+<img src="https://picsum.photos/302" alt="" style="mask-image: linear-gradient(black, transparent)">
+```
+
 ## Xulosa
 
 - `clip-path: circle()`, `polygon()`, `inset()` — shakl bo‘yicha kesish.

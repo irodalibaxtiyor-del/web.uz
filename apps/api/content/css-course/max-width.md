@@ -76,6 +76,21 @@ img {
 
 Bu qator deyarli har bir loyihada bor: rasm hech qachon otasidan kengayib ketmaydi, nisbati saqlanadi.
 
+```tekshir
+Uzun matn qatorini o‘qish uchun qulay kenglikda ushlash uchun nima yoziladi?
++ `max-width: 65ch`
+- `width: 100vw`
+- `min-width: 1200px`
+> Taxminan 60–75 belgili qatorlar ko‘z uchun qulay.
+```
+
+```jonli
+<style>
+  .c { max-width: 40ch; margin: 0 auto; background: #eef4fb; padding: 10px; }
+</style>
+<div class="c">Bu blok 40 belgidan kengaymaydi va markazda turadi. Oynani toraytirsangiz, u ham torayadi.</div>
+```
+
 ## Xulosa
 
 - Kenglik uchun `width` o‘rniga `max-width` ishlating.

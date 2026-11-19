@@ -106,6 +106,26 @@ Telefonda barmoq bilan bosish uchun tugma kamida **44×44px** bo‘lishi tavsiya
 
 Ko‘rinishi bir xil bo‘lishi mumkin, lekin HTML teg to‘g‘ri tanlansa, klaviatura va ekran o‘quvchi to‘g‘ri ishlaydi.
 
+```tekshir
+Qulay tugma uchun minimal bosish maydoni taxminan qancha bo‘lishi tavsiya etiladi?
+- 16px
++ 44px
+- 100px
+> Barmoq bilan aniq bosish uchun kamida ~44×44px.
+```
+
+```jonli
+<style>
+  .btn { font: inherit; display: inline-flex; align-items: center; gap: .4em; min-height: 44px; padding: 0 18px; border: 2px solid transparent; border-radius: 10px; cursor: pointer; }
+  .asosiy { background: #0071dc; color: white; }
+  .asosiy:hover { background: #005bb0; }
+  .ikkinchi { background: white; border-color: #0071dc; color: #0071dc; }
+  .btn:focus-visible { outline: 3px solid #f5a623; outline-offset: 2px; }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+</style>
+<button class="btn asosiy">Saqlash</button> <button class="btn ikkinchi">Bekor qilish</button> <button class="btn asosiy" disabled>O‘chiq</button>
+```
+
 ## Xulosa
 
 - `inline-flex`, padding, shaffof chegara, `font: inherit`.

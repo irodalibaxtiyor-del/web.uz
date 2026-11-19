@@ -98,6 +98,14 @@ Brauzer tushunadigan birinchi formatni oladi.
 
 Turli o‘lchamdagi rasmlar har qanday kenglikda bir xil nisbatda.
 
+```tekshir
+Brauzer ekranga mos o‘lchamdagi rasm faylini o‘zi tanlashi uchun nima ishlatiladi?
++ `srcset` va `sizes`
+- `max-width: 100%`
+- `object-fit`
+> CSS rasmni sig‘diradi, `srcset` esa kichik ekranga kichik faylni yuklaydi.
+```
+
 ## Xulosa
 
 - `max-width: 100%; height: auto;` va HTML’da `width`/`height`.

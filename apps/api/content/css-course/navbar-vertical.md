@@ -70,6 +70,23 @@ Uzun sahifada menyu ko‘rinib turishi uchun:
 }
 ```
 
+```tekshir
+Vertikal menyuda butun qator bosiladigan bo‘lishi uchun havolaga nima beriladi?
++ `display: block` va `padding`
+- `float: left`
+- `cursor: pointer`
+> Blok havola butun kenglikni egallaydi; `padding` bosish maydonini kattalashtiradi.
+```
+
+```jonli
+<style>
+  nav ul { list-style: none; margin: 0; padding: 0; width: 200px; background: #eef4fb; }
+  nav a { display: block; padding: 10px 14px; color: #123; text-decoration: none; }
+  nav a:hover, nav a[aria-current="page"] { background: #0071dc; color: white; }
+</style>
+<nav><ul><li><a href="#" aria-current="page">Bosh sahifa</a></li><li><a href="#">Kurslar</a></li><li><a href="#">Aloqa</a></li></ul></nav>
+```
+
 ## Xulosa
 
 - Menyu — `nav` ichidagi `ul` ro‘yxat.

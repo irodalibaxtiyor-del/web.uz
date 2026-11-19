@@ -77,6 +77,22 @@ Bu variantda biror komponentni `content-box` ga o‘tkazsangiz, uning ichidagi b
 
 Kamdan-kam: masalan, kontent maydoni aniq o‘lchamda bo‘lishi kerak bo‘lsa (rasm atrofidagi ramka). Bunday joyda faqat shu elementga `content-box` qaytariladi.
 
+```tekshir
+`box-sizing: border-box` bo‘lsa, `width: 200px` nimani o‘lchaydi?
+- faqat kontentni
++ kontent, padding va chegarani birga
+- margin bilan birga hammasini
+> `border-box` da padding va chegara kenglik ichida hisoblanadi; margin kirmaydi.
+```
+
+```jonli
+<style>
+  div { width: 200px; padding: 20px; border: 5px solid navy; margin: 6px 0; background: #cde; }
+</style>
+<div style="box-sizing: content-box">content-box: 250px</div>
+<div style="box-sizing: border-box">border-box: 200px</div>
+```
+
 ## Xulosa
 
 - `content-box`: kenglik + padding + chegara.

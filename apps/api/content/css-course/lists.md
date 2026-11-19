@@ -77,6 +77,24 @@ Elementlar orasiga masofa berish uchun `li` ga margin yoki ota elementga `gap` (
 }
 ```
 
+```tekshir
+Menyu uchun ro‘yxat belgilari va chap bo‘shlig‘ini olib tashlash uchun nima yoziladi?
++ `list-style: none; padding-left: 0;`
+- `list-style: hidden;`
+- `display: none;`
+> `display: none` butun ro‘yxatni yashiradi; kerakli narsa — belgini va standart padding’ni olib tashlash.
+```
+
+```jonli
+<style>
+  .a { list-style-type: square; }
+  .a li::marker { color: crimson; }
+  .b { list-style: none; padding-left: 0; display: flex; gap: 12px; }
+</style>
+<ul class="a"><li>Kvadrat</li><li>Qizil belgi</li></ul>
+<ul class="b"><li>Bosh</li><li>Kurslar</li><li>Aloqa</li></ul>
+```
+
 ## Xulosa
 
 - `list-style-type` — belgi turi, `list-style-position` — joyi.

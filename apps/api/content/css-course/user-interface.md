@@ -102,6 +102,25 @@ select {
 
 Brauzerning standart ko‘rinishini olib tashlaydi — elementni noldan bezash uchun. Shundan keyin fokus, strelka va holatlarni o‘zingiz qo‘shishingiz kerak.
 
+```tekshir
+Ichki havolaga (`#bolim`) o‘tishda sahifa silliq aylanishi uchun nima yoziladi?
++ `html { scroll-behavior: smooth; }`
+- `a { transition: scroll 1s; }`
+- `body { overflow: smooth; }`
+> Mahkamlangan header ostida qolmasligi uchun bo‘limga `scroll-margin-top` ham beriladi.
+```
+
+```jonli
+<style>
+  textarea { resize: vertical; width: 100%; }
+  .nosel { user-select: none; background: #eef4fb; padding: 6px; }
+  .k { cursor: help; text-decoration: underline dotted; }
+</style>
+<textarea rows="3">Faqat balandligini o‘zgartirish mumkin</textarea>
+<p class="nosel">Bu matnni belgilab bo‘lmaydi</p>
+<p>Sichqonchani <span class="k">bu so‘z</span> ustiga olib keling.</p>
+```
+
 ## Xulosa
 
 - `cursor` — nima bo‘lishini ko‘rsatadi.

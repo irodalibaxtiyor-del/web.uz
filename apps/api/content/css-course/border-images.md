@@ -63,6 +63,21 @@ Oxiridagi `1` — `border-image-slice`. Gradient uchun shu qiymat yetarli: butun
 
 Ikki qatlamli fon: ichkisi oq (padding qutisigacha), tashqisi gradient (chegara qutisigacha). Chegara shaffof bo‘lgani uchun ostidagi gradient ko‘rinadi.
 
+```tekshir
+Gradient chegara uchun to‘g‘ri yozuv qaysi?
++ `border: 4px solid; border-image: linear-gradient(red, blue) 1;`
+- `border-color: linear-gradient(red, blue);`
+- `border-image: red blue;`
+> `border-color` gradient qabul qilmaydi; `border-image` va oxiridagi `1` (slice) kerak.
+```
+
+```jonli
+<style>
+  .g { border: 6px solid; border-image: linear-gradient(90deg, #0071dc, #f5a623) 1; padding: 14px; }
+</style>
+<div class="g">Gradient chegara</div>
+```
+
 ## Xulosa
 
 - `border-image` chegarani rasm yoki gradient bilan chizadi.

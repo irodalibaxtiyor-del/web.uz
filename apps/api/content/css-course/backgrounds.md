@@ -63,6 +63,25 @@ Fon rangini tanlaganda matn rangini ham o‘ylang:
 
 Ba’zi elementlarning standart foni bor: masalan, `button` va `input` brauzerdan kulrang yoki oq fon oladi. Ularni ham `background-color` bilan o‘zgartirish mumkin.
 
+```tekshir
+Faqat fonni yarim shaffof qilib, matnni to‘liq ko‘rinadigan qoldirish uchun nima yoziladi?
+- `opacity: 0.5`
++ `background-color: rgb(0 0 0 / 0.5)`
+- `background-opacity: 0.5`
+> `opacity` butun elementni (matnni ham) shaffof qiladi, alfa kanalli rang esa faqat fonni.
+```
+
+```jonli
+<style>
+  .w { background: url(https://picsum.photos/400/150) center / cover; padding: 12px; }
+  .w p { padding: 8px; color: white; }
+</style>
+<div class="w">
+  <p style="background: rgb(0 0 0 / 0.5)">alfa kanalli fon</p>
+  <p style="background: black; opacity: 0.5">opacity: 0.5</p>
+</div>
+```
+
 ## Xulosa
 
 - `background-color` — elementning foni, `padding` maydonini ham qamraydi.

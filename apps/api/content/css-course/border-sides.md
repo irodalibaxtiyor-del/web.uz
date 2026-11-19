@@ -72,6 +72,22 @@ blockquote {
 }
 ```
 
+```tekshir
+`border-width: 1px 4px 2px 8px` da o‘ng tomon qalinligi qancha?
+- 1px
++ 4px
+- 2px
+- 8px
+> Tartib soat mili bo‘yicha: yuqori, o‘ng, past, chap.
+```
+
+```jonli
+<style>
+  .x { border-style: solid; border-color: #0071dc; border-width: 1px 4px 2px 8px; padding: 12px; }
+</style>
+<div class="x">1px 4px 2px 8px</div>
+```
+
 ## Xulosa
 
 - `border-top`, `border-right`, `border-bottom`, `border-left` — har bir tomon alohida.

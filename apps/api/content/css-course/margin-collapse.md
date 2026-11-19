@@ -66,6 +66,24 @@ ul {
 }
 ```
 
+```tekshir
+Ketma-ket ikki blokdan birinchisida `margin-bottom: 30px`, ikkinchisida `margin-top: 20px`. Oraliq qancha?
+- 50px
++ 30px
+- 20px
+> Vertikal marginlar qo‘shiladi (collapse): kattarog‘i qoladi.
+```
+
+```jonli
+<style>
+  .a { margin-bottom: 30px; background: #cde; }
+  .b { margin-top: 20px; background: #edc; }
+  div { padding: 6px; }
+</style>
+<div class="a">margin-bottom: 30px</div>
+<div class="b">margin-top: 20px → oraliq 30px</div>
+```
+
 ## Xulosa
 
 - Ustma-ust bloklarning vertikal marginlari qo‘shilib, kattarog‘i qoladi.

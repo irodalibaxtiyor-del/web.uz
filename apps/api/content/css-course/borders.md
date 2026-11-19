@@ -74,6 +74,24 @@ Tartib muhim emas, lekin odatda `qalinlik tur rang` tartibida yoziladi. Faqat `s
 
 Standart holda `width: 200px` va `border: 5px` bo‘lgan element ekranda **210px** kenglikni egallaydi. Bu “quti modeli” darsida batafsil tushuntiriladi.
 
+```tekshir
+`border: 3px red;` nega ko‘rinmaydi?
++ chegara uslubi (`solid`, `dashed` …) berilmagan
+- rang noto‘g‘ri yozilgan
+- qalinlik juda kichik
+> `border-style` ning standart qiymati `none`; uslubsiz chegara chizilmaydi.
+```
+
+```jonli
+<style>
+  p { padding: 8px; }
+</style>
+<p style="border: 3px red">uslubsiz — ko‘rinmaydi</p>
+<p style="border: 3px solid red">solid</p>
+<p style="border: 3px dashed teal">dashed</p>
+<p style="border: 4px double navy">double</p>
+```
+
 ## Xulosa
 
 - Chegara = tur + qalinlik + rang; `border-style` siz ko‘rinmaydi.

@@ -91,6 +91,24 @@ Har bir `<img>` da `alt` bo‘lishi shart:
 - ma’noli rasm — nima tasvirlanganini qisqa yozing;
 - faqat bezak — `alt=""` (bo‘sh), ekran o‘quvchi uni o‘tkazib yuboradi.
 
+```tekshir
+Rasm o‘z konteyneridan kengayib ketmasligi uchun asosiy qoida qaysi?
++ `img { max-width: 100%; height: auto; }`
+- `img { width: 1000px; }`
+- `img { overflow: hidden; }`
+> `max-width: 100%` rasmni konteynerga sig‘diradi, `height: auto` nisbatni saqlaydi.
+```
+
+```jonli
+<style>
+  img { display: inline-block; margin: 4px; }
+  .avatar { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; }
+  .bw { filter: grayscale(1); }
+</style>
+<img class="avatar" src="https://picsum.photos/200/300" alt="">
+<img class="bw" src="https://picsum.photos/150/90" alt="" width="150" height="90">
+```
+
 ## Xulosa
 
 - `img { display: block; max-width: 100%; height: auto; }`.

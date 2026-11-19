@@ -67,6 +67,23 @@ h3 {
 
 Xususiyat nomlari va ko‘pchilik qiymatlar registrga sezgir emas (`COLOR: RED` ham ishlaydi), lekin umumiy qabul qilingan uslub — **kichik harflar**. Klass va id nomlari esa registrga sezgir: `.Karta` va `.karta` — turli klasslar.
 
+```tekshir
+To‘g‘ri yozilgan CSS qoidasi qaysi?
++ `p { color: red; }`
+- `p ( color = red )`
+- `p: { color red }`
+> Qoida selektor va jingalak qavs ichidagi `xususiyat: qiymat;` e’lonlaridan iborat.
+```
+
+```jonli
+<style>
+  h2, p { color: teal; }
+  p { font-size: 18px; }
+</style>
+<h2>Sarlavha</h2>
+<p>Paragraf</p>
+```
+
 ## Xulosa
 
 - Qoida = selektor + `{ xususiyat: qiymat; }`.

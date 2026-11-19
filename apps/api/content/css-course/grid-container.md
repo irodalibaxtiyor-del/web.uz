@@ -87,6 +87,22 @@ Elementlar `grid-template-rows` da berilganidan ko‘p bo‘lsa, brauzer yangi q
 }
 ```
 
+```tekshir
+Media so‘rovsiz moslashuvchan kartochkalar to‘ri uchun qaysi yozuv?
++ `repeat(auto-fill, minmax(200px, 1fr))`
+- `repeat(3, 200px)`
+- `repeat(auto, 1fr)`
+> Sig‘ishiga qarab ustunlar soni avtomatik tanlanadi, har biri kamida 200px.
+```
+
+```jonli
+<style>
+  .g { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; }
+  .g div { background: #0071dc; color: white; height: 60px; display: grid; place-items: center; }
+</style>
+<div class="g"><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div></div>
+```
+
 ## Xulosa
 
 - `grid-template-columns` + `repeat()` + `minmax()`.

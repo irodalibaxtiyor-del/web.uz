@@ -89,6 +89,24 @@ Dropdown — bosilganda yoki ustiga kelinganda chiqadigan qo‘shimcha menyu.
 
 Menyu o‘ng chetdagi tugmada bo‘lsa, ekrandan chiqib ketishi mumkin. Unda `left: 0` o‘rniga `right: 0` bering.
 
+```tekshir
+Ochiluvchi menyu klaviatura bilan ham ochilishi uchun `:hover` bilan birga nima yoziladi?
++ `:focus-within`
+- `:active`
+- `:visited`
+> Ichidagi havola fokus olganda ota `:focus-within` holatiga o‘tadi.
+```
+
+```jonli
+<style>
+  .dd { position: relative; display: inline-block; }
+  .menu { display: none; position: absolute; top: 100%; left: 0; background: white; border: 1px solid #ccc; min-width: 140px; }
+  .menu a { display: block; padding: 8px; }
+  .dd:hover .menu, .dd:focus-within .menu { display: block; }
+</style>
+<div class="dd"><button>Kurslar ▾</button><div class="menu"><a href="#">HTML</a><a href="#">CSS</a><a href="#">JS</a></div></div>
+```
+
 ## Xulosa
 
 - Ota `relative`, menyu `absolute; top: 100%`.

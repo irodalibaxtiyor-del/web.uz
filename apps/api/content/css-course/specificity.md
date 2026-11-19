@@ -69,6 +69,23 @@ p {
 - Selektorlarni qisqa saqlang: maxsuslik past bo‘lsa, keyin qayta yozish oson.
 - Qoida ishlamasa, brauzerning DevTools vositasida qaysi qoida uni “bosib ketgani”ni ko‘ring (chizib tashlangan qatorlar).
 
+```tekshir
+Qaysi selektor eng kuchli (maxsusligi eng yuqori)?
++ `#menu a`
+- `.menu .link a`
+- `nav ul li a`
+> ID har qancha klass va tegdan kuchli: (1,0,1) > (0,2,1) > (0,0,4).
+```
+
+```jonli
+<style>
+  #menu a { color: crimson; }
+  .menu .link a { color: seagreen; }
+  nav ul li a { color: navy; }
+</style>
+<nav id="menu" class="menu"><ul><li class="link"><a href="#">Qaysi rang yutdi?</a></li></ul></nav>
+```
+
 ## Xulosa
 
 - Kaskad: muhimlik → maxsuslik → tartib.

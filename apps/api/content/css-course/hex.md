@@ -62,6 +62,20 @@ Sakkiz belgili yozuvda oxirgi juftlik — alfa (`00` — shaffof, `ff` — to‘
 
 > **Maslahat:** Saytdagi asosiy ranglarni bir joyga yozib qo‘ying (masalan, fayl boshidagi izohda yoki keyinroq o‘rganadigan CSS o‘zgaruvchilarida). Shunda bir xil ko‘kning o‘nta har xil varianti paydo bo‘lmaydi.
 
+```tekshir
+`#f80` qaysi to‘liq yozuvga teng?
++ `#ff8800`
+- `#f80000`
+- `#0f8080`
+> Qisqa HEX’da har belgi ikki marta takrorlanadi: f→ff, 8→88, 0→00.
+```
+
+```jonli
+<div style="background: #f80; padding: 10px">#f80</div>
+<div style="background: #ff8800; padding: 10px">#ff8800</div>
+<div style="background: #0071dc80; padding: 10px">#0071dc80 — yarim shaffof</div>
+```
+
 ## Xulosa
 
 - `#RRGGBB` — qizil, yashil, ko‘k ulushlari o‘n oltilik sanoqda.

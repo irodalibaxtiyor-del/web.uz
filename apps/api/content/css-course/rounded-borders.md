@@ -76,6 +76,23 @@ Har bir burchakning o‘z xususiyati ham bor: `border-top-left-radius`, `border-
 }
 ```
 
+```tekshir
+Kvadrat elementni doiraga aylantirish uchun nima yoziladi?
++ `border-radius: 50%`
+- `border-radius: 100px` (har qanday holatda)
+- `border-style: circle`
+> 50% har burchakni tomon uzunligining yarmicha yumaloqlaydi — kvadrat doiraga aylanadi.
+```
+
+```jonli
+<style>
+  div { width: 90px; height: 90px; background: teal; display: inline-block; margin: 6px; }
+</style>
+<div style="border-radius: 12px"></div>
+<div style="border-radius: 50%"></div>
+<div style="border-radius: 40px 0"></div>
+```
+
 ## Xulosa
 
 - `border-radius` burchaklarni yumaloqlaydi, chegarasiz ham ishlaydi.
