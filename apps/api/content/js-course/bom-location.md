@@ -102,3 +102,24 @@ navigator.userAgent  // brauzer haqida matn (ishonchsiz, oson soxtalashtiriladi)
 ## Mashq sahifasida
 
 Preview alohida, izolyatsiya qilingan muhitda ishlaydi: undagi `location` sizning sahifangiz manzili emas. Shuning uchun mashqda `new URL(...)` bilan berilgan manzillar tahlil qilinadi.
+
+```tekshir
+`new URLSearchParams('?kurs=js&bet=2').get('bet')` nima qaytaradi?
++ satr `'2'`
+- son `2`
+- `null`
+> So‘rov parametrlari har doim satr.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  const url = new URL('https://webdizayn.uz/kurslar?kurs=js&bet=2#top');
+  log(url.hostname, url.pathname, url.hash);
+  log(url.searchParams.get('kurs'), typeof url.searchParams.get('bet'));
+  url.searchParams.set('bet', '3');
+  log(url.href);
+</script>
+```

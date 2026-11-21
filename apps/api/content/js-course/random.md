@@ -76,3 +76,20 @@ Shuning uchun tasodifiy qismni alohida funksiyaga ajratish foydali.
 const massiv = new Uint32Array(1);
 crypto.getRandomValues(massiv);
 ```
+
+```tekshir
+1 dan 6 gacha (6 ham) tasodifiy butun son qaysi ifoda bilan olinadi?
++ `Math.floor(Math.random() * 6) + 1`
+- `Math.random() * 6`
+- `Math.round(Math.random() * 6)`
+> `Math.random()` 0 (kiradi) va 1 (kirmaydi) orasidagi kasr beradi.
+```
+
+```jonli
+<button id="b">Kubik tashlash</button> <b id="n"></b>
+<script>
+  document.getElementById('b').onclick = () => {
+    document.getElementById('n').textContent = Math.floor(Math.random() * 6) + 1;
+  };
+</script>
+```

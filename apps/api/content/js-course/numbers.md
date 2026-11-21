@@ -93,3 +93,23 @@ isNaN(son) // foydalanuvchi son yozmagan bo‘lsa — true
 ```
 
 `Number('')` → `0` ekanini unutmang: bo‘sh maydon xato emas, nol bo‘lib qoladi.
+
+```tekshir
+`0.1 + 0.2 === 0.3` natijasi nima?
+- `true`
++ `false`
+- `NaN`
+> Kasr sonlar ikkilik tizimda aniq saqlanmaydi: 0.1 + 0.2 = 0.30000000000000004.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  log(0.1 + 0.2);
+  log((0.1 + 0.2).toFixed(2));
+  log(Number('12abc'), Number.isNaN(NaN));
+  log(1 / 0);
+</script>
+```

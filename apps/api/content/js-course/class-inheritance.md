@@ -91,3 +91,28 @@ throw new TekshiruvXatosi('email', 'Email noto‘g‘ri');
 ```
 
 O‘z xato turlaringiz — `catch` da `instanceof` bilan ajratish uchun qulay.
+
+```tekshir
+Voris klass konstruktorida `this` ga murojaat qilishdan oldin nima chaqirilishi shart?
++ `super(...)`
+- `parent()`
+- `this.init()`
+> `super()` ota klass konstruktorini chaqiradi; usiz `this` hali tayyor emas.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  class Hayvon {
+    constructor(nom) { this.nom = nom; }
+    ovoz() { return '...'; }
+  }
+  class Mushuk extends Hayvon {
+    ovoz() { return this.nom + ': miyov'; }
+  }
+  const m = new Mushuk('Momiq');
+  log(m.ovoz(), m instanceof Hayvon);
+</script>
+```

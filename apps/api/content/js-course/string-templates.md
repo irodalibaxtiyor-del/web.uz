@@ -74,3 +74,24 @@ const soni = 7;
 | Oddiy, o‘zgarmas matn                   | `'...'`              |
 | Matn ichida qiymat yoki ifoda bor       | `` `...${x}...` ``   |
 | Ko‘p qatorli matn yoki HTML bo‘lagi     | `` `...` ``          |
+
+```tekshir
+Shablon satrda ifoda qanday qo‘yiladi?
++ `` `Narx: ${narx} so‘m` ``
+- `'Narx: ${narx} so‘m'`
+- `` `Narx: {narx} so‘m` ``
+> `${ }` faqat teskari tirnoq (backtick) ichida ishlaydi.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  const ism = 'Ali';
+  const narx = 25000;
+  log(`${ism} ${narx * 2} so‘m to‘ladi`);
+  log(`Ko‘p
+  qatorli matn`);
+</script>
+```

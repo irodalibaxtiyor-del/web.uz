@@ -81,3 +81,25 @@ Navbat bo‘sh bo‘lishi mumkin bo‘lsa, natijani tekshiring (shartlar — key
 ```js
 const keyingi = navbat.shift() ?? 'Navbat bo‘sh';
 ```
+
+```tekshir
+Qaysi metod asl massivni **o‘zgartirmaydi**?
+- `push`
+- `splice`
++ `slice`
+> `slice` nusxa qaytaradi; `push`, `pop`, `splice` esa asl massivni o‘zgartiradi.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  const a = [1, 2, 3, 4, 5];
+  const b = a.slice(1, 3);
+  log(a, b);
+  a.splice(1, 2);
+  log(a);
+  log([1, [2, [3]]].flat(Infinity));
+</script>
+```

@@ -93,3 +93,20 @@ window.onload = function () {
 ```
 
 Skript `<body>` oxirida bo‘lsa, elementlar allaqachon tayyor — odatda `onload` shart emas.
+
+```tekshir
+Input maydoniga har bir harf yozilganda qaysi hodisa ishlaydi?
++ `input`
+- `change`
+- `submit`
+> `change` maydon fokusdan chiqqanda (yoki tanlov o‘zgarganda) ishlaydi.
+```
+
+```jonli
+<input id="i" placeholder="Ismingiz"> <p id="p">Salom!</p>
+<script>
+  document.getElementById('i').addEventListener('input', (e) => {
+    document.getElementById('p').textContent = 'Salom, ' + e.target.value + '!';
+  });
+</script>
+```

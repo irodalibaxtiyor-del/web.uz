@@ -91,3 +91,25 @@ function boshHarflar(matn) {
 
 boshHarflar('olma, non, suv') // 'ONS'
 ```
+
+```tekshir
+Qaysilari iteratsiya qilinadigan (`for...of` bilan aylanadigan) obyektlar?
++ massiv
++ satr
++ `Map` va `Set`
+- oddiy obyekt `{}`
+> Oddiy obyekt iterable emas; uning uchun `Object.entries(obj)` ishlatiladi.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  function* sanoq(n) {
+    for (let i = 1; i <= n; i++) yield i;
+  }
+  log([...sanoq(5)]);
+  for (const [i, harf] of ['a', 'b'].entries()) log(i, harf);
+</script>
+```

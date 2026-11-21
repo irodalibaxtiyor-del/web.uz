@@ -76,3 +76,27 @@ document.getElementById('hisobla').onclick = function () {
 Har bosishda funksiya **yangidan** ishlaydi va `soni` yangi `const` bo‘lib yaratiladi — shuning uchun bu xato emas.
 
 `value` doim matn, lekin `*` operatori matnni songa aylantiradi: `'4' * 25000` → `100000`. (`+` bilan bunday emas — buni keyingi darsda ko‘ramiz.)
+
+```tekshir
+`const arr = [1, 2]; arr.push(3);` ishlaydimi?
++ ha — o‘zgarmas bog‘lanish, massivning ichi esa o‘zgarishi mumkin
+- yo‘q, `TypeError` beradi
+- ha, lekin `arr` yangi massivga aylanadi
+> `const` faqat qayta tayinlashni (`arr = …`) taqiqlaydi.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  const arr = [1, 2];
+  arr.push(3);
+  log(arr);
+  try {
+    arr = [];
+  } catch (e) {
+    log('Xato:', e.name);
+  }
+</script>
+```

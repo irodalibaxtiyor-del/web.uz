@@ -91,3 +91,23 @@ Oddiy tanlov uchun qulay. Murakkab mantiq uchun `if` ishlating — ichma-ich ter
 ```
 
 Standart qiymat berishda `0` yoki `''` haqiqiy qiymat bo‘lishi mumkin bo‘lsa, `??` to‘g‘riroq.
+
+```tekshir
+`5 == '5'` va `5 === '5'` natijalari?
++ `true` va `false`
+- ikkalasi `true`
+- ikkalasi `false`
+> `==` turlarni aylantiradi, `===` esa tur va qiymatni birga solishtiradi.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  log(5 == '5', 5 === '5');
+  log(0 || 10, 0 ?? 10);
+  const ball = 75;
+  log(ball >= 60 ? 'o‘tdi' : 'o‘tmadi');
+</script>
+```

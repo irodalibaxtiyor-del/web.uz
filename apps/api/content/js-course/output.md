@@ -63,3 +63,21 @@ document.getElementById('xabar').textContent = 'Jami: ' + 15000 * 3; // Jami: 45
 ```
 
 Ko‘paytirish qo‘shishdan oldin bajariladi, shuning uchun `'Jami: ' + 45000` hosil bo‘ladi.
+
+```tekshir
+Foydalanuvchi kiritgan matnni sahifaga xavfsiz chiqarish uchun qaysi xususiyat?
++ `textContent`
+- `innerHTML`
+- `document.write`
+> `innerHTML` matndagi teglarni HTML sifatida bajaradi (XSS xavfi), `textContent` esa oddiy matn qo‘yadi.
+```
+
+```jonli
+<p id="a"></p>
+<p id="b"></p>
+<script>
+  const matn = '<b>qalin</b>';
+  document.getElementById('a').textContent = matn; // teglar matn bo‘lib ko‘rinadi
+  document.getElementById('b').innerHTML = matn; // teg bajariladi
+</script>
+```

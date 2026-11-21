@@ -88,3 +88,25 @@ kurs.tahrirchi?.ism      // undefined — xato bermaydi
 ```
 
 `?.` (**optional chaining**) — oraliq qiymat yo‘q bo‘lsa, xato o‘rniga `undefined` qaytaradi. Usiz `kurs.tahrirchi.ism` `TypeError` berardi.
+
+```tekshir
+Obyektda xususiyat borligini qaysi ifoda to‘g‘ri tekshiradi?
++ `'ism' in obj`
++ `Object.hasOwn(obj, 'ism')`
+- `obj.ism == true`
+- `obj.has('ism')`
+> `obj.ism == true` qiymat `0` yoki `''` bo‘lsa noto‘g‘ri javob beradi.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  const kitob = { nomi: 'JS', bet: 0 };
+  log('bet' in kitob, Object.hasOwn(kitob, 'muallif'));
+  delete kitob.bet;
+  log(Object.keys(kitob).length);
+  log(kitob.muallif?.ism);
+</script>
+```

@@ -89,3 +89,21 @@ input.defaultValue;       // HTML’dagi value atributi
 select.value = 'css';     // tanlov
 checkbox.checked = true;
 ```
+
+```tekshir
+`<div data-narx="25000">` dagi qiymat JavaScript’da qanday o‘qiladi?
++ `el.dataset.narx`
+- `el.data.narx`
+- `el.narx`
+> `data-*` atributlari `dataset` obyektida; qiymat har doim satr.
+```
+
+```jonli
+<p id="m" data-narx="25000">Mahsulot</p>
+<button id="b" disabled>Sotib olish</button>
+<script>
+  const m = document.getElementById('m');
+  m.textContent += ': ' + Number(m.dataset.narx) * 2 + ' so‘m (2 dona)';
+  document.getElementById('b').disabled = false;
+</script>
+```

@@ -75,3 +75,24 @@ let kursNarxi = 450000;
 1. Konsolni oching (mashq sahifasida — **Konsol** paneli).
 2. Xato matnini o‘qing: `SyntaxError` — yozuv xatosi, `ReferenceError` — bunday nom yo‘q.
 3. Qator raqamiga qarang va o‘sha qatorni tekshiring: qo‘shtirnoqlar, qavslar, nomlarning yozilishi.
+
+```tekshir
+`ism` va `Ism` JavaScript’da bitta o‘zgaruvchimi?
+- ha, katta-kichik harf farq qilmaydi
++ yo‘q, ular ikki xil o‘zgaruvchi
+- faqat `const` bilan bir xil
+> JavaScript katta-kichik harfni farqlaydi.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  let ism = 'Ali';
+  let Ism = 'Vali';
+  log(ism, Ism);
+  let talabaYoshi = 19; // camelCase
+  log(talabaYoshi);
+</script>
+```

@@ -98,3 +98,25 @@ Array.prototype.oxirgi = function () { /* ... */ }; // yomon g‘oya
 ```
 
 Bu boshqa kutubxonalar bilan to‘qnashadi va tilning kelajakdagi metodlari bilan ziddiyatga kirishi mumkin. O‘z funksiyalaringizni alohida yozing.
+
+```tekshir
+Konstruktorning barcha nusxalari uchun umumiy metod qayerga yoziladi?
++ `Konstruktor.prototype` ga
+- har bir nusxaga alohida
+- `Object.prototype` ga
+> Prototipdagi metod xotirada bitta bo‘ladi va hamma nusxalar uni meros oladi.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  function Mashina(nom) { this.nom = nom; }
+  Mashina.prototype.yur = function () { return this.nom + ' yurdi'; };
+  const a = new Mashina('Nexia');
+  const b = new Mashina('Cobalt');
+  log(a.yur(), b.yur());
+  log(a.yur === b.yur);
+</script>
+```

@@ -85,3 +85,11 @@ return summa * (1 - CHEGIRMA);
 ## Linter
 
 **ESLint** kodni avtomatik tekshiradi: ishlatilmagan o‘zgaruvchilar, `==`, e’lonsiz nomlar. Jamoalarda uslub hujjatda yozilib, linter va formatlovchi bilan majburiy qilinadi — bahslar uchun vaqt ketmaydi.
+
+```tekshir
+“Sehrli son” muammosi qanday hal qilinadi?
++ songa ma’noli nomli konstanta berish (`const OTISH_BALI = 60`)
+- sonni izohsiz qoldirish
+- sonni satrga aylantirish
+> Nomli konstanta kodni tushunarli qiladi va bitta joyda o‘zgartiriladi.
+```

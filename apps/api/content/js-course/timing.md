@@ -88,3 +88,21 @@ Taymer esa brauzerga “nafas olish” imkonini beradi: ishlar orasida sahifa ja
 ## Animatsiya uchun
 
 Vizual animatsiyalar uchun `setInterval` o‘rniga `requestAnimationFrame` yaxshiroq — u ekran yangilanishi bilan sinxron ishlaydi (DOM modulida ko‘ramiz).
+
+```tekshir
+`setTimeout(f, 1000)` va `setTimeout(f(), 1000)` farqi nima?
++ birinchisi funksiyani 1 soniyadan keyin chaqiradi, ikkinchisi uni darhol chaqiradi
+- farqi yo‘q
+- ikkinchisi ikki marta chaqiradi
+> Taymerga funksiyaning o‘zi beriladi, uning natijasi emas.
+```
+
+```jonli
+<p>Soniya: <b id="s">0</b></p>
+<button id="t">To‘xtatish</button>
+<script>
+  let n = 0;
+  const id = setInterval(() => (document.getElementById('s').textContent = ++n), 1000);
+  document.getElementById('t').onclick = () => clearInterval(id);
+</script>
+```

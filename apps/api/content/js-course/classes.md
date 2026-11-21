@@ -97,3 +97,26 @@ Klass — JavaScript’dagi prototiplar ustidagi qulay sintaksis. Prototiplarni 
 - Klass ichidagi kod doim **qat’iy rejimda**.
 - Klass **ko‘tarilmaydi**: e’londan oldin `new Talaba()` — `ReferenceError`.
 - Klassni `new` siz chaqirib bo‘lmaydi: `Talaba('Ali')` — `TypeError`.
+
+```tekshir
+Klassda nusxa yaratilganda avtomatik chaqiriladigan metod qaysi?
++ `constructor`
+- `init`
+- `create`
+> `new Klass(...)` argumentlari `constructor` ga uzatiladi.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  class Talaba {
+    constructor(ism, ball) { this.ism = ism; this.ball = ball; }
+    otdimi() { return this.ball >= 60 ? 'ha' : 'yo‘q'; }
+  }
+  const t = new Talaba('Lola', 72);
+  log(t.ism, t.otdimi());
+  log(typeof Talaba);
+</script>
+```

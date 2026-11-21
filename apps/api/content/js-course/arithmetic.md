@@ -91,3 +91,26 @@ document.getElementById('hisobla').onclick = function () {
 ```
 
 `Number(...)` shart: `%` va `-` matnni o‘zi aylantirsa ham, kod aniq bo‘lishi va `+` ishlatilganda xato bo‘lmasligi uchun kiritmani doim avval songa aylantiring.
+
+```tekshir
+`17 % 5` natijasi nima?
+- 3
++ 2
+- 3.4
+> `%` bo‘lishdan qolgan qoldiqni beradi: 17 = 5·3 + 2.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  log(17 % 5);
+  log(2 ** 10);
+  log(7 / 2);
+  log(2 + 3 * 4, (2 + 3) * 4);
+  let n = 5;
+  n++;
+  log(n);
+</script>
+```

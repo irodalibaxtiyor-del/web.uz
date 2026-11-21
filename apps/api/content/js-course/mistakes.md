@@ -102,3 +102,25 @@ Kod noto‘g‘ri ishlasa, avval shularni tekshiring:
 4. Funksiya `return` qilyaptimi?
 5. Sikl chegarasi `<` mi?
 6. `this` kim?
+
+```tekshir
+`[1, 2] === [1, 2]` natijasi nima?
+- `true`
++ `false`
+- xato
+> Massiv va obyektlar havola bo‘yicha solishtiriladi: bu ikki xil massiv.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  log([1, 2] === [1, 2]);
+  const a = [1, 2];
+  const b = a;
+  log(a === b);
+  log(JSON.stringify([1, 2]) === JSON.stringify([1, 2]));
+  log('2' + 2, 0.1 + 0.2 === 0.3);
+</script>
+```

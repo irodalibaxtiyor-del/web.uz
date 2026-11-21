@@ -64,3 +64,11 @@ Kodda `debugger;` yozsangiz ham, DevTools ochiq bo‘lganda shu yerda to‘xtayd
 ## Tuzatgandan keyin
 
 `console.log` larni olib tashlang yoki kamaytiring — ishlab chiqarish kodida ular faqat shovqin.
+
+```tekshir
+Kodni ma’lum qatorda to‘xtatib, o‘zgaruvchilarni ko‘rish uchun kodga nima yoziladi?
++ `debugger;`
+- `stop;`
+- `pause();`
+> DevTools ochiq bo‘lsa, brauzer `debugger` qatorida to‘xtaydi.
+```

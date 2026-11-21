@@ -101,3 +101,27 @@ Oxirgi holat uchun obyekt ko‘pincha eng qisqa:
 const NOMLAR = { uz: 'O‘zbekcha', ru: 'Ruscha', en: 'Inglizcha' };
 const nom = NOMLAR[til] ?? 'Noma’lum';
 ```
+
+```tekshir
+`switch` da `break` yozilmasa nima bo‘ladi?
++ keyingi `case` lar ham bajarilib ketadi
+- sintaksis xatosi chiqadi
+- `switch` qayta boshlanadi
+> Bu “fall-through”; ba’zan ataylab bir nechta `case` ga bitta kod berish uchun ishlatiladi.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  function kun(n) {
+    switch (n) {
+      case 6: case 7: return 'dam olish';
+      case 1: return 'dushanba';
+      default: return 'ish kuni';
+    }
+  }
+  log(kun(1), kun(3), kun(7));
+</script>
+```

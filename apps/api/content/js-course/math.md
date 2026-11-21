@@ -97,3 +97,22 @@ chegarala(-5, 0, 100)  // 0
 ```
 
 Masalan, progress foizi 0 dan kichik yoki 100 dan katta bo‘lmasligi uchun.
+
+```tekshir
+`Math.round(2.5)` nimaga teng?
+- 2
++ 3
+- 2.5
+> `Math.round` yarimni yuqoriga yaxlitlaydi; `floor` — pastga, `ceil` — yuqoriga.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  log(Math.round(2.5), Math.floor(2.7), Math.ceil(2.1));
+  log(Math.max(3, 9, 1), Math.min(3, 9, 1));
+  log(Math.sqrt(16), Math.abs(-5), Math.PI.toFixed(3));
+</script>
+```

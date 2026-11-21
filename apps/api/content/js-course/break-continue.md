@@ -96,3 +96,24 @@ Bu ko‘pincha `break` + o‘zgaruvchidan toza.
 ```
 
 To‘xtatish kerak bo‘lsa — `for...of`, `some` yoki `find`.
+
+```tekshir
+Sikldagi joriy aylanishni o‘tkazib yuborib, keyingisiga o‘tish uchun nima yoziladi?
+- `break`
++ `continue`
+- `return` (sikl ichida har doim)
+> `break` siklni butunlay to‘xtatadi, `continue` faqat shu aylanishni.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  for (let i = 1; i <= 10; i++) {
+    if (i % 2 === 0) continue;
+    if (i > 7) break;
+    log(i);
+  }
+</script>
+```

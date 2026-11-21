@@ -89,3 +89,22 @@ qiymat.oninput = function () {
 | Holat o‘zgardi (faol, ochiq, xato)             | `classList`          |
 | Qiymat hisoblanadi (kenglik, koordinata)       | `style`              |
 | Mavzu yoki rang to‘plami                       | CSS o‘zgaruvchilari (`style.setProperty`) |
+
+```tekshir
+Element uslubini o‘zgartirishning tavsiya etilgan usuli qaysi?
++ `el.classList.toggle('faol')` — CSS klass bilan
+- har bir xususiyatni `el.style` ga yozish
+- `el.setAttribute('style', ...)` har safar
+> Uslub CSS’da qoladi, JavaScript faqat holat klassini almashtiradi.
+```
+
+```jonli
+<style>.faol { background: #0071dc; color: white; }</style>
+<p id="p">Bosing</p>
+<script>
+  const p = document.getElementById('p');
+  p.onclick = () => p.classList.toggle('faol');
+  p.style.padding = '8px';
+  p.style.cursor = 'pointer';
+</script>
+```

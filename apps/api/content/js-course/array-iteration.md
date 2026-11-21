@@ -120,3 +120,24 @@ function chiz() {
 ```
 
 > Bu yerda ismlar **o‘zimizning** ma’lumotimiz. Foydalanuvchi kiritgan matnni `innerHTML` ga qo‘yish xavfli — buni DOM modulida xavfsiz usul bilan (elementlar yaratib) qilamiz.
+
+```tekshir
+`[1, 2, 3].map((x) => x * 2)` nima qaytaradi?
++ `[2, 4, 6]`
+- `12`
+- `undefined`
+> `map` har elementni o‘zgartirib, shu uzunlikdagi yangi massiv qaytaradi.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  const ballar = [45, 90, 72, 60, 88];
+  log(ballar.map((b) => b + 5));
+  log(ballar.filter((b) => b >= 70));
+  log(ballar.reduce((s, b) => s + b, 0));
+  log(ballar.some((b) => b < 50), ballar.every((b) => b > 0));
+</script>
+```

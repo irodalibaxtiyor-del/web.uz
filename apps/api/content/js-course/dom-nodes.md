@@ -104,3 +104,23 @@ Har bir `append` da sahifa qayta hisoblanishi mumkin; fragment bilan bitta yakun
 ## Bo‘sh joylar
 
 `li.append(span, ' ', tugma)` dagi `' '` — matn tuguni: span va tugma orasida bo‘sh joy. CSS’da `gap` bilan hal qilish ham mumkin.
+
+```tekshir
+Yangi element yaratib, ro‘yxat oxiriga qo‘shishning to‘g‘ri ketma-ketligi qaysi?
++ `createElement` → `textContent` → `append`
+- `append` → `createElement`
+- `innerHTML += '<li>' + matn + '</li>'` (har doim xavfsiz)
+> `innerHTML` ga foydalanuvchi matnini qo‘shish XSS xavfini tug‘diradi.
+```
+
+```jonli
+<input id="i" value="Yangi vazifa"> <button id="b">Qo‘shish</button>
+<ul id="r"></ul>
+<script>
+  document.getElementById('b').onclick = () => {
+    const li = document.createElement('li');
+    li.textContent = document.getElementById('i').value;
+    document.getElementById('r').append(li);
+  };
+</script>
+```

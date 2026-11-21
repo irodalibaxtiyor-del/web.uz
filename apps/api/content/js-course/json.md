@@ -94,3 +94,28 @@ const kurslar = await javob.json(); // JSON.parse ni ichida qiladi
 ```
 
 `fetch` — asinxron modulda.
+
+```tekshir
+Obyektni JSON matnga aylantiradigan metod qaysi?
++ `JSON.stringify`
+- `JSON.parse`
+- `toString()`
+> `stringify` — obyektdan matnga, `parse` — matndan obyektga.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  const o = { ism: 'Ali', ballar: [90, 85] };
+  const matn = JSON.stringify(o);
+  log(matn, typeof matn);
+  log(JSON.parse(matn).ballar[1]);
+  try {
+    JSON.parse("{ism: 'Ali'}");
+  } catch (e) {
+    log('Buzilgan JSON:', e.name);
+  }
+</script>
+```

@@ -88,3 +88,23 @@ forma.reset(); // barcha maydonlarni tozalash
 ## Frontend tekshiruvi — xavfsizlik emas
 
 Brauzerdagi tekshiruv — **qulaylik**: foydalanuvchi xatoni darhol ko‘radi. Lekin JavaScript’ni o‘chirib yoki so‘rovni qo‘lda yuborib uni chetlab o‘tish mumkin. Server **doim** ma’lumotni qayta tekshiradi.
+
+```tekshir
+Forma yuborilganda sahifa qayta yuklanmasligi uchun nima qilinadi?
++ `submit` hodisasida `e.preventDefault()`
+- tugmaga `onclick` yozish yetarli
+- formadan `action` ni o‘chirish
+> Va baribir server tekshiruvi kerak — frontend tekshiruvi xavfsizlik emas.
+```
+
+```jonli
+<form id="f"><input name="email" type="email" required placeholder="Email"> <button>Yuborish</button></form>
+<p id="p"></p>
+<script>
+  document.getElementById('f').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const data = new FormData(e.target);
+    document.getElementById('p').textContent = 'Qabul qilindi: ' + data.get('email');
+  });
+</script>
+```

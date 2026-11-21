@@ -74,3 +74,27 @@ Hoisting’ga **tayanmang**:
 3. Funksiya e’lonlari (`function nom`) faylning istalgan joyida bo‘lishi mumkin, lekin ularni ishlatadigan kod bilan mantiqiy tartibda joylashtiring.
 
 Ko‘p loyihalarda tartib shunday: avval konstantalar va holat, keyin funksiyalar, oxirida hodisalarni ulash va boshlang‘ich chaqiruv.
+
+```tekshir
+E’londan oldin chaqirilgan `function salom() {…}` ishlaydimi?
++ ha — funksiya e’loni to‘liq ko‘tariladi
+- yo‘q — `ReferenceError`
+- yo‘q — `TypeError`
+> Funksiya e’loni ko‘tariladi, funksiya ifodasi (`const f = function…`) esa yo‘q.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  salom();
+  function salom() { log('E’lon ko‘tarildi'); }
+  try {
+    log(x);
+    let x = 1;
+  } catch (e) {
+    log('let:', e.name);
+  }
+</script>
+```

@@ -93,3 +93,22 @@ for (const qism of kiritma.split(',')) {
 - ikki ro‘yxatning umumiy yoki farqli qismlari.
 
 Tartib va indeks muhim bo‘lsa — massiv.
+
+```tekshir
+`new Set([1, 2, 2, 3]).size` nechaga teng?
+- 4
++ 3
+- 2
+> `Set` faqat noyob qiymatlarni saqlaydi.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  const s = new Set([1, 2, 2, 3, 3, 3]);
+  log(s.size, s.has(2));
+  log([...new Set(['js', 'css', 'js', 'html'])]);
+</script>
+```

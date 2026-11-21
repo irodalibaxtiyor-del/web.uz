@@ -102,3 +102,24 @@ const kutish = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 kutish(500).then(() => console.log('yarim soniya o‘tdi'));
 ```
+
+```tekshir
+`Promise.all([...])` qachon xato bilan tugaydi?
++ ichidagi promise’lardan bittasi xato bersa
+- hammasi xato bersagina
+- hech qachon
+> Hammasi muvaffaqiyatli bo‘lishi kerak; aks holda birinchi xato qaytadi.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  const kut = (ms, q) => new Promise((ok) => setTimeout(() => ok(q), ms));
+  kut(300, 'birinchi').then((v) => log(v));
+  Promise.all([kut(200, 'a'), kut(100, 'b')]).then((v) => log('hammasi:', v));
+  Promise.reject(new Error('xato')).catch((e) => log('ushlandi:', e.message));
+  log('sinxron kod avval');
+</script>
+```

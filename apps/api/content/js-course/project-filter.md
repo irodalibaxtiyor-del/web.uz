@@ -86,3 +86,24 @@ Bu — yopilma (closure) va taymerning amaliy birikmasi.
 ## Holatni URL’da saqlash
 
 Filtrlangan sahifani havola orqali ulashish uchun holatni `URLSearchParams` ga yozing (`history.replaceState`) va sahifa ochilganda o‘qing. Bu “location va history” darsidagi bilimlarni qo‘llash uchun yaxshi qo‘shimcha vazifa.
+
+```tekshir
+Katalog filtrida ro‘yxat qanday chiziladi?
++ asl ma’lumotdan filtrlangan hosila massiv olinib, ro‘yxat undan qayta chiziladi
+- har filtr bosilganda asl massivdan elementlar o‘chiriladi
+- elementlar faqat CSS bilan yashiriladi, ma’lumotga tegilmaydi
+> Asl ma’lumot o‘zgarmaydi — filtrni bekor qilish oson.
+```
+
+```jonli
+<input id="q" placeholder="Qidirish"> <ul id="r"></ul>
+<script>
+  const kurslar = ['HTML asoslari', 'CSS Grid', 'JavaScript', 'Bootstrap 5', 'CSS Flexbox'];
+  const r = document.getElementById('r');
+  function chiz(soz) {
+    r.replaceChildren(...kurslar.filter((k) => k.toLowerCase().includes(soz.toLowerCase())).map((k) => Object.assign(document.createElement('li'), { textContent: k })));
+  }
+  document.getElementById('q').oninput = (e) => chiz(e.target.value);
+  chiz('');
+</script>
+```

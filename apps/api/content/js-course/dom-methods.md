@@ -79,3 +79,20 @@ input.focus();       // kursorni qo‘yish
 | `hidden`            | Yashirish (`true`/`false`)      |
 
 Har birini keyingi darslarda ko‘ramiz.
+
+```tekshir
+`querySelector('.karta')` nima qaytaradi?
++ `karta` klassli birinchi elementni (yoki `null`)
+- barcha `karta` elementlar ro‘yxatini
+- har doim massivni
+> Hammasini olish uchun `querySelectorAll`.
+```
+
+```jonli
+<p class="karta">Birinchi</p>
+<p class="karta">Ikkinchi</p>
+<script>
+  document.querySelector('.karta').textContent += ' ← topildi';
+  document.querySelectorAll('.karta').forEach((k) => (k.style.color = 'teal'));
+</script>
+```

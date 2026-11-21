@@ -410,9 +410,10 @@ describe('course glossary', () => {
       for (const g of c.glossary) expect(g.definition.length).toBeGreaterThan(15);
     }
     expect(HTML.glossary?.length).toBeGreaterThanOrEqual(60);
-    expect(CONTENT_COURSES.find((c) => c.slug === 'css')?.glossary?.length).toBeGreaterThanOrEqual(
-      60,
-    );
+    for (const slug of ['css', 'js']) {
+      const course = CONTENT_COURSES.find((c) => c.slug === slug);
+      expect(course?.glossary?.length).toBeGreaterThanOrEqual(60);
+    }
   });
 
   it('a broken glossary entry fails the manifest', () => {

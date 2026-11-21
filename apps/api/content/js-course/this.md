@@ -90,3 +90,27 @@ const obj = {
 - Obyekt metodlari — oddiy metod sintaksisi `metod() {}`.
 - Metodni boshqa joyga **havola** sifatida bersangiz (`onclick`, `setTimeout`) — `bind` yoki o‘rab chaqiring.
 - Ichki callback’larda tashqi `this` kerak bo‘lsa — arrow funksiya.
+
+```tekshir
+Arrow funksiyada `this` qayerdan olinadi?
++ u yozilgan tashqi doiradan
+- chaqirgan obyektdan
+- har doim `window` dan
+> Arrow funksiyaning o‘z `this` i yo‘q.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  const obj = {
+    nom: 'obyekt',
+    oddiy() { return this.nom; },
+    ichida() { return [1].map(() => this.nom)[0]; },
+  };
+  log(obj.oddiy(), obj.ichida());
+  const f = obj.oddiy;
+  log(f());
+</script>
+```

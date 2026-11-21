@@ -79,3 +79,22 @@ for (const x of { a: 1 }) {} // TypeError: object is not iterable
 ```
 
 Oddiy obyekt iteratsiya qilinmaydi. `Object.keys`, `Object.values` yoki `Object.entries` ni aylaning.
+
+```tekshir
+Massiv qiymatlari bo‘ylab aylanish uchun qaysi sikl qulay?
++ `for...of`
+- `for...in`
+- `switch`
+> `for...of` qiymatlarni beradi, `for...in` esa kalitlarni (massivda — indeks satrlarini).
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  const sozlar = ['olma', 'anor', 'shaftoli'];
+  for (const s of sozlar) log(s.toUpperCase());
+  for (const harf of 'Salom') log(harf);
+</script>
+```

@@ -99,3 +99,24 @@ Konsolda esa obyekt to‘liq, ochiladigan ko‘rinishda chiqadi: `console.log(ta
 ## Hammasi obyekt?
 
 JavaScript’da deyarli hamma narsa obyekt bilan bog‘liq: massivlar, sanalar, funksiyalar, hatto `document` ham obyekt. `document.getElementById(...)` — `document` obyektining **metodi**. Metodlar — keyingi darslarda.
+
+```tekshir
+`talaba.ism` va `talaba['ism']` farqi nima?
++ natija bir xil; qavsli yozuv o‘zgaruvchidagi yoki maxsus belgili kalit uchun kerak
+- nuqtali yozuv faqat sonlar uchun
+- qavsli yozuv xususiyatni o‘chiradi
+> `obj[kalit]` da kalit nomi o‘zgaruvchidan olinishi mumkin.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  const talaba = { ism: 'Aziza', yosh: 19 };
+  talaba.kurs = 2;
+  const kalit = 'ism';
+  log(talaba[kalit], talaba.yosh);
+  log(talaba);
+</script>
+```

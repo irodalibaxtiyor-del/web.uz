@@ -96,3 +96,22 @@ Mashq sahifasidagi preview cheksiz siklni bir necha soniyadan keyin to‘xtatadi
 - indeks kerak bo‘lsa.
 
 Massiv elementlari uchun indeks kerak bo‘lmasa, `for...of` qisqaroq — keyingi darslarda.
+
+```tekshir
+`for (let i = 0; i < 3; i++)` necha marta aylanadi?
+- 2
++ 3
+- 4
+> `i` 0, 1, 2 qiymatlarni oladi; 3 da shart yolg‘on bo‘ladi.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  for (let i = 1; i <= 5; i++) {
+    log('7 × ' + i + ' = ' + 7 * i);
+  }
+</script>
+```

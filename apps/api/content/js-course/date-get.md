@@ -82,3 +82,23 @@ function sanaOqi(qiymat) {
 
 const d = sanaOqi(document.getElementById('sana').value);
 ```
+
+```tekshir
+`getDay()` nima qaytaradi?
++ hafta kuni raqami (0 — yakshanba)
+- oyning kuni
+- yil kuni
+> Oyning kuni uchun `getDate()` ishlatiladi.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  const kunlar = ['yakshanba', 'dushanba', 'seshanba', 'chorshanba', 'payshanba', 'juma', 'shanba'];
+  const d = new Date(2026, 10, 19);
+  log(d.getDate(), kunlar[d.getDay()]);
+  log(String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'));
+</script>
+```

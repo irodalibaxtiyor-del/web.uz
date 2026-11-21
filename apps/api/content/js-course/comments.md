@@ -61,3 +61,24 @@ let soni = 0; // savat har safar sahifa ochilganda bo‘shdan boshlanadi
 ```
 
 Eskirgan izoh izohsiz koddan ham yomon: kodni o‘zgartirsangiz, izohni ham yangilang.
+
+```tekshir
+JavaScript’da ko‘p qatorli izoh qanday yoziladi?
++ `/* ... */`
+- `<!-- ... -->`
+- `## ...`
+> Bir qatorli izoh `//`, ko‘p qatorli — `/* … */`.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  // Bu qator bajarilmaydi
+  /* Bu ham
+     bajarilmaydi */
+  log('Faqat shu chiqadi');
+  // log('Vaqtincha o‘chirilgan');
+</script>
+```

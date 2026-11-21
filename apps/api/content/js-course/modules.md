@@ -111,3 +111,11 @@ js/
 ```
 
 Mantiq (`savat.js`) va ko‘rinish (`korinish.js`) ajratilsa, mantiqni brauzersiz sinash ham oson bo‘ladi.
+
+```tekshir
+Modulni HTML’da ulash uchun nima yoziladi?
++ `<script type="module" src="app.js"></script>`
+- `<script module src="app.js">`
+- `<import src="app.js">`
+> Modullar avtomatik qat’iy rejimda va `defer` kabi ishlaydi.
+```

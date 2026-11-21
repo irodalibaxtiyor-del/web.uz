@@ -103,3 +103,23 @@ function formatla(son) {
 - klaviaturadan kiritish (`keydown`: raqamlar, `Enter`, `Backspace`);
 - `%` va `±` tugmalari;
 - hisoblar tarixi.
+
+```tekshir
+Kalkulyatorda nega `eval()` ishlatilmaydi?
++ u ixtiyoriy kodni bajaradi — xavfli va xatolarni nazorat qilish qiyin
+- u faqat butun sonlar bilan ishlaydi
+- u brauzerda mavjud emas
+> Ifodani o‘zingiz hisoblash xavfsiz va har bir amalni nazorat qilish imkonini beradi.
+```
+
+```jonli
+<input id="a" type="number" value="12"> <select id="o"><option>+</option><option>-</option><option>×</option><option>÷</option></select> <input id="b" type="number" value="4"> <button id="h">=</button> <b id="n"></b>
+<script>
+  const amal = { '+': (a, b) => a + b, '-': (a, b) => a - b, '×': (a, b) => a * b, '÷': (a, b) => (b === 0 ? 'Xato' : a / b) };
+  document.getElementById('h').onclick = () => {
+    const a = Number(document.getElementById('a').value);
+    const b = Number(document.getElementById('b').value);
+    document.getElementById('n').textContent = amal[document.getElementById('o').value](a, b);
+  };
+</script>
+```

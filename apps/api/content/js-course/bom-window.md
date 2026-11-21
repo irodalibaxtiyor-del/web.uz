@@ -94,3 +94,21 @@ window.scrollTo({ top: 0, behavior: 'smooth' }); // tepaga
 window.scrollY // qancha pastga tushilgan
 el.scrollIntoView({ behavior: 'smooth' });
 ```
+
+```tekshir
+Brauzer oynasining ichki kengligi qayerdan olinadi?
++ `window.innerWidth`
+- `screen.width` (har doim)
+- `document.width`
+> `screen.width` butun ekran o‘lchami, oyna emas.
+```
+
+```jonli
+<p id="p"></p>
+<script>
+  const p = document.getElementById('p');
+  const yangila = () => (p.textContent = 'Oyna: ' + innerWidth + ' × ' + innerHeight + (matchMedia('(min-width: 600px)').matches ? ' (keng)' : ' (tor)'));
+  yangila();
+  addEventListener('resize', yangila);
+</script>
+```

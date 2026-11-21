@@ -85,3 +85,23 @@ const b = new Date(a); // mustaqil nusxa
 ```
 
 `const b = a;` yozsangiz, ikkalasi **bitta** obyekt bo‘ladi — `b` ni o‘zgartirish `a` ni ham o‘zgartiradi.
+
+```tekshir
+`new Date(2026, 0, 15)` qaysi sana?
++ 2026-yil 15-yanvar
+- 2026-yil 15-fevral
+- 2026-yil 0-oy (xato)
+> Oylar 0 dan sanaladi: 0 — yanvar, 11 — dekabr.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  const d = new Date(2026, 0, 15);
+  log(d.getFullYear(), d.getMonth(), d.getDate());
+  const farq = new Date(2026, 0, 20) - d;
+  log(farq / 86400000 + ' kun');
+</script>
+```

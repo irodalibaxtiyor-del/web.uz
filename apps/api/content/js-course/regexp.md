@@ -100,3 +100,23 @@ const r = new RegExp(soz, 'gi');
 ## Me’yorida
 
 Muntazam ifodalar kuchli, lekin murakkablari o‘qib bo‘lmaydigan bo‘ladi. Oddiy vazifalar uchun (`startsWith`, `includes`, `split`) satr metodlari tushunarliroq.
+
+```tekshir
+`/^\d{3}$/` qaysi satrga mos keladi?
++ `'123'`
+- `'12a'`
+- `'1234'`
+> `^` va `$` — boshi va oxiri, `\d{3}` — aynan 3 ta raqam.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  const tel = /^\+998\d{9}$/;
+  log(tel.test('+998901234567'), tel.test('901234567'));
+  log('Salom   dunyo !'.replace(/\s+/g, ' '));
+  log('2026-11-19'.match(/(\d+)-(\d+)-(\d+)/).slice(1));
+</script>
+```

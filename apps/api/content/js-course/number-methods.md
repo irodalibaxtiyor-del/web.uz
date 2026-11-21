@@ -89,3 +89,23 @@ function somga(dollar) {
 somga(10)   // '126500.00'
 somga(2.5)  // '31625.00'
 ```
+
+```tekshir
+`(3.14159).toFixed(2)` qanday qiymat qaytaradi?
++ satr `'3.14'`
+- son `3.14`
+- son `3`
+> `toFixed` har doim satr qaytaradi; hisobni davom ettirish uchun uni songa aylantiring.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  const n = 3.14159;
+  log(n.toFixed(2), typeof n.toFixed(2));
+  log(parseInt('42px'), parseFloat('3.5kg'), Number('3.5kg'));
+  log((255).toString(16));
+</script>
+```

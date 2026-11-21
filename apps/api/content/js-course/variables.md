@@ -89,3 +89,25 @@ Nom qiymatning **ma’nosini** aytsin. Bitta harfli nomlar faqat juda qisqa sikl
 let $tugma = document.getElementById('saqlash');
 let _ichkiHisob = 0;
 ```
+
+```tekshir
+Zamonaviy kodda o‘zgaruvchi e’lon qilish uchun asosan qaysilari ishlatiladi?
++ `let`
++ `const`
+- `var`
+- `variable`
+> `var` eski usul; `let` va `const` blok doirasiga ega va xatolarni kamaytiradi.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  let ism = 'Lola';
+  let yosh = 20;
+  log(ism + ' ' + yosh + ' yoshda');
+  yosh = yosh + 1;
+  log('Keyingi yil:', yosh);
+</script>
+```

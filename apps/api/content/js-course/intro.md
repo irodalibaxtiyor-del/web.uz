@@ -69,3 +69,21 @@ Har darsda **mashq** bor. Mashq sahifasida:
 - **Tekshirish (CHECK)** — server kodingizni haqiqiy brauzerda sinaydi. U sahifadagi **natijani** tekshiradi, shuning uchun javobni doim sahifaga (`textContent` orqali) yozing.
 
 > Tekshiruv ba’zan kodingizni boshqa qiymatlar bilan ham sinaydi. Shuning uchun javobni qo‘lda yozib qo‘ymang — uni kod hisoblasin.
+
+```tekshir
+JavaScript sahifada nima qila oladi?
++ HTML mazmunini va CSS uslublarini o‘zgartirish
++ foydalanuvchi harakatlariga (bosish, yozish) javob berish
+- sahifaning server kodini o‘qish
+> JavaScript brauzerda ishlaydi va sahifani “jonlantiradi”; serverdagi kod unga ko‘rinmaydi.
+```
+
+```jonli
+<p id="matn">Salom!</p>
+<button id="b">Bosing</button>
+<script>
+  document.getElementById('b').addEventListener('click', () => {
+    document.getElementById('matn').textContent = 'JavaScript matnni o‘zgartirdi!';
+  });
+</script>
+```

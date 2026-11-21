@@ -58,7 +58,7 @@ Oldingi sessiyalar (2026-10-08 … 2026-10-27): [docs/ISH_JURNALI_ARXIV.md](docs
 
 ## Joriy holat (qisqacha)
 
-- **Bajarilgan:** roadmap fazalari F0–F2, 11–15C; kurslar HTML, CSS, JS, PHP, Bootstrap 3/4/5, Moslashuvchan dizayn, UI asoslari, Figma'dan kodga, Portfolio; guruhlar, o'qituvchi/talaba hisoblari va Excel; 8 band (dizayn, responsivlik, app-shell, kabinet menyusi, yo'nalishlar, slug, elektron darslik, chatbot); Loms dizayni qaytarilgan; 8 xil test turi; ilmiy modul (formativ fikr, kirish/yakuniy test, tajriba va nazorat guruhlari statistikasi, so'rovnomalar va Cronbach α, savollar tahlili, vaqt sarfi, normallik va parametrik bo'lmagan mezonlar); "Muallif kitoblari" va kitob ichidan qidiruv; 407 ta dars testi va 485 ta mashq mini-testi (izohlar bilan, `db:sync:quizzes`); darsdagi interaktiv bloklar (`tekshir`/`jonli`/`yechim`, `db:sync:lessons`) — HTML (60 dars) va CSS (101 dars); atamalar lug'ati va oraliqli takrorlash (SM-2, `db:sync:glossary`) — HTML 91 va CSS 108 atama; sertifikatlar (ochiq tekshirish sahifasi bilan) va Telegram xabarnomalari (bot sozlansa).
+- **Bajarilgan:** roadmap fazalari F0–F2, 11–15C; kurslar HTML, CSS, JS, PHP, Bootstrap 3/4/5, Moslashuvchan dizayn, UI asoslari, Figma'dan kodga, Portfolio; guruhlar, o'qituvchi/talaba hisoblari va Excel; 8 band (dizayn, responsivlik, app-shell, kabinet menyusi, yo'nalishlar, slug, elektron darslik, chatbot); Loms dizayni qaytarilgan; 8 xil test turi; ilmiy modul (formativ fikr, kirish/yakuniy test, tajriba va nazorat guruhlari statistikasi, so'rovnomalar va Cronbach α, savollar tahlili, vaqt sarfi, normallik va parametrik bo'lmagan mezonlar); "Muallif kitoblari" va kitob ichidan qidiruv; 407 ta dars testi va 485 ta mashq mini-testi (izohlar bilan, `db:sync:quizzes`); darsdagi interaktiv bloklar (`tekshir`/`jonli`/`yechim`, `db:sync:lessons`) — HTML (60 dars), CSS (101) va JS (97); atamalar lug'ati va oraliqli takrorlash (SM-2, `db:sync:glossary`) — HTML 91, CSS 108 va JS 125 atama; sertifikatlar (ochiq tekshirish sahifasi bilan) va Telegram xabarnomalari (bot sozlansa).
 - **Muhim qoidalar (arxivdan):**
   - Tranzaksiya ichida faqat `tx` ishlatilsin (aks holda PGlite deadlock).
   - Postgres `jsonb` kalitlar tartibini saqlamaydi — taqqoslashda kanonik JSON.
@@ -67,7 +67,7 @@ Oldingi sessiyalar (2026-10-08 … 2026-10-27): [docs/ISH_JURNALI_ARXIV.md](docs
   - Talabalar ro'yxati (shaxsiy ma'lumot) repoga yozilmaydi (`apps/api/.data/` gitignore'da); repo public.
   - Git Bash: URL yo'llari uchun `MSYS_NO_PATHCONV=1`; murakkab matnli heredoc o'rniga fayl + node skript.
 - **Ochiq (infratuzilma):** haqiqiy Telegram bot (token, webhook); Ubuntu'dagi CI E2E, Docker/haqiqiy Postgres/sandbox domeni/edge proksi/backup tekshiruvi, haqiqiy AI provayder (DPA), SMTP, Safari va haqiqiy qurilmalar, Lighthouse qayta o'lchovi.
-- **Ochiq (reja):** qolgan kurslarga (JS, Bootstrap 3/4/5, RWD, UI, Figma, Portfolio, PHP) interaktiv bloklar va lug'at.
+- **Ochiq (reja):** qolgan kurslarga (Bootstrap 3/4/5, RWD, UI, Figma, Portfolio, PHP) interaktiv bloklar va lug'at.
 
 ## 2026-11-14
 
@@ -439,3 +439,16 @@ Oldingi sessiyalar (2026-10-08 … 2026-10-27): [docs/ISH_JURNALI_ARXIV.md](docs
 - Nusxa bazada `db:sync:lessons css` (101 yangilandi, takroriy — 0) va `db:sync:glossary css` (+108). Brauzer tekshiruvi (scratchpad `css-check.cjs`) **23/23**, xatolar 0: 93 ta jonli misolning har biri Chrome'da alohida xatosiz render qilinadi; darsda tekshiruv bloki (xato → "Hali emas", to'g'ri → izoh), jonli misol CSS'ni qo'llaydi va tahrirlangan rang darhol o'zgaradi; lug'at sahifasida 108 atama, qidiruv (katta harf bilan), 1440 light va 390 dark — gorizontal scroll yo'q. Nusxa o'chirildi. Keyin demo bazaga ham sync qilindi.
 - Regressiya: format ✅, typecheck ✅, lint ✅, test ✅ (shared 130 + libs 3 + sandbox 16 + web 67 + check-engine 23 + api 522 = **761**).
 - Qolgan: JS, Bootstrap 3/4/5, RWD, UI, Figma, Portfolio, PHP.
+
+## 2026-11-21
+
+### Kamchilik: JavaScript kursiga interaktiv bloklar va lug'at
+
+- 2026-11-19 da boshlangan, foydalanuvchi "ishni to'xtat" degan joydan davom ettirildi ("claude.md da kelgan joyidan davom et").
+- `apps/api/content/js-course/*.md`: **97 ta darsning** hammasiga ` ```tekshir ` va **89 tasiga** ` ```jonli ` misol. JS darslarining ko'pida `## Xulosa` yo'q — blok shunday darslarda fayl oxiriga qo'yildi (`stripLessonBlocks` natijani `trim` qiladi, shuning uchun sync baribir o'qituvchi tahrirlamagan darsni taniydi). Jonli misollarda konsol ko'rinmagani uchun `log()` yordamchisi natijani sahifaga (`<pre id="out">`) chiqaradi; DOM darslarida tugma, forma, delegatsiya va animatsiya misollari. Sandbox (`allow-scripts`, boshqa origin) ichida ishlamaydiganlar — cookie, `localStorage`, `fetch`, modullar — faqat savol bilan.
+- Savol matni ichidagi kod bloki ` ```tekshir ` blokini erta yopib qo'yishi aniqlandi (`if-else`, `hoisting`) — savollar bir qatorli inline kodga o'tkazildi.
+- 89 ta jonli misolning hammasi Chrome'da platformadagidek `sandbox="allow-scripts"` iframe ichida ishga tushirildi (scratchpad `run-live.cjs`): skript xatosi 0, natijalar ko'zdan kechirildi va savollardagi "nima chiqaradi" kalitlari bilan solishtirildi (`'5' + 3` → `53`, `[10, 9, 1].sort()` → `[1,10,9]`, `Number('')` → `0`, `Math.round(2.5)` → `3` va h.k.). Yagona "bo'sh" natija — `dom-animations` (matnsiz harakatlanuvchi kvadrat, kutilgan).
+- `src/db/content/js/glossary.ts`: **125 ta atama**, darslarga bog'langan; metod va funksiyalar `()` bilan yoziladi (`Map` va `map()` katta-kichik harfsiz kalitda to'qnashmasligi uchun). Registry'ga ulandi; `content-courses.test.ts` CSS va JS lug'atlari hajmini tekshiradi.
+- Nusxa bazada `db:sync:lessons js` (97 yangilandi, takroriy — 0) va `db:sync:glossary js` (+125). Brauzer tekshiruvi (scratchpad `js-check.cjs`, 1440 light va 390 dark) **22/22**, xatolar 0: bir nechta javobli savolda faqat bitta to'g'ri variant — "Hali emas", ikkalasi — to'g'ri va izoh; jonli misol tugma bosilishiga javob beradi, tahrirlangan skript ishlaydi; lug'atda 125 atama, "MAP" qidiruvi `Map` va `map()` ni topadi; gorizontal scroll yo'q. Nusxa o'chirildi, keyin demo bazaga ham sync qilindi.
+- Regressiya: format ✅, typecheck ✅, lint ✅, test ✅ (shared 130 + libs 3 + sandbox 16 + web 67 + check-engine 23 + api 522 = **761**). Birinchi `pnpm -r test` da `check-engine` ning "stuck run → TIMEOUT" testi yiqildi; alohida ishga tushirilganda 23/23 (avvalgi vaqtga bog'liq kuzatuvlar bilan bir xil).
+- Qolgan: Bootstrap 3/4/5, RWD, UI, Figma, Portfolio, PHP.

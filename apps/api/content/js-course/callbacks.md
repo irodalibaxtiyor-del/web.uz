@@ -83,3 +83,25 @@ foydalanuvchiOl(id, (x1, f) => {
 ```
 
 Kod o‘ngga “siljib” ketadi va xatolarni boshqarish qiyinlashadi. Bu muammoni **Promise** va **async/await** hal qiladi — keyingi darslar.
+
+```tekshir
+Callback nima?
++ boshqa funksiyaga argument sifatida berilib, keyinroq chaqiriladigan funksiya
+- har doim asinxron funksiya
+- funksiyaning qaytaradigan qiymati
+> Masalan, `addEventListener` va `forEach` ga beriladigan funksiyalar.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  function harBiri(arr, fn) {
+    for (const x of arr) fn(x);
+  }
+  harBiri([1, 2, 3], (x) => log(x * 10));
+  setTimeout(() => log('keyinroq'), 300);
+  log('avval');
+</script>
+```

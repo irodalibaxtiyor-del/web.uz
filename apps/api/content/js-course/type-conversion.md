@@ -95,3 +95,22 @@ if (Number.isNaN(n)) {
   // son emas — foydalanuvchiga xabar
 }
 ```
+
+```tekshir
+`Number('')` nima qaytaradi?
++ `0`
+- `NaN`
+- `''`
+> Bo‘sh satr songa aylantirilganda 0 bo‘ladi — input bo‘shligini alohida tekshiring.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  log(Number(''), Number(' 42 '), Number('4 2'));
+  log(String(123) + 1, Number('123') + 1);
+  log('3' * '4', true + 1);
+</script>
+```

@@ -72,3 +72,23 @@ Ba’zi so‘zlar til uchun band qilingan va ularni nom sifatida ishlatib bo‘l
 | `return`    | Funksiyadan qiymat qaytarish              |
 
 Ularning har birini keyingi darslarda batafsil o‘rganamiz.
+
+```tekshir
+JavaScript’da buyruqlar odatda nima bilan ajratiladi?
++ nuqtali vergul `;`
+- vergul `,`
+- ikki nuqta `:`
+> Nuqtali vergul ko‘pincha avtomatik qo‘yiladi, lekin uni har doim yozish xatolardan saqlaydi.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  let a = 5;
+  let b = 7;
+  let c = a + b;
+  log('Natija:', c);
+</script>
+```

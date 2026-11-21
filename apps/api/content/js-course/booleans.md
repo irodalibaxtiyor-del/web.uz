@@ -85,3 +85,24 @@ Boolean(b) // true — obyekt doim truthy
 ```js
 document.getElementById('holat').textContent = otdi ? 'O‘tdi' : 'O‘tmadi';
 ```
+
+```tekshir
+Qaysi qiymatlar “falsy” (shartda `false` ga teng)?
++ `0`
++ `''` (bo‘sh satr)
++ `null`
+- `'0'`
+- `[]`
+> Falsy: `false`, `0`, `''`, `null`, `undefined`, `NaN`. Bo‘sh massiv va `'0'` — truthy.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  log(Boolean(0), Boolean(''), Boolean(null), Boolean(NaN));
+  log(Boolean('0'), Boolean([]), Boolean({}));
+  log(!!'salom');
+</script>
+```

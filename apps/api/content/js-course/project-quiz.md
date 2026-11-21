@@ -98,3 +98,31 @@ keyingi.addEventListener('click', () => {
 - savollar va variantlarni aralashtirish (Fisher–Yates);
 - vaqt chegarasi (`setInterval` bilan taymer);
 - noto‘g‘ri javoblar ro‘yxatini oxirida ko‘rsatish.
+
+```tekshir
+Test ilovasida “holat” (state) nimalardan iborat bo‘lishi mumkin?
++ joriy savol raqami
++ to‘g‘ri javoblar soni
+- savollar matnining CSS rangi
+> Holat — ekranni chizish uchun kerak bo‘lgan o‘zgaruvchan ma’lumot.
+```
+
+```jonli
+<p id="s"></p><div id="v"></div><p id="n"></p>
+<script>
+  const savollar = [{ s: '2 + 2?', v: ['3', '4'], t: 1 }, { s: 'HTML nima?', v: ['belgilash tili', 'dasturlash tili'], t: 0 }];
+  let i = 0, togri = 0;
+  function chiz() {
+    const v = document.getElementById('v');
+    if (i === savollar.length) {
+      document.getElementById('s').textContent = '';
+      v.replaceChildren();
+      document.getElementById('n').textContent = `Natija: ${togri}/${savollar.length}`;
+      return;
+    }
+    document.getElementById('s').textContent = savollar[i].s;
+    v.replaceChildren(...savollar[i].v.map((t, j) => Object.assign(document.createElement('button'), { textContent: t, onclick: () => { if (j === savollar[i].t) togri++; i++; chiz(); } })));
+  }
+  chiz();
+</script>
+```

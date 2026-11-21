@@ -18,6 +18,7 @@ import { HTML_COURSE, HTML_MODULES } from './html/manifest';
 import { HTML_LESSON_QUIZZES } from './html/lesson-quizzes';
 import { HTML_MINI_QUIZZES } from './html/mini-quizzes';
 import { HTML_SOLUTIONS } from './html/solutions';
+import { JS_GLOSSARY } from './js/glossary';
 import { JS_COURSE, JS_MODULES } from './js/manifest';
 import { JS_LESSON_QUIZZES } from './js/lesson-quizzes';
 import { JS_MINI_QUIZZES } from './js/mini-quizzes';
@@ -69,6 +70,7 @@ export const CONTENT_COURSES: CourseDef[] = [
     ...JS_COURSE,
     modules: withQuizzes(JS_MODULES, { lesson: JS_LESSON_QUIZZES, mini: JS_MINI_QUIZZES }),
     solutions: JS_SOLUTIONS,
+    glossary: JS_GLOSSARY,
   },
   {
     ...PORTFOLIO_COURSE,

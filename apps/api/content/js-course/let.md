@@ -80,3 +80,25 @@ document.getElementById('plus').onclick = function () {
 | Qayta tayinlash          | mumkin       | mumkin            |
 | Doira                    | funksiya     | **blok** `{ }`    |
 | E’londan oldin o‘qish    | `undefined`  | **ReferenceError** |
+
+```tekshir
+`let` bilan e’lon qilingan o‘zgaruvchi `{ }` blokdan tashqarida ko‘rinadimi?
+- ha, har doim
++ yo‘q, u faqat blok ichida mavjud
+- faqat funksiya ichida bo‘lsa
+> `let` blok doirasiga ega.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  let x = 1;
+  {
+    let x = 2;
+    log('blok ichida:', x);
+  }
+  log('blokdan tashqarida:', x);
+</script>
+```

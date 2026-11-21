@@ -103,3 +103,24 @@ const login = '  Ali.VALIYEV  '.trim().toLowerCase(); // 'ali.valiyev'
 | `split(ajratgich)`    | Massivga bo‘ladi                  |
 | `padStart(n, belgi)`  | Boshidan to‘ldiradi               |
 | `repeat(n)`           | `n` marta takrorlaydi             |
+
+```tekshir
+`'  Salom  '.trim()` nima qaytaradi?
++ `'Salom'`
+- `'  Salom'`
+- `'salom'`
+> `trim()` boshidagi va oxiridagi bo‘sh joylarni olib tashlaydi; asl satr o‘zgarmaydi.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  const s = '  Toshkent shahri  ';
+  log(s.trim().toUpperCase());
+  log(s.trim().slice(0, 8));
+  log('a,b,c'.split(','));
+  log('7'.padStart(3, '0'));
+</script>
+```

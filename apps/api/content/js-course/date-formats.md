@@ -83,6 +83,27 @@ d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }
 
 Natija brauzer va tizimga bog‘liq bo‘lishi mumkin, shuning uchun muhim joylarda o‘zingiz formatlang.
 
+```tekshir
+Sanani serverga yuborish yoki saqlash uchun qaysi format tavsiya etiladi?
++ ISO: `'2026-03-08'`
+- `'08.03.2026'`
+- `'8-mart'`
+> ISO format hamma tizimda bir xil tushuniladi; ko‘rsatishda esa mahalliy formatga o‘tkaziladi.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  const [y, m, d] = '2026-03-08'.split('-').map(Number);
+  const sana = new Date(y, m - 1, d);
+  const oylar = ['yanvar', 'fevral', 'mart'];
+  log(`${sana.getDate()}-${oylar[sana.getMonth()]}`);
+  log(String(d).padStart(2, '0') + '.' + String(m).padStart(2, '0') + '.' + y);
+</script>
+```
+
 ## Xulosa
 
 | Vazifa                              | Usul                                   |

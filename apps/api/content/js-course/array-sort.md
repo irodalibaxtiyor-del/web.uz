@@ -102,3 +102,23 @@ Math.min(...sonlar) // 3
 ```
 
 `...` massivni alohida argumentlarga yoyadi. Faqat eng kattasi kerak bo‘lsa, saralashdan tezroq.
+
+```tekshir
+`[10, 9, 1].sort()` nima qaytaradi?
++ `[1, 10, 9]`
+- `[1, 9, 10]`
+- `[10, 9, 1]`
+> Standart `sort` elementlarni satr sifatida solishtiradi; sonlar uchun `(a, b) => a - b` bering.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  log([10, 9, 1].sort());
+  log([10, 9, 1].sort((a, b) => a - b));
+  const t = [{ i: 'Ali', b: 80 }, { i: 'Lola', b: 95 }];
+  log(t.toSorted((x, y) => y.b - x.b).map((x) => x.i));
+</script>
+```

@@ -95,3 +95,22 @@ kiritmaTuri('   ')   // 'bo‘sh'
 ```
 
 `isNaN('42')` — `false` (`'42'` songa aylanadi). Bo‘sh satrni alohida tekshirish shart, chunki `Number('')` → `0` va `isNaN('')` → `false`.
+
+```tekshir
+Qiymat massiv ekanini qaysi ifoda aniq tekshiradi?
++ `Array.isArray(x)`
+- `typeof x === 'array'`
+- `typeof x === 'object'`
+> Massiv uchun `typeof` `'object'` qaytaradi, shuning uchun `Array.isArray` kerak.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  log(typeof [], Array.isArray([]), Array.isArray({}));
+  log(new Date() instanceof Date);
+  log(typeof yoqOzgaruvchi);
+</script>
+```

@@ -95,3 +95,23 @@ hammasi(document.body);
 ```
 
 Funksiya o‘zini chaqiradi — bu **rekursiya**. Daraxt tuzilmalari uchun tabiiy usul.
+
+```tekshir
+Elementning keyingi qo‘shni **elementi** qaysi xususiyatda?
++ `nextElementSibling`
+- `nextSibling` (har doim element)
+- `nextChild`
+> `nextSibling` matn tugunini (bo‘sh joyni) ham qaytarishi mumkin.
+```
+
+```jonli
+<button class="sar">Savol 1</button>
+<p hidden>Javob 1</p>
+<button class="sar">Savol 2</button>
+<p hidden>Javob 2</p>
+<script>
+  document.querySelectorAll('.sar').forEach((b) => {
+    b.onclick = () => (b.nextElementSibling.hidden = !b.nextElementSibling.hidden);
+  });
+</script>
+```

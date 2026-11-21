@@ -116,3 +116,27 @@ document.getElementById('aylantir').onclick = function () {
 ```
 
 Hisob-kitob (`celsiy`) va sahifa bilan ishlash (tugma, input) **ajratilgan** — bu yaxshi uslub.
+
+```tekshir
+`return` bo‘lmagan funksiya nima qaytaradi?
+- `0`
+- `null`
++ `undefined`
+> `return` yozilmasa yoki bo‘sh bo‘lsa, natija `undefined`.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  function kvadrat(n) {
+    return n * n;
+  }
+  function salom(ism) {
+    log('Salom, ' + ism);
+  }
+  log(kvadrat(7));
+  log(salom('Ali'));
+</script>
+```

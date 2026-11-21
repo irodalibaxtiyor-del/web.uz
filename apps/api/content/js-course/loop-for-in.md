@@ -73,3 +73,26 @@ narxlar.choy = 9000;
 ```
 
 Sikl **ichida** obyektga kalit qo‘shish yoki o‘chirishdan saqlaning — natija oldindan aytib bo‘lmaydigan bo‘ladi.
+
+```tekshir
+`for...in` nimani aylanadi?
++ obyekt kalitlarini
+- massiv qiymatlarini
+- satr belgilarini tartib bilan
+> Massiv qiymatlari uchun `for...of` ishlatiladi.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  const narxlar = { olma: 12000, nok: 15000, uzum: 20000 };
+  let jami = 0;
+  for (const meva in narxlar) {
+    log(meva, narxlar[meva]);
+    jami += narxlar[meva];
+  }
+  log('jami:', jami);
+</script>
+```

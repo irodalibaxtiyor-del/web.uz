@@ -84,3 +84,20 @@ forma.elements.email;             // name="email" maydon
 
 - Odatiy holat — `querySelectorAll` + spread (`[...]`): bashorat qilinadigan, massiv metodlari bilan.
 - Ro‘yxat doim **hozirgi** holatni ko‘rsatishi kerak bo‘lsa — jonli to‘plam (yoki har safar qayta so‘rash).
+
+```tekshir
+`querySelectorAll` qaytargan `NodeList` haqida to‘g‘ri gap qaysi?
++ u statik va `forEach` metodi bor
+- u jonli — yangi elementlar avtomatik qo‘shiladi
+- unda `map` metodi bor
+> `map`/`filter` uchun avval `[...list]` yoki `Array.from(list)`.
+```
+
+```jonli
+<ul><li>3</li><li>8</li><li>5</li></ul>
+<p id="j"></p>
+<script>
+  const sonlar = [...document.querySelectorAll('li')].map((li) => Number(li.textContent));
+  document.getElementById('j').textContent = 'Yig‘indi: ' + sonlar.reduce((a, b) => a + b, 0);
+</script>
+```

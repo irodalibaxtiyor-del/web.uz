@@ -84,3 +84,26 @@ Hisoblagich bo‘lsa — `for` aniqroq. Shart bo‘yicha (“yetguncha”) — `
 | 2     | 2          | 0 — to‘xtash           |
 
 Muqobil: `String(2026)` ni `for...of` bilan aylanib, har bir belgini `Number` ga aylantirish.
+
+```tekshir
+`do...while` ning `while` dan farqi nima?
++ tanasi shart tekshirilishidan oldin kamida bir marta bajariladi
+- u hech qachon to‘xtamaydi
+- u faqat massivlar bilan ishlaydi
+> `while` shartni boshida, `do...while` esa oxirida tekshiradi.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  let jamgarma = 0;
+  let oy = 0;
+  while (jamgarma < 1000000) {
+    jamgarma += 150000;
+    oy++;
+  }
+  log(oy + ' oyda ' + jamgarma + ' so‘m');
+</script>
+```

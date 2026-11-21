@@ -98,3 +98,23 @@ document.getElementById('qosh').onclick = function () {
 
 korsat();
 ```
+
+```tekshir
+`const a = ['x', 'y', 'z'];` da `a[a.length - 1]` nima?
+- `'x'`
+- `undefined`
++ `'z'`
+> Indeks 0 dan boshlanadi, oxirgi element — `length - 1`.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  const mevalar = ['olma', 'nok'];
+  mevalar.push('uzum');
+  log(mevalar.length, mevalar[0], mevalar.at(-1));
+  log(mevalar.join(', '));
+</script>
+```

@@ -86,3 +86,22 @@ const kiritma = document.getElementById('son').value; // '42'
 typeof kiritma           // 'string'
 typeof Number(kiritma)   // 'number'
 ```
+
+```tekshir
+`typeof null` nima qaytaradi?
+- `'null'`
++ `'object'`
+- `'undefined'`
+> Bu tilning tarixiy xatosi; `null` ni tekshirish uchun `x === null` yozing.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  log(typeof 'salom', typeof 42, typeof true);
+  log(typeof undefined, typeof null);
+  log(typeof [1, 2], typeof { a: 1 });
+</script>
+```

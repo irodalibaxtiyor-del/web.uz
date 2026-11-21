@@ -76,3 +76,22 @@ const uzbek = tel.startsWith('+998') && tel.length === 17;
 `&&` — ikkala shart ham bajarilsa `true`.
 
 > Email’ni haqiqatan to‘g‘riligini bunday oddiy tekshiruv bilan aniqlab bo‘lmaydi. Formalarda `type="email"` va serverdagi tekshiruv bilan birga ishlating.
+
+```tekshir
+Satr ichida so‘z borligini `true/false` ko‘rinishida qaysi metod beradi?
++ `includes()`
+- `indexOf()`
+- `slice()`
+> `indexOf` o‘rin raqamini (yoki −1) qaytaradi, `includes` esa mantiqiy qiymat.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  const s = 'JavaScript kursi';
+  log(s.includes('Script'), s.indexOf('kurs'), s.indexOf('PHP'));
+  log(s.startsWith('Java'), s.endsWith('si'));
+</script>
+```

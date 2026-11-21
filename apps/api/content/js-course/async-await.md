@@ -84,6 +84,37 @@ tugma.addEventListener('click', async () => {
 });
 ```
 
+```tekshir
+`await` ni qayerda ishlatish mumkin?
++ `async` funksiya ichida (va modul yuqori darajasida)
+- istalgan oddiy funksiyada
+- faqat `for` sikli ichida
+> `async` funksiya har doim Promise qaytaradi.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  const kut = (ms) => new Promise((ok) => setTimeout(ok, ms));
+  async function yukla() {
+    log('yuklanmoqda...');
+    await kut(500);
+    return 'tayyor';
+  }
+  yukla().then(log);
+  async function xatoli() {
+    try {
+      await Promise.reject(new Error('tarmoq'));
+    } catch (e) {
+      log('xato:', e.message);
+    }
+  }
+  xatoli();
+</script>
+```
+
 ## Xulosa
 
 | Uslub         | Afzalligi                       | Kamchiligi                  |

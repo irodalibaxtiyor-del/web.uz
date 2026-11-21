@@ -95,3 +95,22 @@ if ('geolocation' in navigator) {
 ```
 
 Yangi API’ni ishlatishdan oldin **MDN** dagi “Browser compatibility” jadvaliga qarang.
+
+```tekshir
+Sonni o‘zbekcha formatda (minglik ajratgich bilan) chiqarish uchun qaysi API?
++ `Intl.NumberFormat`
+- `Number.format`
+- `Math.format`
+> `Intl` sanalar, sonlar va valyutalarni mahalliy qoidalar bo‘yicha formatlaydi.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  log(new Intl.NumberFormat('uz-UZ').format(1250000));
+  log(new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(19.5));
+  log('clipboard' in navigator, 'geolocation' in navigator);
+</script>
+```

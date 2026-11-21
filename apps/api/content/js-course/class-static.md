@@ -99,6 +99,32 @@ class Forma {
 
 `#` dan oldin “yopiq” degan kelishuv sifatida `_balans` yozilardi. Bu faqat **ogohlantirish** — tilda himoya yo‘q. Yangi kodda `#` ishlating.
 
+```tekshir
+`static` metod qanday chaqiriladi?
++ klass orqali: `Klass.metod()`
+- nusxa orqali: `nusxa.metod()`
+- faqat konstruktor ichida
+> Statik a’zo klassning o‘ziga tegishli, nusxalarga emas.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  class Hisob {
+    static soni = 0;
+    #balans = 0;
+    constructor() { Hisob.soni++; }
+    qosh(s) { this.#balans += s; return this.#balans; }
+  }
+  const a = new Hisob();
+  new Hisob();
+  log(Hisob.soni, a.qosh(100));
+  log(a.balans);
+</script>
+```
+
 ## Xulosa
 
 | Yozuv              | Kimga tegishli     | Qayerdan murojaat           |

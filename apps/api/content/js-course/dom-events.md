@@ -91,3 +91,21 @@ Hodisa aslida uch bosqichdan o‘tadi: **capture** (yuqoridan pastga), **target*
 tugma.click(); // xuddi foydalanuvchi bosgandek
 el.dispatchEvent(new CustomEvent('saqlandi', { detail: { id: 7 } }));
 ```
+
+```tekshir
+Havolaning standart harakatini (sahifaga o‘tishni) to‘xtatish uchun nima chaqiriladi?
++ `event.preventDefault()`
+- `event.stopPropagation()`
+- `return true`
+> `stopPropagation` faqat hodisaning yuqoriga tarqalishini to‘xtatadi.
+```
+
+```jonli
+<div id="ota" style="padding: 10px; background: #eef4fb">Ota <button id="b">Bola</button></div>
+<pre id="log"></pre>
+<script>
+  const yoz = (t) => (document.getElementById('log').textContent += t + '\n');
+  document.getElementById('ota').addEventListener('click', (e) => yoz('ota: target=' + e.target.id + ', currentTarget=' + e.currentTarget.id));
+  document.getElementById('b').addEventListener('click', () => yoz('bola'));
+</script>
+```

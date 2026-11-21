@@ -83,3 +83,23 @@ Object.getOwnPropertyDescriptor(hisob, 'id');
 - kutubxona foydalanuvchisi ichki ma’lumotni buzmasligi uchun — `freeze` yoki klassdagi `#` maydonlar.
 
 > Bu xavfsizlik vositasi emas — brauzerdagi kodni foydalanuvchi baribir o‘zgartira oladi. Bu **xatolardan** himoya: dasturning o‘zi o‘zgarmasligi kerak bo‘lgan narsani tasodifan o‘zgartirmasligi uchun.
+
+```tekshir
+`Object.freeze(obj)` dan keyin `obj.ichki.x = 1` ishlaydimi (`ichki` — obyekt)?
++ ha — muzlatish sayoz, ichki obyekt muzlamaydi
+- yo‘q, hamma qatlam muzlaydi
+- `obj` o‘chib ketadi
+> Chuqur muzlatish uchun ichki obyektlarni ham alohida muzlatish kerak.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  const s = Object.freeze({ til: 'uz', ichki: { x: 0 } });
+  s.til = 'ru';
+  s.ichki.x = 1;
+  log(s.til, s.ichki.x, Object.isFrozen(s));
+</script>
+```

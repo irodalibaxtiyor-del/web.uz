@@ -95,3 +95,24 @@ const hisobla = () => 1;
 | Obyekt metodi                           | `metod() {}`             |
 | Faylning asosiy, nomlangan funksiyalari | `function nom() {}`      |
 | Hodisa ishlovchisida `this` kerak       | `function () {}`         |
+
+```tekshir
+Qaysi arrow funksiya `x * 2` ni qaytaradi?
++ `(x) => x * 2`
+- `(x) => { x * 2 }`
+- `x => return x * 2`
+> Jingalak qavs ochilsa, `return` ni aniq yozish kerak.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  const ikki = (x) => x * 2;
+  const yoq = (x) => { x * 2; };
+  log(ikki(5), yoq(5));
+  const juft = (n) => ({ n, kv: n * n });
+  log(juft(3));
+</script>
+```

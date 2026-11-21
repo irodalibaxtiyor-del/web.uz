@@ -85,3 +85,11 @@ Ikki to‘g‘ri yo‘l bor.
 Ular **yozilgan tartibda** bajariladi: `yordamchi.js` dagi funksiyalarni `script.js` ishlata oladi.
 
 > Bu kursdagi mashqlarda `script.js` allaqachon `<body>` oxirida ulangan. Kodingizni shu faylga yozing.
+
+```tekshir
+Tashqi JavaScript fayl qanday ulanadi?
++ `<script src="app.js"></script>`
+- `<link rel="script" href="app.js">`
+- `<js src="app.js">`
+> Skript elementni topa olishi uchun u odatda `<body>` oxirida yoki `defer` bilan ulanadi.
+```

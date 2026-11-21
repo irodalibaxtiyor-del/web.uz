@@ -69,3 +69,11 @@ const qatiy = (function () {
 ## Tavsiya
 
 Oddiy `<script>` fayllari boshiga doim `'use strict';` yozing. Bu “bepul” xato qidiruvchi: harf xatolari va noto‘g‘ri `this` darhol ko‘rinadi.
+
+```tekshir
+`'use strict'` rejimida e’lon qilinmagan o‘zgaruvchiga qiymat berilsa nima bo‘ladi?
++ `ReferenceError` xatosi
+- jimgina global o‘zgaruvchi yaratiladi
+- qiymat `undefined` bo‘ladi
+> Qat’iy rejim jim xatolarni ochiq xatoga aylantiradi. Modullar va klasslar avtomatik qat’iy.
+```

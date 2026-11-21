@@ -77,3 +77,11 @@ function tilSaqla(til) {
   }
 }
 ```
+
+```tekshir
+Maxfiy sessiya tokeni uchun cookie’ga qanday bayroq qo‘yiladi (server tomonida)?
++ `HttpOnly` — JavaScript uni o‘qiy olmaydi
+- `Visible`
+- `Public`
+> `HttpOnly` cookie’ni XSS orqali o‘g‘irlab bo‘lmaydi; u faqat serverga yuboriladi.
+```

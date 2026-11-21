@@ -86,3 +86,22 @@ tugma.addEventListener('click', () => {
   this; // tashqi doira — tugma emas! event.currentTarget ishlating
 });
 ```
+
+```tekshir
+Hodisalar delegatsiyasi nima?
++ bitta ishlovchini ota elementga qo‘yib, bosilgan bolani `event.target` orqali aniqlash
+- har bir bolaga alohida ishlovchi qo‘yish
+- hodisani boshqa sahifaga yuborish
+> Keyin qo‘shilgan elementlar uchun ham ishlaydi va ishlovchilar sonini kamaytiradi.
+```
+
+```jonli
+<ul id="r"><li>Olma</li><li>Nok</li><li>Uzum</li></ul>
+<p id="p"></p>
+<script>
+  document.getElementById('r').addEventListener('click', (e) => {
+    const li = e.target.closest('li');
+    if (li) document.getElementById('p').textContent = 'Tanlandi: ' + li.textContent;
+  });
+</script>
+```

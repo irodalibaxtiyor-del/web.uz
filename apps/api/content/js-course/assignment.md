@@ -76,3 +76,24 @@ balans += 5000; // TypeError: Assignment to constant variable.
 ```
 
 Qiymati o‘zgaradigan o‘zgaruvchi — `let`.
+
+```tekshir
+`let x = 10; x += 5;` dan keyin `x` nechaga teng?
+- 5
+- 10
++ 15
+> `x += 5` — `x = x + 5` ning qisqa yozuvi.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  let hamyon = 100;
+  hamyon += 50;
+  hamyon -= 30;
+  hamyon *= 2;
+  log('Hamyonda:', hamyon);
+</script>
+```

@@ -82,3 +82,20 @@ DOM HTML’ning bir qismi emas, alohida W3C/WHATWG standarti. U hamma brauzerlar
 ## Skript qayerda turadi
 
 Skript DOM elementlari **yaratilgandan keyin** ishlashi kerak: `<body>` oxirida yoki `defer` bilan. Aks holda `querySelector` `null` qaytaradi.
+
+```tekshir
+DOM nima?
++ brauzer HTML’dan quradigan, JavaScript o‘zgartira oladigan elementlar daraxti
+- HTML faylning o‘zi
+- CSS fayl turi
+> JavaScript HTML faylni emas, xotiradagi DOM daraxtini o‘zgartiradi.
+```
+
+```jonli
+<ul id="r"><li>bir</li><li>ikki</li></ul>
+<p id="p"></p>
+<script>
+  const r = document.getElementById('r');
+  document.getElementById('p').textContent = 'Bandlar soni: ' + r.children.length + ', teg: ' + r.tagName;
+</script>
+```

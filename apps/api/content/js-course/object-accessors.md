@@ -113,3 +113,26 @@ Setter bo‘lmagan xususiyatga yozish oddiy rejimda e’tiborsiz qoladi, qat’i
 ## Ehtiyotkorlik
 
 Getter **tez** va **yon ta’sirsiz** bo‘lsin. `obj.qiymat` ni o‘qish server so‘rovi yuborishi yoki boshqa ma’lumotni o‘zgartirishi kutilmaydi — bunday ishlar uchun oddiy metod yozing.
+
+```tekshir
+Getter qanday chaqiriladi?
++ xususiyat kabi, qavssiz: `obj.toliqIsm`
+- metod kabi: `obj.toliqIsm()`
+- faqat `get(obj)` orqali
+> Getter funksiya bo‘lsa ham tashqaridan oddiy xususiyatdek o‘qiladi.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  const odam = {
+    ism: 'Lola', familiya: 'Karimova',
+    get toliqIsm() { return this.ism + ' ' + this.familiya; },
+  };
+  log(odam.toliqIsm);
+  odam.ism = 'Nodira';
+  log(odam.toliqIsm);
+</script>
+```

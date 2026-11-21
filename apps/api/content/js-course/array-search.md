@@ -100,3 +100,23 @@ const t = talabalar.find(function (x) {
   return x.ism.toLowerCase() === qidiruv.toLowerCase();
 });
 ```
+
+```tekshir
+`find` shartni qanoatlantiradigan element topilmasa nima qaytaradi?
+- `-1`
++ `undefined`
+- `null`
+> `-1` ni `findIndex` va `indexOf` qaytaradi.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  const talabalar = [{ ism: 'Ali', ball: 80 }, { ism: 'Lola', ball: 95 }];
+  log(talabalar.find((t) => t.ball > 90));
+  log(talabalar.find((t) => t.ball > 100));
+  log(talabalar.findIndex((t) => t.ism === 'Lola'));
+</script>
+```

@@ -110,3 +110,24 @@ const { ism } = undefined; // TypeError: Cannot destructure ...
 ```
 
 Manba bo‘sh bo‘lishi mumkin bo‘lsa: `const { ism } = obyekt ?? {};`
+
+```tekshir
+`const [a, b] = [1, 2, 3];` dan keyin `b` nechaga teng?
+- 1
++ 2
+- 3
+> Massivdan o‘rin bo‘yicha olinadi; ortiqcha elementlar e’tiborga olinmaydi.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  const { ism, yosh = 18 } = { ism: 'Ali' };
+  log(ism, yosh);
+  let x = 1, y = 2;
+  [x, y] = [y, x];
+  log(x, y);
+</script>
+```

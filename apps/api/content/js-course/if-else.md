@@ -106,3 +106,26 @@ if (kirgan) {
 ```
 
 Ikki darajadan chuqurroq bo‘lsa, erta qaytish yoki alohida funksiyalar bilan soddalashtiring.
+
+```tekshir
+`ball = 85` bo‘lsa, `if (ball >= 90) natija = 'A'; else if (ball >= 80) natija = 'B'; else natija = 'C';` dan keyin `natija` nima?
+- `A`
++ `B`
+- `C`
+> Birinchi rost shartning bloki bajariladi, qolganlari tekshirilmaydi.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  function baho(ball) {
+    if (ball < 0 || ball > 100) return 'noto‘g‘ri';
+    if (ball >= 90) return 'A';
+    if (ball >= 80) return 'B';
+    return 'C';
+  }
+  log(baho(95), baho(85), baho(40), baho(120));
+</script>
+```

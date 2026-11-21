@@ -100,3 +100,25 @@ function Mahsulot(nom, narx) {
 ```
 
 Shunda noto‘g‘ri obyekt umuman yaratilmaydi.
+
+```tekshir
+Konstruktor funksiya qanday chaqiriladi?
++ `new` bilan: `new Talaba('Ali')`
+- oddiy: `Talaba('Ali')` — xuddi shu natija
+- `create Talaba('Ali')`
+> `new` yangi obyekt yaratadi, `this` ni unga bog‘laydi va uni qaytaradi.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  function Talaba(ism, ball) {
+    this.ism = ism;
+    this.ball = ball;
+  }
+  const t = new Talaba('Ali', 90);
+  log(t, t instanceof Talaba);
+</script>
+```

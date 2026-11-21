@@ -91,3 +91,26 @@ Har bir global nom boshqa skript bilan to‘qnashishi mumkin. Qoidalar:
 - o‘zgaruvchini imkon qadar **tor** doirada e’lon qiling;
 - umumiy holatni bitta obyektga jamlang: `const ilova = { jami: 0, savat: [] };`
 - funksiyalarga kerakli qiymatlarni **parametr** sifatida bering.
+
+```tekshir
+Funksiya ichida `let` bilan e’lon qilingan o‘zgaruvchi tashqarida ko‘rinadimi?
+- ha
++ yo‘q
+- faqat funksiya chaqirilgandan keyin
+> Har bir funksiya o‘z doirasini yaratadi.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  const tashqi = 'global';
+  function f() {
+    const ichki = 'mahalliy';
+    log(tashqi, ichki);
+  }
+  f();
+  log(typeof ichki);
+</script>
+```

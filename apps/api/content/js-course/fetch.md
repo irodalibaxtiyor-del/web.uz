@@ -80,3 +80,11 @@ Xavfsizlik uchun mashqlar preview’i va serverdagi tekshiruv **tashqi so‘rovl
 const javob = await soxtaFetch('/api/kurslar'); // mashqda
 const javob = await fetch('/api/kurslar');      // haqiqiy loyihada
 ```
+
+```tekshir
+`fetch` 404 javob qaytarsa nima bo‘ladi?
++ promise muvaffaqiyatli bajariladi, lekin `response.ok` `false` bo‘ladi
+- promise darhol xato bilan tugaydi
+- `fetch` qayta urinadi
+> `fetch` faqat tarmoq xatosida rad etadi, shuning uchun `ok` ni tekshirish shart.
+```

@@ -79,6 +79,27 @@ const f = () => this;
 f.call(ali); // ali emas — tashqi this
 ```
 
+```tekshir
+Qaysi metod funksiyani darhol chaqirmaydi, balki yangi funksiya qaytaradi?
+- `call`
+- `apply`
++ `bind`
+> `call` va `apply` darhol chaqiradi; `bind` keyin chaqirish uchun bog‘langan funksiya beradi.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  function salom(sahifa) { return this.ism + ': ' + sahifa; }
+  const u = { ism: 'Ali' };
+  log(salom.call(u, 'bosh'), salom.apply(u, ['kurslar']));
+  const b = salom.bind(u);
+  log(b('profil'));
+</script>
+```
+
 ## Xulosa
 
 | Metod   | Chaqiradimi?    | Argumentlar        | Qaytaradi              |

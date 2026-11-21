@@ -82,3 +82,23 @@ yosh >= 18 && yosh < 60 // true — ikkalasi ham to‘g‘ri
 yosh < 7 || yosh > 65   // false — hech biri to‘g‘ri emas
 !(yosh > 18)            // false — inkor
 ```
+
+```tekshir
+`'5' + 3` natijasi nima?
++ `'53'`
+- `8`
+- `NaN`
+> Agar qo‘shiluvchilardan biri satr bo‘lsa, `+` ularni ulaydi.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  log('5' + 3);
+  log('5' - 3);
+  log(5 + 3);
+  log(Number('5') + 3);
+</script>
+```

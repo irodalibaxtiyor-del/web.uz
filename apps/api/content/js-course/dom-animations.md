@@ -82,3 +82,25 @@ const kamroq = matchMedia('(prefers-reduced-motion: reduce)').matches;
 ```
 
 Bunday holatda animatsiyani o‘tkazib yuborib, darhol yakuniy holatni ko‘rsating.
+
+```tekshir
+JavaScript bilan animatsiya qilishning tavsiya etilgan usuli qaysi?
++ CSS `transition` va klassni almashtirish, kerak bo‘lsa `requestAnimationFrame`
+- `setInterval(..., 1)` bilan har millisoniyada `style.left`
+- `while` sikli
+> `requestAnimationFrame` ekran yangilanishiga moslashadi va yashirin tabda to‘xtaydi.
+```
+
+```jonli
+<div id="q" style="width: 40px; height: 40px; background: #0071dc; position: relative"></div>
+<script>
+  const q = document.getElementById('q');
+  let x = 0;
+  function qadam() {
+    x = (x + 2) % 250;
+    q.style.transform = 'translateX(' + x + 'px)';
+    requestAnimationFrame(qadam);
+  }
+  requestAnimationFrame(qadam);
+</script>
+```

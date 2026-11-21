@@ -91,3 +91,25 @@ function formatla(d) {
 
 formatla(kunQosh(new Date(2026, 11, 25), 10)) // '04.01.2027'
 ```
+
+```tekshir
+Sanaga 10 kun qo‘shishning to‘g‘ri usuli qaysi?
++ `d.setDate(d.getDate() + 10)`
+- `d.getDate() + 10`
+- `d = d + 10`
+> `setDate` oy chegarasidan o‘tsa, keyingi oyga avtomatik o‘tkazadi.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  const d = new Date(2026, 0, 28);
+  d.setDate(d.getDate() + 10);
+  log(d.toDateString());
+  const nusxa = new Date(d);
+  nusxa.setMonth(nusxa.getMonth() + 1);
+  log(d.getMonth(), nusxa.getMonth());
+</script>
+```

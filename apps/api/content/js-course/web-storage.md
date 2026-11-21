@@ -93,3 +93,11 @@ const mavzu = (() => {
 })();
 document.body.classList.toggle('qorongi', mavzu === 'qorongi');
 ```
+
+```tekshir
+`localStorage` ga obyektni qanday saqlash kerak?
++ `JSON.stringify` bilan matnga aylantirib
+- to‘g‘ridan-to‘g‘ri `setItem('k', obj)`
+- `localStorage.obj = obj`
+> Ombor faqat satr saqlaydi; obyekt aks holda `'[object Object]'` bo‘lib qoladi.
+```

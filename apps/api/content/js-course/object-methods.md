@@ -93,3 +93,26 @@ document.getElementById('kirim').onclick = function () {
 ```
 
 Balansni hisoblash qoidasi bir joyda — `hisob` ichida. Sahifa kodi faqat chaqiradi va ko‘rsatadi.
+
+```tekshir
+Obyekt metodida `this` nimaga ishora qiladi (`obj.metod()` chaqirilganda)?
++ `obj` ning o‘ziga
+- `window` ga
+- metod funksiyasining o‘ziga
+> Nuqtadan oldingi obyekt — `this`.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  const hisob = {
+    egasi: 'Ali',
+    balans: 100,
+    qosh(s) { this.balans += s; return this.balans; },
+  };
+  log(hisob.qosh(50));
+  log(JSON.stringify(hisob));
+</script>
+```

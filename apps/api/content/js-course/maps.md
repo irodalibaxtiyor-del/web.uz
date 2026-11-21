@@ -93,3 +93,24 @@ const obyekt = { non: 4000, sut: 12000 };
 const map = new Map(Object.entries(obyekt));
 const yana = Object.fromEntries(map); // { non: 4000, sut: 12000 }
 ```
+
+```tekshir
+`Map` ning oddiy obyektdan afzalligi qaysi?
++ kalit har qanday turda (hatto obyekt) bo‘lishi mumkin va `size` bor
+- `Map` JSON’ga avtomatik aylanadi
+- `Map` faqat satr kalitlarni qabul qiladi
+> Obyekt kalitlari satrga aylanadi; `Map` kalitning turini saqlaydi.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  const matn = 'olma nok olma uzum olma nok';
+  const sanoq = new Map();
+  for (const s of matn.split(' ')) sanoq.set(s, (sanoq.get(s) ?? 0) + 1);
+  log([...sanoq]);
+  log(sanoq.size);
+</script>
+```

@@ -89,3 +89,22 @@ el.matches('.kurs.orta');    // element selektorga mosmi?
 ```
 
 Hodisalar bilan ishlashda juda qulay — keyingi modulda.
+
+```tekshir
+`el.closest('.karta')` nima qiladi?
++ elementning o‘zidan boshlab yuqoriga qarab birinchi mos ajdodni topadi
+- ichidagi eng yaqin bolani topadi
+- eng yaqin qo‘shnini topadi
+> Delegatsiyada bosilgan elementdan kartochkani topish uchun qulay.
+```
+
+```jonli
+<div class="karta" data-id="7"><button>Ochish</button></div>
+<p id="n"></p>
+<script>
+  document.querySelector('button').onclick = (e) => {
+    const k = e.target.closest('.karta');
+    document.getElementById('n').textContent = 'Karta id: ' + k.dataset.id;
+  };
+</script>
+```

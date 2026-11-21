@@ -108,3 +108,26 @@ for (var i = 1; i <= 3; i++) {
 ## Xotira
 
 Yopilma eslab qolgan o‘zgaruvchilar funksiya mavjud ekan xotirada qoladi. Odatda muammo emas, lekin katta ma’lumotlarni (masalan, ulkan massivni) keraksiz ushlab turmang.
+
+```tekshir
+Yopilma (closure) nima?
++ funksiya o‘zi yaratilgan doiradagi o‘zgaruvchilarni eslab qolishi
+- yopiq (`#`) klass maydoni
+- tugatilgan funksiya
+> Tashqi funksiya tugasa ham ichki funksiya uning o‘zgaruvchilariga murojaat qila oladi.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  function hisoblagich() {
+    let n = 0;
+    return () => ++n;
+  }
+  const a = hisoblagich();
+  const b = hisoblagich();
+  log(a(), a(), a(), b());
+</script>
+```

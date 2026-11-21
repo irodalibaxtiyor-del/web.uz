@@ -94,3 +94,23 @@ String(2026)      // '2026'
 (2026).toString() // '2026'
 Number('2026')    // 2026
 ```
+
+```tekshir
+`'salom'.length` nechaga teng?
+- 4
++ 5
+- 6
+> `length` belgilar sonini beradi.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  const s = 'Salom';
+  log(s.length, s[0], s.at(-1));
+  log('U dedi: "Ha"');
+  log('Birinchi\nIkkinchi');
+</script>
+```

@@ -101,3 +101,36 @@ const korinadigan = vazifalar.filter((v) =>
 - muddat (sana) va muddati o‘tganlarni qizil ko‘rsatish;
 - “Bajarilganlarni tozalash” tugmasi;
 - sudrab tartiblash (`dragstart`, `drop`).
+
+```tekshir
+“Holat → chizish” arxitekturasida vazifa qo‘shilganda nima qilinadi?
++ massivga obyekt qo‘shiladi va ro‘yxat massivdan qayta chiziladi
+- faqat DOM’ga `<li>` qo‘shiladi, massiv kerak emas
+- sahifa qayta yuklanadi
+> Yagona ma’lumot manbai — massiv; DOM uning aksi.
+```
+
+```jonli
+<form id="f"><input id="i" required placeholder="Vazifa"> <button>Qo‘shish</button></form>
+<ul id="r"></ul>
+<script>
+  let vazifalar = [{ id: 1, matn: 'Darsni o‘qish', bajarildi: false }];
+  const r = document.getElementById('r');
+  function chiz() {
+    r.replaceChildren(...vazifalar.map((v) => {
+      const li = document.createElement('li');
+      li.textContent = (v.bajarildi ? '✔ ' : '') + v.matn;
+      li.dataset.id = v.id;
+      return li;
+    }));
+  }
+  r.onclick = (e) => { const v = vazifalar.find((x) => x.id === Number(e.target.dataset.id)); if (v) { v.bajarildi = !v.bajarildi; chiz(); } };
+  document.getElementById('f').onsubmit = (e) => {
+    e.preventDefault();
+    vazifalar.push({ id: Date.now(), matn: document.getElementById('i').value, bajarildi: false });
+    document.getElementById('i').value = '';
+    chiz();
+  };
+  chiz();
+</script>
+```

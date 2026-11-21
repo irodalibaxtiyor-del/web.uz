@@ -96,3 +96,31 @@ catch (xato) {
 ## Ushlangan xato konsolni bulg‘amaydi
 
 Ushlanmagan xato konsolda qizil bo‘lib chiqadi va CHECK’dagi “Konsolda xato yo‘q” tekshiruvini yiqitadi. `try...catch` bilan to‘g‘ri ishlangan xato esa dasturning **odatiy** holatiga aylanadi.
+
+```tekshir
+`finally` bloki qachon bajariladi?
++ har doim — xato bo‘lsa ham, bo‘lmasa ham
+- faqat xato bo‘lganda
+- faqat xato bo‘lmaganda
+> `finally` tozalash ishlari (masalan, yuklanish belgisini yashirish) uchun qulay.
+```
+
+```jonli
+<pre id="out"></pre>
+<script>
+  // log() natijani shu oynaga chiqaradi (console.log o‘rniga)
+  const log = (...a) => (document.getElementById('out').textContent += a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' ') + '\n');
+  function bolish(a, b) {
+    if (b === 0) throw new Error('Nolga bo‘lib bo‘lmaydi');
+    return a / b;
+  }
+  try {
+    log(bolish(10, 2));
+    log(bolish(1, 0));
+  } catch (e) {
+    log('Xato:', e.message);
+  } finally {
+    log('tugadi');
+  }
+</script>
+```
