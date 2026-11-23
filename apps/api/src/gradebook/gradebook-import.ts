@@ -1,6 +1,10 @@
 import {
   columnKey,
   columnLabel,
+  CREDIT_CONTROL_INFO,
+  creditControlOf,
+  type CreditControl,
+  type GradebookScheme,
   GRADEBOOK_MAX_COLUMNS,
   isIgnoredHeader,
   parseColumnHeader,
@@ -26,17 +30,30 @@ const words = (s: string) => rosterKey(s).split(' ').filter(Boolean);
 export function previewGradebookImport(
   rows: ReadCell[][],
   roster: readonly RosterStudent[],
-  existing: readonly { title: string; date: string | null }[],
+  existing: readonly {
+    title: string;
+    date: string | null;
+    maxScore?: number;
+    control?: CreditControl | null;
+  }[],
   fallbackYear: number,
+  scheme: GradebookScheme = 'LESSONS',
 ): GradebookImportPreview {
   const issues: GradebookImportIssue[] = [];
+  const ignored: string[] = [];
 
   // Header: the first of the top rows with a name header ("F.I.Sh."), else the first non-empty.
   const top = rows.slice(0, 15);
   let h = top.findIndex((r) => r.some((c) => isIgnoredHeader(text(c)) === 'name'));
   if (h < 0) h = rows.findIndex((r) => r.some((c) => text(c) !== ''));
   if (h < 0)
-    return { columns: [], rows: [], issues: [{ row: 0, message: 'Fayl bo‘sh' }], missing: [] };
+    return {
+      columns: [],
+      rows: [],
+      issues: [{ row: 0, message: 'Fayl bo‘sh' }],
+      missing: [],
+      ignored,
+    };
   const header = rows[h]!;
   const body = rows.slice(h + 1);
 
@@ -56,15 +73,52 @@ export function previewGradebookImport(
   }
   if (nameCol < 0) {
     issues.push({ row: h + 1, message: 'Talabalar ismi yozilgan ustun topilmadi (“F.I.Sh.”)' });
-    return { columns: [], rows: [], issues, missing: roster.map((s) => s.fullName) };
+    return { columns: [], rows: [], issues, missing: roster.map((s) => s.fullName), ignored };
   }
 
   // Grade columns: every other non-empty header that is not "№" or "O‘rtacha".
-  const existingKeys = new Set(existing.map(columnKey));
+  // CREDIT: only the control totals (JN-1, JN-2, ON-1, ON-2, YaN) are taken; "JAMI" is a check.
   const seen = new Set<string>();
-  const columns: { index: number; title: string; date: string | null; existing: boolean }[] = [];
+  const columns: {
+    index: number;
+    title: string;
+    date: string | null;
+    existing: boolean;
+    max: number;
+  }[] = [];
+  let totalCol = -1;
   header.forEach((cell, index) => {
     if (index === nameCol) return;
+    if (scheme === 'CREDIT') {
+      const label = text(cell).replace(/\s+/g, ' ');
+      if (label === '' || isIgnoredHeader(label) === 'number') return;
+      const control = creditControlOf(text(cell));
+      if (control === 'TOTAL') {
+        totalCol = index;
+        return;
+      }
+      const target = control ? existing.find((c) => c.control === control) : undefined;
+      if (!control || !target) {
+        ignored.push(label);
+        return;
+      }
+      if (seen.has(control)) {
+        issues.push({
+          row: h + 1,
+          message: `${CREDIT_CONTROL_INFO[control].short} ustuni ikki marta uchradi — ikkinchisi olinmadi`,
+        });
+        return;
+      }
+      seen.add(control);
+      columns.push({
+        index,
+        title: target.title,
+        date: target.date,
+        existing: true,
+        max: target.maxScore ?? CREDIT_CONTROL_INFO[control].max,
+      });
+      return;
+    }
     const raw = typeof cell === 'number' ? cell : text(cell);
     if (raw === '' || (typeof raw === 'string' && isIgnoredHeader(raw))) return;
     const col = parseColumnHeader(raw, fallbackYear);
@@ -77,9 +131,18 @@ export function previewGradebookImport(
       return;
     }
     seen.add(key);
-    columns.push({ index, ...col, existing: existingKeys.has(key) });
+    const prior = existing.find((c) => columnKey(c) === key);
+    columns.push({ index, ...col, existing: !!prior, max: prior?.maxScore ?? 100 });
   });
-  if (columns.length === 0) issues.push({ row: h + 1, message: 'Baho ustunlari topilmadi' });
+  if (scheme === 'CREDIT') columns.sort((a, b) => existingPos(a) - existingPos(b));
+  if (columns.length === 0)
+    issues.push({
+      row: h + 1,
+      message:
+        scheme === 'CREDIT'
+          ? 'JN, ON yoki YaN jami ustunlari topilmadi (masalan, “AMALIY JAMI”, “JN JAMI”, “1 ON”, “YaN”)'
+          : 'Baho ustunlari topilmadi',
+    });
   if (columns.length > GRADEBOOK_MAX_COLUMNS) {
     issues.push({ row: h + 1, message: `Ustunlar ${GRADEBOOK_MAX_COLUMNS} tadan ko‘p` });
     columns.length = GRADEBOOK_MAX_COLUMNS;
@@ -119,13 +182,25 @@ export function previewGradebookImport(
     used.add(student.userId);
     const scores = columns.map((c) => {
       const p = parseScoreCell(r[c.index]);
-      if (p.ok) return p.score;
+      if (p.ok && (p.score === null || p.score <= c.max)) return p.score;
       issues.push({
         row: rowNo,
-        message: `${name}, “${columnLabel(c)}”: ${p.message} — katak olinmadi`,
+        message: `${name}, “${columnLabel(c)}”: ${
+          p.ok ? `${p.score} — ball ${c.max} dan oshmaydi` : p.message
+        } — katak olinmadi`,
       });
       return null;
     });
+    // CREDIT: the file's own "JAMI" must equal the sum of the controls taken.
+    if (totalCol >= 0) {
+      const t = parseScoreCell(r[totalCol]);
+      const sum = Math.round(scores.reduce<number>((a, v) => a + (v ?? 0), 0) * 10) / 10;
+      if (t.ok && t.score !== null && Math.abs(t.score - sum) > 0.05)
+        issues.push({
+          row: rowNo,
+          message: `${name}: fayldagi JAMI (${t.score}) nazoratlar yig‘indisiga (${sum}) teng emas — tekshiring`,
+        });
+    }
     out.push({ userId: student.userId, fullName: student.fullName, sourceName: name, scores });
   });
 
@@ -134,5 +209,10 @@ export function previewGradebookImport(
     rows: out,
     issues,
     missing: roster.filter((s) => !used.has(s.userId)).map((s) => s.fullName),
+    ignored,
   };
+
+  function existingPos(c: { title: string; date: string | null }) {
+    return existing.findIndex((e) => columnKey(e) === columnKey(c));
+  }
 }

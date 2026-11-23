@@ -8,12 +8,21 @@ import { and, asc, desc, eq, inArray, sql } from 'drizzle-orm';
 import {
   columnKey,
   columnLabel,
+  CREDIT_CONTROL_INFO,
+  CREDIT_CONTROLS,
+  CREDIT_YN_PASS,
+  creditHeldMax,
   GRADE_BAND_LABEL,
+  GRADE_BAND_MARK,
   GRADE_BANDS,
-  gradeBand,
   GRADEBOOK_MAX_COLUMNS,
+  gradebookMark,
   gradebookStats,
   meanScore,
+  type CreditControl,
+  type CreditFinal,
+  type GradebookScheme,
+  type RenameGradebookInput,
   type CreateGradebookInput,
   type GradebookColumn,
   type GradebookColumnInput,
@@ -40,6 +49,12 @@ const titleKey = (t: string) => t.replace(/\s+/g, ' ').trim().toLowerCase();
 const tashkentYear = () => new Date(Date.now() + 5 * 3_600_000).getUTCFullYear();
 
 type BookRow = typeof gradebooks.$inferSelect;
+const schemeOf = (b: BookRow): GradebookScheme => (b.scheme === 'CREDIT' ? 'CREDIT' : 'LESSONS');
+const FINAL_LABEL: Record<CreditFinal, string> = {
+  PENDING: 'YaN qo‘yilmagan',
+  PASSED: 'Yakuniy baho',
+  YN_FAILED: `YaN ${CREDIT_YN_PASS} balldan kam — topshirilmagan`,
+};
 
 @Injectable()
 export class GradebookService {
@@ -77,19 +92,37 @@ export class GradebookService {
     input: CreateGradebookInput,
   ): Promise<GradebookSummary> {
     const group = await this.monitoring.assertGroup(auth, m, groupId);
-    const [row] = await this.db
-      .insert(gradebooks)
-      .values({
-        organizationId: m.organizationId,
-        groupId: group.id,
-        title: input.title,
-        titleKey: titleKey(input.title),
-        createdBy: auth.userId,
-      })
-      .onConflictDoNothing()
-      .returning();
+    const scheme = input.scheme ?? 'LESSONS';
+    const row = await this.db.transaction(async (trx) => {
+      const tx = trx as unknown as Db;
+      const [book] = await tx
+        .insert(gradebooks)
+        .values({
+          organizationId: m.organizationId,
+          groupId: group.id,
+          title: input.title,
+          titleKey: titleKey(input.title),
+          scheme,
+          createdBy: auth.userId,
+        })
+        .onConflictDoNothing()
+        .returning();
+      if (!book) return null;
+      // A credit gradebook always has exactly the five controls, in order.
+      if (scheme === 'CREDIT')
+        await tx.insert(gradebookColumns).values(
+          CREDIT_CONTROLS.map((control, position) => ({
+            gradebookId: book.id,
+            position,
+            title: CREDIT_CONTROL_INFO[control].title,
+            maxScore: CREDIT_CONTROL_INFO[control].max,
+            control,
+          })),
+        );
+      return book;
+    });
     if (!row) throw this.exists();
-    await this.record(auth, m, 'gradebook.create', row.id);
+    await this.record(auth, m, 'gradebook.create', row.id, { scheme });
     return this.summary(row, group, await this.students(group));
   }
 
@@ -103,25 +136,27 @@ export class GradebookService {
     const columns = await this.columns(book.id);
     const roster = await this.students(group);
     const scores = await this.scoresOf(columns, roster);
-    const students = roster.map((s) => {
+    const scheme = schemeOf(book);
+    const maps = roster.map((s) => {
       const row: Record<string, number | null> = {};
       for (const c of columns) row[c.id] = scores.get(`${c.id}|${s.userId}`) ?? null;
-      const vals = Object.values(row);
-      return {
-        userId: s.userId,
-        fullName: s.fullName,
-        scores: row,
-        average: meanScore(vals),
-        filled: vals.filter((v) => v !== null).length,
-      };
+      return row;
     });
+    const heldMax = creditHeldMax(columns, maps);
+    const students = roster.map((s, i) => ({
+      userId: s.userId,
+      fullName: s.fullName,
+      scores: maps[i]!,
+      ...gradebookMark(scheme, columns, maps[i]!, heldMax),
+    }));
     return {
       id: book.id,
       title: book.title,
+      scheme,
       group: { id: group.id, name: group.name },
       columns,
       students,
-      stats: gradebookStats(columns, students),
+      stats: gradebookStats(scheme, columns, students),
       updatedAt: book.updatedAt.toISOString(),
     };
   }
@@ -131,7 +166,7 @@ export class GradebookService {
     m: MembershipContext,
     groupId: string,
     id: string,
-    input: CreateGradebookInput,
+    input: RenameGradebookInput,
   ): Promise<GradebookView> {
     const { book } = await this.book(auth, m, groupId, id);
     const key = titleKey(input.title);
@@ -164,6 +199,7 @@ export class GradebookService {
     input: GradebookColumnInput,
   ): Promise<GradebookView> {
     const { book } = await this.book(auth, m, groupId, id);
+    this.assertLessons(book);
     await this.db.transaction(async (trx) => {
       const tx = trx as unknown as Db;
       const existing = await this.columns(book.id, tx);
@@ -214,6 +250,7 @@ export class GradebookService {
     columnId: string,
   ): Promise<GradebookView> {
     const { book } = await this.book(auth, m, groupId, id);
+    this.assertLessons(book);
     await this.db.transaction(async (trx) => {
       const tx = trx as unknown as Db;
       const [gone] = await tx
@@ -243,12 +280,13 @@ export class GradebookService {
     input: GradebookScoresInput,
   ): Promise<GradebookView> {
     const { book, group } = await this.book(auth, m, groupId, id);
-    const columnIds = new Set((await this.columns(book.id)).map((c) => c.id));
+    const cols = new Map((await this.columns(book.id)).map((c) => [c.id, c]));
     const userIds = new Set((await this.students(group)).map((s) => s.userId));
     for (const e of input.entries) {
-      if (!columnIds.has(e.columnId))
-        throw new BadRequestException('Ustun bu jurnalga tegishli emas');
+      const col = cols.get(e.columnId);
+      if (!col) throw new BadRequestException('Ustun bu jurnalga tegishli emas');
       if (!userIds.has(e.userId)) throw new BadRequestException('Talaba bu guruhda emas');
+      if (e.score !== null && e.score > col.maxScore) throw this.overMax(col);
     }
     await this.db.transaction(async (trx) => {
       const tx = trx as unknown as Db;
@@ -282,6 +320,7 @@ export class GradebookService {
       await this.students(group),
       await this.columns(book.id),
       tashkentYear(),
+      schemeOf(book),
     );
   }
 
@@ -304,6 +343,14 @@ export class GradebookService {
       const existing = await this.columns(book.id, tx);
       const byKey = new Map(existing.map((c) => [columnKey(c), c.id]));
       const fresh = plan.columns.filter((c) => !byKey.has(columnKey(c)));
+      if (fresh.length > 0 && schemeOf(book) === 'CREDIT')
+        throw new BadRequestException('Kredit jurnalida faqat JN, ON va YaN ustunlari bo‘ladi');
+      const maxOf = new Map(existing.map((c) => [columnKey(c), c]));
+      for (const r of plan.rows)
+        r.scores.forEach((score, i) => {
+          const col = maxOf.get(keys[i]!);
+          if (col && score !== null && score > col.maxScore) throw this.overMax(col);
+        });
       if (existing.length + fresh.length > GRADEBOOK_MAX_COLUMNS)
         throw new BadRequestException(`Ustunlar ${GRADEBOOK_MAX_COLUMNS} tadan oshmaydi`);
       let position = existing.length;
@@ -330,6 +377,7 @@ export class GradebookService {
 
   async exportXlsx(auth: AuthContext, m: MembershipContext, groupId: string, id: string) {
     const v = await this.view(auth, m, groupId, id);
+    if (v.scheme === 'CREDIT') return this.exportCredit(auth, m, v);
     const head: Cell[] = ['№', 'F.I.Sh.', ...v.columns.map(columnLabel), 'O‘rtacha'];
     const body: Cell[][] = v.students.map((s, i) => [
       i + 1,
@@ -368,6 +416,69 @@ export class GradebookService {
     };
   }
 
+  private async exportCredit(auth: AuthContext, m: MembershipContext, v: GradebookView) {
+    const cols = v.columns;
+    const label = (c: GradebookColumn) =>
+      `${c.control ? CREDIT_CONTROL_INFO[c.control].short : c.title} (${c.maxScore})`;
+    const head: Cell[] = [
+      '№',
+      'F.I.Sh.',
+      ...cols.map(label),
+      'JN jami (40)',
+      'JN bahosi',
+      'ON jami (20)',
+      'Jami (100)',
+      'Baho',
+      'Holat',
+    ];
+    const body: Cell[][] = v.students.map((s, i) => [
+      i + 1,
+      s.fullName,
+      ...cols.map((c) => s.scores[c.id] ?? null),
+      s.sections?.JN?.score ?? null,
+      s.sections?.JN ? GRADE_BAND_MARK[s.sections.JN.band] : null,
+      s.sections?.ON?.score ?? null,
+      s.total,
+      s.final === 'PENDING' || !s.band ? null : GRADE_BAND_MARK[s.band],
+      s.final ? FINAL_LABEL[s.final] : null,
+    ]);
+    const stats: Cell[][] = [
+      ['Ko‘rsatkich', 'Qiymat'],
+      ['Guruh', v.group.name],
+      ['Fan / jurnal', v.title],
+      ['Baholash tizimi', 'Kredit: JN 40 + ON 20 + YaN 40 = 100 ball'],
+      ['Talabalar', v.students.length],
+      ['O‘tkazilgan nazoratlar (maksimal ball)', v.stats.heldMax],
+      ['O‘rtacha jami ball', v.stats.average],
+      ['O‘rtacha JN (40 dan)', v.stats.jnAverage],
+      ['YaN qo‘yilmagan talabalar', v.stats.pending],
+      [],
+      ['Joriy nazorat (JN) bahosi', 'Talabalar'],
+      ...GRADE_BANDS.map((b): Cell[] => [GRADE_BAND_LABEL[b], v.stats.jnBands?.[b] ?? 0]),
+      [],
+      [
+        v.stats.pending > 0 ? 'Joriy holat (o‘tkazilgan nazoratlar bo‘yicha)' : 'Yakuniy baho',
+        'Talabalar',
+      ],
+      ...GRADE_BANDS.map((b): Cell[] => [GRADE_BAND_LABEL[b], v.stats.bands[b]]),
+      [],
+      ['Manba', 'O‘qituvchi qo‘ygan baholar (kredit tizimi, “Ballar taqsimoti”)'],
+    ];
+    await this.record(auth, m, 'gradebook.export', v.id);
+    return {
+      fileName: `jurnal-${v.group.name}-${v.title}.xlsx`.replace(/[\\/:*?"<>|]+/g, '-'),
+      data: buildXlsx([
+        {
+          name: 'Jurnal',
+          rows: [head, ...body],
+          headerRows: 1,
+          widths: [5, 34, ...cols.map(() => 12), 12, 10, 12, 11, 8, 22],
+        },
+        { name: 'Statistika', rows: stats, headerRows: 1, widths: [44, 44] },
+      ]),
+    };
+  }
+
   // ---- Student ------------------------------------------------------------------------
 
   async mine(auth: AuthContext, m: MembershipContext): Promise<MyGradebook[]> {
@@ -396,14 +507,23 @@ export class GradebookService {
         ...c,
         score: own.get(`${c.id}|${auth.userId}`) ?? null,
       }));
-      const average = meanScore(withScores.map((c) => c.score));
+      const scheme = schemeOf(b);
+      const scores = Object.fromEntries(withScores.map((c) => [c.id, c.score]));
+      // “Held so far” comes from the whole group (a control the student missed still counts).
+      const heldMax = scheme === 'CREDIT' ? await this.heldMax(columns) : 0;
+      const mark = gradebookMark(scheme, columns, scores, heldMax);
       out.push({
         id: b.id,
         title: b.title,
         groupName: membership.groupName,
+        scheme,
         columns: withScores,
-        average,
-        band: average === null ? null : gradeBand(average),
+        average: mark.average,
+        total: mark.total,
+        heldMax: scheme === 'CREDIT' ? heldMax : null,
+        sections: mark.sections,
+        final: mark.final,
+        band: mark.band,
       });
     }
     return out;
@@ -438,7 +558,48 @@ export class GradebookService {
       .from(gradebookColumns)
       .where(eq(gradebookColumns.gradebookId, bookId))
       .orderBy(asc(gradebookColumns.position), asc(gradebookColumns.createdAt));
-    return rows.map((c) => ({ id: c.id, title: c.title, date: c.heldOn, position: c.position }));
+    return rows.map((c) => ({
+      id: c.id,
+      title: c.title,
+      date: c.heldOn,
+      position: c.position,
+      maxScore: Math.round(c.maxScore * 10) / 10,
+      control: (CREDIT_CONTROLS as readonly string[]).includes(c.control ?? '')
+        ? (c.control as CreditControl)
+        : null,
+    }));
+  }
+
+  /** CREDIT: sum of the maxima of columns that have any score. */
+  private async heldMax(columns: GradebookColumn[]): Promise<number> {
+    if (columns.length === 0) return 0;
+    const rows = await this.db
+      .selectDistinct({ columnId: gradebookScores.columnId })
+      .from(gradebookScores)
+      .where(
+        inArray(
+          gradebookScores.columnId,
+          columns.map((c) => c.id),
+        ),
+      );
+    const held = new Set(rows.map((r) => r.columnId));
+    return (
+      Math.round(columns.filter((c) => held.has(c.id)).reduce((s, c) => s + c.maxScore, 0) * 10) /
+      10
+    );
+  }
+
+  private assertLessons(book: BookRow) {
+    if (schemeOf(book) === 'CREDIT')
+      throw new BadRequestException(
+        'Kredit jurnalida nazoratlar (JN-1, JN-2, ON-1, ON-2, YaN) o‘zgarmaydi',
+      );
+  }
+
+  private overMax(col: GradebookColumn) {
+    return new BadRequestException(
+      `“${columnLabel(col)}” ustunida ball ${col.maxScore} dan oshmaydi`,
+    );
   }
 
   /** `${columnId}|${userId}` → score. */
@@ -506,14 +667,26 @@ export class GradebookService {
   ): Promise<GradebookSummary> {
     const columns = await this.columns(b.id);
     const scores = await this.scoresOf(columns, roster);
+    const scheme = schemeOf(b);
+    let average: number | null;
+    if (scheme === 'CREDIT') {
+      const totals = roster.map((s) => {
+        const vals = columns.map((c) => scores.get(`${c.id}|${s.userId}`));
+        return vals.some((v) => v !== undefined)
+          ? vals.reduce<number>((a, v) => a + (v ?? 0), 0)
+          : null;
+      });
+      average = meanScore(totals);
+    } else average = meanScore([...scores.values()]);
     return {
       id: b.id,
       title: b.title,
       groupId: group.id,
       groupName: group.name,
+      scheme,
       columns: columns.length,
       students: roster.length,
-      average: meanScore([...scores.values()]),
+      average,
       updatedAt: b.updatedAt.toISOString(),
     };
   }

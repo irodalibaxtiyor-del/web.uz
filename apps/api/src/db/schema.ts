@@ -1375,6 +1375,8 @@ export const gradebooks = pgTable(
     title: text('title').notNull(),
     /** Lower-cased, space-normalised title: one gradebook per subject name in a group. */
     titleKey: text('title_key').notNull(),
+    /** LESSONS (100 per lesson, mean) or CREDIT (JN/ON/YaN controls, sum out of 100). */
+    scheme: text('scheme').notNull().default('LESSONS'),
     createdBy: uuid('created_by').references(() => users.id, { onDelete: 'set null' }),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
@@ -1383,6 +1385,7 @@ export const gradebooks = pgTable(
     uniqueIndex('gradebooks_group_title_idx').on(t.groupId, t.titleKey),
     index('gradebooks_org_idx').on(t.organizationId),
     index('gradebooks_created_by_idx').on(t.createdBy),
+    check('gradebooks_scheme', sql`${t.scheme} in ('LESSONS', 'CREDIT')`),
   ],
 );
 
@@ -1396,11 +1399,23 @@ export const gradebookColumns = pgTable(
     position: integer('position').notNull(),
     title: text('title').notNull().default(''),
     heldOn: date('held_on', { mode: 'string' }),
+    /** Highest score the column accepts. */
+    maxScore: real('max_score').notNull().default(100),
+    /** CREDIT gradebooks: JN1 | JN2 | ON1 | ON2 | YN. */
+    control: text('control'),
     createdAt: createdAt(),
   },
   (t) => [
     index('gradebook_columns_book_idx').on(t.gradebookId, t.position),
+    uniqueIndex('gradebook_columns_control_idx')
+      .on(t.gradebookId, t.control)
+      .where(sql`${t.control} is not null`),
     check('gradebook_columns_label', sql`${t.title} <> '' or ${t.heldOn} is not null`),
+    check('gradebook_columns_max', sql`${t.maxScore} > 0 and ${t.maxScore} <= 100`),
+    check(
+      'gradebook_columns_control',
+      sql`${t.control} is null or ${t.control} in ('JN1', 'JN2', 'ON1', 'ON2', 'YN')`,
+    ),
   ],
 );
 

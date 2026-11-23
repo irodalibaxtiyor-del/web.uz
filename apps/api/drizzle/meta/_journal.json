@@ -218,6 +218,13 @@
       "when": 1795411497619,
       "tag": "0030_gradebooks",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1795434493925,
+      "tag": "0031_gradebook_credit",
+      "breakpoints": true
     }
   ]
 }

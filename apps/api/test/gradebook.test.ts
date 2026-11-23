@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { eq } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { buildXlsx } from '../src/common/xlsx';
 import { readSpreadsheet } from '../src/common/xlsx-read';
 import { auditEvents, gradebookColumns, gradebookScores, users } from '../src/db/schema';
 import { createMember, createOrg, setup, type TestContext } from './helpers';
@@ -139,7 +140,7 @@ describe('gradebook editing', () => {
     expect(v.body.stats).toMatchObject({
       average: 75.2,
       columnAverages: [70, 85.5],
-      bands: { EXCELLENT: 1, GOOD: 0, SATISFACTORY: 0, FAIL: 1 },
+      bands: { EXCELLENT: 0, GOOD: 1, SATISFACTORY: 0, FAIL: 1 },
       filledCells: 3,
       totalCells: 6,
     });
@@ -167,7 +168,7 @@ describe('gradebook editing', () => {
       title: 'Veb dizayn',
       groupName: '8-24 ATT',
       average: 87.8,
-      band: 'EXCELLENT',
+      band: 'GOOD',
     });
     expect(mine.body[0].columns.map((c: { score: number | null }) => c.score)).toEqual([90, 85.5]);
     expect(JSON.stringify(mine.body)).not.toContain(s2.userId);
@@ -313,5 +314,205 @@ describe('gradebook import and export', () => {
       .from(gradebookColumns)
       .where(eq(gradebookColumns.gradebookId, id));
     expect(cols).toEqual([]);
+  });
+});
+
+describe('credit gradebook (JN / ON / YaN)', () => {
+  let id: string;
+  const col = (v: { columns: { id: string; control: string }[] }, c: string) =>
+    v.columns.find((x) => x.control === c)!.id;
+
+  it('is created with the five controls and their maxima; controls are fixed', async () => {
+    const r = await req(teacherA, 'post', books(), {
+      title: 'Kompyuter grafikasi',
+      scheme: 'CREDIT',
+    }).expect(201);
+    id = r.body.id;
+    expect(r.body.scheme).toBe('CREDIT');
+    const v = (await req(teacherA, 'get', `${books()}/${id}`).expect(200)).body;
+    expect(
+      v.columns.map((c: { control: string; maxScore: number }) => [c.control, c.maxScore]),
+    ).toEqual([
+      ['JN1', 20],
+      ['JN2', 20],
+      ['ON1', 10],
+      ['ON2', 10],
+      ['YN', 40],
+    ]);
+    await req(teacherA, 'post', `${books()}/${id}/columns`, { title: 'Qo‘shimcha' }).expect(400);
+    await req(teacherA, 'delete', `${books()}/${id}/columns/${col(v, 'ON2')}`).expect(400);
+    await req(teacherA, 'post', books(), { title: 'X fan', scheme: 'OTHER' }).expect(400);
+  });
+
+  it('refuses a score above the control maximum; computes JN, ON and the pending total', async () => {
+    const v0 = (await req(teacherA, 'get', `${books()}/${id}`).expect(200)).body;
+    await req(teacherA, 'put', `${books()}/${id}/scores`, {
+      entries: [{ columnId: col(v0, 'JN1'), userId: s1.userId, score: 21 }],
+    }).expect(400);
+    const entries: [Member, string, number][] = [
+      [s1, 'JN1', 20],
+      [s1, 'JN2', 18],
+      [s1, 'ON1', 9],
+      [s1, 'ON2', 5],
+      [s2, 'JN1', 6],
+      [s2, 'JN2', 8],
+      [s2, 'ON2', 5],
+    ];
+    const v = (
+      await req(teacherA, 'put', `${books()}/${id}/scores`, {
+        entries: entries.map(([s, c, score]) => ({
+          columnId: col(v0, c),
+          userId: s.userId,
+          score,
+        })),
+      }).expect(200)
+    ).body;
+    const row = (u: string) => v.students.find((s: { userId: string }) => s.userId === u);
+    expect(row(s1.userId)).toMatchObject({
+      total: 52,
+      final: 'PENDING',
+      band: 'GOOD', // 52 of the 60 held so far
+      sections: {
+        JN: { score: 38, max: 40, band: 'EXCELLENT' },
+        ON: { score: 14, max: 20, band: 'GOOD' },
+      },
+    });
+    expect(row(s2.userId)).toMatchObject({
+      total: 19,
+      sections: { JN: { score: 14, band: 'FAIL' } },
+    });
+    expect(v.stats).toMatchObject({ heldMax: 60, pending: 2, average: 35.5, jnAverage: 26 });
+
+    // YaN below 24: not passed; at least 24: final mark out of 100.
+    const fin = (
+      await req(teacherA, 'put', `${books()}/${id}/scores`, {
+        entries: [
+          { columnId: col(v0, 'YN'), userId: s1.userId, score: 36 },
+          { columnId: col(v0, 'YN'), userId: s2.userId, score: 20 },
+        ],
+      }).expect(200)
+    ).body;
+    const frow = (u: string) => fin.students.find((s: { userId: string }) => s.userId === u);
+    expect(frow(s1.userId)).toMatchObject({ total: 88, final: 'PASSED', band: 'GOOD' });
+    expect(frow(s2.userId)).toMatchObject({ total: 39, final: 'YN_FAILED', band: 'FAIL' });
+
+    // The student sees their own JN mark.
+    const mine = (await req(s1, 'get', `/orgs/${orgA}/gradebooks/mine`).expect(200)).body;
+    expect(mine.find((b: { id: string }) => b.id === id)).toMatchObject({
+      scheme: 'CREDIT',
+      total: 88,
+      final: 'PASSED',
+      sections: { JN: { score: 38, band: 'EXCELLENT' } },
+    });
+  });
+
+  it('imports only the control totals from a credit vedomost and checks JAMI', async () => {
+    const file = buildXlsx([
+      {
+        name: 'Varaq',
+        rows: [
+          [
+            '#',
+            'FISH',
+            '1-amaliy ish\nGnomchalar\n2-ball',
+            'AMALIY JAMI\n20 ball',
+            'Izoh',
+            '2\nJN\nReklama\n3 ball',
+            '2\nJN\nJAMI\n(20)',
+            '1\nON\n(10)',
+            '2\nON\n(10)',
+            'YaN\n(40)',
+            'JAMI',
+          ],
+          [1, 'Testov Ali', 2, 20, 'izoh matni', 3, 19, 10, 5, null, 54],
+          [2, 'SINOVOVA LOLA', 1, 13, null, 2, 16, 25, 5, null, 99],
+        ],
+      },
+    ]);
+    const p = (
+      await ctx
+        .http()
+        .post(`${books()}/${id}/import/preview`)
+        .set('Cookie', teacherA.cookie)
+        .attach('file', file, 'baholar.xlsx')
+        .expect(200)
+    ).body;
+    expect(p.columns.map((c: { title: string }) => c.title)).toEqual([
+      'Joriy nazorat-1',
+      'Joriy nazorat-2',
+      'Oraliq nazorat-1',
+      'Oraliq nazorat-2',
+      'Yakuniy nazorat',
+    ]);
+    expect(p.ignored).toEqual(['1-amaliy ish Gnomchalar 2-ball', 'Izoh', '2 JN Reklama 3 ball']);
+    expect(p.rows.map((r: { scores: unknown[] }) => r.scores)).toEqual([
+      [20, 19, 10, 5, null],
+      [13, 16, null, 5, null],
+    ]);
+    const messages = p.issues.map((i: { message: string }) => i.message).join('\n');
+    expect(messages).toMatch(/25 — ball 10 dan oshmaydi/);
+    expect(messages).toMatch(/JAMI \(99\).*\(34\)/);
+    expect(messages).not.toMatch(/Testov Ali: fayldagi JAMI/);
+
+    const done = await req(teacherA, 'post', `${books()}/${id}/import`, {
+      columns: p.columns.map((c: { title: string; date: string | null }) => ({
+        title: c.title,
+        date: c.date,
+      })),
+      rows: p.rows.map((r: { userId: string; scores: unknown[] }) => ({
+        userId: r.userId,
+        scores: r.scores,
+      })),
+    }).expect(201);
+    expect(done.body).toEqual({ columnsCreated: 0, cellsWritten: 7 });
+    // A plan that would add a column or exceed a maximum is refused.
+    await req(teacherA, 'post', `${books()}/${id}/import`, {
+      columns: [{ title: 'Boshqa', date: null }],
+      rows: [{ userId: s1.userId, scores: [5] }],
+    }).expect(400);
+    await req(teacherA, 'post', `${books()}/${id}/import`, {
+      columns: [{ title: 'Oraliq nazorat-1', date: null }],
+      rows: [{ userId: s1.userId, scores: [11] }],
+    }).expect(400);
+
+    const r = await req(teacherA, 'get', `${books()}/${id}/export.xlsx`)
+      .buffer(true)
+      .parse((res, cb) => {
+        const chunks: Buffer[] = [];
+        res.on('data', (c: Buffer) => chunks.push(c));
+        res.on('end', () => cb(null, Buffer.concat(chunks)));
+      })
+      .expect(200);
+    const rows = readSpreadsheet(r.body as Buffer);
+    expect(rows[0]).toEqual([
+      '№',
+      'F.I.Sh.',
+      'JN-1 (20)',
+      'JN-2 (20)',
+      'ON-1 (10)',
+      'ON-2 (10)',
+      'YaN (40)',
+      'JN jami (40)',
+      'JN bahosi',
+      'ON jami (20)',
+      'Jami (100)',
+      'Baho',
+      'Holat',
+    ]);
+    expect(rows.find((x) => x[1] === 'TESTOV ALI VALIYEVICH')).toEqual([
+      expect.any(Number),
+      'TESTOV ALI VALIYEVICH',
+      20,
+      19,
+      10,
+      5,
+      36,
+      39,
+      5,
+      15,
+      90,
+      5,
+      'Yakuniy baho',
+    ]);
   });
 });

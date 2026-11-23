@@ -16,11 +16,13 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import type { Response } from 'express';
 import {
   createGradebookSchema,
+  renameGradebookSchema,
   GRADEBOOK_IMPORT_MAX_BYTES,
   gradebookColumnSchema,
   gradebookImportSchema,
   gradebookScoresSchema,
   type CreateGradebookInput,
+  type RenameGradebookInput,
   type GradebookColumnInput,
   type GradebookImportInput,
   type GradebookScoresInput,
@@ -78,7 +80,7 @@ export class GroupGradebooksController {
     @CurrentMembership() m: MembershipContext,
     @Param('groupId', Id) groupId: string,
     @Param('id', Id) id: string,
-    @Body(new ZodPipe(createGradebookSchema)) body: CreateGradebookInput,
+    @Body(new ZodPipe(renameGradebookSchema)) body: RenameGradebookInput,
   ) {
     return this.gradebooks.rename(auth, m, groupId, id, body);
   }

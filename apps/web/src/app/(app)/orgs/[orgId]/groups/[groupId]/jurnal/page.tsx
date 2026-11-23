@@ -1,6 +1,12 @@
 'use client';
 
-import type { GradebookSummary, GroupOverview } from '@webdizayn/shared';
+import {
+  GRADEBOOK_SCHEME_LABEL,
+  GRADEBOOK_SCHEMES,
+  type GradebookScheme,
+  type GradebookSummary,
+  type GroupOverview,
+} from '@webdizayn/shared';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useState, type FormEvent } from 'react';
@@ -17,6 +23,7 @@ export default function GradebooksPage() {
   const group = useApi<GroupOverview>(`/orgs/${orgId}/groups/${groupId}`);
   const { state } = useApi<GradebookSummary[]>(`/orgs/${orgId}/groups/${groupId}/gradebooks`);
   const [title, setTitle] = useState('');
+  const [scheme, setScheme] = useState<GradebookScheme>('CREDIT');
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const base = `/orgs/${orgId}/groups/${groupId}`;
@@ -26,7 +33,10 @@ export default function GradebooksPage() {
     e.preventDefault();
     setPending(true);
     setError(null);
-    const r = await send<GradebookSummary>('POST', `${base}/gradebooks`, { title });
+    const r = await send<GradebookSummary>('POST', `${base}/gradebooks`, {
+      title,
+      scheme,
+    });
     setPending(false);
     if (!r.ok) return setError(r.message);
     router.push(`${base}/jurnal/${r.data.id}`);
@@ -41,7 +51,7 @@ export default function GradebooksPage() {
           { href: base, label: groupName },
         ]}
         title="Baholash jurnali"
-        subtitle="Darsda qo‘ygan baholaringiz (100 ballik shkala): har dars uchun ustun, Excel’dan import va eksport."
+        subtitle="Darsda qo‘ygan baholaringiz: kredit tizimi (JN, ON, YaN) yoki har dars uchun ustun; Excel’dan import va eksport."
       />
       <div className="space-y-8">
         <form onSubmit={create} className="card flex flex-wrap items-end gap-3 p-5">
@@ -60,6 +70,27 @@ export default function GradebooksPage() {
               maxLength={120}
             />
           </div>
+          <fieldset className="w-full">
+            <legend className="mb-1 font-semibold">Baholash tizimi</legend>
+            <div className="grid gap-2 md:grid-cols-2">
+              {GRADEBOOK_SCHEMES.map((s) => (
+                <label
+                  key={s}
+                  className="flex cursor-pointer items-start gap-2 rounded-xl border border-line p-3 has-checked:border-brand-500"
+                >
+                  <input
+                    type="radio"
+                    name="scheme"
+                    value={s}
+                    checked={scheme === s}
+                    onChange={() => setScheme(s)}
+                    className="mt-1"
+                  />
+                  <span>{GRADEBOOK_SCHEME_LABEL[s]}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
           <Button type="submit" disabled={pending}>
             <Icon name="plus" className="size-4" /> Yaratish
           </Button>
@@ -87,11 +118,20 @@ export default function GradebooksPage() {
                     >
                       <p className="font-display text-lg font-semibold">{b.title}</p>
                       <p className="mt-1 text-sm text-muted">
-                        {b.students} talaba · {b.columns} dars · yangilangan{' '}
-                        {formatDate(b.updatedAt)}
+                        {b.scheme === 'CREDIT' ? 'Kredit tizimi' : `${b.columns} dars`} ·{' '}
+                        {b.students} talaba · yangilangan {formatDate(b.updatedAt)}
                       </p>
                       <p className="mt-3 text-sm">
-                        Guruh o‘rtachasi: <ScoreBadge score={b.average} />
+                        {b.scheme === 'CREDIT' ? (
+                          <>
+                            O‘rtacha jami ball:{' '}
+                            <strong className="tabular-nums">{b.average ?? '—'}</strong>
+                          </>
+                        ) : (
+                          <>
+                            Guruh o‘rtachasi: <ScoreBadge score={b.average} />
+                          </>
+                        )}
                       </p>
                     </Link>
                   </li>

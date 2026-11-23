@@ -2,9 +2,11 @@ import { describe, expect, it } from 'vitest';
 import {
   columnKey,
   columnLabel,
+  creditControlOf,
   excelSerialToIso,
   gradeBand,
   gradebookImportSchema,
+  gradebookMark,
   gradebookStats,
   gradeScoreSchema,
   isIgnoredHeader,
@@ -14,8 +16,8 @@ import {
 } from './gradebook';
 
 describe('gradebook helpers', () => {
-  it('bands follow the 100-point scale', () => {
-    expect([100, 86, 85.9, 71, 70, 55, 54.9, 0].map(gradeBand)).toEqual([
+  it('bands follow “Ballar taqsimoti”: 90 / 70 / 60 % of the maximum', () => {
+    expect([100, 90, 89.9, 70, 69.9, 60, 59.9, 0].map((x) => gradeBand(x))).toEqual([
       'EXCELLENT',
       'EXCELLENT',
       'GOOD',
@@ -25,6 +27,87 @@ describe('gradebook helpers', () => {
       'FAIL',
       'FAIL',
     ]);
+    // Joriy nazorat (40): 36 / 28 / 24; one control (20): 18 / 14 / 12; ON (10): 9 / 7 / 6.
+    expect([36, 35.9, 28, 27.9, 24, 23.9].map((x) => gradeBand(x, 40))).toEqual([
+      'EXCELLENT',
+      'GOOD',
+      'GOOD',
+      'SATISFACTORY',
+      'SATISFACTORY',
+      'FAIL',
+    ]);
+    expect([18, 17.9, 14, 12, 11.9].map((x) => gradeBand(x, 20))).toEqual([
+      'EXCELLENT',
+      'GOOD',
+      'GOOD',
+      'SATISFACTORY',
+      'FAIL',
+    ]);
+    expect([9, 8.9, 7, 6, 5.9].map((x) => gradeBand(x, 10))).toEqual([
+      'EXCELLENT',
+      'GOOD',
+      'GOOD',
+      'SATISFACTORY',
+      'FAIL',
+    ]);
+  });
+
+  it('credit marks: JN / ON sections, pending final, YaN pass rule', () => {
+    const cols = (
+      [
+        ['j1', 'JN1', 20],
+        ['j2', 'JN2', 20],
+        ['o1', 'ON1', 10],
+        ['o2', 'ON2', 10],
+        ['y', 'YN', 40],
+      ] as const
+    ).map(([id, control, maxScore]) => ({ id, control, maxScore }));
+    const pending = gradebookMark('CREDIT', cols, { j1: 20, j2: 18, o1: 9, o2: 5, y: null }, 60);
+    expect(pending).toMatchObject({ total: 52, final: 'PENDING', band: 'GOOD', filled: 4 });
+    expect(pending.sections).toEqual({
+      JN: { score: 38, max: 40, band: 'EXCELLENT' },
+      ON: { score: 14, max: 20, band: 'GOOD' },
+    });
+    // An empty control counts as 0 in its section.
+    expect(gradebookMark('CREDIT', cols, { j2: 8, o2: 5 }, 60).sections?.JN).toEqual({
+      score: 8,
+      max: 40,
+      band: 'FAIL',
+    });
+    expect(
+      gradebookMark('CREDIT', cols, { j1: 20, j2: 20, o1: 10, o2: 10, y: 36 }, 100),
+    ).toMatchObject({ total: 96, final: 'PASSED', band: 'EXCELLENT' });
+    expect(
+      gradebookMark('CREDIT', cols, { j1: 20, j2: 20, o1: 10, o2: 10, y: 23 }, 100),
+    ).toMatchObject({ total: 83, final: 'YN_FAILED', band: 'FAIL' });
+    expect(gradebookMark('CREDIT', cols, {}, 60)).toMatchObject({ total: null, band: null });
+
+    const rows = [
+      { scores: { j1: 20, j2: 18, o1: 9, o2: 5 } },
+      { scores: { j1: 6, j2: 8, o1: 3, o2: 5 } },
+    ].map((r) => ({ ...r, ...gradebookMark('CREDIT', cols, r.scores, 60) }));
+    const st = gradebookStats('CREDIT', cols, rows);
+    expect(st).toMatchObject({ heldMax: 60, pending: 2, average: 37, jnAverage: 26 });
+    expect(st.jnBands).toEqual({ EXCELLENT: 1, GOOD: 0, SATISFACTORY: 0, FAIL: 1 });
+  });
+
+  it('finds the control totals in a credit vedomost header', () => {
+    const map = (h: string) => creditControlOf(h);
+    expect(map('AMALIY JAMI\r\n20 ball')).toBe('JN1');
+    expect(map('2\r\nJN\r\nJAMI\r\n(20)')).toBe('JN2');
+    expect(map('1\r\nON\r\n(10)')).toBe('ON1');
+    expect(map('2\r\nON\r\n(10)')).toBe('ON2');
+    expect(map('YaN\r\n(40)')).toBe('YN');
+    expect(map('JAMI')).toBe('TOTAL');
+    expect(map('Joriy nazorat-2')).toBe('JN2');
+    expect(map('Oraliq nazorat-1')).toBe('ON1');
+    expect(map('Yakuniy nazorat')).toBe('YN');
+    // Item columns are not controls.
+    expect(map('1-amaliy ish\r\nGnomchalar\r\n2-ball')).toBeNull();
+    expect(map('2\r\nJN\r\n1-Amaliy ish\r\nPhoto mantaj\r\n2 ball')).toBeNull();
+    expect(map('Jami ball\r\n10 ball')).toBeNull();
+    expect(map('02/03\r\nQayta ish topshirganligi')).toBeNull();
+    expect(map('29,04,2026')).toBeNull();
   });
 
   it('means ignore empty cells and round to one decimal', () => {
@@ -34,12 +117,18 @@ describe('gradebook helpers', () => {
   });
 
   it('stats: overall mean, column means and bands', () => {
-    const cols = [{ id: 'a' }, { id: 'b' }];
-    const s = gradebookStats(cols, [
-      { scores: { a: 90, b: 100 } },
-      { scores: { a: 60, b: null } },
-      { scores: {} },
-    ]);
+    const cols = [
+      { id: 'a', maxScore: 100, control: null },
+      { id: 'b', maxScore: 100, control: null },
+    ];
+    const s = gradebookStats(
+      'LESSONS',
+      cols,
+      [{ scores: { a: 90, b: 100 } }, { scores: { a: 60, b: null } }, { scores: {} }].map((r) => ({
+        ...r,
+        ...gradebookMark('LESSONS', cols, r.scores, 0),
+      })),
+    );
     expect(s.average).toBe(83.3);
     expect(s.columnAverages).toEqual([75, 100]);
     expect(s.bands).toEqual({ EXCELLENT: 1, GOOD: 0, SATISFACTORY: 1, FAIL: 0 });
