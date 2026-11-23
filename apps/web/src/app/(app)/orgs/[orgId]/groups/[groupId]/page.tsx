@@ -71,6 +71,11 @@ function Panel({ orgId, o }: { orgId: string; o: GroupOverview }) {
         ]}
         title={o.group.name}
         subtitle={`${o.students.length} nafar talaba · ${formatDate(o.generatedAt)} holatiga`}
+        actions={
+          <Link href={`/orgs/${orgId}/groups/${o.group.id}/jurnal`} className="btn btn-primary">
+            <Icon name="list" className="size-4" /> Baholash jurnali
+          </Link>
+        }
       />
       <div className="space-y-8">
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">

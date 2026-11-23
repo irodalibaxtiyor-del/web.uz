@@ -14,6 +14,7 @@ import {
 import { LoadState, PageHeader, ProgressBar } from '@/components/ui';
 import { formatDate } from '@/lib/dates';
 import { useApi } from '@/lib/use-api';
+import { MyGradebooks } from '@/components/gradebook-ui';
 
 export default function MyAnalyticsPage() {
   const { state } = useApi<StudentAnalytics>('/analytics/me');
@@ -27,6 +28,7 @@ export default function MyAnalyticsPage() {
             subtitle="O‘qish jarayoningiz: progress, tekshiruvlar, testlar va topshiriqlar. Bu ma’lumotlarni faqat siz ko‘rasiz."
           />
           <div className="space-y-8">
+            <MyGradebooks />
             {data.courses.length === 0 ? (
               <Section title="Hali kurs yo‘q">
                 <Empty>

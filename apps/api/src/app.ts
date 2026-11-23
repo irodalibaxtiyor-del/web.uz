@@ -9,6 +9,11 @@ import { TutorService } from './ai/tutor.service';
 import { AdminAccountsController } from './accounts/admin-accounts.controller';
 import { AccountsService } from './accounts/accounts.service';
 import { AdminGroupsController } from './groups/admin-groups.controller';
+import {
+  GroupGradebooksController,
+  MyGradebooksController,
+} from './gradebook/gradebook.controller';
+import { GradebookService } from './gradebook/gradebook.service';
 import { GroupsController } from './groups/groups.controller';
 import { MonitoringService } from './groups/monitoring.service';
 import { GroupsService } from './groups/groups.service';
@@ -139,6 +144,8 @@ export class AppModule {
         AdminGroupsController,
         AdminAccountsController,
         GroupsController,
+        GroupGradebooksController,
+        MyGradebooksController,
         AdminBooksController,
         BooksController,
         PublicBooksController,
@@ -183,6 +190,7 @@ export class AppModule {
         GroupsService,
         AccountsService,
         MonitoringService,
+        GradebookService,
         KnowledgeBase,
         ChatbotService,
         { provide: CONTACT_NOTIFIER, useValue: contactNotifier },

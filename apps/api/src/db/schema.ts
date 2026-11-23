@@ -1357,3 +1357,70 @@ export const notificationOutbox = pgTable(
     ),
   ],
 );
+
+/**
+ * Teacher gradebook ("Baholash jurnali") for a group: scores given in class on a 100-point
+ * scale. Kept apart from platform activity — nothing here counts as a quiz attempt or progress.
+ */
+export const gradebooks = pgTable(
+  'gradebooks',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    organizationId: uuid('organization_id')
+      .notNull()
+      .references(() => organizations.id, { onDelete: 'cascade' }),
+    groupId: uuid('group_id')
+      .notNull()
+      .references(() => groups.id, { onDelete: 'cascade' }),
+    title: text('title').notNull(),
+    /** Lower-cased, space-normalised title: one gradebook per subject name in a group. */
+    titleKey: text('title_key').notNull(),
+    createdBy: uuid('created_by').references(() => users.id, { onDelete: 'set null' }),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (t) => [
+    uniqueIndex('gradebooks_group_title_idx').on(t.groupId, t.titleKey),
+    index('gradebooks_org_idx').on(t.organizationId),
+    index('gradebooks_created_by_idx').on(t.createdBy),
+  ],
+);
+
+export const gradebookColumns = pgTable(
+  'gradebook_columns',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    gradebookId: uuid('gradebook_id')
+      .notNull()
+      .references(() => gradebooks.id, { onDelete: 'cascade' }),
+    position: integer('position').notNull(),
+    title: text('title').notNull().default(''),
+    heldOn: date('held_on', { mode: 'string' }),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    index('gradebook_columns_book_idx').on(t.gradebookId, t.position),
+    check('gradebook_columns_label', sql`${t.title} <> '' or ${t.heldOn} is not null`),
+  ],
+);
+
+export const gradebookScores = pgTable(
+  'gradebook_scores',
+  {
+    columnId: uuid('column_id')
+      .notNull()
+      .references(() => gradebookColumns.id, { onDelete: 'cascade' }),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    score: real('score').notNull(),
+    updatedBy: uuid('updated_by').references(() => users.id, { onDelete: 'set null' }),
+    updatedAt: updatedAt(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.columnId, t.userId] }),
+    index('gradebook_scores_user_idx').on(t.userId),
+    index('gradebook_scores_updated_by_idx').on(t.updatedBy),
+    check('gradebook_scores_range', sql`${t.score} >= 0 and ${t.score} <= 100`),
+  ],
+);

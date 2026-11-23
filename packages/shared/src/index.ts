@@ -36,3 +36,4 @@ export * from './lesson-blocks';
 export * from './glossary';
 export * from './certificates';
 export * from './notifications';
+export * from './gradebook';

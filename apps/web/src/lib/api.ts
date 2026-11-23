@@ -94,3 +94,27 @@ export async function download(
   setTimeout(() => URL.revokeObjectURL(url), 1000);
   return { ok: true, status: res.status, data: { fileName, headers: res.headers } };
 }
+
+/** Multipart upload (no JSON content type); errors are reported like `api()`. */
+export async function upload<T>(path: string, form: FormData): Promise<ApiResult<T>> {
+  let res: Response;
+  try {
+    res = await fetch(`/api${path}`, { method: 'POST', credentials: 'same-origin', body: form });
+  } catch {
+    return { ok: false, status: 0, message: NETWORK_ERROR };
+  }
+  const body: unknown = await res.json().catch(() => null);
+  if (res.ok) return { ok: true, status: res.status, data: body as T };
+  const obj = body && typeof body === 'object' ? (body as Record<string, unknown>) : {};
+  return {
+    ok: false,
+    status: res.status,
+    message:
+      res.status === 413
+        ? 'Fayl juda katta (ko‘pi bilan 2 MB)'
+        : typeof obj.message === 'string'
+          ? obj.message
+          : 'Kutilmagan xatolik yuz berdi',
+    code: typeof obj.code === 'string' ? obj.code : undefined,
+  };
+}
