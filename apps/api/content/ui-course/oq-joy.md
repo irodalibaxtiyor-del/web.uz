@@ -57,3 +57,20 @@ Qoida yo‘q, lekin yo‘l-yo‘riq bor:
 Har qanday interfeys ham havodor bo‘lishi shart emas. Jadvallar, admin panellar, kod muharrirlari — ko‘p ma’lumotni bir ekranda ko‘rsatish uchun **zich**. Lending va maqola sahifalari esa havodor. Zichlikni foydalanuvchi vazifasiga qarab tanlang.
 
 Mashqda bo‘limga ekranga moslashuvchan oq joy, konteyner va qulay matn kengligi berasiz.
+
+```tekshir
+Bo‘sh joy (white space) haqida to‘g‘ri gap qaysi?
++ u ma’lumotni guruhlaydi va o‘qishni osonlashtiradi
+- u isrof qilingan joy, uni to‘ldirish kerak
+- u faqat chop etishda kerak
+> Bo‘sh joy — dizaynning faol elementi.
+```
+
+```jonli
+<style>
+  .z { background: #eef4fb; padding: 4px; line-height: 1.1; }
+  .k { background: #eef4fb; padding: 20px; line-height: 1.6; margin-top: 12px; }
+</style>
+<div class="z"><b>Zich</b><br>Matn va chegara orasida joy yo‘q, o‘qish qiyin.</div>
+<div class="k"><b>Havodor</b><br>Bo‘sh joy matnni tinchroq va tushunarli qiladi.</div>
+```

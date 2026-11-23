@@ -65,3 +65,27 @@ Agar `.ish` ga CSS’da `display: grid` yoki `flex` berilsa, u `hidden` atributi
 Filtrdan keyin nechta loyiha qolganini aytish foydali: `<p role="status">2 ta loyiha</p>`. `role="status"` ekran o‘quvchiga o‘zgarishni bildiradi.
 
 Mashqda loyihalarni toifa bo‘yicha filtrlaydigan tugmalar yasaysiz.
+
+```tekshir
+Filtrlangan kartalarni yashirish uchun qaysi usul ham ko‘zdan, ham ekran o‘quvchidan yashiradi?
++ `hidden` atributi
+- `opacity: 0`
+- `transform: scale(0)`
+> `hidden` = `display: none`; natijalar soni `aria-live` bilan e’lon qilinadi.
+```
+
+```jonli
+<div role="group" aria-label="Filtr"><button data-f="hammasi" aria-pressed="true">Hammasi</button> <button data-f="sayt" aria-pressed="false">Sayt</button> <button data-f="dizayn" aria-pressed="false">Dizayn</button></div>
+<ul id="r"><li data-t="sayt">Kafe sayti</li><li data-t="dizayn">Logo</li><li data-t="sayt">Do‘kon</li></ul>
+<p id="n" aria-live="polite"></p>
+<script>
+  document.querySelector('[role=group]').onclick = (e) => {
+    const f = e.target.dataset.f;
+    if (!f) return;
+    document.querySelectorAll('[data-f]').forEach((b) => b.setAttribute('aria-pressed', String(b === e.target)));
+    let n = 0;
+    document.querySelectorAll('#r li').forEach((li) => { li.hidden = f !== 'hammasi' && li.dataset.t !== f; if (!li.hidden) n++; });
+    document.getElementById('n').textContent = n + ' ta ish';
+  };
+</script>
+```

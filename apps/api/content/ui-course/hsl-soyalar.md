@@ -58,3 +58,20 @@ Zamonaviy CSS’da ikkita rangni aralashtirish mumkin:
 “Asosiy rangning 85% i va 15% qora” — to‘qroq soya. Brauzer qo‘llab-quvvatlashini tekshirib ishlating.
 
 Mashqda bitta tondan uch soya yasaysiz.
+
+```tekshir
+HSL’da bir rangning och va to‘q soyalarini olish uchun qaysi qiymat o‘zgartiriladi?
++ yorqinlik (L)
+- tus (H)
+- faqat alfa
+> Tus bir xil qolsa, soyalar bitta “oila” bo‘lib ko‘rinadi.
+```
+
+```jonli
+<style>
+  .s { display: flex; }
+  .s div { flex: 1; height: 48px; }
+</style>
+<div class="s"><div style="background: hsl(210 90% 92%)"></div><div style="background: hsl(210 90% 75%)"></div><div style="background: hsl(210 90% 55%)"></div><div style="background: hsl(210 90% 40%)"></div><div style="background: hsl(210 90% 25%)"></div></div>
+<div style="height: 48px; margin-top: 6px; background: color-mix(in srgb, #0071dc 40%, white)">color-mix 40%</div>
+```

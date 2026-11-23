@@ -62,3 +62,20 @@ Ba’zan farq butun sahifada emas, komponentda: kartaning Mobile va Desktop vari
 Sahifani DevTools’da freym o‘lchamlariga (360, 1440) qo‘yib, maket skrinshoti bilan solishtiring. “Pixel Perfect” kabi brauzer kengaytmalari maket rasmini sahifa ustiga yarim shaffof qo‘yib beradi.
 
 Mashqda ikki freymdagi header farqlarini media so‘rov bilan birlashtirasiz.
+
+```tekshir
+Maketda mobil va desktop freymlar bor. Kodni qaysi tartibda yozish qulay?
++ avval mobil freym bo‘yicha, keyin `min-width` media so‘rov bilan desktop farqlari
+- avval desktop, keyin hamma narsani bekor qilish
+- ikkita alohida HTML fayl
+> Freymlar orasidagi farqlarni ro‘yxatga olib, faqat shularni media so‘rovga yozasiz.
+```
+
+```jonli
+<style>
+  .h { display: grid; gap: 12px; padding: 16px; background: #eef4fb; }
+  .h h2 { margin: 0; font-size: 1.4rem; }
+  @media (min-width: 640px) { .h { grid-template-columns: 1fr 1fr; align-items: center; } .h h2 { font-size: 2rem; } }
+</style>
+<section class="h"><h2>Mobil — ustma-ust, desktop — yonma-yon</h2><div style="background: #0071dc; height: 100px"></div></section>
+```

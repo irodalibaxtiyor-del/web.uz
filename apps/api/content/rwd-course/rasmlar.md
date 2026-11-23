@@ -67,3 +67,20 @@ To‘g‘ri to‘rtburchak rasm ham chiroyli doira bo‘ladi.
 CSS fonidagi rasm uchun `background-size: cover` va `background-position: center` — xuddi `object-fit: cover` kabi. Lekin kontent bo‘lgan rasm (mahsulot, maqola rasmi) `<img>` bilan bo‘lishi kerak: unga `alt` yozish mumkin, u qidiruvda ko‘rinadi va kechiktirib yuklanadi.
 
 Mashqda kurs kartasi muqovasi va muallif avatarini moslashuvchan qilasiz.
+
+```tekshir
+HTML’da `<img>` ga `width` va `height` yozish nimaga yordam beradi?
++ rasm yuklanmasidan oldin joy ajratilib, sahifa “sakramaydi” (CLS)
+- rasmni har doim shu o‘lchamda qotiradi
+- rasmni tezroq yuklaydi
+> CSS dagi `max-width: 100%; height: auto` bilan birga rasm baribir moslashadi.
+```
+
+```jonli
+<style>
+  img { max-width: 100%; height: auto; display: block; }
+  .a { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; }
+</style>
+<img src="data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%27800%27%20height=%27300%27%3E%3Crect%20width=%27800%27%20height=%27300%27%20fill=%27%230071dc%27/%3E%3Ccircle%20cx=%27560%27%20cy=%27105%27%20r=%2745%27%20fill=%27%23fff%27/%3E%3C/svg%3E" width="800" height="300" alt="Keng rasm">
+<img class="a" src="data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%27200%27%20height=%27300%27%3E%3Crect%20width=%27200%27%20height=%27300%27%20fill=%27%23f5a623%27/%3E%3Ccircle%20cx=%27140%27%20cy=%27105%27%20r=%2730%27%20fill=%27%23fff%27/%3E%3C/svg%3E" width="200" height="300" alt="Avatar" style="margin-top: 8px">
+```

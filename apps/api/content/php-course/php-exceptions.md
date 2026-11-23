@@ -118,6 +118,14 @@ echo f(); // finally try
 
 `finally` qaytarishdan **oldin** bajariladi — fayl yoki ulanishni yopish uchun ishonchli joy.
 
+```tekshir
+Foydalanuvchiga xato haqida nima ko‘rsatiladi?
++ tushunarli umumiy xabar; texnik tafsilotlar esa logga yoziladi
+- to‘liq xato matni va fayl yo‘li
+- hech narsa
+> Texnik tafsilotlar hujumchiga tizim haqida ma’lumot beradi.
+```
+
 ## Mustaqil mashq
 
 ```php

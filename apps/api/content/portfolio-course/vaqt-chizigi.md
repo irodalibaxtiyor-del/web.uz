@@ -66,3 +66,21 @@ Telefonda vertikal chiziq chapda — ideal. Kompyuterda ba’zan voqealar chiziq
 `::before` dagi `content: ""` bo‘sh — ekran o‘quvchi uni o‘qimaydi. Lekin `content: "★"` kabi belgi yozsangiz, u o‘qilishi mumkin. Bezak belgilarini psevdoelementga qo‘yganda buni hisobga oling.
 
 Mashqda tajriba ro‘yxatini vaqt chizig‘iga aylantirasiz.
+
+```tekshir
+Vaqt chizig‘i (timeline) uchun qaysi HTML tuzilma mos?
++ tartiblangan ro‘yxat `<ol>`
+- `<table>`
+- bir nechta `<br>`
+> Voqealar tartibi ma’noli — `<ol>` buni ekran o‘quvchiga ham bildiradi.
+```
+
+```jonli
+<style>
+  ol { list-style: none; position: relative; padding-left: 24px; }
+  ol::before { content: ""; position: absolute; left: 7px; top: 4px; bottom: 4px; width: 2px; background: #ccc; }
+  li { position: relative; margin-bottom: 12px; }
+  li::before { content: ""; position: absolute; left: -22px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: #6c3483; }
+</style>
+<ol><li><b>2024</b> — HTML va CSS kursi</li><li><b>2025</b> — birinchi buyurtma</li><li><b>2026</b> — frontend dasturchi</li></ol>
+```

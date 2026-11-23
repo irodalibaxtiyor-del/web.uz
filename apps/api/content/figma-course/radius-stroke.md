@@ -55,3 +55,20 @@ Aniq naqsh kerak bo‘lsa — SVG fon yoki `background-image` gradient hiylalari
 Figma’da stroke’ni alohida tomonlarga berish mumkin (faqat pastki chiziq). CSS’da: `border-bottom: 1px solid`.
 
 Mashqda burchak radiuslari, ichki stroke va punktir chiziqni yozasiz.
+
+```tekshir
+Figma’dagi “Inside stroke” CSS’da qanday chiziladi, o‘lcham o‘zgarmasligi uchun?
++ `box-sizing: border-box` bilan `border` yoki `box-shadow: inset 0 0 0 2px`
+- `outline` (har doim)
+- `border` va `content-box`
+> `inset` soya umuman joy egallamaydi.
+```
+
+```jonli
+<style>
+  div { display: inline-block; width: 100px; height: 60px; margin: 6px; background: #eef4fb; }
+</style>
+<div style="border-radius: 12px; box-shadow: inset 0 0 0 2px #0071dc"></div>
+<div style="border-radius: 12px; border: 2px dashed #0071dc; box-sizing: border-box"></div>
+<div style="border-bottom: 3px solid #f5a623"></div>
+```

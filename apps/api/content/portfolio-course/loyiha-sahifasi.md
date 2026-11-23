@@ -65,3 +65,20 @@ Katta skrinshotlar hikoya ustunidan kengroq bo‘lishi mumkin — `figure` ga `g
 Sahifa oxirida “Keyingi loyiha →” havolasi o‘quvchini saytda ushlab qoladi.
 
 Mashqda case study sahifasining ikki ustunli maketini yasaysiz.
+
+```tekshir
+Case study sahifasi nimalarni hikoya qilishi kerak?
++ muammo, sizning rolingiz, jarayon va natija
+- faqat skrinshotlar
+- faqat ishlatilgan texnologiyalar ro‘yxati
+> Ish beruvchi qanday fikrlashingizni ko‘rmoqchi.
+```
+
+```jonli
+<style>
+  dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; }
+  dt { font-weight: 600; color: #555; }
+  dd { margin: 0; }
+</style>
+<dl><dt>Mijoz</dt><dd>“Non” kafesi</dd><dt>Rolim</dt><dd>Dizayn va frontend</dd><dt>Muddat</dt><dd>3 hafta</dd><dt>Natija</dt><dd>Onlayn buyurtmalar 40% oshdi</dd></dl>
+```

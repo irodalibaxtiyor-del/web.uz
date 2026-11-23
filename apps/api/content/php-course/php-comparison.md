@@ -73,6 +73,14 @@ var_dump(["a" => 1, "b" => 2] == ["b" => 2, "a" => 1]);  // bool(true)
 var_dump(["a" => 1, "b" => 2] === ["b" => 2, "a" => 1]); // bool(false) — tartib ham muhim
 ```
 
+```tekshir
+`0 == 'abc'` PHP 8 da qanday natija beradi?
++ `false`
+- `true`
+- xato
+> PHP 8 da son va son bo‘lmagan satr solishtirilganda son satrga aylantiriladi. Baribir `===` ishlating.
+```
+
 ## Mustaqil mashq
 
 Har bir taqqoslash natijasini oldin **qog‘ozda** yozing, keyin tekshiring:

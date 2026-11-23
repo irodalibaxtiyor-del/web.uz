@@ -83,6 +83,14 @@ echo <<<HTML
 HTML;
 ```
 
+```tekshir
+`number_format(1234567.891, 2, '.', ' ')` natijasi qaysi?
++ `'1 234 567.89'`
+- `'1234567.89'`
+- `'1,234,567.891'`
+> Argumentlar: son, kasr xonalari, kasr ajratgichi, minglik ajratgichi.
+```
+
 ## Mustaqil mashq
 
 Chek satrlarini bir xil kenglikda chiqaring:

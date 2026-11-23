@@ -92,6 +92,14 @@ $url = 'kurslar.php?' . http_build_query(['q' => 'flex box', 'sahifa' => 2]);
 // kurslar.php?q=flex+box&sahifa=2
 ```
 
+```tekshir
+`$_GET` va `$_POST` dagi ma’lumotga qanday munosabatda bo‘lish kerak?
++ hech qachon ishonmaslik — har doim tekshirish va tozalash
+- ular server tomonidan yaratilgani uchun xavfsiz
+- faqat `$_GET` ni tekshirish yetarli
+> Ikkalasini ham foydalanuvchi xohlagancha o‘zgartira oladi.
+```
+
 ## Mustaqil mashq
 
 `salom.php`:

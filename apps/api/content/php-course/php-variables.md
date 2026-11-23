@@ -91,6 +91,14 @@ var_dump(isset($ism));   // bool(false)
 
 Funksiya ichidagi o‘zgaruvchi tashqaridagini ko‘rmaydi va aksincha — buni “Funksiyalar” modulida batafsil ko‘ramiz.
 
+```tekshir
+PHP’da o‘zgaruvchi qanday boshlanadi?
++ `$` belgisi bilan: `$ism`
+- `var` bilan
+- `@` belgisi bilan
+> O‘zgaruvchi nomlari katta-kichik harfni farqlaydi: `$ism` va `$Ism` — boshqa-boshqa.
+```
+
 ## Mustaqil mashq
 
 `profil.php` yarating:

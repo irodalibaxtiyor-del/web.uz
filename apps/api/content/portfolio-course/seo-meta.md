@@ -70,3 +70,11 @@ Qidiruv tizimlariga “bu sahifa — shaxs haqida” deb aytish mumkin:
 - Sarlavha va tavsif har bir sahifada (case study sahifalari ham) o‘ziga xos bo‘lsin.
 
 Mashqda portfolio `<head>` qismini SEO va ulashish uchun tayyorlaysiz.
+
+```tekshir
+Sahifa ijtimoiy tarmoqda ulashilganda ko‘rinadigan rasm qaysi meta teg bilan beriladi?
++ `<meta property="og:image" content="...">`
+- `<meta name="image">`
+- `<link rel="icon">`
+> Open Graph teglari: `og:title`, `og:description`, `og:image`.
+```

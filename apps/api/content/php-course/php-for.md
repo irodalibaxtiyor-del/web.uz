@@ -87,6 +87,14 @@ Massivlar uchun odatda `foreach` qulayroq — keyingi dars. `for` indeks bilan m
 
 > `count()` ni shartda yozsangiz, u har aylanishda chaqiriladi. Katta massivda oldindan hisoblang: `for ($i = 0, $n = count($a); $i < $n; $i++)`.
 
+```tekshir
+`for ($i = 0; $i < 5; $i += 2)` necha marta aylanadi?
++ 3 (`0, 2, 4`)
+- 5
+- 2
+> 6 da shart yolg‘on bo‘ladi.
+```
+
 ## Mustaqil mashq
 
 FizzBuzz: 1 dan 15 gacha — 3 ga bo‘linsa `Fizz`, 5 ga — `Buzz`, ikkalasiga — `FizzBuzz`, aks holda sonning o‘zi:

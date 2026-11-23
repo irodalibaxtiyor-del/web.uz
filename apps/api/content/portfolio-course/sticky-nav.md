@@ -47,3 +47,19 @@ Header balandligi 64px bo‘lsa, langarlar bilan o‘tganda sarlavhalar uning os
 Kichik ekranda doimiy header joy egallaydi. Ba’zi saytlar pastga aylantirganda header’ni yashirib, yuqoriga aylantirganda ko‘rsatadi (JavaScript bilan). Oddiy portfolio uchun ixcham (56–64px) sticky header yetarli.
 
 Mashqda header’ni yopishqoq va shaffof-xira qilasiz.
+
+```tekshir
+`position: sticky` ishlamasligining odatiy sababi qaysi?
++ ota elementlardan birida `overflow: hidden` yoki `top` berilmagan
+- `z-index` juda katta
+- sahifada rasm bor
+> Sticky uchun `top: 0` kabi qiymat va aylantiriladigan ota kerak.
+```
+
+```jonli
+<style>
+  .w { height: 180px; overflow: auto; border: 1px solid #ccc; }
+  header { position: sticky; top: 0; background: rgb(255 255 255 / .8); backdrop-filter: blur(6px); padding: 10px; border-bottom: 1px solid #ddd; }
+</style>
+<div class="w"><header><b>Aziza</b> · Ishlar · Aloqa</header><p style="height: 500px; padding: 10px; background: linear-gradient(#eef4fb, #f5a623)">Ichini aylantiring — header yuqorida qoladi.</p></div>
+```

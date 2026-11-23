@@ -50,3 +50,11 @@ Barmoq sichqoncha kursoridan ancha yo‘g‘on. Tugma va havolalarning bosish ma
 Brauzerda **F12** → qurilma rejimi (Device toolbar, `Ctrl+Shift+M`). U yerda iPhone, Galaxy kabi o‘lchamlarni tanlash, ekranni burish va sekin internetni sinash mumkin. Lekin u faqat taqlid: imkon bo‘lsa, sahifani haqiqiy telefonda ham oching.
 
 Mashqda viewport tegini tuzatasiz, rasmni ekranga sig‘diradigan qilasiz va tugmaga yetarli bosish maydoni berasiz.
+
+```tekshir
+Qaysi viewport meta teg qulaylikka zid?
++ `user-scalable=no` yoki `maximum-scale=1` bor bo‘lgani
+- `width=device-width, initial-scale=1`
+- `initial-scale=1`
+> Kattalashtirishni taqiqlash ko‘zi zaif foydalanuvchilarga to‘sqinlik qiladi.
+```

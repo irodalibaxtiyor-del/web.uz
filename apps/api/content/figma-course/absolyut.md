@@ -46,3 +46,19 @@ Barcha to‘rt tomonni bir yozuvda berish mumkin: `inset: 0` — ota elementni t
 Nishon “3” kontekstsiz o‘qilsa tushunarsiz: `aria-label="3 ta yangi xabar"` yoki yashirin matn qo‘shing.
 
 Mashqda avatar burchagidagi nishonni maketdagi kabi joylashtirasiz.
+
+```tekshir
+Auto Layout’dan chiqarilgan (absolute) nishon kodda qanday joylashtiriladi?
++ ota `position: relative`, nishon `position: absolute` va `top`/`right`
+- nishon `float: right`
+- `margin-top: -20px`
+> Ota element nishon uchun tayanch nuqta bo‘ladi.
+```
+
+```jonli
+<style>
+  .k { position: relative; width: 200px; padding: 20px; background: #eef4fb; border-radius: 10px; }
+  .n { position: absolute; top: -8px; right: -8px; background: #c0392b; color: #fff; font-size: 12px; min-width: 22px; height: 22px; display: grid; place-items: center; border-radius: 999px; }
+</style>
+<div class="k">Xabarlar<span class="n">3<span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)"> ta yangi</span></span></div>
+```

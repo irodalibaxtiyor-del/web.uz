@@ -64,3 +64,20 @@ Telefonda uzun URL yoki so‘z qatorni yorib chiqishi mumkin:
 ```
 
 Mashqda matn va sarlavhaga suyuq o‘lcham, to‘g‘ri qator balandligi va qulay qator uzunligini berasiz.
+
+```tekshir
+O‘qish uchun qulay qator uzunligi taxminan qancha?
++ 45–75 belgi (`max-width: 65ch` kabi)
+- 150 belgidan ortiq
+- 10–15 belgi
+> Juda uzun qatorda ko‘z keyingi qatorni yo‘qotadi.
+```
+
+```jonli
+<style>
+  p { max-width: 50ch; line-height: 1.6; font-size: clamp(1rem, 0.9rem + 0.5vw, 1.25rem); }
+  h2 { font-size: clamp(1.4rem, 1rem + 2vw, 2.4rem); }
+</style>
+<h2>Suyuq sarlavha</h2>
+<p>Bu paragraf 50 belgidan kengaymaydi va shrift o‘lchami ekran kengligiga qarab silliq o‘zgaradi, lekin chegaradan chiqmaydi.</p>
+```

@@ -114,6 +114,14 @@ Saralashda juda qulay (massivlar modulida).
 
 Shubha bo‘lsa — **qavs**.
 
+```tekshir
+PHP’da satrlarni ulash operatori qaysi?
++ `.` (nuqta)
+- `+`
+- `&`
+> `"Salom, " . $ism` — `+` satrlarni son sifatida qo‘shishga urinadi.
+```
+
 ## Mustaqil mashq
 
 ```php

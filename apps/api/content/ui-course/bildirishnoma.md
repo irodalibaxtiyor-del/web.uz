@@ -60,3 +60,17 @@ Ekranning chetida bir necha soniya ko‘rinib yo‘qoladigan xabar — _toast_. 
 Belgi ekran o‘quvchiga kontekstsiz “3” deb o‘qiladi. Yaxshisi: `<span class="belgi" aria-label="3 ta yangi xabar">3</span>` yoki matnni yonida yozish.
 
 Mashqda muvaffaqiyat va xato xabarlarini hamda hisoblagich belgisini yasaysiz.
+
+```tekshir
+Sahifada paydo bo‘lgan bildirishnomani ekran o‘quvchi aytishi uchun nima kerak?
++ `role="status"` (yoki `aria-live="polite"`) bo‘lgan konteyner
+- `title` atributi
+- qizil rang
+> Shoshilinch xato uchun `role="alert"`.
+```
+
+```jonli
+<button id="b">Saqlash</button>
+<div id="t" role="status" style="margin-top: 8px"></div>
+<script>document.getElementById('b').onclick = () => { document.getElementById('t').textContent = 'Saqlandi ✔'; };</script>
+```

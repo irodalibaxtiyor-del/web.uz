@@ -72,3 +72,21 @@ Brauzer modal oynaga `max-width` va `max-height` cheklovini standart holda berad
 Modal ishni to‘xtatadi. Uzun formalar, ko‘p qadamli jarayonlar uchun alohida sahifa yaxshiroq. Modal — tasdiqlash, qisqa forma, rasmni kattalashtirish uchun.
 
 Mashqda modal oynani telefonda to‘liq ekranli, kompyuterda markazdagi panel qilasiz.
+
+```tekshir
+`<dialog>` elementini modal sifatida ochadigan metod qaysi?
++ `showModal()`
+- `open()`
+- `show()` (u modal emas)
+> `showModal()` fonni bloklaydi, Esc bilan yopiladi va fokusni ichkarida ushlaydi.
+```
+
+```jonli
+<style>
+  dialog { width: min(90vw, 360px); border: 0; border-radius: 12px; }
+  dialog::backdrop { background: rgb(0 0 0 / .5); }
+</style>
+<button id="o">Oynani ochish</button>
+<dialog id="d"><p>Bu modal oyna. Esc yoki tugma bilan yoping.</p><form method="dialog"><button>Yopish</button></form></dialog>
+<script>document.getElementById('o').onclick = () => document.getElementById('d').showModal();</script>
+```

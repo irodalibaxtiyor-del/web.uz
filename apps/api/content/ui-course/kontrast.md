@@ -37,3 +37,17 @@ O‘qilishiga shrift o‘lchami va qalinligi ham ta’sir qiladi. Ingichka (300)
 Qorong‘i mavzuda sof oq matn qora fonda (21:1) ba’zi odamlarga “ko‘zni kesadigan” bo‘lib tuyuladi. Qorong‘i mavzuda `#e2e8f0` kabi biroz yumshoq oq va to‘q ko‘k-kulrang fon yaxshiroq.
 
 Mashqda uchta past kontrastli joyni WCAG talabiga moslaysiz.
+
+```tekshir
+WCAG AA bo‘yicha oddiy matn uchun minimal kontrast nisbati qancha?
+- 3:1
++ 4,5:1
+- 7:1
+> Katta matn (taxminan 24px yoki 19px qalin) uchun 3:1 yetarli; 7:1 — AAA darajasi.
+```
+
+```jonli
+<p style="color: #aaa; background: #fff; padding: 8px">#aaa oq fonda — kontrast past (≈ 2,3:1)</p>
+<p style="color: #595959; background: #fff; padding: 8px">#595959 oq fonda — AA (≈ 7:1)</p>
+<p style="color: #fff; background: #0071dc; padding: 8px">Oq matn #0071dc fonda</p>
+```

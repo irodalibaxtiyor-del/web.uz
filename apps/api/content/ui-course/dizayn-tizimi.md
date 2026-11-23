@@ -56,3 +56,11 @@ Tizim faqat kodda emas, ko‘rinadigan sahifada ham bo‘lsin: barcha ranglar, s
 Tizim ijodni o‘ldirmaydi: u asosiy qarorlarni hal qiladi va sizga haqiqatan yangi muammolarga vaqt qoldiradi. Agar tizimda yo‘q narsa kerak bo‘lsa — tizimga qo‘shing, bir sahifada “qo‘lda” yozmang.
 
 Mashqda komponentdagi qattiq qiymatlarni tokenlarga almashtirib, urg‘u rangini bitta qatordan o‘zgartirasiz.
+
+```tekshir
+Dizayn tizimining uch qatlami qaysi tartibda?
++ tokenlar → komponentlar → shablonlar (sahifalar)
+- sahifalar → ranglar → tugmalar
+- faqat komponentlar
+> Tokenlar (rang, oraliq, shrift) komponentlar uchun asos bo‘ladi.
+```

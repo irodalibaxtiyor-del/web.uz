@@ -95,6 +95,14 @@ $ext = strtolower(pathinfo('Avatar.JPG', PATHINFO_EXTENSION)); // jpg
 var_dump(in_array($ext, ['png', 'jpg', 'jpeg'], true));        // bool(true)
 ```
 
+```tekshir
+Yuklangan fayl turini qanday ishonchli tekshirish kerak?
++ fayl mazmuni bo‘yicha (`finfo` bilan MIME), ruxsat etilganlar ro‘yxatidan
+- `$_FILES['f']['type']` ga ishonish
+- faqat fayl nomi kengaytmasiga qarash
+> `type` maydonini brauzer yuboradi — uni soxtalashtirish oson.
+```
+
 ## Mustaqil mashq
 
 Yuqoridagi formani va skriptni kompyuteringizda ishga tushiring (`yuklar` papkasini loyiha papkasidan **tashqarida** yarating). Uch xil fayl yuklab ko‘ring: PNG rasm, 3 MB rasm va nomini `test.png` ga o‘zgartirilgan matn fayli.

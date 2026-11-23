@@ -46,3 +46,21 @@ Ko‘z sahifani odatda “F” yoki “Z” shaklida ko‘zdan kechiradi: yuqori
 “O‘chirish” kabi qaytarib bo‘lmaydigan amal asosiy tugmadek yorqin bo‘lmasin — tasodifan bosilishi mumkin. U ko‘pincha qizil matnli ikkinchi darajali tugma va tasdiqlash oynasi bilan beriladi.
 
 Mashqda uchta bir xil tugmani uch darajali harakatga aylantirasiz.
+
+```tekshir
+Bir ekranda nechta asosiy (eng ko‘zga tashlanadigan) harakat bo‘lishi tavsiya etiladi?
++ bitta
+- uchta
+- qancha ko‘p bo‘lsa, shuncha yaxshi
+> Qolgan harakatlar ikkinchi va uchinchi darajali ko‘rinishda bo‘ladi.
+```
+
+```jonli
+<style>
+  button { font: inherit; padding: 10px 16px; border-radius: 8px; margin-right: 6px; cursor: pointer; }
+  .a { background: #0071dc; color: #fff; border: 2px solid #0071dc; }
+  .b { background: #fff; color: #0071dc; border: 2px solid #0071dc; }
+  .c { background: none; border: 0; color: #0071dc; text-decoration: underline; }
+</style>
+<button class="a">Saqlash</button><button class="b">Qoralama</button><button class="c">Bekor qilish</button>
+```

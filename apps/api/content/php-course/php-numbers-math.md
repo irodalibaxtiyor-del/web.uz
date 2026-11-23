@@ -90,6 +90,14 @@ echo number_format(2 / 3, 3);          // 0.667
 echo number_format(1500000, 0, '.', ' '); // 1 500 000
 ```
 
+```tekshir
+`intdiv(7, 2)` nimaga teng?
++ `3`
+- `3.5`
+- `4`
+> `intdiv` butun bo‘lish natijasini qaytaradi; qoldiq uchun `%`.
+```
+
 ## Mustaqil mashq
 
 100 kishini 45 o‘rinli avtobuslarga joylash va o‘rtacha ballni hisoblash:

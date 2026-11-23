@@ -61,3 +61,20 @@ Matnga qo‘shtirnoqni HTML’da yozish yoki CSS bilan qo‘shish mumkin:
 3 ta fikr — grid yoki oldingi darsdagi karusel. 10 ta fikr kerak emas; eng aniq va qisqa 2–4 tasini tanlang. Muallifning surati bo‘lsa, kichik doira avatar ishonchni oshiradi.
 
 Mashqda fikrlarni semantik iqtiboslarga aylantirasiz.
+
+```tekshir
+Mijoz fikri (iqtibos) uchun qaysi semantik tuzilma to‘g‘ri?
++ `<figure>` ichida `<blockquote>` va muallif uchun `<figcaption>`
+- `<p>` va qo‘shtirnoqlar
+- `<q>` butun bo‘lim uchun
+> Muallif nomi iqtibos ichiga emas, `figcaption` ga yoziladi.
+```
+
+```jonli
+<style>
+  figure { margin: 0; padding: 16px; border-left: 4px solid #6c3483; background: #faf7fc; max-width: 420px; }
+  blockquote { margin: 0; font-size: 1.1rem; }
+  figcaption { margin-top: 8px; color: #555; }
+</style>
+<figure><blockquote><p>Sayt vaqtida va juda sifatli tayyorlandi.</p></blockquote><figcaption>— Nodira, “Non” kafesi</figcaption></figure>
+```

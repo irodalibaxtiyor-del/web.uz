@@ -55,3 +55,20 @@ Avval yaqinlikdan foydalaning. Agar masofa yetmasa — umumiy fon yoki chegara. 
 Oddiy qoida: **ichki oraliq ≤ tashqi oraliq**. Tugma ichidagi matn va ikonka orasi < tugmaning chetlari < tugmalar orasi < bo‘limlar orasi. Har bir daraja oldingisidan kattaroq — shunda tuzilma o‘z-o‘zidan o‘qiladi.
 
 Mashqda formadagi oraliqlarni yaqinlik qoidasi bo‘yicha qayta taqsimlaysiz.
+
+```tekshir
+Formada yorliq qaysi maydonga yaqinroq turishi kerak?
++ o‘zi tegishli maydonga — undan keyingisiga emas
+- ikkala maydon o‘rtasida teng masofada
+- maydondan uzoqda
+> Yaqinlik qoidasi: ko‘z yaqin turganlarni bitta guruh deb qabul qiladi.
+```
+
+```jonli
+<style>
+  label { display: block; margin: 20px 0 4px; font-weight: 600; }
+  input { width: 100%; max-width: 280px; padding: 8px; }
+</style>
+<label for="i">Ism</label><input id="i">
+<label for="f">Familiya</label><input id="f">
+```

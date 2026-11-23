@@ -106,6 +106,14 @@ function minMax(array $a): array
 echo "$kichik $katta"; // 1 9
 ```
 
+```tekshir
+PHP 8 dagi nomlangan argumentlar qanday yoziladi?
++ `yarat(ism: 'Ali', yosh: 20)`
+- `yarat($ism = 'Ali')`
+- `yarat([ism => 'Ali'])`
+> Argumentlar tartibini eslab qolish shart emas va standart qiymatlarni o‘tkazib yuborish oson.
+```
+
 ## Mustaqil mashq
 
 ```php

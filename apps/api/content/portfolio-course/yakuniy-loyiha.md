@@ -39,3 +39,12 @@ Yangi yaxshi loyiha qilsangiz — eng zaifini olib tashlab, yangisini qo‘shing
 Kursni tugatdingiz. Endi o‘z haqiqiy portfolioingizni yasang, nashr qiling va havolasini o‘qituvchingizga ko‘rsating. Platformadagi “Portfolio” bo‘limida bajargan mashq va topshiriqlaringizdan ochiq sahifa yasash ham mumkin.
 
 Mashqda portfolioning asosiy qismlarini yakuniy sahifada birlashtirasiz.
+
+```tekshir
+Portfolioni nashr qilishdan oldingi ro‘yxatga nimalar kiradi?
++ har sahifada `<title>`, `lang` va meta tavsif
++ rasmlarda `alt`, havolalar ishlaydi
++ telefonda tekshirilgan
+- kodni yashirish
+> Kodingiz ham portfolioning bir qismi — uni toza saqlang.
+```

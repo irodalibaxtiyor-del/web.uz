@@ -57,3 +57,24 @@ Haqiqiy saytda bu yerda `fetch()` bilan serverga (yoki Formspree kabi xizmatga) 
 Har bir maydonning ko‘rinadigan yorlig‘i, kamida 44px balandlik, 16px shrift (telefonda kattalashib ketmasligi uchun), aniq xato matnlari — “UI asoslari” kursidagi qoidalar.
 
 Mashqda formani brauzer tekshiruvi va natija xabari bilan to‘ldirasiz.
+
+```tekshir
+Aloqa formasini botlardan himoya qilishning oddiy, foydalanuvchini bezovta qilmaydigan usuli qaysi?
++ yashirin “honeypot” maydon (odam uni to‘ldirmaydi)
+- har bir maydonga murakkab CAPTCHA
+- formani butunlay o‘chirish
+> Bot yashirin maydonni ham to‘ldiradi — server bunday so‘rovni rad etadi.
+```
+
+```jonli
+<style>
+  label { display: block; margin-top: 8px; }
+  input, textarea { width: 100%; max-width: 320px; box-sizing: border-box; padding: 8px; font: inherit; }
+  .hp { position: absolute; left: -9999px; }
+</style>
+<form id="f"><label for="i">Ism</label><input id="i" name="ism" required autocomplete="name">
+<label for="x">Xabar</label><textarea id="x" name="xabar" required rows="3"></textarea>
+<label class="hp" aria-hidden="true">Bo‘sh qoldiring<input name="website" tabindex="-1" autocomplete="off"></label>
+<p><button>Yuborish</button></p><p id="n" role="status"></p></form>
+<script>document.getElementById('f').onsubmit = (e) => { e.preventDefault(); document.getElementById('n').textContent = 'Rahmat! Xabaringiz qabul qilindi.'; };</script>
+```

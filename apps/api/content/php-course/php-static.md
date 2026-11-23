@@ -107,6 +107,14 @@ echo get_class(Bola::selfYarat()); // Ota
 
 Statik xususiyatlar — aslida **global o‘zgaruvchi**lar klass ichida. Ularni o‘zgartiradigan kodni sinash va tushunish qiyin. Statik — o‘zgarmas konstantalar, yordamchi funksiyalar va fabrikalar uchun; holat — obyektlarda.
 
+```tekshir
+Klassning statik metodi qanday chaqiriladi?
++ `Klass::metod()`
+- `new Klass()->metod()` (yagona usul)
+- `$this->metod()` tashqaridan
+> Klass ichida `self::` yoki `static::`.
+```
+
 ## Mustaqil mashq
 
 ```php

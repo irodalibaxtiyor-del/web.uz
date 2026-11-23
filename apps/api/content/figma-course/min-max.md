@@ -58,3 +58,19 @@ Kesilgan matnning to‘liq varianti foydalanuvchiga qandaydir yo‘l bilan yetib
 Min/max height ham shunday: `min-height` — bo‘sh holatda ham karta bir xil balandlikda; `max-height` + `overflow-y: auto` — uzun ro‘yxat ichida aylanadi.
 
 Mashqda kartaga min/max kenglik va bir qatorli sarlavha berasiz.
+
+```tekshir
+Flex element ichidagi uzun matn “…” bilan kesilishi uchun elementga nima kerak?
++ `min-width: 0` (va matnga `overflow: hidden; text-overflow: ellipsis; white-space: nowrap`)
+- `max-width: none`
+- `flex-shrink: 0`
+> Flex elementning standart `min-width: auto` qiymati uni siqilishdan saqlaydi.
+```
+
+```jonli
+<style>
+  .r { display: flex; gap: 8px; width: 280px; border: 1px solid #ccc; padding: 6px; }
+  .m { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+</style>
+<div class="r"><span class="m">Juda uzun fayl nomi_yakuniy_versiya_2026.pdf</span><button>Ochish</button></div>
+```

@@ -72,3 +72,29 @@ Foydalanuvchi hali tanlamagan bo‘lsa, tizimdagi sozlamaga amal qilish yaxshi:
 Skript sahifa oxirida yuklansa, qorong‘i mavzuni tanlagan foydalanuvchi bir lahza yorug‘ sahifani ko‘radi. Yechim — mavzuni qo‘llaydigan kichik skriptni `<head>` ichida, CSS’dan oldin ishga tushirish.
 
 Mashqda saqlanadigan mavzu almashtirgichni yasaysiz.
+
+```tekshir
+Sahifa ochilganda mavzu “miltillashi”ning (avval yorug‘, keyin qorong‘i) oldini qanday olish mumkin?
++ `<head>` dagi kichik skript saqlangan mavzuni CSS yuklanmasdan oldin qo‘llaydi
+- mavzuni `DOMContentLoaded` dan keyin qo‘llash
+- rasmlarni kechiktirib yuklash
+> Mavzu birinchi chizishdan oldin qo‘llanishi kerak.
+```
+
+```jonli
+<style>
+  :root { --fon: #ffffff; --matn: #1b2430; }
+  :root[data-mavzu="qorongi"] { --fon: #101820; --matn: #e8eef5; }
+  body { background: var(--fon); color: var(--matn); }
+</style>
+<p>Mavzu almashtirgichi</p>
+<button id="t" aria-pressed="false">Qorong‘i mavzu</button>
+<script>
+  const t = document.getElementById('t');
+  t.onclick = () => {
+    const q = t.getAttribute('aria-pressed') !== 'true';
+    t.setAttribute('aria-pressed', String(q));
+    document.documentElement.dataset.mavzu = q ? 'qorongi' : '';
+  };
+</script>
+```

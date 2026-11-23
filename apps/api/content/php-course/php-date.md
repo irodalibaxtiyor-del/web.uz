@@ -88,6 +88,14 @@ echo $d->format('Y-m-d'); // 2026-03-03 — jimgina keyingi oyga o‘tdi!
 
 `createFromFormat` mavjud bo‘lmagan sanani ham “to‘g‘irlab” yuboradi. Foydalanuvchi sanasini avval `checkdate` bilan tekshiring.
 
+```tekshir
+`date('Y-m-d')` qanday ko‘rinishdagi natija beradi?
++ `'2026-11-23'` kabi
+- `'23.11.2026'`
+- `'Nov 23'`
+> Avval `date_default_timezone_set('Asia/Tashkent')` bilan vaqt zonasi beriladi.
+```
+
 ## Mustaqil mashq
 
 ```php

@@ -97,6 +97,14 @@ $naqsh = '/' . preg_quote($soz, '/') . '/';
 
 Oddiy vazifalar uchun satr funksiyalari tezroq va tushunarliroq: `str_contains`, `str_starts_with`, `explode`. Email va URL uchun — `filter_var` (keyingi dars).
 
+```tekshir
+`preg_match('/^\d{5}$/', $kod)` qachon `1` qaytaradi?
++ `$kod` aynan 5 ta raqamdan iborat bo‘lsa
+- `$kod` ichida 5 ta raqam bo‘lsa
+- har doim
+> `^` va `$` — satr boshi va oxiri.
+```
+
 ## Mustaqil mashq
 
 ```php

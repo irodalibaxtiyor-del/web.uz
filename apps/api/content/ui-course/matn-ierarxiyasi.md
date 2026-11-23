@@ -57,3 +57,22 @@ Ikkinchi darajali matnni bir vaqtda kichik **va** xira **va** ingichka qilish �
 Narx va statistika uchun `font-variant-numeric: tabular-nums` — raqamlar bir xil kenglikda, ustunlarda tekis turadi. Ming xonalarini bo‘sh joy bilan ajratish (`45 000`) o‘qishni osonlashtiradi.
 
 Mashqda kitob kartasidagi matnlarga to‘g‘ri darajalar berasiz.
+
+```tekshir
+Matn ierarxiyasini yaratadigan vositalar qaysilar?
++ o‘lcham
++ qalinlik
++ rang (kontrast)
+- har bir so‘zni boshqa shriftda yozish
+> Bir-ikkita vosita yetarli — hammasini birdaniga kuchaytirmang.
+```
+
+```jonli
+<style>
+  .k { font-family: system-ui, sans-serif; max-width: 320px; }
+  .k h3 { font-size: 1.4rem; margin: 0 0 4px; }
+  .k .m { color: #555; font-size: .9rem; }
+  .k .n { font-size: 2rem; font-weight: 700; }
+</style>
+<div class="k"><h3>CSS: to‘liq kurs</h3><p class="m">101 dars · 15 modul</p><p class="n">99 000 so‘m</p></div>
+```

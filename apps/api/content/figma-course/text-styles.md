@@ -61,3 +61,20 @@ Maketdagi shrift (masalan, Inter) loyihaga ulanmagan bo‘lsa, Figma’dagi ko�
 Figma matn qutisida yuqori va pastda qator balandligi tufayli bo‘sh joy bo‘ladi (_leading_). CSS’da ham xuddi shunday, shuning uchun Figma’dagi “matn qutisidan matn qutisigacha” masofa CSS’dagi `margin` bilan odatda mos keladi.
 
 Mashqda uch Text Style’ni CSS’ga aniq o‘girasiz.
+
+```tekshir
+Figma’da line height “150%” bo‘lsa, CSS’da eng yaxshi yozuv qaysi?
++ `line-height: 1.5`
+- `line-height: 150px`
+- `line-height: 150%` (ichma-ich elementlarda ham har doim to‘g‘ri)
+> Birliksiz qiymat har elementning o‘z shriftiga ko‘paytiriladi.
+```
+
+```jonli
+<style>
+  .h1 { font: 700 2rem/1.2 system-ui, sans-serif; letter-spacing: -0.02em; margin: 0; }
+  .body { font: 400 1rem/1.5 system-ui, sans-serif; max-width: 40ch; }
+</style>
+<p class="h1">Sarlavha stili</p>
+<p class="body">Asosiy matn stili: 16px, qator balandligi 1.5 — Figma’dagi 150% ga teng.</p>
+```

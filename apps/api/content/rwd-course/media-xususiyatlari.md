@@ -70,3 +70,20 @@ Chop etilganda menyu va tugmalar kerak emas, havola manzillari esa qog‘ozda ko
 ## Sinab ko‘rish
 
 Brauzer DevTools’ida **Rendering** panelidan `prefers-color-scheme`, `prefers-reduced-motion` va `print` ni taqlid qilish mumkin. Platformadagi avtomatik tekshiruv faqat ekran o‘lchamini o‘zgartiradi, shuning uchun mashq yo‘nalish (`orientation`) haqida.
+
+```tekshir
+Sichqonchali qurilmada hover effektini faqat qo‘llash uchun qaysi shart?
++ `@media (hover: hover)`
+- `@media (mouse)`
+- `@media screen`
+> Sensorli ekranda hover yo‘q — effekt “yopishib” qolmasligi uchun.
+```
+
+```jonli
+<style>
+  .b { padding: 10px 16px; background: #0071dc; color: #fff; border: 0; border-radius: 8px; }
+  @media (hover: hover) { .b:hover { background: #005bb0; } }
+  @media (prefers-reduced-motion: no-preference) { .b { transition: background .2s; } }
+</style>
+<button class="b">Tugma</button>
+```

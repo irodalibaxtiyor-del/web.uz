@@ -107,6 +107,14 @@ $login = strtolower(trim("  Ali.VALIYEV  ")); // ali.valiyev
 
 Ichkaridan tashqariga o‘qing: avval `trim`, keyin `strtolower`.
 
+```tekshir
+O‘zbekcha (UTF-8) satr uzunligini to‘g‘ri hisoblaydigan funksiya qaysi?
++ `mb_strlen()`
+- `strlen()`
+- `count()`
+> `strlen` baytlarni sanaydi: `o‘` kabi harflar bir necha bayt egallaydi.
+```
+
 ## Mustaqil mashq
 
 Ism va familiyani chiroyli formatlang:

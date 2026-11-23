@@ -70,3 +70,19 @@ window.addEventListener(
 Qotirilgan tugma telefonda matn yoki boshqa tugmalarni yopib qo‘yishi mumkin. Sahifa pastiga (footer’ga) tugma o‘lchamicha bo‘sh joy qoldiring va kichik ekranda tekshiring.
 
 Mashqda “yuqoriga” tugmasini qotirilgan, nomlangan va silliq ishlaydigan qilasiz.
+
+```tekshir
+“Yuqoriga” tugmasi iPhone’dagi pastki chiziq ostida qolmasligi uchun nima ishlatiladi?
++ `env(safe-area-inset-bottom)`
+- `bottom: -20px`
+- `z-index: 9999` yetarli
+> `viewport-fit=cover` bilan xavfsiz hudud o‘lchamlarini hisobga oladi.
+```
+
+```jonli
+<style>
+  .w { height: 180px; overflow: auto; position: relative; border: 1px solid #ccc; scroll-behavior: smooth; }
+  .yu { position: sticky; float: right; top: calc(100% - 56px); margin: 0 8px; width: 44px; height: 44px; border-radius: 50%; background: #6c3483; color: #fff; display: grid; place-items: center; text-decoration: none; }
+</style>
+<div class="w"><p id="boshi" style="margin: 0; padding: 8px">Boshi</p><div style="height: 500px; padding: 8px">Pastga aylantiring…</div><a class="yu" href="#boshi" aria-label="Sahifa boshiga">↑</a></div>
+```

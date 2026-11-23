@@ -53,3 +53,21 @@ img {
 - Bitta kodni qo‘llab-quvvatlash ikki saytdan arzon.
 
 Mashqda qotgan sahifani suyuq qilasiz: telefonda ham, kompyuterda ham to‘g‘ri ko‘rinishini tekshiring. Playground’da brauzer oynasini toraytirib ko‘ring — yon tomonga aylantirish paydo bo‘lmasligi kerak.
+
+```tekshir
+Moslashuvchan dizaynning uchta asosiy g‘ishti qaysilar?
++ suyuq maket
++ moslashuvchan rasm va media
++ media so‘rovlar
+- har qurilma uchun alohida sayt
+> Bitta sahifa har xil ekranga moslashadi.
+```
+
+```jonli
+<style>
+  .k { display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+  .k div { background: #eef4fb; padding: 16px; border-radius: 8px; }
+</style>
+<div class="k"><div>1</div><div>2</div><div>3</div><div>4</div></div>
+<p>Oynani toraytirib-kengaytiring: ustunlar soni o‘zgaradi.</p>
+```

@@ -26,16 +26,21 @@ import { JS_COURSE, JS_MODULES } from './js/manifest';
 import { JS_LESSON_QUIZZES } from './js/lesson-quizzes';
 import { JS_MINI_QUIZZES } from './js/mini-quizzes';
 import { JS_SOLUTIONS } from './js/solutions';
+import { PHP_GLOSSARY } from './php/glossary';
 import { PHP_COURSE, PHP_MODULES } from './php/manifest';
+import { PORTFOLIO_GLOSSARY } from './portfolio/glossary';
 import { PORTFOLIO_LESSON_QUIZZES } from './portfolio/lesson-quizzes';
 import { PORTFOLIO_MINI_QUIZZES } from './portfolio/mini-quizzes';
 import { PORTFOLIO_COURSE, PORTFOLIO_MODULES, PORTFOLIO_SOLUTIONS } from './portfolio/manifest';
+import { RWD_GLOSSARY } from './rwd/glossary';
 import { RWD_LESSON_QUIZZES } from './rwd/lesson-quizzes';
 import { RWD_MINI_QUIZZES } from './rwd/mini-quizzes';
 import { RWD_COURSE, RWD_MODULES, RWD_SOLUTIONS } from './rwd/manifest';
+import { UI_GLOSSARY } from './ui/glossary';
 import { UI_LESSON_QUIZZES } from './ui/lesson-quizzes';
 import { UI_MINI_QUIZZES } from './ui/mini-quizzes';
 import { UI_COURSE, UI_MODULES, UI_SOLUTIONS } from './ui/manifest';
+import { FIGMA_GLOSSARY } from './figma/glossary';
 import { FIGMA_LESSON_QUIZZES } from './figma/lesson-quizzes';
 import { FIGMA_MINI_QUIZZES } from './figma/mini-quizzes';
 import { FIGMA_COURSE, FIGMA_MODULES, FIGMA_SOLUTIONS } from './figma/manifest';
@@ -58,16 +63,19 @@ export const CONTENT_COURSES: CourseDef[] = [
     ...RWD_COURSE,
     modules: withQuizzes(RWD_MODULES, { lesson: RWD_LESSON_QUIZZES, mini: RWD_MINI_QUIZZES }),
     solutions: RWD_SOLUTIONS,
+    glossary: RWD_GLOSSARY,
   },
   {
     ...UI_COURSE,
     modules: withQuizzes(UI_MODULES, { lesson: UI_LESSON_QUIZZES, mini: UI_MINI_QUIZZES }),
     solutions: UI_SOLUTIONS,
+    glossary: UI_GLOSSARY,
   },
   {
     ...FIGMA_COURSE,
     modules: withQuizzes(FIGMA_MODULES, { lesson: FIGMA_LESSON_QUIZZES, mini: FIGMA_MINI_QUIZZES }),
     solutions: FIGMA_SOLUTIONS,
+    glossary: FIGMA_GLOSSARY,
   },
   {
     ...JS_COURSE,
@@ -82,8 +90,9 @@ export const CONTENT_COURSES: CourseDef[] = [
       mini: PORTFOLIO_MINI_QUIZZES,
     }),
     solutions: PORTFOLIO_SOLUTIONS,
+    glossary: PORTFOLIO_GLOSSARY,
   },
-  { ...PHP_COURSE, modules: PHP_MODULES, solutions: {} },
+  { ...PHP_COURSE, modules: PHP_MODULES, solutions: {}, glossary: PHP_GLOSSARY },
   {
     ...BS3_COURSE,
     modules: withQuizzes(BS3_MODULES, { lesson: BS3_LESSON_QUIZZES, mini: BS3_MINI_QUIZZES }),

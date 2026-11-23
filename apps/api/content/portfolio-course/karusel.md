@@ -55,3 +55,19 @@ Scroll snap baribir slaydni to‘g‘ri joyga yopishtiradi.
 Har bir slayd — `<figure>`, ichida `<blockquote>` (fikr) va `<figcaption>` (muallif). Keyingi modulda batafsil.
 
 Mashqda fikrlar lentasini scroll-snap bilan yasaysiz.
+
+```tekshir
+CSS bilan karusel qilishning zamonaviy usuli qaysi?
++ `overflow-x: auto` va `scroll-snap-type` / `scroll-snap-align`
+- `setInterval` va `margin-left`
+- `<marquee>`
+> Scroll snap JavaScript’siz ishlaydi va sensorli ekranda tabiiy.
+```
+
+```jonli
+<style>
+  .k { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 8px; }
+  .k > div { flex: 0 0 80%; scroll-snap-align: start; height: 120px; border-radius: 10px; display: grid; place-items: center; color: #fff; font-weight: 700; }
+</style>
+<div class="k" tabindex="0" role="region" aria-label="Fikrlar"><div style="background: #0071dc">1</div><div style="background: #6c3483">2</div><div style="background: #2e8b57">3</div></div>
+```

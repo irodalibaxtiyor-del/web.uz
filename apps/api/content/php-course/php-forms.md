@@ -89,6 +89,14 @@ if (!in_array($daraja, $ruxsat, true)) {
 }
 ```
 
+```tekshir
+Forma POST bilan yuborilgandan keyin nega boshqa sahifaga redirect qilinadi (PRG)?
++ sahifani yangilaganda forma qayta yuborilmasligi uchun
+- sahifa tezroq yuklanishi uchun
+- POST faqat bir marta ishlaydi
+> POST → Redirect → GET: yangilash faqat GET so‘rovni takrorlaydi.
+```
+
 ## Mustaqil mashq
 
 Yuqoridagi `aloqa.php` ni yarating, `php -S localhost:8000` bilan oching va:

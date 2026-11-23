@@ -56,3 +56,22 @@ Yoki telefonda kichikroq koeffitsient (1.2), kompyuterda kattaroq (1.25) olinadi
 Ierarxiya uchun hamma narsani kattalashtirish shart emas. Qalinlik, rang, oraliq va joylashuv ham “bu muhim” deb aytadi. Shkaladagi 5–6 qadam ko‘pincha yetarli; 12 xil o‘lcham — tizim yo‘qligining belgisi.
 
 Mashqda tasodifiy o‘lchamlarni shkala tokenlari bilan almashtirasiz.
+
+```tekshir
+Modulli shkala nima?
++ har bir o‘lcham oldingisini bir xil koeffitsiyentga ko‘paytirib olinadigan qiymatlar qatori
+- faqat bitta shrift o‘lchami
+- tasodifiy o‘lchamlar ro‘yxati
+> Masalan, 1.25 koeffitsiyent: 16, 20, 25, 31 …
+```
+
+```jonli
+<style>
+  :root { --r: 1.25; }
+  p { margin: 4px 0; font-family: system-ui, sans-serif; }
+</style>
+<p style="font-size: 1rem">1rem — asos</p>
+<p style="font-size: calc(1rem * var(--r))">× 1.25</p>
+<p style="font-size: calc(1rem * var(--r) * var(--r))">× 1.25²</p>
+<p style="font-size: calc(1rem * var(--r) * var(--r) * var(--r))">× 1.25³</p>
+```

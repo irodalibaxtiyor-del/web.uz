@@ -45,3 +45,11 @@ Har bir `<source>` ichida ham `srcset` + `sizes` ishlatsa bo‘ladi: keng banner
 Ikkala rasm bir xil ma’noni beradi, shuning uchun `alt` bitta. Agar banner ustida matn bo‘lsa (masalan, “-20%”), o‘sha matn `alt` da ham bo‘lishi kerak — ko‘zi ojiz foydalanuvchi chegirma haqida bilishi kerak.
 
 Mashqda telefon uchun kvadrat, keng ekran uchun past va keng banner ko‘rsatasiz.
+
+```tekshir
+`<picture>` qachon `srcset` dan afzal?
++ ekranga qarab rasmning boshqacha kesimi (art direction) yoki boshqa format kerak bo‘lsa
+- har doim
+- faqat bitta rasm bo‘lsa
+> Oddiy o‘lcham tanlash uchun `<img srcset sizes>` yetarli.
+```

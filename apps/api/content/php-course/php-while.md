@@ -83,6 +83,14 @@ while (true) {
 <?php endwhile; ?>
 ```
 
+```tekshir
+`do...while` ning tanasi kamida necha marta bajariladi?
++ bir marta
+- nol marta
+- ikki marta
+> Shart oxirida tekshiriladi.
+```
+
 ## Mustaqil mashq
 
 1 dan boshlab sonlar kvadratini, kvadrat 50 dan oshmaguncha chiqaring:

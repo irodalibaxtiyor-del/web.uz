@@ -55,3 +55,11 @@ Shu sabab ko‘p loyihalar shrift faylini o‘z serverida saqlaydi (_self-hostin
 Har bir shriftning litsenziyasi bor. Bepul shriftlar (SIL Open Font License) saytda erkin ishlatiladi; pullik shriftni boshqa saytdan “olib” qo‘yish mumkin emas.
 
 Mashqda `@font-face` bilan o‘z nomingizdagi shriftni e’lon qilib, uni zaxira bilan ishlatasiz.
+
+```tekshir
+`@font-face` dagi `local()` nima qiladi?
++ shrift foydalanuvchi kompyuterida bo‘lsa, uni yuklamasdan ishlatadi
+- shriftni serverdan majburan yuklaydi
+- shriftni faqat mahalliy tarmoqda ishlatadi
+> Bu tarmoq trafigini tejaydi.
+```

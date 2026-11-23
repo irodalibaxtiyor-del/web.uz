@@ -75,3 +75,20 @@ Telefonda 32px dan kam emas, katta ekranda 56px gacha.
 - Telefonda rasmni matndan keyin qo‘yish (HTML tartibi) — asosiy xabar birinchi.
 
 Mashqda bosh ekranni telefon va kompyuter uchun moslashtirasiz.
+
+```tekshir
+Lendingning bosh ekrani (hero) birinchi navbatda nimani bajarishi kerak?
++ bir qarashda nima taklif qilinayotganini aytib, asosiy harakatga undashi
+- iloji boricha ko‘p ma’lumot berishi
+- faqat katta rasm ko‘rsatishi
+> Bitta aniq sarlavha va bitta asosiy tugma.
+```
+
+```jonli
+<style>
+  .h { display: grid; gap: 16px; align-items: center; padding: 24px; background: #eef4fb; }
+  .h h1 { font-size: clamp(1.6rem, 1rem + 3vw, 2.8rem); margin: 0; }
+  @media (min-width: 640px) { .h { grid-template-columns: 1.2fr 1fr; } }
+</style>
+<section class="h"><div><h1>Veb-dizaynni o‘rganing</h1><p>Amaliy darslar o‘zbek tilida.</p><a href="#">Boshlash</a></div><img src="data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%27400%27%20height=%27260%27%3E%3Crect%20width=%27400%27%20height=%27260%27%20fill=%27%230071dc%27/%3E%3Ccircle%20cx=%27280%27%20cy=%2791%27%20r=%2739%27%20fill=%27%23fff%27/%3E%3C/svg%3E" width="400" height="260" alt="" style="max-width: 100%; height: auto"></section>
+```

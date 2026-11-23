@@ -94,6 +94,14 @@ $rol = Rol::tryFrom($_POST['rol'] ?? '') ?? Rol::Talaba;
 
 Formadan kelgan noma’lum qiymat xavfsiz standartga tushadi.
 
+```tekshir
+Qiymatli (backed) enum qanday e’lon qilinadi?
++ `enum Holat: string { case Faol = 'faol'; }`
+- `enum Holat { Faol = 1 }`
+- `const enum Holat`
+> `Holat::from('faol')` qiymatdan enum holatini oladi.
+```
+
 ## Mustaqil mashq
 
 ```php

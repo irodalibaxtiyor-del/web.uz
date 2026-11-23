@@ -88,6 +88,14 @@ foreach ($talabalar as $t) {
 
 Bo‘sh massivda `foreach` bir marta ham aylanmaydi — xato yo‘q. Lekin massiv **emas** (masalan, `null`) bo‘lsa — ogohlantirish. Ishonchsiz manbada: `foreach ($royxat ?? [] as $x)`.
 
+```tekshir
+`foreach ($arr as &$x)` dagi `&` nima qiladi?
++ elementni havola orqali oladi — o‘zgartirsangiz massiv ham o‘zgaradi
+- elementni nusxalaydi
+- kalitni oladi
+> Sikldan keyin `unset($x)` qilish kerak, aks holda keyingi kodda kutilmagan xato chiqishi mumkin.
+```
+
 ## Mustaqil mashq
 
 O‘tgan talabalarni sanang va o‘rtacha ballni hisoblang:

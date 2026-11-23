@@ -55,3 +55,11 @@ Format bo‘yicha tanlash `<picture>` bilan qilinadi (keyingi dars).
 DevTools → **Network** panelida “Img” filtrini tanlang va oynani kichraytirib sahifani yangilang — qaysi fayl yuklanganini ko‘rasiz. Elementlar panelida `img` ni tanlab, konsolda `$0.currentSrc` deb yozsangiz, tanlangan fayl manzili chiqadi.
 
 Mashqda rasmga `srcset`, `sizes`, o‘lchamlar va kechiktirib yuklashni qo‘shasiz.
+
+```tekshir
+`srcset` dagi `800w` nimani bildiradi?
++ fayl kengligi 800 piksel
+- ekran kengligi 800 piksel
+- 800 marta kattalashtirish
+> `sizes` bilan birga brauzer kerakli faylni o‘zi tanlaydi.
+```

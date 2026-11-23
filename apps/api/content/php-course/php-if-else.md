@@ -89,6 +89,14 @@ if (!$talaba || $yosh < 7) {
 }
 ```
 
+```tekshir
+`$ism = $_GET['ism'] ?? 'Mehmon';` nima qiladi?
++ `ism` parametri bo‘lmasa yoki `null` bo‘lsa, `'Mehmon'` ni oladi
+- har doim `'Mehmon'`
+- `ism` bo‘sh satr bo‘lsa ham uni almashtiradi
+> `??` faqat `null` va mavjud bo‘lmagan qiymatni almashtiradi, bo‘sh satrni emas.
+```
+
 ## Mustaqil mashq
 
 `baho()` funksiyasini yozing va turli ballar bilan chaqiring:

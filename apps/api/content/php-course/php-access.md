@@ -109,6 +109,14 @@ class Buyurtma
 
 Metod modifikatorsiz bo‘lsa — `public`. Xususiyatlar uchun modifikator (yoki `var`, eskirgan) **shart**. Doim aniq yozing.
 
+```tekshir
+`private` xususiyatga qayerdan murojaat qilish mumkin?
++ faqat o‘sha klass ichidan
+- voris klasslardan ham
+- hamma joydan
+> `protected` — klass va vorislari, `public` — hamma joydan.
+```
+
 ## Mustaqil mashq
 
 Yuqoridagi `Hisob` klassini sinang:

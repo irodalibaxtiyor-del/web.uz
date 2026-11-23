@@ -65,3 +65,20 @@ Ish qidirayotgan bo‘lsangiz, “Rezyumeni yuklab olish (PDF)” havolasini qo�
 Fayl turi va hajmini yozish — foydalanuvchi nima kutayotganini biladi.
 
 Mashqda surat va matnni moslashuvchan ikki ustunli bo‘limga joylaysiz.
+
+```tekshir
+Portretning `alt` matni qanday bo‘lishi kerak?
++ qisqa va mazmunli: masalan, “Aziza Karimova, ish stolida”
+- “rasm.jpg”
+- bo‘sh qoldirish kerak
+> Bezak bo‘lmagan rasmning `alt` i undagi muhim narsani aytadi.
+```
+
+```jonli
+<style>
+  .p { display: grid; gap: 16px; align-items: center; }
+  .p img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; }
+  @media (min-width: 500px) { .p { grid-template-columns: 120px 1fr; } }
+</style>
+<section class="p"><img src="data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%27300%27%20height=%27300%27%3E%3Crect%20width=%27300%27%20height=%27300%27%20fill=%27%236c3483%27/%3E%3Ccircle%20cx=%27210%27%20cy=%27105%27%20r=%2745%27%20fill=%27%23fff%27/%3E%3C/svg%3E" width="120" height="120" alt="Aziza Karimova portreti"><div><h2 style="margin: 0">Men haqimda</h2><p>3 yildan beri interfeyslar yarataman.</p></div></section>
+```

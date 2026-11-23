@@ -78,3 +78,20 @@ Ba’zi jamoalar klass o‘rniga `data-` atribut ishlatadi: `<button class="tugm
 Figma’da “Small + Secondary + Disabled” chizilmagan bo‘lishi mumkin. Kodda u baribir paydo bo‘ladi — modifikatorlar to‘g‘ri yozilgan bo‘lsa, natija mantiqiy. Uni dizaynerga ko‘rsatib tasdiqlating.
 
 Mashqda Size va Type variantlarini modifikator klasslarga aylantirasiz.
+
+```tekshir
+Figma’dagi tugma variantlari (Primary/Secondary, Small/Large) kodda qanday yoziladi?
++ asos klass + modifikatorlar: `tugma tugma--katta`
+- har variant uchun butunlay alohida klass
+- inline `style` bilan
+> Asos umumiy uslubni, modifikator faqat farqni beradi.
+```
+
+```jonli
+<style>
+  .tugma { font: inherit; padding: 8px 14px; border: 1px solid transparent; border-radius: 8px; background: #0071dc; color: #fff; }
+  .tugma--ikkinchi { background: #fff; color: #0071dc; border-color: #0071dc; }
+  .tugma--katta { padding: 12px 20px; font-size: 1.1rem; }
+</style>
+<button class="tugma">Asosiy</button> <button class="tugma tugma--ikkinchi">Ikkinchi</button> <button class="tugma tugma--katta">Katta</button>
+```

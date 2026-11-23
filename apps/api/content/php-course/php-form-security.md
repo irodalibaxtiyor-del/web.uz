@@ -90,6 +90,14 @@ Hujumchi email o‘rniga `' OR '1'='1` yozib, barcha foydalanuvchilarni oladi. H
 - Xato xabarlari ichki ma’lumotni oshkor qilmasin: “Email yoki parol noto‘g‘ri” — qaysi biri ekanini aytmang.
 - Tez-tez yuboriladigan formalar (kirish, ro‘yxatdan o‘tish) uchun urinishlar sonini cheklang.
 
+```tekshir
+CSRF hujumidan himoyalanish uchun formaga nima qo‘shiladi?
++ sessiyada saqlangan tasodifiy token va uni `hash_equals` bilan tekshirish
+- CAPTCHA har doim yetarli
+- `htmlspecialchars` yetarli
+> `htmlspecialchars` XSS’dan, tayyorlangan so‘rovlar SQL injection’dan himoya qiladi.
+```
+
 ## Mustaqil mashq
 
 Ikki xil chiqarishni solishtiring:

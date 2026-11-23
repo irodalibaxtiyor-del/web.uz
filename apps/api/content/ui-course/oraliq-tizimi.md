@@ -57,3 +57,20 @@ Elementlar orasidagi masofani har bir elementning `margin` i bilan emas, ota ele
 Komponent ichidagi oraliq u bilan qo‘shnisi orasidagi oraliqdan kichik bo‘lishi kerak. Karta ichida 16px, kartalar orasida 24–32px. Aks holda ko‘z qaysi element qaysi kartaga tegishli ekanini ajrata olmaydi (keyingi dars — yaqinlik).
 
 Mashqda tasodifiy oraliqlarni tokenlar bilan almashtirasiz.
+
+```tekshir
+8px qoidasida oraliqlar qanday tanlanadi?
++ 8 ga karrali qiymatlardan (8, 16, 24, 32 …), kerak bo‘lsa 4
+- har safar ko‘z bilan
+- faqat 10 ga karrali
+> Cheklangan shkala izchil ritm beradi va qaror qabul qilishni osonlashtiradi.
+```
+
+```jonli
+<style>
+  :root { --s1: 8px; --s2: 16px; --s3: 24px; }
+  .k { padding: var(--s3); background: #eef4fb; display: grid; gap: var(--s1); border-radius: var(--s1); }
+  .k h3 { margin: 0 0 var(--s1); }
+</style>
+<div class="k"><h3>Karta</h3><span>Ichki oraliq 24px</span><span>Elementlar orasida 8px</span></div>
+```

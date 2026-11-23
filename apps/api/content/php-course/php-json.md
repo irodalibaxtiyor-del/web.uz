@@ -93,6 +93,14 @@ JavaScript `fetch` JSON yuborsa, u `$_POST` da **bo‘lmaydi**:
 $kiritma = json_decode(file_get_contents('php://input'), true, flags: JSON_THROW_ON_ERROR);
 ```
 
+```tekshir
+`json_decode($matn, true)` dagi `true` nima qiladi?
++ natijani obyekt emas, assotsiativ massiv qilib qaytaradi
+- JSON’ni chiroyli formatlaydi
+- xatoni yashiradi
+> Buzilgan JSON’da xato olish uchun `JSON_THROW_ON_ERROR` bayrog‘i.
+```
+
 ## Mustaqil mashq
 
 ```php

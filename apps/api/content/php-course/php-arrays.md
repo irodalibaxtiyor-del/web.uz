@@ -97,6 +97,14 @@ foreach ($kurslar as $i => $kurs) {
 }
 ```
 
+```tekshir
+`$a = [1, 2]; $b = $a; $b[] = 3;` dan keyin `count($a)` nechaga teng?
++ 2
+- 3
+- 0
+> PHP massivlari qiymat bo‘yicha nusxalanadi — `$b` o‘zgarsa `$a` o‘zgarmaydi.
+```
+
 ## Mustaqil mashq
 
 ```php

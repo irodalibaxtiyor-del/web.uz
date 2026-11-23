@@ -63,3 +63,20 @@ Grid’da `grid-template-columns` berilmasa, bitta ustun bo‘ladi — shuning u
 3. Maket bo‘shab, keng va noqulay bo‘la boshlagan joyda `min-width` so‘rovi qo‘shing.
 
 Mashqda “faqat kompyuter uchun” yozilgan kartalar to‘rini avval mobil yondashuvida qayta yozasiz.
+
+```tekshir
+“Avval mobil” yondashuvida media so‘rovlar qanday yoziladi?
++ `min-width` bilan — katta ekranlar uchun qo‘shimcha qoidalar
+- `max-width` bilan — kichik ekranlar uchun bekor qilish
+- media so‘rovsiz
+> Oddiy uslub telefonga, keyin kengayish bo‘yicha qo‘shib boriladi.
+```
+
+```jonli
+<style>
+  .m { display: grid; gap: 8px; }
+  .m div { background: #eef4fb; padding: 12px; }
+  @media (min-width: 600px) { .m { grid-template-columns: 2fr 1fr; } }
+</style>
+<div class="m"><div>Asosiy</div><div>Yon panel</div></div>
+```

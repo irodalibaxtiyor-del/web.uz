@@ -54,3 +54,11 @@ Portfolio’ni kim o‘qishini o‘ylang: HR mutaxassisi 30 soniyada ko‘zdan k
 `href="#ishlar"` — shu sahifadagi `id="ishlar"` elementiga o‘tadi. Bir sahifali portfolio uchun yetarli; keyinchalik har bir loyiha uchun alohida sahifa qo‘shish mumkin.
 
 Mashqda `div` lardan iborat qoralamani semantik skeletga aylantirasiz.
+
+```tekshir
+Portfolioga qanday ishlarni kiritish kerak?
++ eng yaxshi 3–6 ta ish, har birida vazifa, yechim va natija bilan
+- qilgan hamma narsani, hatto tugallanmaganlarini ham
+- faqat sertifikatlar ro‘yxatini
+> Kam, lekin sifatli va tushuntirilgan ishlar ko‘proq ta’sir qiladi.
+```

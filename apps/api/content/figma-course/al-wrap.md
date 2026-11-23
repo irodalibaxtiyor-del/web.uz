@@ -41,3 +41,19 @@ Wrap rejimida qatorlarning o‘zini tekislash uchun `align-content` ishlatiladi 
 Maket bir xil uzunlikdagi teglar bilan chizilgan bo‘lishi mumkin. Haqiqiy ma’lumotda “Moslashuvchan dizayn” kabi uzun teg bo‘ladi. `white-space: nowrap` bilan teg ichidagi matn sinmasin, lekin teg qatorga sig‘masa — keyingi qatorga o‘tsin. Juda uzun bitta teg konteynerdan kengroq bo‘lsa, `max-width: 100%` va `text-overflow: ellipsis` qo‘shish mumkin.
 
 Mashqda teglar ro‘yxatini o‘raladigan qilasiz va ikki xil oraliqni berasiz.
+
+```tekshir
+Auto Layout Wrap’da qatorlar orasidagi va elementlar orasidagi oraliq CSS’da qanday beriladi?
++ `row-gap` va `column-gap` (yoki `gap: 12px 8px`)
+- faqat `margin`
+- `line-height`
+> `gap` ning birinchi qiymati — qatorlar orasi, ikkinchisi — ustunlar orasi.
+```
+
+```jonli
+<style>
+  .t { display: flex; flex-wrap: wrap; gap: 12px 8px; max-width: 280px; }
+  .t span { padding: 4px 10px; background: #eef4fb; border-radius: 999px; }
+</style>
+<div class="t"><span>HTML</span><span>CSS</span><span>JavaScript</span><span>Figma</span><span>Bootstrap</span><span>Git</span></div>
+```

@@ -95,6 +95,14 @@ var_dump(in_array("5", [1, 5, 9], true)); // bool(false) — qat’iy
 
 `in_array` va `array_search` uchinchi argumentsiz `==` ishlatadi. Ishonchli natija uchun `true` bering.
 
+```tekshir
+Qaysi funksiya massiv oxiridan elementni olib tashlab, uni qaytaradi?
++ `array_pop()`
+- `array_shift()`
+- `array_push()`
+> `array_shift` boshidan oladi; `unset` esa kalit bo‘yicha o‘chiradi.
+```
+
 ## Mustaqil mashq
 
 Navbat:

@@ -52,3 +52,11 @@ DevTools taqlidi juda foydali, lekin u barmoq o‘lchamini, haqiqiy protsessor t
 Lighthouse (DevTools → Lighthouse) mobil rejimda tezlik, accessibility va eng yaxshi amaliyotlar bo‘yicha baho beradi va aniq muammolarni ko‘rsatadi. 90 dan yuqori ball — yaxshi natija.
 
 Mashqda ataylab buzilgan sahifadagi beshta tipik xatoni tuzatasiz. Kursni tugatdingiz — endi o‘z loyihangizni shu ro‘yxat bo‘yicha tekshiring.
+
+```tekshir
+Sahifada gorizontal aylantirish chiqib qolsa, aybdor elementni topishning tez usuli qaysi?
++ DevTools’da vaqtincha `* { outline: 1px solid red }` qo‘yib, ekrandan chiqqan elementni ko‘rish
+- `body { overflow-x: hidden }` yozib qo‘yish (yagona yechim)
+- sahifani qayta yuklash
+> `overflow-x: hidden` muammoni yashiradi, sababini tuzatmaydi.
+```

@@ -37,3 +37,11 @@ Sichqonchani bir chetga qo‘ying va saytni faqat Tab, Enter va Esc bilan aylani
 Avtomatik tekshiruvlar muammolarning bir qismini topadi xolos; bu qo‘lda tekshiruv ham shart.
 
 Mashqda Lighthouse topadigan odatiy xatolarni tuzatasiz.
+
+```tekshir
+Sahifani klaviatura bilan tekshirishda nimalarga e’tibor beriladi?
++ Tab tartibi mantiqiy va fokus doim ko‘rinadi
++ barcha tugma va havolalarga yetib borish mumkin
+- faqat sichqoncha bilan ishlashi
+> Lighthouse va axe avtomatik topadi, lekin klaviatura testi qo‘lda qilinadi.
+```

@@ -108,6 +108,14 @@ echo file_get_contents('fayllar/' . $_GET['nom']); // ?nom=../../config.php — 
 
 Faqat `basename()` va ruxsat etilgan ro‘yxat yoki bazadagi ID orqali.
 
+```tekshir
+Faylni butunlay bitta satrga o‘qiydigan funksiya qaysi?
++ `file_get_contents()`
+- `file()`
+- `fgets()`
+> `file()` qatorlar massivini, `fgets()` bitta qatorni o‘qiydi.
+```
+
 ## Mustaqil mashq
 
 `royxat.txt` faylini yarating (har qatorda bitta kurs, bitta bo‘sh qator ham qo‘shing):

@@ -70,6 +70,14 @@ error_reporting(E_ALL);
 
 > Haqiqiy saytda xatolarni ekranga **chiqarmang** — ular fayl yo‘llari va boshqa ichki ma’lumotlarni oshkor qiladi. Ishlab chiqarishda xatolar faqat log faylga yoziladi.
 
+```tekshir
+PHP’ning o‘rnatilgan serverini loyiha papkasida qaysi buyruq ishga tushiradi?
++ `php -S localhost:8000`
+- `php run server`
+- `npm start`
+> Bu ishlab chiqish uchun qulay; production’da Apache yoki Nginx ishlatiladi.
+```
+
 ## Mustaqil mashq
 
 1. PHP’ni yuqoridagi yo‘llardan biri bilan o‘rnating va `php -v` ni bajaring.

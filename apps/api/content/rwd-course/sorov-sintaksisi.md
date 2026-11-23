@@ -68,3 +68,19 @@ Agar so‘rovni fayl boshiga qo‘ysangiz va asosiy qoida pastda bo‘lsa, so‘
 Bunday fayl faqat shart bajarilganda qo‘llanadi (brauzer uni baribir yuklab qo‘yadi).
 
 Mashqda diapazon yozuvi, oraliq so‘rov va `screen and` bilan ishlaysiz.
+
+```tekshir
+Zamonaviy diapazon yozuvida “600px dan 900px gacha” qanday yoziladi?
++ `@media (600px <= width <= 900px)`
+- `@media (width: 600-900px)`
+- `@media between(600px, 900px)`
+> Klassik yozuv: `(min-width: 600px) and (max-width: 900px)`.
+```
+
+```jonli
+<style>
+  .s { padding: 10px; background: #eef4fb; }
+  @media (600px <= width <= 900px) { .s { background: #f5a623; } }
+</style>
+<p class="s">600–900px oralig‘ida to‘q sariq bo‘ladi</p>
+```

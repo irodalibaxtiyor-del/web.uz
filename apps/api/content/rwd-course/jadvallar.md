@@ -68,3 +68,20 @@ Telefonda faqat eng muhim 2–3 ustunni ko‘rsatish va qolganini “Batafsil”
 - Raqamli ustunlarni o‘ngga tekislang va `font-variant-numeric: tabular-nums` bering — raqamlar bir xil kenglikda.
 
 Mashqda kurslar jadvalini telefonda kartochkalarga aylantirasiz.
+
+```tekshir
+Keng jadvalni telefonda ko‘rsatishning eng oddiy usuli qaysi?
++ jadvalni `overflow-x: auto` o‘ramga solish
+- shrift o‘lchamini 8px qilish
+- ustunlarni `display: none` bilan yashirish
+> Ma’lumot saqlanadi, foydalanuvchi gorizontal aylantiradi.
+```
+
+```jonli
+<style>
+  .o { overflow-x: auto; }
+  table { border-collapse: collapse; min-width: 520px; }
+  td, th { border: 1px solid #ccc; padding: 6px; white-space: nowrap; }
+</style>
+<div class="o" role="region" aria-label="Natijalar jadvali" tabindex="0"><table><tr><th>Ism</th><th>HTML</th><th>CSS</th><th>JS</th><th>Bootstrap</th><th>Jami</th></tr><tr><td>Lola</td><td>95</td><td>90</td><td>88</td><td>92</td><td>365</td></tr></table></div>
+```

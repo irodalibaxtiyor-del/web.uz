@@ -92,6 +92,14 @@ $xabar = $_SESSION['flash'] ?? null;
 unset($_SESSION['flash']);
 ```
 
+```tekshir
+Foydalanuvchi tizimga kirgandan keyin nega `session_regenerate_id(true)` chaqiriladi?
++ sessiya identifikatorini almashtirib, “session fixation” hujumining oldini olish uchun
+- sessiyani o‘chirish uchun
+- parolni tekshirish uchun
+> Kirishdan oldingi identifikator hujumchiga ma’lum bo‘lishi mumkin.
+```
+
 ## Mustaqil mashq
 
 `sanoq.php`:

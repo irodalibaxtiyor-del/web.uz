@@ -52,3 +52,21 @@ HSL’ning kuchi: rangni o‘zgartirish oson. “Biroz ochroq” — L ni oshiri
 Yangi brauzerlarda `oklch()` ham bor: unda yorug‘lik inson ko‘zi sezishiga mos o‘zgaradi, shuning uchun bir xil L dagi sariq va ko‘k bir xil yorug‘ ko‘rinadi. Hozircha HSL’ni yaxshi o‘rganib olish yetarli.
 
 Mashqda to‘rtta namunaga turli yozuvlarda rang berasiz.
+
+```tekshir
+`#0071dc80` dagi oxirgi `80` nimani bildiradi?
++ shaffoflik (alfa) — taxminan 50%
+- rang yorqinligi
+- ko‘k kanal qiymati
+> Sakkiz belgili HEX’da oxirgi juftlik alfa kanali.
+```
+
+```jonli
+<style>
+  div { padding: 8px; margin: 4px 0; }
+</style>
+<div style="background: #0071dc; color: #fff">#0071dc</div>
+<div style="background: #0071dc80">#0071dc80</div>
+<div style="background: rgb(0 113 220 / .2)">rgb(0 113 220 / .2)</div>
+<div style="background: hsl(210 100% 43%); color: #fff">hsl(210 100% 43%)</div>
+```

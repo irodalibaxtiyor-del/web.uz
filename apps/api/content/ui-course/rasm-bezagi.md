@@ -70,3 +70,19 @@ Yarim shaffof qatlam istalgan rasmda oq matnni o‘qiladigan qiladi.
 Rasm yuklanguncha joyi bo‘sh qolmasin: `aspect-ratio` joy ajratadi, ozgina kulrang fon (`background-color: #e2e8f0`) esa “bu yerda rasm bor” deydi.
 
 Mashqda galereya rasmlarini bir xil ramkaga solib, avatar halqasini yasaysiz.
+
+```tekshir
+Rasm ustidagi oq matn o‘qilishi uchun nima qilinadi?
++ rasm ustiga qorong‘i gradient qatlam qo‘yiladi
+- matnni kichraytirish
+- rasmni xira qilmasdan, faqat matnni qalin qilish
+> Gradient matn turgan qismda kontrastni oshiradi.
+```
+
+```jonli
+<style>
+  .r { position: relative; max-width: 360px; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; background: linear-gradient(135deg, #f5a623, #0071dc); }
+  .r p { position: absolute; inset: auto 0 0 0; margin: 0; padding: 30px 12px 10px; color: #fff; background: linear-gradient(transparent, rgb(0 0 0 / .7)); }
+</style>
+<figure class="r" style="margin: 0"><p>Toshkent, 2026</p></figure>
+```

@@ -72,3 +72,21 @@ Bo‘sh holat — foydalanuvchini o‘rgatish uchun eng yaxshi joy.
 Dizaynni sinash uchun ataylab “yomon” ma’lumot qo‘ying: juda uzun ism, nolta element, 1000 ta element, rasmsiz karta. Agar interfeys bunda buzilsa — `text-overflow: ellipsis`, `overflow-wrap: anywhere`, sahifalash yoki zaxira rasm kerak.
 
 Mashqda yuklanish, bo‘sh va xato holatlarini bezaysiz.
+
+```tekshir
+“Skelet” yuklanish holati spinnerdan nimasi bilan yaxshiroq?
++ kontentning shaklini oldindan ko‘rsatib, sahifa sakrashini kamaytiradi
+- u tezroq yuklaydi
+- u animatsiyasiz bo‘lishi shart
+> Foydalanuvchi nima kelishini oldindan ko‘radi.
+```
+
+```jonli
+<style>
+  .s { display: grid; gap: 8px; max-width: 280px; }
+  .s span { display: block; height: 14px; border-radius: 6px; background: linear-gradient(90deg, #e6ecf2 25%, #f3f6f9 50%, #e6ecf2 75%); background-size: 200% 100%; animation: y 1.2s infinite; }
+  @keyframes y { to { background-position: -200% 0; } }
+  @media (prefers-reduced-motion: reduce) { .s span { animation: none; } }
+</style>
+<div class="s" aria-busy="true" aria-label="Yuklanmoqda"><span style="width: 60%"></span><span></span><span style="width: 80%"></span></div>
+```

@@ -57,3 +57,21 @@ Rasmni matn yoniga qo‘yish (keng ekranda ikki ustun, telefonda rasm matn ostid
 Ism ustidagi kichik rangli yozuv (“Salom, men”) ko‘zni ismga yo‘naltiradi va brend rangini birinchi ekranda ko‘rsatadi. Lekin uni `h1` ichiga qo‘shmang — sarlavha qisqa va aniq bo‘lsin.
 
 Mashqda bosh ekranni ekran balandligida, suyuq sarlavha va o‘raladigan tugmalar bilan yasaysiz.
+
+```tekshir
+Portfolio bosh ekranida eng katta matn nima bo‘lishi kerak?
++ ismingiz yoki siz kim ekaningiz
+- “Xush kelibsiz” so‘zi
+- telefon raqamingiz
+> Mehmon 5 soniyada kim va nima qilishingizni tushunishi kerak.
+```
+
+```jonli
+<style>
+  .h { padding: 32px 16px; background: #faf7fc; }
+  .h small { color: #6c3483; font-weight: 600; }
+  .h h1 { font-size: clamp(2rem, 1rem + 4vw, 3.5rem); margin: 4px 0; }
+  .h a { display: inline-block; margin: 12px 8px 0 0; padding: 10px 16px; border-radius: 8px; }
+</style>
+<section class="h"><small>Salom, men</small><h1>Aziza Karimova</h1><p>Veb-dizayner va frontend dasturchi.</p><a href="#ishlar" style="background: #6c3483; color: #fff">Ishlarim</a><a href="#aloqa" style="border: 2px solid #6c3483; color: #6c3483">Bog‘lanish</a></section>
+```

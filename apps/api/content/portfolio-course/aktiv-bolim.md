@@ -61,3 +61,27 @@ document.querySelectorAll('main section').forEach((s) => kuzatuvchi.observe(s));
 Platformadagi tekshiruv aylantirishni taqlid qilmaydi, shuning uchun mashq bosish holati haqida; kuzatuvchini o‘z portfolioingizda sinab ko‘ring.
 
 Mashqda bosilgan havolani `aria-current` bilan belgilaysiz.
+
+```tekshir
+Menyuda joriy bo‘limni ekran o‘quvchiga bildirish uchun qaysi atribut?
++ `aria-current="true"` (sahifa uchun `"page"`)
+- `class="active"` yetarli
+- `aria-hidden="false"`
+> CSS’da ham `[aria-current]` selektori bilan bezash mumkin.
+```
+
+```jonli
+<style>
+  nav a { padding: 6px 10px; color: #333; }
+  nav a[aria-current] { color: #0071dc; font-weight: 700; border-bottom: 2px solid; }
+</style>
+<nav><a href="#a" aria-current="true">Men haqimda</a><a href="#b">Ishlar</a><a href="#c">Aloqa</a></nav>
+<script>
+  document.querySelector('nav').onclick = (e) => {
+    const a = e.target.closest('a');
+    if (!a) return;
+    document.querySelectorAll('nav a').forEach((x) => x.removeAttribute('aria-current'));
+    a.setAttribute('aria-current', 'true');
+  };
+</script>
+```

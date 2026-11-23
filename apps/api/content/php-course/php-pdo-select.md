@@ -109,6 +109,14 @@ $ustun = in_array($_GET['tartib'] ?? '', $ruxsat, true) ? $_GET['tartib'] : 'ism
 $st = $pdo->query("SELECT * FROM talabalar ORDER BY $ustun");
 ```
 
+```tekshir
+Bitta qiymatni (masalan, `COUNT(*)`) olish uchun qaysi metod qulay?
++ `fetchColumn()`
+- `fetchAll()`
+- `rowCount()` (SELECT uchun ishonchli)
+> `fetch()` bitta qatorni, `fetchAll()` hamma qatorlarni qaytaradi.
+```
+
 ## Mustaqil mashq
 
 ```php

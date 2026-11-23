@@ -58,3 +58,22 @@ Ehtiyot bo‘ling: o‘chirilgan tugma **nima uchun** o‘chirilganini aytmaydi.
 Rang almashinuvi silliq bo‘ladi. Lekin 300 ms dan uzun animatsiya sekin tuyuladi.
 
 Mashqda hover, fokus va o‘chirilgan holatlarni yozasiz.
+
+```tekshir
+Tugmaning klaviatura fokusini ko‘rsatish uchun qaysi psevdoklass tavsiya etiladi?
++ `:focus-visible`
+- `:hover`
+- `:active`
+> `:focus-visible` sichqoncha bilan bosilganda emas, klaviatura bilan kelganda kontur chiqaradi.
+```
+
+```jonli
+<style>
+  .b { font: inherit; padding: 10px 16px; border: 0; border-radius: 8px; background: #0071dc; color: #fff; cursor: pointer; transition: background-color .15s, transform .15s; }
+  .b:hover { background: #005bb0; }
+  .b:active { transform: translateY(1px); }
+  .b:focus-visible { outline: 3px solid #f5a623; outline-offset: 2px; }
+  .b:disabled { opacity: .5; cursor: not-allowed; }
+</style>
+<button class="b">Tab bilan keling</button> <button class="b" disabled>O‘chirilgan</button>
+```

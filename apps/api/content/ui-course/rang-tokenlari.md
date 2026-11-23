@@ -82,3 +82,21 @@ tugma.addEventListener('click', () => {
 - `color-scheme: light dark` yozing — brauzer formalar va aylantirish chizig‘ini ham mos rangda chizadi.
 
 Mashqda semantik tokenlar va mavzu almashtiruvchi tugma yasaysiz.
+
+```tekshir
+Semantik rang tokeni qaysi?
++ `--color-text-muted`
+- `--blue-500`
+- `#0071dc`
+> Semantik token vazifani aytadi; qorong‘i mavzuda faqat uning qiymati almashadi.
+```
+
+```jonli
+<style>
+  .t { --bg: #ffffff; --text: #1b2430; --muted: #5b6573; background: var(--bg); color: var(--text); padding: 12px; border: 1px solid #ccc; margin-bottom: 8px; }
+  .t.dark { --bg: #101820; --text: #e8eef5; --muted: #9aa6b2; }
+  .t small { color: var(--muted); }
+</style>
+<div class="t"><b>Yorug‘ mavzu</b><br><small>Ikkilamchi matn</small></div>
+<div class="t dark"><b>Qorong‘i mavzu</b><br><small>Xuddi shu klasslar, boshqa tokenlar</small></div>
+```

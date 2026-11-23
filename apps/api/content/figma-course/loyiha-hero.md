@@ -61,3 +61,21 @@ Cards: 3 ta · Gap 24 · Padding 24 · Radius 16 · Stroke 1 #E2E8F0
 Ba’zan maketdagi karta 412 yoki 420 bo‘ladi — dizayner qo‘lda cho‘zgan. Bunday hollarda tizim (to‘r, gap) ustun: CSS to‘r bo‘yicha hisoblasin, farqni dizaynerga ayting. Bitta karta uchun “sehrli” qiymat yozmang.
 
 Mashqda hero sarlavhasi va xizmat kartalarini ikki freym bo‘yicha yig‘asiz.
+
+```tekshir
+Maket va kodda kichik farq (1–2px) chiqsa, eng to‘g‘ri yo‘l qaysi?
++ tokenlar va shkaladagi eng yaqin qiymatni olish; katta farq bo‘lsa dizayner bilan kelishish
+- har bir pikselni absolute bilan moslash
+- maketni e’tiborsiz qoldirish
+> Tizimli qiymatlar sahifani izchil qiladi.
+```
+
+```jonli
+<style>
+  .hero { max-width: 960px; margin: 0 auto; padding: 32px 16px; text-align: center; }
+  .hero h1 { font-size: clamp(1.8rem, 1rem + 3vw, 3rem); margin: 0 0 12px; }
+  .kartalar { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); margin-top: 20px; }
+  .kartalar div { padding: 16px; border-radius: 10px; background: #eef4fb; }
+</style>
+<section class="hero"><h1>Maketdan sahifaga</h1><p>Figma qiymatlari tokenlar orqali.</p><div class="kartalar"><div>Tez</div><div>Moslashuvchan</div><div>Qulay</div></div></section>
+```

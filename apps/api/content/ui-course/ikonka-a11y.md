@@ -58,3 +58,19 @@ Ikonka 20px bo‘lsa ham, tugma kamida 44×44px bo‘lsin. Kichik ikonka atrofig
 - Eng yaxshi tekshiruv — ekran o‘quvchini yoqib, sahifani Tab bilan aylanib chiqish.
 
 Mashqda ikonkali tugmalarga nom berasiz va bezak SVG’larni yashirasiz.
+
+```tekshir
+Matni yo‘q, faqat ikonkadan iborat tugmaga nima kerak?
++ tugmaga `aria-label` (masalan, “Yopish”)
+- ikonkaga `title` yetarli
+- hech narsa
+> Bezak ikonkalari esa `aria-hidden="true"` bilan yashiriladi.
+```
+
+```jonli
+<style>
+  button { width: 44px; height: 44px; display: inline-grid; place-items: center; }
+  svg { width: 20px; height: 20px; }
+</style>
+<button aria-label="Yopish"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2.5"/></svg></button>
+```

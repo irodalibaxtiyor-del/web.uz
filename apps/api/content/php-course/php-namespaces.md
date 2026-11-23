@@ -98,6 +98,14 @@ Laravel, Symfony va deyarli barcha zamonaviy PHP loyihalari shunday tuzilgan.
 
 > `vendor/` papka repoga qo‘shilmaydi (`.gitignore`), `composer.lock` esa qo‘shiladi — hamma bir xil versiyalarni oladi.
 
+```tekshir
+Composer’ning avtomatik yuklagichi qaysi fayl orqali ulanadi?
++ `require __DIR__ . '/vendor/autoload.php';`
+- `include 'composer.json';`
+- `use Composer;`
+> Autoload klasslarni namespace bo‘yicha kerak bo‘lganda o‘zi yuklaydi.
+```
+
 ## Mustaqil mashq
 
 Kompyuteringizda:

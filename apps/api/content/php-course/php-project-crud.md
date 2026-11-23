@@ -244,6 +244,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 | O‘zgartirish faqat POST                        | `amal.php` boshida 405                |
 | Begona/yo‘q `id`                               | bir xil 404                           |
 
+```tekshir
+O‘chirish amali qaysi so‘rov turi bilan yuborilishi kerak?
++ POST (CSRF tokeni bilan)
+- havoladagi GET: `amal.php?ochir=5`
+- har qanday — farqi yo‘q
+> GET havolani bot yoki oldindan yuklovchi tasodifan ochishi mumkin.
+```
+
 ## Mustaqil mashq
 
 1. Loyihani 2-loyiha ustiga quring va ishga tushiring.

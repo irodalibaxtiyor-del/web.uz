@@ -82,6 +82,14 @@ echo "$ism: $ball"; // Ali: 85
 
 Oddiy ma’lumot tuzilmalari uchun assotsiativ massivlar juda qulay. Lekin xatti-harakat (metodlar) va qat’iy tuzilma kerak bo‘lsa — klasslar (OOP modulida).
 
+```tekshir
+Massivda kalit borligini, qiymati `null` bo‘lsa ham, aniq tekshiradigan funksiya qaysi?
++ `array_key_exists()`
+- `isset()`
+- `in_array()`
+> `isset` qiymat `null` bo‘lsa `false` qaytaradi; `in_array` qiymatlar ichidan qidiradi.
+```
+
 ## Mustaqil mashq
 
 Lug‘at:

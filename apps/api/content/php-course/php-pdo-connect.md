@@ -90,6 +90,14 @@ $pdo = new PDO($c['dsn'], $c['user'], $c['pass'], [
 ]);
 ```
 
+```tekshir
+PDO ulanishda nega `PDO::ERRMODE_EXCEPTION` rejimi tavsiya etiladi?
++ SQL xatolari istisno sifatida tashlanadi va jimgina o‘tib ketmaydi
+- ulanish tezroq bo‘ladi
+- parol shifrlanadi
+> PHP 8 dan bu standart rejim.
+```
+
 ## Mustaqil mashq
 
 `db.php` faylini yarating:

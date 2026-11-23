@@ -63,3 +63,21 @@ Uch tarifni telefonda solishtirish qiyin. Yordam beradigan usullar:
 - yoki tariflarni gorizontal aylanadigan qatorga qo‘yish (`overflow-x: auto` va `scroll-snap-type: x mandatory`).
 
 Mashqda tariflar to‘rini yasaysiz va telefonda tavsiya etilgan tarifni birinchi qo‘yasiz.
+
+```tekshir
+Tavsiya etilgan tarifni ajratib ko‘rsatishda nima muhim?
++ faqat rang emas — “Tavsiya etiladi” matni yoki belgisi bilan ham ajratish
+- uni boshqalardan ikki baravar katta qilish
+- boshqa tariflarni yashirish
+> Rangni ajratolmaydigan foydalanuvchi ham farqni bilishi kerak.
+```
+
+```jonli
+<style>
+  .n { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+  .n > div { border: 1px solid #ccc; border-radius: 10px; padding: 14px; }
+  .n .t { border: 2px solid #0071dc; }
+  .n .t::before { content: "Tavsiya etiladi"; display: inline-block; background: #0071dc; color: #fff; font-size: 12px; padding: 2px 8px; border-radius: 999px; }
+</style>
+<div class="n"><div><h3>Oddiy</h3><p><b>0</b> so‘m</p></div><div class="t"><h3>Pro</h3><p><b>99 000</b> so‘m/oy</p></div></div>
+```

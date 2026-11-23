@@ -58,3 +58,18 @@ Qatlamlar daraxti HTML tuzilmasining tayyor rejasi.
 Figma’da Auto Layout freymining o‘lchamiga stroke kirmaydi (sozlamaga bog‘liq). CSS’da `box-sizing: border-box` bilan chegara o‘lcham ichida hisoblanadi. Ikkalasini bir xil qilish uchun maketdagi stroke turini (Inside/Outside) tekshiring — keyingi modullarda batafsil.
 
 Mashqda Auto Layout tugmani Flexbox bilan yasaysiz.
+
+```tekshir
+Figma’dagi Auto Layout CSS’da nimaga to‘g‘ri keladi?
++ Flexbox (`display: flex`, `gap`, `padding`)
+- `float`
+- `position: absolute`
+> Yo‘nalish — `flex-direction`, item spacing — `gap`, padding — `padding`.
+```
+
+```jonli
+<style>
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; background: #0071dc; color: #fff; border-radius: 8px; font: 600 16px system-ui, sans-serif; }
+</style>
+<span class="btn"><span aria-hidden="true">★</span> Auto Layout tugma</span>
+```

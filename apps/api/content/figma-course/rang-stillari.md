@@ -49,3 +49,19 @@ Figma Variables’ni JSON sifatida eksport qiluvchi plaginlar va Style Dictionar
 Figma’da rang yonida foiz bo‘ladi: `#0F172A 8%`. CSS’da: `rgb(15 23 42 / 0.08)`. HEX’ni RGB’ga o‘girish uchun: `0F` = 15, `17` = 23, `2A` = 42.
 
 Mashqda maketdagi rang o‘zgaruvchilarini CSS o‘zgaruvchilariga ko‘chirib, komponentda ishlatasiz.
+
+```tekshir
+Figma’dagi rang stilini kodga qanday ko‘chirish yaxshiroq?
++ CSS o‘zgaruvchisi (token) sifatida: `--color-primary: #0071dc`
+- har joyda HEX qiymatni qayta yozish
+- rasm sifatida eksport qilish
+> Token o‘zgarsa, butun sayt bir joydan yangilanadi.
+```
+
+```jonli
+<style>
+  :root { --color-primary: #0071dc; --color-surface: #f5faff; --color-text: #1b2430; }
+  .k { background: var(--color-surface); color: var(--color-text); border-left: 4px solid var(--color-primary); padding: 12px; }
+</style>
+<div class="k">Tokenlardan rang olgan blok</div>
+```

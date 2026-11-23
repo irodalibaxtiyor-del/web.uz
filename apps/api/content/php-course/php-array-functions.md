@@ -85,6 +85,14 @@ Ichma-ich chaqiruvlar uzun bo‘lsa, oraliq natijalarni nomli o‘zgaruvchilarga
 
 Ikkalasi ham to‘g‘ri. Funksiyalar qisqa va maqsadni aniq aytadi (“filtrla”, “o‘zgartir”). Murakkab mantiq (bir nechta shart, erta chiqish) bo‘lsa — `foreach` tushunarliroq.
 
+```tekshir
+`array_filter` qanday massiv qaytaradi?
++ shartni qanoatlantirgan elementlarni, asl kalitlari bilan
+- har elementni o‘zgartirilgan holda
+- bitta qiymatni
+> Kalitlarni 0 dan qayta tartiblash uchun `array_values()`.
+```
+
 ## Mustaqil mashq
 
 ```php

@@ -72,3 +72,19 @@ Shaffof PNG yoki SVG shakl atrofida (to‘rtburchak emas, shakl bo‘ylab) soya 
 Figma soyani **shaffof** elementlar uchun ham chizadi (“Show behind transparent areas” sozlamasi). CSS’dagi `box-shadow` esa doim element qutisi bo‘ylab. Natijalar odatda bir xil, lekin shaffof fonli elementlarda tekshiring.
 
 Mashqda ikki qatlamli soya, ichki soya va fon xiralashtirishni yozasiz.
+
+```tekshir
+Figma’dagi “Background blur” CSS’da qaysi xususiyat?
++ `backdrop-filter: blur(…)`
+- `filter: blur(…)`
+- `box-shadow`
+> `filter: blur` elementning o‘zini, `backdrop-filter` esa uning orqasini xiralashtiradi.
+```
+
+```jonli
+<style>
+  .f { position: relative; height: 140px; background: linear-gradient(135deg, #f5a623, #0071dc); display: grid; place-items: center; }
+  .s { padding: 16px 24px; border-radius: 12px; background: rgb(255 255 255 / .25); backdrop-filter: blur(8px); box-shadow: 0 8px 24px rgb(0 0 0 / .2); color: #fff; }
+</style>
+<div class="f"><div class="s">backdrop-filter + box-shadow</div></div>
+```

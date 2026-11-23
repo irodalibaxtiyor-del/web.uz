@@ -79,3 +79,21 @@ Ko‘pincha oddiy ro‘yxat yaxshiroq ishlaydi:
 Darajalarni ko‘rsatish kerak bo‘lsa — so‘z bilan: “Ishonchli”, “Ishlay olaman”, “O‘rganyapman”.
 
 Mashqda accessible ko‘nikma chiziqlarini yasaysiz.
+
+```tekshir
+Ko‘nikma darajasini ko‘rsatishda nima muhim?
++ faqat chiziq emas — matn yoki foiz bilan ham yozish
+- faqat rangli chiziq yetarli
+- 100% dan ortiq ko‘rsatish
+> `<meter>` yoki `<progress>` elementi ekran o‘quvchiga qiymatni aytadi.
+```
+
+```jonli
+<style>
+  label { display: block; margin-top: 8px; }
+  meter { width: 100%; max-width: 280px; height: 14px; }
+</style>
+<label>HTML — 90% <meter min="0" max="100" value="90"></meter></label>
+<label>CSS — 80% <meter min="0" max="100" value="80"></meter></label>
+<label>JavaScript — 60% <meter min="0" max="100" value="60"></meter></label>
+```

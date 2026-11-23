@@ -46,3 +46,19 @@ Bular nozik sozlashlar; avval asosiy chiziqlarni to‘g‘rilang.
 Sahifa darajasida tekislashni 12 ustunli to‘r yoki konteyner ta’minlaydi: hamma bo‘limlar bir xil `max-width` va chetlarga ega bo‘lsa, ular ostma-ost tekis turadi.
 
 Mashqda navigatsiya, karta matni va narxlar jadvalini to‘g‘ri tekislaysiz.
+
+```tekshir
+Jadvaldagi raqamlarni solishtirishni osonlashtirish uchun nima qilinadi?
++ o‘ngga tekislash va `font-variant-numeric: tabular-nums`
+- markazga tekislash
+- har xil shriftda yozish
+> Bir xil enli raqamlarda xonalar ustma-ust tushadi.
+```
+
+```jonli
+<style>
+  td { padding: 4px 12px; }
+  .r { text-align: right; font-variant-numeric: tabular-nums; }
+</style>
+<table><tr><td>Daftar</td><td class="r">5 000</td></tr><tr><td>Ruchka</td><td class="r">12 500</td></tr><tr><td>Kitob</td><td class="r">111 000</td></tr></table>
+```

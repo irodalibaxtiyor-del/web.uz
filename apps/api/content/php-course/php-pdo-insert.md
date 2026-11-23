@@ -112,6 +112,14 @@ if (!$xatolar) {
 
 Tartib: **tekshirish** (validatsiya) → **tayyorlangan so‘rov** → **yo‘naltirish** (sahifa yangilanganda ma’lumot qayta yuborilmasligi uchun).
 
+```tekshir
+SQL injection’dan to‘g‘ri himoya qaysi?
++ tayyorlangan so‘rov: `prepare()` va `execute([...])` parametrlar bilan
+- `addslashes()` bilan satrni yopishtirish
+- faqat `htmlspecialchars()`
+> Ma’lumot SQL kodidan alohida yuboriladi, shuning uchun buyruq sifatida bajarilmaydi.
+```
+
 ## Mustaqil mashq
 
 ```php

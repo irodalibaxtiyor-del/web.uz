@@ -51,3 +51,17 @@ Yaxshi juftliklar ko‘pincha **kontrastga** asoslanadi: serifli sarlavha + sans
 - Faqat bezak uchun “chiroyli” qo‘lyozma shriftlarini oddiy matnda ishlatmang — o‘qish qiyinlashadi.
 
 Mashqda sahifadagi “Comic Sans” ni to‘g‘ri zaxira ro‘yxatlari bilan almashtirasiz.
+
+```tekshir
+O‘zbek tilidagi matn uchun shrift tanlashda nimani tekshirish kerak?
++ `o‘`, `g‘` va `ʼ` (tutuq belgisi) to‘g‘ri ko‘rinishini
+- faqat lotin harflari borligini
+- shriftning narxini
+> Ba’zi shriftlarda `‘` va `ʼ` belgilari yo‘q yoki boshqa shriftdan olinib, qo‘pol ko‘rinadi.
+```
+
+```jonli
+<p style="font-family: Georgia, serif">Georgia: O‘zbekiston, g‘alaba, ma’no</p>
+<p style="font-family: system-ui, sans-serif">system-ui: O‘zbekiston, g‘alaba, ma’no</p>
+<p style="font-family: Consolas, monospace">monospace: O‘zbekiston, g‘alaba, ma’no</p>
+```

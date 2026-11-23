@@ -90,6 +90,14 @@ for ($i = 0; $i < 3; $i++) {
 echo $i, " ", $oxirgi; // 3 2 — sikldan keyin ham mavjud
 ```
 
+```tekshir
+Funksiya ichidan tashqaridagi `$x` o‘zgaruvchisini ko‘rish mumkinmi?
++ yo‘q — uni parametr sifatida berish kerak (yoki `global`, lekin tavsiya etilmaydi)
+- ha, har doim
+- faqat `$x` konstanta bo‘lsa
+> Har bir funksiya o‘z doirasiga ega.
+```
+
 ## Mustaqil mashq
 
 Har chaqiruvda tartib raqamli ID qaytaruvchi funksiya:

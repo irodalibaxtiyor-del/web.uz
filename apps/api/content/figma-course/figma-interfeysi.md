@@ -36,3 +36,11 @@ Yaxshi dizayner qatlamlarga ma’noli nom beradi: `Header`, `Card/Lesson`, `Butt
 Matn qatlamida shrift, o‘lcham, qator balandligi, qalinlik va rang ko‘rsatiladi. “Bold 28/36” — 28px shrift, 36px qator balandligi. Bu yozuv tipografiyada keng tarqalgan.
 
 Mashqda oddiy mobil freymni spetsifikatsiya bo‘yicha sahifaga ko‘chirasiz.
+
+```tekshir
+Figma’dagi freym (frame) kodda odatda nimaga to‘g‘ri keladi?
++ konteyner element (`div`, `section`) — ichida boshqa elementlar joylashadi
+- CSS rangi
+- JavaScript funksiyasi
+> Freym — sahifa yoki blok; qatlamlar daraxti HTML tuzilmasiga o‘xshaydi.
+```

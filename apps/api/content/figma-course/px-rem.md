@@ -56,3 +56,20 @@ Dev Mode sozlamalarida birlikni `rem` ga o‘zgartirish mumkin — u holda Inspe
 Maketda 15px bo‘lsa, 0.9375rem chiqadi. Bunday qiymatlar tizimda yo‘qligining belgisi — yaqin tokenni (14 yoki 16) tanlang.
 
 Mashqda maketdagi piksellarni rem tokenlariga aylantirasiz.
+
+```tekshir
+Maketdagi 24px ildiz shrift 16px bo‘lganda necha `rem`?
+- 2.4rem
++ 1.5rem
+- 0.67rem
+> rem = px ÷ 16 → 24 ÷ 16 = 1.5.
+```
+
+```jonli
+<style>
+  p { margin: 4px 0; }
+</style>
+<p style="font-size: 1rem">1rem = 16px</p>
+<p style="font-size: 1.5rem">1.5rem = 24px</p>
+<p style="font-size: 2rem">2rem = 32px</p>
+```

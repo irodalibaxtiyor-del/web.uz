@@ -52,3 +52,19 @@ Rangni farqlay olmaydigan odamlar (erkaklarning taxminan 8 foizi) qizil va yashi
 Tayyor palitralarni tabiatdan, fotosuratlardan yoki rang generatorlaridan olish mumkin. Lekin generator bergan beshta rangni interfeysga to‘g‘ridan-to‘g‘ri qo‘ymang — ulardan bittasini asosiy, bittasini urg‘u qilib tanlang, qolganini neytrallar bilan to‘ldiring.
 
 Mashqda asos tondan to‘rtta uyg‘un rangni `calc()` bilan hisoblaysiz.
+
+```tekshir
+Rang g‘ildiragida bir-biriga qarama-qarshi turgan ranglar sxemasi qanday ataladi?
++ komplementar
+- monoxrom
+- analog
+> Komplementar ranglar kuchli kontrast beradi — urg‘u uchun qulay, ko‘p ishlatilsa charchatadi.
+```
+
+```jonli
+<style>
+  div { display: inline-block; width: 70px; height: 70px; margin: 4px; border-radius: 8px; }
+</style>
+<p>Komplementar:</p><div style="background: hsl(210 80% 50%)"></div><div style="background: hsl(30 80% 50%)"></div>
+<p>Analog:</p><div style="background: hsl(190 70% 45%)"></div><div style="background: hsl(210 70% 45%)"></div><div style="background: hsl(230 70% 45%)"></div>
+```

@@ -53,3 +53,20 @@ Telefonda `100vh` ko‘pincha ekrandan biroz baland chiqadi (manzil paneli hisob
 - Ingichka chegara — `px`.
 
 Mashqda piksellarda yozilgan sahifani nisbiy birliklarga o‘tkazasiz.
+
+```tekshir
+Mobil brauzerdagi o‘zgaruvchan manzil paneli hisobga olinadigan ekran balandligi birligi qaysi?
++ `dvh`
+- `vh`
+- `px`
+> `100vh` ba’zan panel ostida qolib ketadi; `100dvh` haqiqiy ko‘rinadigan balandlik.
+```
+
+```jonli
+<style>
+  div { background: #eef4fb; margin: 4px 0; padding: 4px; }
+</style>
+<div style="width: 50%">50% — ota kengligi</div>
+<div style="width: 40vw">40vw — oyna kengligi</div>
+<div style="font-size: 1.25rem">1.25rem shrift</div>
+```

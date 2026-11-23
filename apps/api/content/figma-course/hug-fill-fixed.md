@@ -55,3 +55,21 @@ Yangi Figma’da Fill yoki Hug elementga **Min width / Max width** ham berish mu
 Hug tugmada matn uzaysa, tugma kengayadi. Lekin juda tor joyda matn qatorga sinib ketmasligi uchun `white-space: nowrap` yozing — aks holda “Yangi vazifa qo‘shish” ikki qatorga bo‘linib, tugma balandligi o‘zgaradi.
 
 Mashqda asboblar panelidagi uch elementga to‘g‘ri o‘lcham rejimini berasiz.
+
+```tekshir
+Figma’dagi “Fill container” gorizontal Auto Layout ichida CSS’da qanday yoziladi?
++ `flex: 1` (kerak bo‘lsa `min-width: 0`)
+- `width: auto`
+- `width: fit-content`
+> Hug — kontent kengligi, Fixed — qat’iy `width`, Fill — qolgan joy.
+```
+
+```jonli
+<style>
+  .p { display: flex; gap: 8px; padding: 8px; background: #eef4fb; }
+  .p > * { padding: 8px; background: #fff; border: 1px solid #ccc; }
+  .fill { flex: 1; min-width: 0; }
+  .fixed { width: 80px; flex-shrink: 0; }
+</style>
+<div class="p"><span>Hug</span><span class="fill">Fill — qolgan joy</span><span class="fixed">Fixed 80</span></div>
+```

@@ -60,3 +60,21 @@ Bu qoidani deyarli har bir loyihaning boshiga yozib qo‘yishadi.
 ## Tayyor tizimlar
 
 Bootstrap kabi freymvorklar aynan shu g‘oyani klasslarga aylantirgan: `col-md-9`, `col-md-3`. Ularni ishlatish uchun to‘r qanday ishlashini tushunish kifoya — mashqda o‘zingiz kichik versiyasini yozasiz.
+
+```tekshir
+Ustunlarga `padding` berilganda kenglik 100% dan oshib ketmasligi uchun nima kerak?
++ `box-sizing: border-box`
+- `overflow: hidden`
+- `float: left`
+> `border-box` da padding kenglik ichida hisoblanadi.
+```
+
+```jonli
+<style>
+  * { box-sizing: border-box; }
+  .q { display: flex; flex-wrap: wrap; }
+  .q div { flex: 1 1 100%; padding: 12px; border: 1px solid #ccc; }
+  @media (min-width: 600px) { .q div { flex-basis: 33.333%; } }
+</style>
+<div class="q"><div>1</div><div>2</div><div>3</div></div>
+```

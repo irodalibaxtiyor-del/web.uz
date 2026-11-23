@@ -90,6 +90,14 @@ Nuqta (`.`) — satrlarni ulash operatori (JavaScript’dagi `+` emas!). Batafsi
 | `Fatal error` | Bajarilish to‘xtadi (masalan, yo‘q funksiya) |
 | `Warning` | Ogohlantirish — kod davom etadi |
 
+```tekshir
+PHP kodi qaysi teglar orasida yoziladi?
++ `<?php ... ?>`
+- `<php> ... </php>`
+- `<script type="php">`
+> Faqat PHP bo‘lgan faylda yopuvchi `?>` yozilmaydi — ortiqcha bo‘sh joy chiqib qolmasligi uchun.
+```
+
 ## Mustaqil mashq
 
 `sana.php` faylini yarating:

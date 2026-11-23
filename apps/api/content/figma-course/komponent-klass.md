@@ -43,3 +43,20 @@ Instance’ni tanlasangiz, Inspect’da “Main component: Chip” va uning xusu
 Figma’dagi komponent nomlari (`Button/Primary`, `Card/Course`) kod klasslari va fayl nomlari bilan mos bo‘lsa, ikki dunyo orasida “tarjima” kerak bo‘lmaydi. Jamoa bilan bitta nomlash qoidasini kelishib oling.
 
 Mashqda Chip komponentini va uning ikonkasiz variantini yozasiz.
+
+```tekshir
+Figma komponenti kodda nimaga mos keladi?
++ qayta ishlatiladigan klass (masalan, `.karta`) yoki komponent
+- har sahifada nusxa ko‘chirilgan alohida uslub
+- rasm
+> Komponentning “instance” lari — bir klassli ko‘p elementlar.
+```
+
+```jonli
+<style>
+  .karta { padding: 12px; border: 1px solid #dfe6ee; border-radius: 10px; margin-bottom: 8px; }
+  .karta__sarlavha { margin: 0 0 4px; font-size: 1.1rem; }
+</style>
+<div class="karta"><h3 class="karta__sarlavha">HTML</h3>60 dars</div>
+<div class="karta"><h3 class="karta__sarlavha">CSS</h3>101 dars</div>
+```

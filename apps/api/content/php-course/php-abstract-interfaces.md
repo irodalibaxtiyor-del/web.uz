@@ -105,6 +105,14 @@ var_dump(new Karta() instanceof Qaytarish); // bool(true)
 
 Amaliy qoida: **avval interfeys** o‘ylang (`Tolov`, `Saqlovchi`, `Xabarchi`). Umumiy kod takrorlansa — abstrakt klass yoki trait (keyingi dars).
 
+```tekshir
+Klass nechta interfeysni amalga oshira oladi?
++ bir nechtasini: `implements A, B`
+- faqat bittasini
+- hech birini, interfeys faqat meros uchun
+> Lekin faqat bitta klassdan meros olish (`extends`) mumkin.
+```
+
 ## Mustaqil mashq
 
 ```php

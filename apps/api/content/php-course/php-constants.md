@@ -93,6 +93,14 @@ Bu skript qaysi papkadan ishga tushirilishidan qat’i nazar, to‘g‘ri faylni
 
 > Parol va maxfiy kalitlarni kodga konstanta qilib yozmang — ular muhit o‘zgaruvchilarida (`getenv('DB_PAROL')`) yoki repoga kirmaydigan sozlama faylida saqlanadi.
 
+```tekshir
+PHP konstantasi haqida to‘g‘ri gap qaysi?
++ u `$` belgisisiz yoziladi va qayta aniqlab bo‘lmaydi
+- u `$` bilan boshlanadi
+- uni istalgan joyda o‘zgartirish mumkin
+> E’lon: `const PI = 3.14;` yoki `define('PI', 3.14);`.
+```
+
 ## Mustaqil mashq
 
 ```php

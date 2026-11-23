@@ -62,3 +62,22 @@ main { flex: 1; }
 ```
 
 Mashqda to‘liq “muqaddas grail” maketini telefon va kompyuter uchun yasaysiz.
+
+```tekshir
+“Muqaddas grail” maketi nimalardan iborat?
++ header, footer va o‘rtada uchta ustun (menyu, kontent, yon panel)
+- faqat bitta ustun
+- ikki header va ikki footer
+> Telefonda ustunlar ustma-ust tushadi.
+```
+
+```jonli
+<style>
+  .p { display: grid; min-height: 220px; gap: 4px; grid-template-rows: auto 1fr auto; }
+  .p > * { background: #eef4fb; padding: 8px; }
+  .o { display: grid; gap: 4px; }
+  .o > * { background: #ffe08a; padding: 8px; }
+  @media (min-width: 600px) { .o { grid-template-columns: 120px 1fr 120px; } }
+</style>
+<div class="p"><header>header</header><div class="o" style="padding: 0; background: none"><nav>menyu</nav><main>kontent</main><aside>yon</aside></div><footer>footer</footer></div>
+```

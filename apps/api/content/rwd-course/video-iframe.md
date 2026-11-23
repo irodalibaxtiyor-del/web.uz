@@ -71,3 +71,15 @@ video {
 Begona sayt iframe’iga faqat kerakli ruxsatlarni bering (`allow="fullscreen"`) va `title` atributini yozing — ekran o‘quvchi iframe’ni shu nom bilan e’lon qiladi.
 
 Mashqda joylashtirilgan va o‘z videongizni moslashuvchan qilasiz.
+
+```tekshir
+Iframe videoni 16:9 nisbatda moslashuvchan qilishning zamonaviy usuli qaysi?
++ `width: 100%; height: auto; aspect-ratio: 16 / 9;`
+- `padding-top: 56.25%` (yagona usul)
+- `height: 100vh`
+> Eski padding usuli ham ishlaydi, lekin `aspect-ratio` soddaroq.
+```
+
+```jonli
+<div style="width: 100%; max-width: 480px; aspect-ratio: 16 / 9; background: #123; color: #fff; display: grid; place-items: center">16 : 9</div>
+```

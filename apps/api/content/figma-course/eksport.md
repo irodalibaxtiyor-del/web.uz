@@ -53,3 +53,11 @@ SVG’ni optimallashtirish: Figma eksporti ba’zan ortiqcha guruhlar va atribut
 Eksport fayl nomlari qatlam nomidan olinadi. `Frame 427.png` emas, `hero-talaba.webp` — loyihada topish oson. Figma’da qatlamni to‘g‘ri nomlash eksportdan oldin bir daqiqalik ish.
 
 Mashqda logoga 1x/2x fayl beradigan `srcset` qo‘shasiz va ikonkani `currentColor` ga o‘tkazasiz.
+
+```tekshir
+Ikonkani Figma’dan qaysi formatda eksport qilish yaxshiroq?
++ SVG
+- JPG
+- 1x PNG
+> SVG har qanday o‘lchamda tiniq va rangini CSS bilan boshqarish mumkin.
+```

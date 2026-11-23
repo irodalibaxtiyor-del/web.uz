@@ -108,6 +108,14 @@ class Talaba
 echo (new Talaba('Madina', 92))->malumot(); // Madina: 92 ball (o‘tdi)
 ```
 
+```tekshir
+Obyekt metodini chaqirish qanday yoziladi?
++ `$obj->metod()`
+- `$obj.metod()`
+- `$obj::metod()` (oddiy metod uchun)
+> `::` statik a’zolar va konstantalar uchun.
+```
+
 ## Mustaqil mashq
 
 ```php

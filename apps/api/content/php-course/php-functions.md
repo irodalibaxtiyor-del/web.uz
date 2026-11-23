@@ -107,6 +107,14 @@ Har rekursiyada **to‘xtash sharti** bo‘lishi shart.
 
 PHP’da mingdan ortiq tayyor funksiya bor: `strlen`, `count`, `date`, `json_encode`... Funksiya nomini bilmasangiz — php.net qidiruvi.
 
+```tekshir
+`function salom(string $ism): string` dagi `: string` nimani bildiradi?
++ funksiya qaytaradigan qiymat turi
+- parametr turi
+- funksiya nomi
+> Tiplar xatolarni erta topishga yordam beradi.
+```
+
 ## Mustaqil mashq
 
 ```php

@@ -76,6 +76,14 @@ Keyingi darslarda har birini amalda ko‘ramiz.
 
 Kichik skriptlar uchun funksiyalar ham yetarli — OOP maqsad emas, vosita.
 
+```tekshir
+OOP’ning to‘rt tamoyili qaysilar?
++ inkapsulyatsiya, meros, polimorfizm, abstraksiya
+- o‘zgaruvchi, funksiya, sikl, shart
+- HTML, CSS, JS, PHP
+> Ular kodni tartibli va qayta ishlatiladigan qiladi.
+```
+
 ## Mustaqil mashq
 
 Yuqoridagi `Hisob` klassini yozing va sinang:

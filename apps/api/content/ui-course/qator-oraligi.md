@@ -43,3 +43,17 @@ Uzun matnni bosh harflarda yozmang: so‘zlarning shakli yo‘qoladi va o‘qish
 Paragraflar orasidagi `margin` odatda qator balandligiga yaqin (~1em). Sarlavhadan oldingi bo‘shliq undan keyingisidan kattaroq bo‘lsin — shunda sarlavha o‘zidan keyingi matnga “tegishli” ko‘rinadi (yaqinlik qoidasi, 3-modulda).
 
 Mashqda matn, sarlavha va yorliqqa to‘g‘ri ritm berasiz.
+
+```tekshir
+Bosh harflar bilan yozilgan kichik yorliqqa nima qo‘shish o‘qishni osonlashtiradi?
++ biroz `letter-spacing` (masalan, `0.05em`)
+- `line-height: 0.8`
+- `font-style: italic`
+> Bosh harflar zich ko‘rinadi, kichik harf oralig‘i ularni ajratadi.
+```
+
+```jonli
+<p style="text-transform: uppercase; font-size: 12px; font-weight: 600">oraliqsiz yorliq</p>
+<p style="text-transform: uppercase; font-size: 12px; font-weight: 600; letter-spacing: .08em">oraliqli yorliq</p>
+<p style="line-height: 1.7; max-width: 40ch">line-height 1.7 bilan uzun paragraf qatorlari orasida yetarli joy qoladi va ko‘z charchamaydi.</p>
+```

@@ -62,3 +62,16 @@ Har biriga och fon va to‘q matn soyasi kerak bo‘ladi.
 - Juda och kulrang matn — chiroyli ko‘rinadi, lekin o‘qib bo‘lmaydi (keyingi dars).
 
 Mashqda qo‘pol ranglarni olib tashlab, uch rolli palitrani tokenlar orqali berasiz.
+
+```tekshir
+60-30-10 qoidasida 10% qaysi rangga to‘g‘ri keladi?
++ urg‘u (accent) rangi — tugmalar va muhim belgilar
+- asosiy fon rangi
+- matn rangi
+> 60% — neytral fon, 30% — ikkilamchi, 10% — urg‘u.
+```
+
+```jonli
+<div style="display: flex; height: 60px"><div style="flex: 6; background: #f5faff"></div><div style="flex: 3; background: #123456"></div><div style="flex: 1; background: #f5a623"></div></div>
+<p>60% neytral · 30% ikkilamchi · 10% urg‘u</p>
+```

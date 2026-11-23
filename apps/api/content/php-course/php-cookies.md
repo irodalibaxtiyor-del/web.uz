@@ -74,6 +74,14 @@ setcookie('til', '', ['expires' => time() - 3600, 'path' => '/']);
 
 Cookie’da faqat qulaylik sozlamalari (til, mavzu) yoki server tomonida tekshiriladigan tasodifiy tokenlar saqlanadi.
 
+```tekshir
+`setcookie()` nega HTML chiqarilishidan oldin chaqirilishi kerak?
++ cookie HTTP sarlavhasida yuboriladi, sarlavhalar esa mazmundan oldin ketadi
+- aks holda cookie shifrlanmaydi
+- bu faqat tavsiya
+> Aks holda “headers already sent” ogohlantirishi chiqadi.
+```
+
 ## Mustaqil mashq
 
 `til.php`:

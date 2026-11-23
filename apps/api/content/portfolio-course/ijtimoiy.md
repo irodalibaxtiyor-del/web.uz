@@ -51,3 +51,19 @@ Yangi oynada ochish haqida foydalanuvchini ogohlantirish ham mumkin: yashirin ma
 GitHub, Telegram kabi logotiplar ularning brend qoidalariga bo‘ysunadi: rangini va shaklini o‘zgartirmaslik so‘raladi. Bir rangli (monoxrom) variantlar odatda ruxsat etilgan.
 
 Mashqda ijtimoiy havolalarni accessible va xavfsiz qilasiz.
+
+```tekshir
+Yangi tabda ochiladigan tashqi havolaga qaysi `rel` qiymati qo‘shiladi?
++ `rel="noopener noreferrer"`
+- `rel="external-only"`
+- `rel="stylesheet"`
+> `noopener` yangi sahifaning sizning sahifangizni boshqarishiga yo‘l qo‘ymaydi.
+```
+
+```jonli
+<style>
+  .s { display: flex; gap: 8px; }
+  .s a { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: #6c3483; color: #fff; text-decoration: none; font-weight: 700; }
+</style>
+<div class="s"><a href="https://github.com/" target="_blank" rel="noopener noreferrer" aria-label="GitHub (yangi tabda)">GH</a><a href="mailto:aziza@misol.uz" aria-label="Email yozish">@</a></div>
+```

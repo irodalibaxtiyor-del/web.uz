@@ -94,6 +94,14 @@ class A
 
 “Jamg‘arma hisobi — bu **hisobning bir turi**” — meros mos. “Buyurtma **ichida** mahsulotlar bor” — meros emas, xususiyat: `private array $mahsulotlar`. Uzun meros zanjirlaridan qoching; ko‘pincha **interfeys + tarkib** moslashuvchanroq (keyingi modul).
 
+```tekshir
+Voris klassda ota klass metodini chaqirish qanday yoziladi?
++ `parent::metod()`
+- `super.metod()`
+- `$this->parent()`
+> `final` metodni vorisda qayta yozib bo‘lmaydi.
+```
+
 ## Mustaqil mashq
 
 ```php

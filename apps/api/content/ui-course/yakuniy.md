@@ -46,3 +46,12 @@ UI asoslarini bildingiz. Endi:
 Eng yaxshi mashq — sevimli ilovangizdagi bitta ekranni ko‘chirib chizish va nega aynan shunday qilinganini tushunishga harakat qilish.
 
 Mashqda profil kartasini kursda o‘rganilgan qoidalar bilan bezaysiz.
+
+```tekshir
+Interfeysni topshirishdan oldin nimalarni tekshirish kerak?
++ kontrast va fokus ko‘rinishi
++ yuklanish, bo‘sh va xato holatlari
++ telefon kengligida ko‘rinish
+- faqat kompyuterdagi chiroyli skrinshot
+> Interfeys faqat “ideal” holatda emas, barcha holatlarda ishlashi kerak.
+```

@@ -57,3 +57,11 @@ Shubha bo‘lsa — dizaynerdan katta ekran uchun ham freym so‘rang (keyingi d
 Freymni burchagidan tortib kattalashtiring — elementlar qanday harakat qilishini ko‘rasiz. Bu dizayner bilan suhbatda ham foydali: “Freymni 1024 ga cho‘zsak, banner nima bo‘ladi?”
 
 Mashqda uch xil constraint’ni CSS’ga o‘girasiz.
+
+```tekshir
+Figma’da “Left & Right” constraint kodda nimaga mos keladi?
++ element kengligi otaga qarab cho‘ziladi (`width: auto` yoki `left: 0; right: 0`)
+- qat’iy kenglik
+- element markazda qotadi
+> Freym kattalashganda element ikki chetga bog‘langan holda cho‘ziladi.
+```

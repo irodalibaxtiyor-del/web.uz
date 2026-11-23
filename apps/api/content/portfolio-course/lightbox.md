@@ -77,3 +77,26 @@ oyna.addEventListener('click', (e) => {
 Katta faylning manzili `data-katta` da saqlanadi va faqat bosilganda yuklanadi. Agar katta rasmlar oldindan `<img>` sifatida sahifada tursa, sahifa ochilganda ularning hammasi yuklanadi.
 
 Mashqda galereya uchun `<dialog>` asosidagi lightbox yasaysiz.
+
+```tekshir
+Lightbox uchun qaysi HTML elementi qulay, chunki Esc va fokusni o‘zi boshqaradi?
++ `<dialog>` va `showModal()`
+- oddiy `<div>` va `z-index`
+- `<iframe>`
+> `showModal()` fonni bloklaydi va Esc bilan yopiladi.
+```
+
+```jonli
+<style>
+  dialog { border: 0; padding: 0; border-radius: 10px; }
+  dialog::backdrop { background: rgb(0 0 0 / .7); }
+  dialog img { display: block; max-width: 80vw; height: auto; }
+</style>
+<button id="o"><img src="data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%27160%27%20height=%27100%27%3E%3Crect%20width=%27160%27%20height=%27100%27%20fill=%27%23f5a623%27/%3E%3Ccircle%20cx=%27112%27%20cy=%2735%27%20r=%2715%27%20fill=%27%23fff%27/%3E%3C/svg%3E" alt="Loyiha skrinshotini kattalashtirish" width="160" height="100"></button>
+<dialog id="d"><img src="data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%27640%27%20height=%27400%27%3E%3Crect%20width=%27640%27%20height=%27400%27%20fill=%27%23f5a623%27/%3E%3Ccircle%20cx=%27448%27%20cy=%27140%27%20r=%2760%27%20fill=%27%23fff%27/%3E%3C/svg%3E" alt="Loyiha skrinshoti" width="640" height="400"><form method="dialog" style="padding: 8px; text-align: right"><button>Yopish</button></form></dialog>
+<script>
+  const d = document.getElementById('d');
+  document.getElementById('o').onclick = () => d.showModal();
+  d.onclick = (e) => { if (e.target === d) d.close(); };
+</script>
+```

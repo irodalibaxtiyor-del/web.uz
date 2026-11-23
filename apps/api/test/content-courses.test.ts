@@ -418,6 +418,20 @@ describe('course glossary', () => {
       const course = CONTENT_COURSES.find((c) => c.slug === slug);
       expect(course?.glossary?.length).toBeGreaterThanOrEqual(50);
     }
+    // Every bundled course has a glossary of a useful size.
+    for (const c of CONTENT_COURSES) {
+      expect(c.glossary?.length ?? 0, c.slug).toBeGreaterThanOrEqual(35);
+    }
+  });
+
+  it('every lesson of every bundled course has a self-check block', () => {
+    for (const c of CONTENT_COURSES) {
+      const without = prepareCourse(c)
+        .flatMap((m) => m.lessons)
+        .filter((l) => !l.content.includes('```tekshir'))
+        .map((l) => l.slug);
+      expect(without, c.slug).toEqual([]);
+    }
   });
 
   it('a broken glossary entry fails the manifest', () => {

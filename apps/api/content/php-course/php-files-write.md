@@ -87,6 +87,14 @@ Veb-server (masalan, `www-data` foydalanuvchisi) papkaga yoza olishi kerak. Leki
 - yoziladigan papka **veb orqali ochiladigan joyda bo‘lmasin** (yoki u yerda PHP bajarilmasin);
 - `chmod 777` qilmang — bu hamma narsaga ruxsat.
 
+```tekshir
+Faylga mavjud mazmunni o‘chirmasdan qo‘shish uchun nima yoziladi?
++ `file_put_contents($f, $matn, FILE_APPEND)`
+- `file_put_contents($f, $matn)`
+- `fopen($f, 'w')`
+> `'w'` rejimi va bayroqsiz `file_put_contents` faylni qayta yozadi.
+```
+
 ## Mustaqil mashq
 
 Mehmonlar kitobi uchun oddiy yozuv:

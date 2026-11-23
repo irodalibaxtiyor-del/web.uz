@@ -87,6 +87,14 @@ echo json_encode(["ism" => "Ali", "kurslar" => ["HTML", "CSS"]]);
 // {"ism":"Ali","kurslar":["HTML","CSS"]}
 ```
 
+```tekshir
+Obyektlar massividan bitta ustunni (masalan, barcha `ism`larni) olish uchun qaysi funksiya?
++ `array_column($talabalar, 'ism')`
+- `array_keys($talabalar)`
+- `array_slice($talabalar, 'ism')`
+> Uchinchi argument bilan kalitni ham tanlash mumkin.
+```
+
 ## Mustaqil mashq
 
 Har bir kurs bo‘yicha o‘rtacha ballni hisoblang:

@@ -69,3 +69,20 @@ Nom berilmagan so‘rov eng yaqin konteynerni oladi.
 - Qayta ishlatiladigan komponent (karta, forma bloki, vidjet) — **konteyner so‘rovi**.
 
 Mashqda bir xil kartani keng va tor joyga qo‘yib, ikkalasini konteyner so‘rovi bilan moslashtirasiz.
+
+```tekshir
+Konteyner so‘rovi ishlashi uchun ota elementga nima yoziladi?
++ `container-type: inline-size`
+- `display: container`
+- `@container` faqat `body` uchun
+> Keyin `@container (min-width: 400px) { … }` shu ota kengligiga qarab ishlaydi.
+```
+
+```jonli
+<style>
+  .w { container-type: inline-size; resize: horizontal; overflow: auto; border: 1px dashed #999; padding: 6px; width: 260px; }
+  .k { display: grid; gap: 8px; background: #eef4fb; padding: 8px; }
+  @container (min-width: 400px) { .k { grid-template-columns: 100px 1fr; } }
+</style>
+<div class="w"><div class="k"><div style="background: #0071dc; height: 60px"></div><div>Ramka burchagidan tortib kengaytiring — karta yonma-yon bo‘ladi.</div></div></div>
+```

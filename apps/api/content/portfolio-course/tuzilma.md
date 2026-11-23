@@ -64,3 +64,21 @@ Brauzer bo‘limni ekran tepasidan 80px pastda to‘xtatadi.
 Odatiy tartib: bosh ekran → ishlar → men haqimda → aloqa. Ishlarni “men haqimda” dan oldin qo‘yish ko‘pincha yaxshiroq: tashrif buyuruvchi aynan shu uchun kelgan.
 
 Mashqda o‘tish havolasi, silliq aylantirish va `scroll-margin-top` ni qo‘shasiz.
+
+```tekshir
+“O‘tish havolasi” (skip link) nima uchun kerak?
++ klaviatura foydalanuvchisi menyuni o‘tkazib, darhol asosiy kontentga o‘tishi uchun
+- sahifani tezroq yuklash uchun
+- SEO uchun majburiy
+> U odatda yashirin bo‘ladi va fokus olganda ko‘rinadi.
+```
+
+```jonli
+<style>
+  .skip { position: absolute; left: -999px; }
+  .skip:focus { left: 8px; top: 8px; background: #fff; padding: 8px; border: 2px solid #0071dc; }
+</style>
+<a class="skip" href="#asosiy">Asosiy kontentga o‘tish</a>
+<nav>Menyu: <a href="#">Bosh</a> <a href="#">Ishlar</a></nav>
+<main id="asosiy" tabindex="-1"><p>Tab tugmasini bosing — avval o‘tish havolasi chiqadi.</p></main>
+```

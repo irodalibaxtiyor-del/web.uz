@@ -71,3 +71,21 @@ Uch qism tayyor bo‘lgach, butun sahifani 360 va 1440 da maket bilan solishtiri
 Kursni tugatdingiz. Endi “Portfolio” kursida o‘z saytingizni shu usulda — avval maket, keyin kod — yasashingiz mumkin.
 
 Mashqda footer’ni ikki freym bo‘yicha yig‘asiz.
+
+```tekshir
+Footer uchun qaysi semantik teg ishlatiladi?
++ `<footer>`
+- `<bottom>`
+- `<div id="footer">` (yetarli va eng yaxshi)
+> Semantik teg ekran o‘quvchiga sahifa qismini bildiradi.
+```
+
+```jonli
+<style>
+  footer { background: #101820; color: #c9d3dd; padding: 24px 16px; }
+  footer .t { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+  footer a { color: #fff; }
+  footer small { display: block; margin-top: 16px; border-top: 1px solid #2a3642; padding-top: 12px; }
+</style>
+<footer><div class="t"><div><b>WEBDIZAYN</b></div><div><a href="#">Kurslar</a></div><div><a href="#">Aloqa</a></div></div><small>© 2026</small></footer>
+```

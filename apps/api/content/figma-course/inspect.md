@@ -50,3 +50,11 @@ Figma’da qatlamni tanlab, **Alt** (macOS’da Option) tugmasini bosib turib bo
 Maketda 15px va 17px kabi “g‘alati” qiymatlar ko‘rsangiz, bu ko‘pincha dizayner xatosi: ehtimol 16px nazarda tutilgan. Bunday hollarda tizimdagi eng yaqin qiymatni oling yoki dizaynerdan so‘rang — taxmin qilmang.
 
 Mashqda kartani Inspect paneli bo‘yicha piksellarigacha aniq yasaysiz.
+
+```tekshir
+Inspect panelidagi CSS’ni to‘g‘ridan-to‘g‘ri nusxalashning xavfi nima?
++ mutlaq qiymatlar (`position: absolute`, qat’iy `width`) moslashuvchanlikni buzadi
+- u har doim noto‘g‘ri rang beradi
+- u HTML yozib beradi
+> Qiymatlarni (rang, oraliq, shrift) olib, maketni o‘zingiz Flexbox/Grid bilan qurasiz.
+```

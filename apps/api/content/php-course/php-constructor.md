@@ -135,6 +135,14 @@ echo Pul::somdan(12.5)->tiyin; // 1250
 
 `static` metodlar — keyingi modulda.
 
+```tekshir
+PHP 8 dagi konstruktor xususiyatlari (constructor promotion) qanday yoziladi?
++ `public function __construct(private string $ism) {}`
+- `function __construct() { $this->ism; }`
+- `constructor(string $ism)`
+> Parametr bir vaqtda xususiyat sifatida e’lon qilinadi va qiymat oladi.
+```
+
 ## Mustaqil mashq
 
 ```php

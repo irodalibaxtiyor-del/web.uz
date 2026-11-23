@@ -114,6 +114,14 @@ echo strcmp("a", "b");       // -1 — alifbo bo‘yicha oldin
 echo strcasecmp("PHP", "php"); // 0 — registrsiz teng
 ```
 
+```tekshir
+`$ism = 'Ali'; echo 'Salom, $ism';` nima chiqaradi?
++ `Salom, $ism` — bittalik qo‘shtirnoqda o‘zgaruvchi almashtirilmaydi
+- `Salom, Ali`
+- xato beradi
+> O‘zgaruvchini satr ichiga qo‘yish uchun qo‘sh qo‘shtirnoq: `"Salom, $ism"`.
+```
+
 ## Mustaqil mashq
 
 ```php

@@ -61,3 +61,20 @@ Ikonka `aria-hidden="true"` — ekran o‘quvchi uni o‘qimaydi, tugmaning nomi
 HTML’da `hidden` atributi ham elementni yashiradi (`display: none` kabi). Lekin CSS’da `display: flex` yozilgan bo‘lsa, u `hidden` ni yengib qo‘yadi. Shu sabab ko‘p loyihalarda `[hidden] { display: none !important; }` qoidasi qo‘shiladi.
 
 Mashqda telefon va kompyuter uchun navigatsiyani ajratasiz va `.sr-only` klassini yozasiz.
+
+```tekshir
+Matnni ko‘zdan yashirib, ekran o‘quvchiga qoldirish uchun qaysi usul to‘g‘ri?
++ “visually hidden” klassi (`clip`, `width: 1px` va h.k.)
+- `display: none`
+- `visibility: hidden`
+> `display: none` va `visibility: hidden` ekran o‘quvchidan ham yashiradi.
+```
+
+```jonli
+<style>
+  .vh { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+  @media (max-width: 599px) { .keng { display: none; } }
+</style>
+<button>🔍<span class="vh">Qidirish</span></button>
+<p class="keng">Bu matn faqat 600px dan keng ekranda ko‘rinadi.</p>
+```

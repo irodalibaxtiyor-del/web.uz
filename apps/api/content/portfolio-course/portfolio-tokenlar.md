@@ -52,3 +52,20 @@ Professional, yaxshi yoritilgan, oddiy fondagi fotosurat ishonch uyg‘otadi. U 
 Har bir bo‘limga boshqa rang, har bir sarlavhaga boshqa shrift — havaskorlik belgisi. Cheklangan palitra va izchil oraliqlar portfolioni “qimmat” ko‘rsatadi.
 
 Mashqda portfolio uslubini tokenlarga yig‘asiz.
+
+```tekshir
+Shaxsiy sayt uchun nechta shrift oilasi yetarli?
++ bir yoki ikkita (sarlavha va matn uchun)
+- beshta va undan ko‘p
+- har bo‘limga alohida
+> Kamroq shrift — izchilroq va tezroq sayt.
+```
+
+```jonli
+<style>
+  :root { --rang: #6c3483; --fon: #faf7fc; --matn: #221b26; --shrift: Georgia, serif; }
+  .p { background: var(--fon); color: var(--matn); padding: 16px; border-radius: 10px; }
+  .p h2 { font-family: var(--shrift); color: var(--rang); margin: 0 0 6px; }
+</style>
+<div class="p"><h2>Aziza Karimova</h2><p>Bitta urg‘u rangi va ikki shrift — shaxsiy uslub.</p></div>
+```

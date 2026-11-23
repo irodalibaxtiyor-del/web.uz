@@ -154,6 +154,14 @@ $xabarlar = $pdo->query('SELECT ism, matn, vaqt FROM xabarlar ORDER BY id DESC L
 
 `nl2br(e(...))` tartibi muhim: avval escape, keyin `<br>` qo‘shiladi. Teskarisi `<br>` ni ham escape qilib yuboradi.
 
+```tekshir
+Mehmonlar kitobida xabarni sahifaga chiqarishda nima majburiy?
++ `htmlspecialchars()` bilan chiqarish
+- `strtoupper()`
+- hech narsa — ma’lumot bazadan kelgan
+> Bazadagi ma’lumot ham foydalanuvchidan kelgan — XSS xavfi saqlanadi.
+```
+
 ## Mustaqil mashq
 
 1. Loyihani yuqoridagidek yarating va ishga tushiring.

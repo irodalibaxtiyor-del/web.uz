@@ -55,3 +55,21 @@ Hover holati sensorli ekranda deyarli ishlamaydi. Agar maketdagi muhim ma’lumo
 `:active` sichqoncha bosib turilganda ishlaydi va juda qisqa. Ko‘pincha rangni yana bir pog‘ona to‘qlashtirish yoki `transform: scale(0.98)` kifoya.
 
 Mashqda Hover, Focused va Disabled variantlarini psevdoklasslarga o‘girasiz.
+
+```tekshir
+Maketda fokus holati chizilmagan bo‘lsa, dasturchi nima qilishi kerak?
++ baribir aniq ko‘rinadigan fokus uslubini qo‘shishi va dizaynerga aytishi
+- fokusni `outline: none` bilan o‘chirish
+- faqat hover’ni yozish
+> Klaviatura foydalanuvchilari fokussiz qayerda ekanini bilmaydi.
+```
+
+```jonli
+<style>
+  a { display: inline-block; padding: 8px 12px; color: #0071dc; border-radius: 6px; }
+  a:hover { background: #eef4fb; }
+  a:active { background: #dbe8f7; }
+  a:focus-visible { outline: 3px solid #f5a623; outline-offset: 2px; }
+</style>
+<a href="#">Bosh</a><a href="#">Kurslar</a><a href="#">Aloqa</a>
+```

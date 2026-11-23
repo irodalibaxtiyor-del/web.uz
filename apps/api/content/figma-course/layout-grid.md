@@ -59,3 +59,19 @@ Agar karta ichidagi elementlar ham sahifa to‘riga tekislanishi kerak bo‘lsa,
 Figma’da to‘rni **View → Layout grids** menyusi orqali yoqib-o‘chirish mumkin. Dev Mode’da freymni tanlasangiz, to‘r qiymatlari ham ko‘rsatiladi.
 
 Mashqda maketdagi 12 va 4 ustunli to‘rni CSS Grid bilan aynan qayta yasaysiz.
+
+```tekshir
+Figma’dagi 12 ustunli, 24px gutterli layout grid CSS’da qanday yoziladi?
++ `grid-template-columns: repeat(12, 1fr); column-gap: 24px;`
+- `columns: 12; gap: 24`
+- `display: table` 12 katak bilan
+> Elementlar `grid-column: span N` bilan ustunlarni egallaydi.
+```
+
+```jonli
+<style>
+  .g { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: 12px; row-gap: 8px; }
+  .g div { background: #eef4fb; padding: 8px; }
+</style>
+<div class="g"><div style="grid-column: span 8">span 8</div><div style="grid-column: span 4">span 4</div><div style="grid-column: span 12">span 12</div></div>
+```

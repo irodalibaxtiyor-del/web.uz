@@ -67,3 +67,23 @@ Yorliq maydon ustida, qisqa va doim ko‘rinadigan. Placeholder yorliq o‘rnini
 - To‘g‘ri to‘ldirilganini ham ko‘rsatish mumkin, lekin ehtiyotkorlik bilan — yashil chegaralar ko‘payib ketmasin.
 
 Mashqda maydonga aniq chegara, fokus va xato holatini berasiz.
+
+```tekshir
+Maydon xatosini qachon ko‘rsatish qulayroq?
++ foydalanuvchi maydonni tark etgandan yoki formani yuborgandan keyin
+- birinchi harf yozilishi bilan
+- sahifa ochilishi bilan
+> Yozib ulgurmasdan xato ko‘rsatish asabiylashtiradi; CSS’da `:user-invalid` shunday ishlaydi.
+```
+
+```jonli
+<style>
+  label { display: block; font-weight: 600; margin-bottom: 4px; }
+  input { font: inherit; padding: 8px 10px; border: 1px solid #8a94a3; border-radius: 6px; width: 100%; max-width: 280px; }
+  input:focus-visible { outline: 3px solid #0071dc55; border-color: #0071dc; }
+  input:user-invalid { border-color: #c0392b; }
+  input:user-invalid + .x { display: block; }
+  .x { display: none; color: #c0392b; font-size: .9rem; }
+</style>
+<label for="em">Email</label><input id="em" type="email" required><span class="x">To‘g‘ri email kiriting</span>
+```

@@ -65,3 +65,20 @@ Ikonka o‘lchamlari ham shkalaga bo‘ysunsin: odatda 16, 20, 24px.
 Hamma tushunadigan ikonkalar kam: uy, qidiruv, yopish (×), menyu, savat. Qolgan ikonkalar (masalan, “eksport”, “arxiv”) yorliqsiz tushunarsiz. Shubha bo‘lsa — ikonka yoniga matn yozing.
 
 Mashqda tugmadagi ikonkani matnga moslashadigan qilasiz.
+
+```tekshir
+SVG ikonka atrofdagi matn bilan bir xil o‘lchamda bo‘lishi uchun o‘lcham qanday beriladi?
++ `width: 1em; height: 1em`
+- `width: 24px` (har doim)
+- `font-size: 0`
+> `em` matn o‘lchamiga bog‘liq — ikonka matn bilan birga kattalashadi.
+```
+
+```jonli
+<style>
+  a { color: #0071dc; display: inline-flex; align-items: center; gap: .35em; font-size: 20px; }
+  a:hover { color: crimson; }
+  svg { width: 1em; height: 1em; fill: currentColor; }
+</style>
+<a href="#"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.5-9.5 9-9.5 9z"/></svg>Sevimlilar</a>
+```

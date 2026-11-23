@@ -67,3 +67,20 @@ Agar karta bosilmasa, hover effekti foydalanuvchini aldaydi — u bosib ko‘rad
 Interfeysda 2–3 ta radius yetarli: kichik (6–8px — tugma, maydon), o‘rta (12px — karta), katta (16–24px — modal oyna). Ular ham tokenga aylanadi: `--r-sm`, `--r-md`, `--r-lg`.
 
 Mashqda uch qismli karta yasaysiz.
+
+```tekshir
+Kartaga hover effekti qachon beriladi?
++ faqat butun karta bosiladigan bo‘lsa
+- har doim, chiroyli bo‘lishi uchun
+- hech qachon
+> Bosilmaydigan kartadagi hover foydalanuvchini chalg‘itadi.
+```
+
+```jonli
+<style>
+  .k { position: relative; max-width: 240px; padding: 16px; border: 1px solid #dfe6ee; border-radius: 12px; background: #fff; box-shadow: 0 1px 2px rgb(0 0 0 / .06); transition: box-shadow .2s; }
+  .k:hover { box-shadow: 0 8px 24px rgb(0 0 0 / .12); }
+  .k a::after { content: ""; position: absolute; inset: 0; }
+</style>
+<div class="k"><h3 style="margin-top: 0"><a href="#">CSS kursi</a></h3><p>Butun karta bosiladi.</p></div>
+```

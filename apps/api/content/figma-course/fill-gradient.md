@@ -51,3 +51,20 @@ Ko‘p uchraydigan xato: Fill opacity’ni `opacity` bilan yozish. Natijada matn
 Figma’dagi _Multiply_, _Screen_ kabi aralashtirish rejimlari CSS’da `mix-blend-mode` (element) va `background-blend-mode` (fon qatlamlari). Ular ko‘zga chiroyli, lekin rang kontrastini taxmin qilishni qiyinlashtiradi — matn ostida ehtiyotkorlik bilan.
 
 Mashqda gradient banner va ikki xil shaffoflikni yozasiz.
+
+```tekshir
+Figma’da qatlam shaffofligi (layer opacity) va fill shaffofligi farqi kodda qanday ifodalanadi?
++ layer — `opacity` (butun element), fill — alfa kanalli rang (faqat fon)
+- ikkalasi ham `opacity`
+- ikkalasi ham `rgba` fon
+> `opacity` ichidagi matnni ham shaffof qiladi.
+```
+
+```jonli
+<style>
+  div { padding: 10px; margin: 6px 0; color: #fff; }
+</style>
+<div style="background: linear-gradient(135deg, #0071dc, #8e44ad)">Linear gradient</div>
+<div style="background: rgb(0 113 220 / .5); color: #000">Fill 50% (matn to‘liq)</div>
+<div style="background: #0071dc; opacity: .5">Layer 50% (matn ham)</div>
+```

@@ -52,3 +52,20 @@ Funksiyalar **o‘lchamlarni** silliq o‘zgartiradi. Lekin maket **tuzilishi** 
 `min()`, `max()` va `clamp()` barcha zamonaviy brauzerlarda ishlaydi. Juda eski brauzerlar uchun oddiy qiymatni oldin yozib qo‘yish mumkin — tushunmagan brauzer ikkinchi qatorni e’tiborsiz qoldiradi.
 
 Mashqda konteyner, sarlavha va bo‘shliqni media so‘rovsiz moslashtirasiz. Brauzer oynasini toraytirib-kengaytirib, sarlavha qanday silliq o‘zgarishini kuzating.
+
+```tekshir
+`width: min(100%, 600px)` nima qiladi?
++ element 600px dan keng bo‘lmaydi, tor joyda esa 100% bo‘ladi
+- har doim 600px
+- har doim 100%
+> `min()` ikki qiymatdan kichigini oladi — `max-width` ning qisqa yozuvi kabi.
+```
+
+```jonli
+<style>
+  .c { width: min(100%, 400px); background: #eef4fb; padding: 8px; }
+  h2 { font-size: clamp(1.2rem, 4vw, 2.2rem); }
+</style>
+<h2>clamp() sarlavha</h2>
+<div class="c">min(100%, 400px)</div>
+```

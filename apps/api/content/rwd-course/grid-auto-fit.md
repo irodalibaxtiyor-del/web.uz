@@ -49,3 +49,22 @@ Endi minimum “250px yoki konteyner kengligi — qaysi kichik bo‘lsa”.
 Agar telefonda 1, planshetda **aniq** 2, kompyuterda **aniq** 4 ta ustun bo‘lishi talab qilinsa — media so‘rov aniqroq. `auto-fit` esa “nechta sig‘sa” mantiqi bilan ishlaydi.
 
 Mashqda qotgan 4 ustunli galereyani shu bitta qator bilan almashtirasiz.
+
+```tekshir
+`auto-fit` va `auto-fill` farqi nima?
++ `auto-fit` bo‘sh ustunlarni yig‘ib, elementlarni cho‘zadi; `auto-fill` bo‘sh ustunlarni saqlaydi
+- farqi yo‘q
+- `auto-fill` faqat Flexbox’da ishlaydi
+> Element kam bo‘lganda farq ko‘rinadi.
+```
+
+```jonli
+<style>
+  .g { display: grid; gap: 6px; margin-bottom: 10px; }
+  .g div { background: #0071dc; color: #fff; padding: 10px; }
+  .fit { grid-template-columns: repeat(auto-fit, minmax(min(100px, 100%), 1fr)); }
+  .fill { grid-template-columns: repeat(auto-fill, minmax(min(100px, 100%), 1fr)); }
+</style>
+<p>auto-fit:</p><div class="g fit"><div>1</div><div>2</div></div>
+<p>auto-fill:</p><div class="g fill"><div>1</div><div>2</div></div>
+```

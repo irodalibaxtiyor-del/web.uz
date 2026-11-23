@@ -61,3 +61,20 @@ Mobil freymda nav yashirin — demak dizayner burger menyuni nazarda tutgan. Uni
 Logo odatda bosh sahifaga havola (`<a href="/">`). Agar u rasm bo‘lsa — `alt` da sayt nomi; SVG bo‘lsa — `aria-label`.
 
 Mashqda header’ni ikki freym spetsifikatsiyasi bo‘yicha yig‘asiz.
+
+```tekshir
+Header uchun `height` o‘rniga nega `min-height` tavsiya etiladi?
++ matn kattalashganda yoki qatorga o‘tganda kontent kesilmaydi
+- `height` CSS’da yo‘q
+- `min-height` tezroq ishlaydi
+> Qat’iy balandlik foydalanuvchi shriftni kattalashtirganda muammo beradi.
+```
+
+```jonli
+<style>
+  header { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 64px; padding: 0 16px; background: #123456; color: #fff; }
+  header nav { display: flex; gap: 12px; }
+  header a { color: inherit; }
+</style>
+<header><b>Logo</b><nav><a href="#">Kurslar</a><a href="#">Aloqa</a></nav></header>
+```

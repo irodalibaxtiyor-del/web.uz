@@ -64,6 +64,14 @@ PHP serverda ishlaydi, shuning uchun bu kursda kod platformaning o‘zida bajari
 
 > Kodni “boshda bajarish” — dasturchining eng muhim ko‘nikmasi. Testdagi kodni avval o‘zingiz hisoblang, keyin kompyuterda tekshiring.
 
+```tekshir
+PHP kodi qayerda bajariladi?
++ serverda — brauzerga tayyor HTML yuboriladi
+- foydalanuvchi brauzerida
+- faqat ma’lumotlar bazasida
+> Shuning uchun PHP kodini sahifa manbasida ko‘rib bo‘lmaydi.
+```
+
 ## Mustaqil mashq
 
 Hozircha kod yozmaymiz. O‘zingiz uchun javob yozing:

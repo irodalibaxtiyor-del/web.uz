@@ -66,3 +66,20 @@ Kartada bitta havola qoladi (ekran o‘quvchi butun karta matnini havola nomi qi
 Bir xil karta keng joyda gorizontal, tor joyda vertikal bo‘lishi kerak bo‘lsa — konteyner so‘rovlari (2-modul).
 
 Mashqda kurslar kartalarini teng balandlikda va tugmalarni bir qatorda qilasiz.
+
+```tekshir
+Kartalardagi tugmalar matn uzunligidan qat’i nazar bir chiziqda turishi uchun nima qilinadi?
++ karta ichini `flex-direction: column` qilib, tugmaga `margin-top: auto`
+- har kartaga bir xil `height`
+- matnni qisqartirish
+> `auto` margin bo‘sh joyni egallab tugmani pastga itaradi.
+```
+
+```jonli
+<style>
+  .t { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+  .k { display: flex; flex-direction: column; background: #eef4fb; padding: 10px; border-radius: 8px; }
+  .k button { margin-top: auto; }
+</style>
+<div class="t"><div class="k"><b>Qisqa</b><button>Ochish</button></div><div class="k"><b>Uzun</b><p>Bu kartada matn ko‘proq bo‘lsa ham tugmalar bir chiziqda.</p><button>Ochish</button></div></div>
+```

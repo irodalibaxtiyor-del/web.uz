@@ -99,6 +99,14 @@ require __DIR__ . '/sahifalar/' . $fayl;
 
 Katta loyihalarda klasslar `require` bilan qo‘lda ulanmaydi — Composer ularni avtomatik yuklaydi (`require 'vendor/autoload.php';`). Nomlar fazosi darsida ko‘ramiz.
 
+```tekshir
+`require` va `include` farqi nima?
++ fayl topilmasa `require` dasturni to‘xtatadi, `include` ogohlantirib davom etadi
+- farqi yo‘q
+- `include` faqat HTML fayllar uchun
+> `_once` variantlari faylni ikki marta ulamaydi.
+```
+
 ## Mustaqil mashq
 
 Uchta fayl yarating:

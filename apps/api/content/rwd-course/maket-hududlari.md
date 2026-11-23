@@ -63,3 +63,21 @@ Hududlar bilan elementni ekranda istalgan joyga qo‘yish mumkin, lekin klaviatu
 Chrome va Firefox DevTools’ida grid konteyner yonidagi `grid` belgisini bosing — sahifa ustida chiziqlar va hudud nomlari chiziladi. Maket kutilgandek bo‘lmasa, birinchi qarash kerak bo‘lgan joy shu.
 
 Mashqda bir xil HTML’dan telefon va planshet uchun ikki xil maket yasaysiz.
+
+```tekshir
+Grid hududlari bilan tartibni o‘zgartirganda nimaga ehtiyot bo‘lish kerak?
++ klaviatura va ekran o‘quvchi HTML tartibi bo‘yicha yuradi — vizual tartib undan juda uzoqlashmasin
+- hududlar faqat kompyuterda ishlaydi
+- hududlar nomida raqam bo‘lishi shart
+> Vizual va mantiqiy tartib farqi foydalanuvchini chalg‘itadi.
+```
+
+```jonli
+<style>
+  .s { display: grid; gap: 6px; grid-template-areas: "h" "m" "a" "f"; }
+  .s > * { background: #eef4fb; padding: 10px; }
+  header { grid-area: h; } main { grid-area: m; } aside { grid-area: a; } footer { grid-area: f; }
+  @media (min-width: 600px) { .s { grid-template-columns: 1fr 160px; grid-template-areas: "h h" "m a" "f f"; } }
+</style>
+<div class="s"><header>header</header><main>main</main><aside>aside</aside><footer>footer</footer></div>
+```

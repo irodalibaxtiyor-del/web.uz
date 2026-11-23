@@ -73,3 +73,23 @@ Karta butunlay bosilsa, fokus ham butun kartada ko‘rinsin:
 - `width`/`height` atributlari va `loading="lazy"` (birinchi ekrandan pastdagi rasmlar uchun).
 
 Mashqda loyihalar galereyasini moslashuvchan to‘r va bosiladigan kartalar bilan yasaysiz.
+
+```tekshir
+Loyiha kartasini butunlay bosiladigan qilish uchun qaysi usul accessible?
++ sarlavhadagi havolaga `::after { content: ""; position: absolute; inset: 0 }`
+- butun kartani `<a>` ichiga, ichida tugmalar bilan
+- kartaga `onclick` va `div`
+> Havola matni (loyiha nomi) ekran o‘quvchiga aniq bo‘lib qoladi.
+```
+
+```jonli
+<style>
+  .t { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+  .k { position: relative; border: 1px solid #ddd; border-radius: 10px; overflow: hidden; }
+  .k img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; display: block; }
+  .k h3 { font-size: 1rem; margin: 8px; }
+  .k a::after { content: ""; position: absolute; inset: 0; }
+  .k:focus-within { outline: 3px solid #6c3483; }
+</style>
+<div class="t"><article class="k"><img src="data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%27320%27%20height=%27200%27%3E%3Crect%20width=%27320%27%20height=%27200%27%20fill=%27%230071dc%27/%3E%3Ccircle%20cx=%27224%27%20cy=%2770%27%20r=%2730%27%20fill=%27%23fff%27/%3E%3C/svg%3E" alt=""><h3><a href="#">Kafe sayti</a></h3></article><article class="k"><img src="data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%27320%27%20height=%27200%27%3E%3Crect%20width=%27320%27%20height=%27200%27%20fill=%27%232e8b57%27/%3E%3Ccircle%20cx=%27224%27%20cy=%2770%27%20r=%2730%27%20fill=%27%23fff%27/%3E%3C/svg%3E" alt=""><h3><a href="#">Do‘kon</a></h3></article></div>
+```

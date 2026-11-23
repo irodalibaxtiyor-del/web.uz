@@ -92,6 +92,14 @@ echo implode(",", $asl); // 3,1,2
 shuffle($savollar); // tasodifiy tartib
 ```
 
+```tekshir
+Assotsiativ massivni qiymat bo‘yicha saralab, kalitlarni saqlaydigan funksiya qaysi?
++ `asort()`
+- `sort()`
+- `ksort()`
+> `sort` kalitlarni yo‘qotadi, `ksort` kalit bo‘yicha saralaydi.
+```
+
 ## Mustaqil mashq
 
 ```php

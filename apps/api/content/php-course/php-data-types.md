@@ -99,6 +99,14 @@ PHP 8 da son bo‘lmagan satr bilan arifmetika xato beradi:
 echo "olma" + 1; // TypeError: Unsupported operand types: string + int
 ```
 
+```tekshir
+`var_dump(10 / 4);` nima chiqaradi?
++ `float(2.5)`
+- `int(2)`
+- `int(3)`
+> `/` natijasi butun bo‘lmasa `float`; butun bo‘lish uchun `intdiv()`.
+```
+
 ## Mustaqil mashq
 
 Har bir qiymatning turini `get_debug_type` bilan chiqaring:

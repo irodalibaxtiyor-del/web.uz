@@ -56,3 +56,19 @@ Flexbox o‘rash qachon yaxshi:
 `gap` faqat elementlar **orasiga** joy qo‘yadi, chetlarga emas. Eski usuldagi `margin` bilan hisoblash (oxirgi elementning chetini olib tashlash va hokazo) endi kerak emas.
 
 Mashqda qotib qolgan to‘rt blokni o‘zi qatorga tushadigan qilasiz.
+
+```tekshir
+`flex: 1 1 200px` nimani bildiradi?
++ o‘sishi, siqilishi mumkin va boshlang‘ich kengligi 200px
+- qat’iy 200px
+- faqat 1px dan 200px gacha
+> `flex-wrap: wrap` bilan birga — media so‘rovsiz moslashuvchan qator.
+```
+
+```jonli
+<style>
+  .w { display: flex; flex-wrap: wrap; gap: 8px; }
+  .w div { flex: 1 1 160px; background: #eef4fb; padding: 16px; }
+</style>
+<div class="w"><div>A</div><div>B</div><div>C</div><div>D</div><div>E</div></div>
+```

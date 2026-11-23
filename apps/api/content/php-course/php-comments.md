@@ -93,6 +93,15 @@ $i++;
 $sahifa = $indeks + 1;
 ```
 
+```tekshir
+PHP’da qaysilari izoh?
++ `// izoh`
++ `# izoh`
++ `/* izoh */`
+- `<!-- izoh -->`
+> `<!-- -->` HTML izohi — u brauzerga yuboriladi.
+```
+
 ## Mustaqil mashq
 
 Quyidagi koddagi ikkinchi va uchinchi `echo` ni **o‘chirmasdan** izohga aylantiring, birinchi qatorga esa fayl haqida izoh qo‘shing:

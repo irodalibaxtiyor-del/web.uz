@@ -58,3 +58,17 @@ Shuning uchun katta loyihalarda SVG afzal. Lekin tez prototip va Bootstrap’li 
 CDN havolasida aniq versiya (`@1.13.1`) yozing. Versiyasiz havola yangi chiqqan versiyani olib, ikonkalarni kutilmaganda o‘zgartirishi mumkin.
 
 Mashqda Bootstrap Icons’ni ulab, menyu havolalariga ikonka qo‘shasiz.
+
+```tekshir
+Ikonka shriftining SVG ikonkalarga nisbatan kamchiligi qaysi?
++ butun shrift fayli yuklanadi va shrift yuklanmasa ikonka ko‘rinmaydi
+- uni rangini o‘zgartirib bo‘lmaydi
+- u faqat Bootstrap’da ishlaydi
+> Shu sababli versiyani qotirib, kerak bo‘lsa SVG’ga o‘tiladi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+<p style="font-size: 24px; color: #0071dc"><i class="bi bi-house" aria-hidden="true"></i> <i class="bi bi-envelope" aria-hidden="true"></i> <i class="bi bi-star-fill" aria-hidden="true"></i></p>
+<button aria-label="Sozlamalar" style="font-size: 20px"><i class="bi bi-gear" aria-hidden="true"></i></button>
+```

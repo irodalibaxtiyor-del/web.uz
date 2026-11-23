@@ -71,3 +71,32 @@ Oddiy holatlarda `<details>` elementi ham ishlaydi:
 U klaviatura va ekran o‘quvchi bilan o‘zi ishlaydi, lekin ko‘rinishini sozlash cheklangan.
 
 Mashqda burger tugmasini `aria-expanded` bilan to‘liq ishlaydigan qilasiz.
+
+```tekshir
+Menyu tugmasi ochiq yoki yopiqligini ekran o‘quvchiga qaysi atribut bildiradi?
++ `aria-expanded`
+- `aria-hidden` tugmaning o‘zida
+- `data-open`
+> Tugma bosilganda `aria-expanded` `true`/`false` ga almashtiriladi.
+```
+
+```jonli
+<style>
+  nav ul { list-style: none; padding: 0; margin: 0; display: none; }
+  nav ul.ochiq { display: block; }
+  nav a { display: block; padding: 8px; }
+  @media (min-width: 600px) { nav button { display: none; } nav ul { display: flex; gap: 12px; } }
+</style>
+<nav>
+  <button aria-expanded="false" aria-controls="m">Menyu</button>
+  <ul id="m"><li><a href="#">Bosh</a></li><li><a href="#">Kurslar</a></li><li><a href="#">Aloqa</a></li></ul>
+</nav>
+<script>
+  const b = document.querySelector('nav button');
+  b.onclick = () => {
+    const ochiq = b.getAttribute('aria-expanded') === 'true';
+    b.setAttribute('aria-expanded', String(!ochiq));
+    document.getElementById('m').classList.toggle('ochiq', !ochiq);
+  };
+</script>
+```

@@ -92,6 +92,14 @@ echo htmlspecialchars($izoh); // &lt;script&gt;alert(1)&lt;/script&gt;
 
 Aks holda sahifangizda begona skript ishga tushadi (XSS). Formalar modulida bunga qaytamiz.
 
+```tekshir
+Foydalanuvchi kiritgan matnni HTML’ga xavfsiz chiqarish uchun qaysi funksiya?
++ `htmlspecialchars()`
+- `print_r()`
+- `strtoupper()`
+> U `<`, `>`, `"` va `&` belgilarini xavfsiz ko‘rinishga o‘tkazib, XSS’ning oldini oladi.
+```
+
 ## Mustaqil mashq
 
 `chek.php` — vergul bilan bir nechta qiymat chiqaring:

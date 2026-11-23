@@ -64,6 +64,14 @@ XAMPP’da `http://localhost/phpmyadmin` — MySQL’ni brauzerdan boshqarish pa
 
 PHP’da bazaga ulanishning ikki yo‘li bor: `mysqli` (faqat MySQL) va **PDO** (MySQL, PostgreSQL, SQLite va boshqalar — bir xil kod). Biz **PDO** ni o‘rganamiz.
 
+```tekshir
+SQL’da jadvaldan ma’lumot o‘qish buyrug‘i qaysi?
++ `SELECT`
+- `GET`
+- `READ`
+> `INSERT` — qo‘shish, `UPDATE` — o‘zgartirish, `DELETE` — o‘chirish.
+```
+
 ## Mustaqil mashq
 
 phpMyAdmin’da (yoki istalgan SQL vositasida):

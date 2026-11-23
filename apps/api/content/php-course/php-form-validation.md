@@ -109,6 +109,14 @@ print_r(tekshir(['ism' => ' ', 'email' => 'ali@']));
 // [ism => Ismni kiriting, email => Email noto‘g‘ri]
 ```
 
+```tekshir
+Emailni tekshirish uchun qaysi kod to‘g‘ri?
++ `filter_var($email, FILTER_VALIDATE_EMAIL)`
+- `strpos($email, '@') > 0` yetarli
+- `is_string($email)`
+> `filter_var` noto‘g‘ri bo‘lsa `false` qaytaradi.
+```
+
 ## Mustaqil mashq
 
 `tekshir()` ni yosh bilan kengaytiring va sinang:

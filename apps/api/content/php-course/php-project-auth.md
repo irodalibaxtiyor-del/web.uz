@@ -220,6 +220,14 @@ Chiqish ham POST — aks holda boshqa sayt `<img src="logout.php">` bilan foydal
 - **Email tasdiqlash** va parolni tiklash (bir martalik, muddatli token).
 - `password_needs_rehash()` — algoritm yangilanganda hash’ni kirish paytida yangilash.
 
+```tekshir
+Parolni bazada qanday saqlash kerak?
++ `password_hash()` bilan, tekshirish — `password_verify()`
+- `md5()` bilan
+- ochiq matn sifatida
+> `password_hash` tuzli va sekin algoritm ishlatadi; md5 tez buziladi.
+```
+
 ## Mustaqil mashq
 
 1. Loyihani yarating, `php -S localhost:8000` bilan ishga tushiring.

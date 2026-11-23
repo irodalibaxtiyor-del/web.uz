@@ -98,6 +98,14 @@ Trait — qulay, lekin ehtiyot bo‘ling:
 
 Laravel kabi freymvorklarda trait’lar keng ishlatiladi (`HasFactory`, `SoftDeletes`) — ularni o‘qiy olish uchun bilish shart.
 
+```tekshir
+Trait klassga qanday qo‘shiladi?
++ klass ichida `use TraitNomi;`
+- `extends TraitNomi`
+- `implements TraitNomi`
+> Trait — bir nechta klassga kod bo‘lagini qo‘shish usuli.
+```
+
 ## Mustaqil mashq
 
 ```php

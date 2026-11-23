@@ -90,6 +90,14 @@ UPDATE postlar SET ochirilgan_vaqt = CURRENT_TIMESTAMP WHERE id = ?;
 SELECT * FROM postlar WHERE ochirilgan_vaqt IS NULL;
 ```
 
+```tekshir
+Tranzaksiya nima uchun kerak?
++ bir nechta so‘rov “hammasi yoki hech narsa” bo‘lib bajarilishi uchun
+- so‘rovlarni tezlashtirish uchun
+- SQL injection’dan himoya uchun
+> Xato bo‘lsa `rollBack()`, hammasi yaxshi bo‘lsa `commit()`.
+```
+
 ## Mustaqil mashq
 
 ```php

@@ -106,6 +106,14 @@ $uch = kopaytiruvchi(3);
 echo $uch(7); // 21
 ```
 
+```tekshir
+Anonim funksiya tashqi o‘zgaruvchini qanday oladi?
++ `function () use ($x) { … }`
+- avtomatik, hech narsa yozilmaydi
+- `global $x` yozish shart
+> Arrow funksiya `fn() => $x * 2` esa tashqi o‘zgaruvchini avtomatik ko‘radi.
+```
+
 ## Mustaqil mashq
 
 Narxlar ro‘yxatidan 10 000 dan arzonlarini olib, QQS qo‘shing:

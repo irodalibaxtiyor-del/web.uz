@@ -49,3 +49,19 @@ CSS o‘zgaruvchisini media so‘rov shartida ishlatib bo‘lmaydi (`@media (min
 Agar har 50 pikselda yangi so‘rov kerak bo‘lsa, maket yetarlicha suyuq emas. Avval `%`, `fr`, `minmax()`, `clamp()` bilan hal qilishga urinib ko‘ring.
 
 Mashqda menyuning piksellardagi tanaffus nuqtasini `em` ga o‘tkazasiz va ikkinchi nuqta qo‘shasiz.
+
+```tekshir
+Tanaffus nuqtasini nima belgilashi kerak?
++ kontent — maket buzila boshlagan kenglik
+- mashhur telefon modellari
+- har doim 768 va 1024
+> Oynani sekin toraytirib, kontent noqulay bo‘lgan joyda nuqta qo‘yiladi.
+```
+
+```jonli
+<style>
+  .n { background: #ffe08a; padding: 10px; }
+  @media (min-width: 40em) { .n { background: #b7ebc6; } .n::after { content: " — 40em dan keng"; } }
+</style>
+<p class="n">Rangga qarang</p>
+```

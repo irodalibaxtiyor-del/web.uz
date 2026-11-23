@@ -95,6 +95,14 @@ settype($x, "integer");
 var_dump($x); // int(123)
 ```
 
+```tekshir
+`(int) '12abc'` natijasi nima?
++ `12`
+- `0`
+- xato
+> Satr boshidagi raqamlar olinadi; qat’iy tekshirish uchun `filter_var` yoki `is_numeric`.
+```
+
 ## Mustaqil mashq
 
 Formadan kelgandek satrlarni songa aylantirib, yig‘indini hisoblang:

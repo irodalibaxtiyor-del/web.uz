@@ -104,6 +104,14 @@ Birinchi `true` ga teng shart tanlanadi.
 - Yangi kodda — **`match`**: qisqa, qat’iy, natija qaytaradi.
 - Har bir holatda bir nechta buyruq bajarilishi kerak bo‘lsa — `switch` yoki `if`.
 
+```tekshir
+`match` ning `switch` dan farqi qaysi?
++ qat’iy (`===`) solishtiradi, qiymat qaytaradi va `break` kerak emas
+- u faqat sonlar bilan ishlaydi
+- unda `default` bo‘lmaydi
+> Mos holat topilmasa va `default` bo‘lmasa, `match` xato tashlaydi.
+```
+
 ## Mustaqil mashq
 
 HTTP holat kodini matnga aylantiruvchi funksiya:

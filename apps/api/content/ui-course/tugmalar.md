@@ -67,3 +67,21 @@ Ko‘p tizimlarda tugmaning 2–3 o‘lchami bor: kichik (36px — jadval ichida
 Tugma matni — **fe’l**, aniq harakat: “Saqlash”, “Kursga yozilish”. “OK” yoki “Ha” kabi umumiy so‘zlar tasdiqlash oynasida noaniq: “O‘chirish” va “Bekor qilish” ancha tushunarli.
 
 Mashqda bitta asosdan uchta tugma varianti yasaysiz.
+
+```tekshir
+Tugmaga nega `border: 1px solid transparent` beriladi?
++ variantlar orasida (chegarali va chegarasiz) o‘lcham bir xil qolishi uchun
+- tugmani ko‘rinmas qilish uchun
+- hover’ni o‘chirish uchun
+> Chegarali “outline” variant bilan bir qatorda turganda tugmalar sakramaydi.
+```
+
+```jonli
+<style>
+  .btn { font: inherit; display: inline-flex; align-items: center; gap: .4em; padding: .6em 1.1em; border: 1px solid transparent; border-radius: 8px; cursor: pointer; }
+  .btn-asosiy { background: #0071dc; color: #fff; }
+  .btn-chegarali { border-color: #0071dc; color: #0071dc; background: #fff; }
+  .btn-kichik { font-size: .85rem; }
+</style>
+<button class="btn btn-asosiy">Saqlash</button> <button class="btn btn-chegarali">Bekor qilish</button> <button class="btn btn-asosiy btn-kichik">Kichik</button>
+```

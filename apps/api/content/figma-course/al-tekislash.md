@@ -64,3 +64,18 @@ Turli o‘lchamdagi matnlar (katta sarlavha va kichik havola) bir qatorda turgan
 “Space between” da bitta element bo‘lsa, u chap chetda qoladi. Ba’zan dizayner shu tarzda “o‘ngga tekislash” ni nazarda tutadi — natijani tekshiring.
 
 Mashqda vazifalar kartasidagi tekislashlarni Figma’dan CSS’ga o‘girasiz.
+
+```tekshir
+Auto Layout’dagi “Space between” CSS’da qanday yoziladi?
++ `justify-content: space-between`
+- `gap: auto`
+- `align-items: between`
+> Elementlar orasidagi bo‘sh joy teng taqsimlanadi.
+```
+
+```jonli
+<style>
+  .r { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #eef4fb; }
+</style>
+<div class="r"><b>Logo</b><span>Menyu</span><button>Kirish</button></div>
+```

@@ -70,6 +70,14 @@ var_dump($natija['yosh'], $natija['email']); // int(25), bool(false)
 
 To‘g‘ridan-to‘g‘ri so‘rovdan: `filter_input(INPUT_GET, 'sahifa', FILTER_VALIDATE_INT)` — `$_GET` ga murojaatsiz.
 
+```tekshir
+Butun sonni 1 dan 100 gacha oraliqda tekshirish uchun qaysi filtr?
++ `filter_var($x, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 100]])`
+- `FILTER_SANITIZE_NUMBER_INT`
+- `(int) $x`
+> Sanitize filtrlari tekshirmaydi, faqat tozalaydi.
+```
+
 ## Mustaqil mashq
 
 Ro‘yxatdan o‘tish ma’lumotlarini tekshiring:
