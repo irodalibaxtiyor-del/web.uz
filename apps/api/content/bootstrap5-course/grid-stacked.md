@@ -60,6 +60,24 @@ Telefonda bloklar orasida 1rem, planshetda — yonma-yon (va keyingi qatorga tus
 | Kichik ikonkalar / statistika   | `col-6` (xs) dan |
 | Forma maydonlari                | `col-md-*`     |
 
+```tekshir
+Ustunlar ustma-ust tushganda ular orasida vertikal bo‘shliq berish uchun qaysi klass?
++ `row` ga `gy-3` (yoki `g-3`)
+- har ustunga `<br>`
+- `row-gap-auto`
+> Bootstrap 5 gutter klasslari: `g-*`, `gx-*`, `gy-*`.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="row gy-3">
+    <div class="col-md-6"><div class="p-2 border bg-body-tertiary">Birinchi</div></div>
+    <div class="col-md-6"><div class="p-2 border bg-body-tertiary">Ikkinchi</div></div>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - Bitta sinf: tor ekranda ustma-ust (`width: 100%`), keng ekranda yonma-yon.

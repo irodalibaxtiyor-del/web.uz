@@ -72,6 +72,25 @@ Bootstrap 5.3 da `.text-muted` o‘rniga `.text-body-secondary` tavsiya etiladi 
 </ul>
 ```
 
+```tekshir
+Bootstrap 5 da qalin matn uchun qaysi utilita?
++ `fw-bold`
+- `font-weight-bold`
+- `text-bold`
+> `font-weight-bold` — Bootstrap 4 dagi nomi; Bootstrap 5 qisqartirdi: `fw-*`, `fs-*`.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <h1 class="display-6">Display 6</h1>
+  <p class="lead">Lead matn</p>
+  <p class="fw-bold fs-5">fw-bold fs-5</p>
+  <p class="text-body-secondary">text-body-secondary</p>
+  <figure><blockquote class="blockquote"><p>Bilim — kuch.</p></blockquote><figcaption class="blockquote-footer">Muallif</figcaption></figure>
+</div>
+```
+
 ## Xulosa
 
 - 16px asosiy, sarlavhalar moslashuvchan; `.display-1` … `.display-6`.

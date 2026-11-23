@@ -73,7 +73,7 @@ Faqat fonni yarim shaffof qilib, matnni to‘liq ko‘rinadigan qoldirish uchun 
 
 ```jonli
 <style>
-  .w { background: url(https://picsum.photos/400/150) center / cover; padding: 12px; }
+  .w { background: url(data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%27400%27%20height=%27150%27%20viewBox=%270%200%20400%20150%27%3E%3Cdefs%3E%3ClinearGradient%20id=%27g%27%20x1=%270%27%20y1=%270%27%20x2=%271%27%20y2=%271%27%3E%3Cstop%20offset=%270%27%20stop-color=%27%232e8b57%27/%3E%3Cstop%20offset=%271%27%20stop-color=%27%23ffe08a%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width=%27400%27%20height=%27150%27%20fill=%27url(%23g)%27/%3E%3Ccircle%20cx=%27288%27%20cy=%2745%27%20r=%2724%27%20fill=%27%23fff%27%20fill-opacity=%27.75%27/%3E%3Cpath%20d=%27M0%20150%20L0%20105%20L140%2068%20L240%20113%20L320%2090%20L400%20120%20L400%20150%20Z%27%20fill=%27%231b3a2b%27%20fill-opacity=%27.8%27/%3E%3C/svg%3E) center / cover; padding: 12px; }
   .w p { padding: 8px; color: white; }
 </style>
 <div class="w">

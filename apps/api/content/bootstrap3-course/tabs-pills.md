@@ -73,6 +73,30 @@ Yorliqlardan biri ochiladigan menyu bo‘lishi ham mumkin:
 </li>
 ```
 
+```tekshir
+Yorliqlar (tabs) ko‘rinishidagi navigatsiya qaysi klasslar bilan?
++ `nav nav-tabs`
+- `nav nav-pills` (faqat shu tabs bo‘ladi)
+- `tabs tabs-default`
+> `nav-pills` — tabletka shaklidagi tugmalar ko‘rinishi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <ul class="nav nav-tabs">
+    <li class="active"><a data-toggle="tab" href="#a">Bosh</a></li>
+    <li><a data-toggle="tab" href="#b">Profil</a></li>
+  </ul>
+  <div class="tab-content" style="padding: 10px">
+    <div id="a" class="tab-pane fade in active">Bosh sahifa matni</div>
+    <div id="b" class="tab-pane fade">Profil matni</div>
+  </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+```
+
 ## Xulosa
 
 - `ul.nav` + `.nav-tabs` yoki `.nav-pills` (`.nav-stacked`, `.nav-justified`).

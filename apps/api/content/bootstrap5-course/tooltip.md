@@ -76,6 +76,25 @@ t.setContent({ '.tooltip-inner': 'Yangi matn' }); // 5.2 dan
 t.dispose();
 ```
 
+```tekshir
+Bootstrap 5 da sahifadagi barcha tooltiplarni qanday yoqish mumkin?
++ `document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach((el) => new bootstrap.Tooltip(el))`
+- `$('[data-toggle="tooltip"]').tooltip()` (jQuery shart)
+- ular avtomatik yoqiladi
+> Bootstrap 5 jQuery’siz: har element uchun `new bootstrap.Tooltip(el)`.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <p class="mt-4"><button class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Saqlash: Ctrl + S">Ustiga olib keling</button></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach((el) => new bootstrap.Tooltip(el));
+</script>
+```
+
 ## Xulosa
 
 - `data-bs-toggle="tooltip"` + `data-bs-title` + `data-bs-placement`.

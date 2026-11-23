@@ -75,6 +75,24 @@ $('#batafsil').collapse('toggle');
 $('#batafsil').on('shown.bs.collapse', function () { /* ochildi */ });
 ```
 
+```tekshir
+Bootstrap 4 da collapse dastlab ochiq bo‘lishi uchun qaysi klass?
++ `show`
+- `in`
+- `open`
+> Bootstrap 3 dagi `in` klassi Bootstrap 4 da `show` ga almashgan.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <button class="btn btn-primary" data-toggle="collapse" data-target="#c1" aria-expanded="false" aria-controls="c1">Batafsil</button>
+  <div class="collapse mt-2" id="c1"><div class="card card-body">Yashirin matn ochildi!</div></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+```
+
 ## Xulosa
 
 - `.collapse` (yashirin), `.collapse.show` (ochiq).

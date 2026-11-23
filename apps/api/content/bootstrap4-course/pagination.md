@@ -70,6 +70,26 @@ Bootstrap 4 da har bir bandga `.breadcrumb-item` kerak; ajratuvchi `/` ni Bootst
 
 Bootstrap 3 dagi `.pager` olib tashlangan. “Oldingi / Keyingi” uchun ikkita bandli `.pagination` yoki `d-flex justify-content-between` ichidagi ikki tugma ishlatiladi.
 
+```tekshir
+Bootstrap 4’da pagination bandlari qaysi klasslar bilan yoziladi?
++ `page-item` va ichida `page-link`
+- `li.page` va `a.link`
+- `pager-item`
+> Bootstrap 4 da `pager` komponenti olib tashlangan.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <nav aria-label="Sahifalar"><ul class="pagination">
+    <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+    <li class="page-item active" aria-current="page"><span class="page-link">1</span></li>
+    <li class="page-item"><a class="page-link" href="#">2</a></li>
+  </ul></nav>
+  <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="#">Bosh</a></li><li class="breadcrumb-item active" aria-current="page">Kurslar</li></ol></nav>
+</div>
+```
+
 ## Xulosa
 
 - `ul.pagination` > `li.page-item` > `a.page-link`; holatlar `.page-item` ga.

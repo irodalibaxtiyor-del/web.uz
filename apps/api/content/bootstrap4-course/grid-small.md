@@ -47,6 +47,24 @@ Kattaroq ekranda offset’ni bekor qilish: `offset-md-0`.
 
 Flex qatorda balandliklar turlicha bo‘lsa ham “zinapoya” muammosi yo‘q (Bootstrap 3 dagi `clearfix` kerak emas).
 
+```tekshir
+`col-sm-6` qaysi kenglikdan boshlab yarim kenglik bo‘ladi?
++ 576px
+- 768px
+- 480px
+> Bootstrap 4: sm ≥ 576, md ≥ 768, lg ≥ 992, xl ≥ 1200.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="row">
+    <div class="col-sm-6"><div class="p-2 border bg-light">col-sm-6</div></div>
+    <div class="col-sm-6"><div class="p-2 border bg-light">col-sm-6</div></div>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - `col-*` + `col-sm-*` — telefon va kichik planshetda turli nisbat.

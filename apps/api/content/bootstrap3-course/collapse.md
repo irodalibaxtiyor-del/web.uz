@@ -73,6 +73,24 @@ $('#batafsil').collapse('hide');   // yopish
 $('#batafsil').collapse('toggle'); // almashtirish
 ```
 
+```tekshir
+Collapse bloki dastlab ochiq turishi uchun Bootstrap 3’da qaysi klass?
++ `in`
+- `show`
+- `open`
+> Bootstrap 3 da `collapse in`, Bootstrap 4–5 da `collapse show`.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <button class="btn btn-primary" data-toggle="collapse" data-target="#batafsil" aria-expanded="false" aria-controls="batafsil">Batafsil</button>
+  <div class="collapse" id="batafsil"><div class="well">Yashirin matn ochildi!</div></div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+```
+
 ## Xulosa
 
 - Yashirin kontent: `.collapse`; ochiq: `.collapse.in`.

@@ -82,6 +82,37 @@ $('[data-tur]').on('click', function () {
 $('#natija').text($('#royxat li:visible').length + ' ta kurs topildi');
 ```
 
+```tekshir
+`jquery.slim` versiyasida qaysi imkoniyat yo‘q?
++ AJAX va animatsiya (effektlar) metodlari
+- `$(...)` selektorlari
+- hodisalar (`on`)
+> Bootstrap 4 plaginlari uchun slim versiya yetarli; filtr ham ishlaydi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <input class="form-control" id="fq" placeholder="Qidirish…" aria-label="Qidirish">
+  <ul class="list-group mt-2" id="fr"><li class="list-group-item">HTML asoslari</li><li class="list-group-item">CSS Grid</li><li class="list-group-item">Bootstrap 4</li></ul>
+  <p class="mt-2 text-muted" id="fn" aria-live="polite"></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  document.getElementById('fq').addEventListener('input', (e) => {
+    const soz = e.target.value.toLowerCase();
+    let n = 0;
+    document.querySelectorAll('#fr li').forEach((li) => {
+      const mos = li.textContent.toLowerCase().includes(soz);
+      li.classList.toggle('d-none', !mos);
+      if (mos) n++;
+    });
+    document.getElementById('fn').textContent = n + ' ta natija';
+  });
+</script>
+```
+
 ## Xulosa
 
 - `input` hodisasi + `.filter()` + `.toggle(bool)` — jQuery slim bilan ishlaydi.

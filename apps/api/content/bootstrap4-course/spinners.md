@@ -67,6 +67,22 @@ Utilitalar bilan:
 </div>
 ```
 
+```tekshir
+Spinner ekran o‘quvchiga qanday tushuntiriladi?
++ `role="status"` va ichida `<span class="sr-only">Yuklanmoqda…</span>`
+- `alt` atributi bilan
+- spinner ekran o‘quvchiga ko‘rinmasligi kerak
+> `sr-only` matni ko‘rinmaydi, lekin ekran o‘quvchi uni o‘qiydi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="spinner-border text-primary" role="status"><span class="sr-only">Yuklanmoqda…</span></div>
+  <div class="spinner-grow text-success ml-2" role="status"><span class="sr-only">Yuklanmoqda…</span></div>
+</div>
+```
+
 ## Xulosa
 
 - `.spinner-border` yoki `.spinner-grow` + `role="status"` + `.sr-only` matn.

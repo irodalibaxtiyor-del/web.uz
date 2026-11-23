@@ -85,6 +85,25 @@ Telefonda 2 × 2, noutbukda bir qatorda 4 ta.
 4. Bootstrap 3 dan ko‘chirganda sinflarni siljitmaslik (`md` → `lg`).
 5. `offset-md-*` o‘rniga eski `col-md-offset-*` yozish.
 
+```tekshir
+Kartalar katalogida hamma kartalar bir xil balandlikda bo‘lishi uchun kartaga qaysi klass?
++ `h-100`
+- `card-equal`
+- `same-height`
+> Ustunlar bir xil balandlikda bo‘lgani uchun karta `height: 100%` bilan ularni to‘ldiradi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="row row-cols-1 row-cols-md-3">
+    <div class="col mb-3"><div class="card h-100"><div class="card-body">HTML</div></div></div>
+    <div class="col mb-3"><div class="card h-100"><div class="card-body">CSS — uzunroq tavsif ikki qatorga o‘tadi</div></div></div>
+    <div class="col mb-3"><div class="card h-100"><div class="card-body">JS</div></div></div>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - Katalog: `row-cols-*` + `.col` + `.card.h-100`.

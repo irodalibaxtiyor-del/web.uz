@@ -74,6 +74,25 @@ Sonsiz kichik nuqta:
 | `badge-pill`                       | `rounded-pill`                      |
 | `sr-only`                          | `visually-hidden`                   |
 
+```tekshir
+Bootstrap 5 da badge rangini berish uchun qaysi usul?
++ fon utilitasi: `badge text-bg-success` yoki `bg-success`
+- `badge-success`
+- `badge color="success"`
+> `badge-success` — Bootstrap 4 dagi nomi; Bootstrap 5 da utilitalar ishlatiladi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <h4>Kurs <span class="badge text-bg-secondary">Yangi</span></h4>
+  <span class="badge rounded-pill text-bg-success">97 ball</span>
+  <button type="button" class="btn btn-primary position-relative ms-3">Xabarlar
+    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">4<span class="visually-hidden"> ta yangi xabar</span></span>
+  </button>
+</div>
+```
+
 ## Xulosa
 
 - `.badge` + `bg-*` yoki `text-bg-*`; pill — `.rounded-pill`.

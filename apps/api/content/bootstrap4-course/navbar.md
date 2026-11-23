@@ -78,6 +78,29 @@ Kontent markazda tursin desangiz:
 </nav>
 ```
 
+```tekshir
+Navbar qaysi ekrandan boshlab to‘liq yoyilishini qaysi klass belgilaydi?
++ `navbar-expand-lg` (yoki `-md`, `-sm`)
+- `navbar-collapse-lg`
+- `navbar-wide`
+> Shu sinfdan kichik ekranda menyu gamburger tugmaga yig‘iladi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">WEBDIZAYN</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#nv" aria-controls="nv" aria-expanded="false" aria-label="Menyu"><span class="navbar-toggler-icon"></span></button>
+    <div class="collapse navbar-collapse" id="nv">
+      <ul class="navbar-nav mr-auto"><li class="nav-item active"><a class="nav-link" href="#">Bosh</a></li><li class="nav-item"><a class="nav-link" href="#">Kurslar</a></li></ul>
+    </div>
+  </nav>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+```
+
 ## Xulosa
 
 - `nav.navbar.navbar-expand-md.navbar-dark.bg-dark`.

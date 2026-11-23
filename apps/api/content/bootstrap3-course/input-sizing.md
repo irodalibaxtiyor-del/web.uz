@@ -79,6 +79,28 @@ Tugma bilan — `.input-group-btn`:
 
 Butun guruh o‘lchami: `.input-group-lg`, `.input-group-sm`.
 
+```tekshir
+Maydon oldiga “@” kabi qo‘shimcha qo‘yish uchun qaysi komponent?
++ `input-group` va `input-group-addon`
+- `form-prefix`
+- `input-label`
+> Masalan: email yoki narx maydonida `@` yoki `so‘m` belgisi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <div class="input-group">
+    <span class="input-group-addon">@</span>
+    <input type="text" class="form-control" placeholder="foydalanuvchi">
+  </div>
+  <p></p>
+  <input class="form-control input-lg" placeholder="input-lg">
+  <p></p>
+  <input class="form-control input-sm" placeholder="input-sm">
+</div>
+```
+
 ## Xulosa
 
 - Balandlik: `.input-lg`, `.input-sm`; guruh uchun `.form-group-lg|sm`.

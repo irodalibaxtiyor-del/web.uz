@@ -94,6 +94,25 @@ Bootstrap 5 da `custom-file` kerak emas — oddiy `form-control`:
 <input class="form-control" type="file" id="fayl">
 ```
 
+```tekshir
+Bootstrap 5 da forma yorlig‘i uchun qaysi klass?
++ `form-label`
+- `control-label`
+- `label-form`
+> `form-group` ham Bootstrap 5 da yo‘q — o‘rniga `mb-3` kabi utilitalar.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <form>
+    <div class="mb-3"><label for="em" class="form-label">Email</label><input type="email" class="form-control" id="em" aria-describedby="emh"><div id="emh" class="form-text">Email hech kimga ko‘rsatilmaydi.</div></div>
+    <div class="mb-3"><label for="fl" class="form-label">Fayl</label><input class="form-control" type="file" id="fl"></div>
+    <button class="btn btn-primary">Yuborish</button>
+  </form>
+</div>
+```
+
 ## Xulosa
 
 - `.form-group` yo‘q → `.mb-3`; yorliq — `.form-label`; yordam — `.form-text`.

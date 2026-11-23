@@ -57,6 +57,25 @@ Utilitalar bilan:
 - Bitta sahifada bitta — u “eng muhim joy” bo‘lgani uchun ta’sirli;
 - Tugma matni amalni aniq aytsin: “Kursga yozilish”, “Batafsil” emas.
 
+```tekshir
+Bootstrap 5’da `jumbotron` komponenti bormi?
+- ha, o‘zgarishsiz
++ yo‘q — uni utilita klasslari bilan qilish kerak
+- faqat `jumbotron-fluid`
+> Bootstrap 5 da shunga o‘xshash blok `p-5 mb-4 bg-light rounded-3` kabi utilitalar bilan yig‘iladi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="jumbotron">
+    <h1 class="display-4">WEBDIZAYN.UZ</h1>
+    <p class="lead">Veb-dizaynni o‘zbek tilida o‘rganing.</p>
+    <a class="btn btn-primary btn-lg" href="#">Boshlash</a>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - `.jumbotron` — kulrang, yumaloq, katta padding’li blok.

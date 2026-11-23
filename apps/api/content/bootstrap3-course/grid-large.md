@@ -56,6 +56,25 @@ Juda keng qatorda matnni o‘qish qiyin: ko‘z qator oxiridan keyingisining bos
 </div>
 ```
 
+```tekshir
+Faqat `col-lg-4` yozilgan ustun 1000px kenglikdagi ekranda qanday bo‘ladi?
++ butun kenglikda (lg 1200px dan boshlanadi)
+- uchdan bir kenglikda
+- yashirin
+> `lg` dan kichik ekranlarda ustunlar ustma-ust turadi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <div class="row">
+    <div class="col-lg-4" style="background: #d9edf7">lg-4</div>
+    <div class="col-lg-4" style="background: #dff0d8">lg-4</div>
+    <div class="col-lg-4" style="background: #fcf8e3">lg-4</div>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - `col-lg-*` — 1200px va undan katta ekran (`.container` 1170px).

@@ -58,6 +58,23 @@ Foydalanuvchi tizimda “harakatni kamaytirish” sozlamasini yoqqan bo‘lsa (`
 </div>
 ```
 
+```tekshir
+Progress bar chiziqlarini harakatlantirish uchun qaysi ikki klass?
++ `progress-bar-striped`
++ `progress-bar-animated`
+- `progress-move`
+- `active`
+> Bootstrap 3 dagi `active` o‘rniga Bootstrap 4 da `progress-bar-animated`.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="progress mb-2"><div class="progress-bar bg-success" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">60%</div></div>
+  <div class="progress" style="height: 8px"><div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 40%"></div></div>
+</div>
+```
+
 ## Xulosa
 
 - `.progress` > `.progress-bar` (`width`, `role`, `aria-value*`).

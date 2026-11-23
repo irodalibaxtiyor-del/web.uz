@@ -48,6 +48,24 @@ Flex qatorda ustunlar avtomatik bir xil balandlikda. Ichidagi kartani ham cho‘
 </div>
 ```
 
+```tekshir
+Bootstrap 4 da qatordagi ustunlar nega bir xil balandlikda bo‘ladi?
++ `.row` flex konteyner, flex elementlar standart holda cho‘ziladi
+- har ustunga `height` beriladi
+- JavaScript balandlikni tenglaydi
+> `align-items: stretch` — flex’ning standart qiymati.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="row">
+    <div class="col-md-6"><div class="p-2 border bg-light h-100">Qisqa</div></div>
+    <div class="col-md-6"><div class="p-2 border bg-light h-100">Uzun matn<br>ikkinchi qator<br>uchinchi qator</div></div>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - Bitta sinf: tor ekranda ustma-ust, keng ekranda yonma-yon.

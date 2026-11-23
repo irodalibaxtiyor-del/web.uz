@@ -68,6 +68,21 @@ $('#menyu').affix({
 
 > Bootstrap 4 da affix olib tashlangan. Hozir xuddi shu natija bitta CSS qatori bilan olinadi: `position: sticky; top: 0;`. Bootstrap 4/5 da buning uchun `.sticky-top` klassi bor. Affix’ni faqat eski Bootstrap 3 loyihalarida uchratasiz.
 
+```tekshir
+Bugun `affix` plagini o‘rniga qaysi CSS yechim ishlatiladi?
++ `position: sticky`
+- `position: absolute`
+- `float: top`
+> Affix Bootstrap 4 da olib tashlandi; `sticky` JavaScript’siz ishlaydi.
+```
+
+```jonli
+<div style="height: 160px; overflow: auto; border: 1px solid #ddd">
+  <div style="position: sticky; top: 0; background: #0071dc; color: #fff; padding: 8px">Yopishqoq sarlavha (sticky)</div>
+  <p style="height: 400px; padding: 8px">Ichini aylantiring — sarlavha yuqorida qoladi.</p>
+</div>
+```
+
 ## Xulosa
 
 - `data-spy="affix"` + `data-offset-top="N"`.

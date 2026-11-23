@@ -63,6 +63,27 @@ $('#ogohlantirish').on('closed.bs.alert', function () {
 });
 ```
 
+```tekshir
+Alert ichidagi havola matn rangiga mos ko‘rinishi uchun qaysi klass?
++ `alert-link`
+- `link-alert`
+- `text-link`
+> `alert-link` havolani qalin va alert rangida ko‘rsatadi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="alert alert-info">Yangi dars qo‘shildi. <a href="#" class="alert-link">Ko‘rish</a></div>
+  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    Diqqat: muddat ertaga!
+    <button type="button" class="close" data-dismiss="alert" aria-label="Yopish"><span aria-hidden="true">&times;</span></button>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+```
+
 ## Xulosa
 
 - `.alert` + `.alert-primary | -secondary | -success | -danger | -warning | -info | -light | -dark`.

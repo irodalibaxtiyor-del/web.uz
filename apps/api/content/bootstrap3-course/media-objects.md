@@ -66,6 +66,24 @@ Bir nechta media’ni ro‘yxat sifatida yozish ham mumkin:
 </ul>
 ```
 
+```tekshir
+Media object’da rasm chap tomonda turishi uchun qaysi klass?
++ `media-left`
+- `media-start`
+- `pull-image`
+> Tuzilma: `media` → `media-left` (rasm) → `media-body` (matn).
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <div class="media">
+    <div class="media-left"><span class="glyphicon glyphicon-user" style="font-size: 40px" aria-hidden="true"></span></div>
+    <div class="media-body"><h4 class="media-heading">Aziza</h4>Darslik juda foydali bo‘ldi!</div>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - `.media` > `.media-left` (`img.media-object`) + `.media-body` (`.media-heading`).

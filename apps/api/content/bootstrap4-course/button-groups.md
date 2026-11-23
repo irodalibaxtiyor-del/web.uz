@@ -81,6 +81,29 @@ Tugma ko‘rinishidagi tanlovlar:
 
 Bootstrap 4 da `.btn-group-justified` yo‘q — to‘liq kenglik uchun guruhga `d-flex` va tugmalarga `w-100` yoki `flex-fill` bering.
 
+```tekshir
+Bootstrap 4’da tugmalar guruhi ekran o‘quvchiga qanday tanishtiriladi?
++ `role="group"` va `aria-label`
+- `title` atributi bilan
+- hech narsa kerak emas
+> `aria-label` guruh nima uchun ekanini aytadi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="btn-group" role="group" aria-label="Matn uslubi">
+    <button class="btn btn-secondary">Q</button>
+    <button class="btn btn-secondary">K</button>
+    <button class="btn btn-secondary">T</button>
+  </div>
+  <div class="btn-group-vertical ml-3" role="group" aria-label="Vertikal">
+    <button class="btn btn-outline-primary">1</button>
+    <button class="btn btn-outline-primary">2</button>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - `.btn-group` (+ `role`, `aria-label`), o‘lcham `.btn-group-lg|sm`, vertikal `.btn-group-vertical`.

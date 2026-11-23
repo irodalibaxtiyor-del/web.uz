@@ -60,6 +60,26 @@ $('[data-toggle="popover"]').popover('hide');
 | Tooltip   | Kichik qora izoh        | hover / fokus    |
 | Popover   | Sarlavha + matnli quti  | bosish           |
 
+```tekshir
+Popover boshqa joyga bosilganda yopilishi uchun qaysi sozlama?
++ `data-trigger="focus"` (va element `<a tabindex="0">` yoki tugma)
+- `data-close="outside"`
+- `data-dismiss="popover"`
+> `focus` triggeri fokus yo‘qolganda popoverni yopadi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <p class="mt-3"><button type="button" class="btn btn-info" data-toggle="popover" data-trigger="focus" title="Popover" data-content="Boshqa joyga bosing — yopiladi.">Bosing</button></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  $('[data-toggle="popover"]').popover();
+</script>
+```
+
 ## Xulosa
 
 - `data-toggle="popover"` + `title` + `data-content`; yoqish: `.popover()`.

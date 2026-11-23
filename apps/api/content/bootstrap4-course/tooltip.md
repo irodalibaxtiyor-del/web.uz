@@ -65,6 +65,26 @@ Hodisalar: `show.bs.tooltip`, `shown.bs.tooltip`, `hide.bs.tooltip`, `hidden.bs.
 - Tooltip — qo‘shimcha izoh. Telefonda “hover” yo‘q, shuning uchun muhim ma’lumotni tooltipga yashirmang.
 - Faqat ikonkadan iborat tugmaning nomi `aria-label` yoki `.sr-only` bilan berilsin — tooltip uning o‘rnini bosmaydi.
 
+```tekshir
+O‘chirilgan (`disabled`) tugmada tooltip chiqishi uchun nima qilinadi?
++ tugma `<span tabindex="0">` ichiga o‘raladi va tooltip o‘ramga beriladi
+- `disabled` tugmaga to‘g‘ridan-to‘g‘ri beriladi
+- buning iloji yo‘q
+> O‘chirilgan element sichqoncha va fokus hodisalarini qabul qilmaydi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <p class="mt-4"><button class="btn btn-secondary" data-toggle="tooltip" data-placement="top" title="Saqlash: Ctrl + S">Ustiga olib keling</button></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  $('[data-toggle="tooltip"]').tooltip();
+</script>
+```
+
 ## Xulosa
 
 - `data-toggle="tooltip"` + `title`; yoqish: `$('[data-toggle="tooltip"]').tooltip()`.

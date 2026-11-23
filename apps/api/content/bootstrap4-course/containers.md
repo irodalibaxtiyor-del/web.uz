@@ -69,6 +69,21 @@ Bu klasslarni “Utilitalar” modulida batafsil o‘rganamiz.
 
 Konteynerlarni ichma-ich qo‘yish shart emas — odatda har bir bo‘lim uchun bitta konteyner yetarli.
 
+```tekshir
+Har doim 100% kenglikdagi konteyner uchun qaysi klass?
++ `container-fluid`
+- `container-full`
+- `container-lg`
+> `container-md` kabi klasslar esa shu sinfgacha 100% bo‘lib, keyin cheklanadi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container bg-light border p-2 mb-2">.container</div>
+<div class="container-fluid bg-info text-white p-2 mb-2">.container-fluid</div>
+<div class="container-md bg-warning p-2">.container-md</div>
+```
+
 ## Xulosa
 
 - `.container` — markazda, ekranga qarab 540/720/960/1140px.

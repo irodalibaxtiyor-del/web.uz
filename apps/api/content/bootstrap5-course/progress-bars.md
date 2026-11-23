@@ -63,6 +63,22 @@ Bar ichidagi matn bar juda tor bo‘lsa sig‘maydi. Muhim qiymatni bar yonida h
 <div class="d-flex justify-content-between small"><span>HTML</span><span>60%</span></div>
 ```
 
+```tekshir
+Bootstrap 5.3 da bir nechta qismli progress bar qaysi o‘ram bilan?
++ `progress-stacked`
+- `progress-multi`
+- bitta `progress` ichida bir nechta `progress-bar` (yagona usul)
+> 5.3 da har bir qism o‘z `progress` elementiga ega bo‘lib, `progress-stacked` ichida turadi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="progress mb-2" role="progressbar" aria-label="Kurs" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"><div class="progress-bar bg-success" style="width: 60%">60%</div></div>
+  <div class="progress" role="progressbar" aria-label="Yuklanish" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"><div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 40%"></div></div>
+</div>
+```
+
 ## Xulosa
 
 - `div.progress[role="progressbar"][aria-label][aria-value*]` > `div.progress-bar[style="width:…"]`.

@@ -41,6 +41,24 @@ Navbar ham shu sinflarga qaraydi: `navbar-expand-md` — 768px dan menyu ochiq. 
 
 DevTools’dagi qurilma rejimi (Ctrl + Shift + M) bilan 575, 576, 767, 768px kengliklarni sinab ko‘ring — chegaralarda maket qanday o‘zgarishini ko‘rasiz. Platforma CHECK’i ham mashqlarni turli kengliklarda tekshiradi.
 
+```tekshir
+Elementni faqat `md` va undan katta ekranda ko‘rsatish uchun qaysi klasslar?
++ `d-none d-md-block`
+- `hidden-sm`
+- `visible-md`
+> Bootstrap 5 da ko‘rinish `d-*` utilitalari bilan boshqariladi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="row g-2">
+    <div class="col-md-8"><div class="p-2 border bg-body-tertiary">Kontent</div></div>
+    <div class="col-md-4 d-none d-md-block"><div class="p-2 border bg-body-tertiary">Yon panel (md dan)</div></div>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - `col-md-*` — 768px dan, `.container` 720px.

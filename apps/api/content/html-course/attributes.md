@@ -87,7 +87,7 @@ Atribut qayerga yoziladi?
 
 ```jonli
 <p title="Sichqonchani ustiga olib keling">Ustiga olib keling</p>
-<img src="https://picsum.photos/200/120" alt="Tasodifiy rasm" width="200" height="120">
+<img src="data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%27200%27%20height=%27120%27%20viewBox=%270%200%20200%20120%27%3E%3Cdefs%3E%3ClinearGradient%20id=%27g%27%20x1=%270%27%20y1=%270%27%20x2=%271%27%20y2=%271%27%3E%3Cstop%20offset=%270%27%20stop-color=%27%230071dc%27/%3E%3Cstop%20offset=%271%27%20stop-color=%27%23f5a623%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width=%27200%27%20height=%27120%27%20fill=%27url(%23g)%27/%3E%3Ccircle%20cx=%27144%27%20cy=%2736%27%20r=%2719%27%20fill=%27%23fff%27%20fill-opacity=%27.75%27/%3E%3Cpath%20d=%27M0%20120%20L0%2084%20L70%2054%20L120%2090%20L160%2072%20L200%2096%20L200%20120%20Z%27%20fill=%27%23123456%27%20fill-opacity=%27.8%27/%3E%3C/svg%3E" alt="Tasodifiy rasm" width="200" height="120">
 ```
 
 ## Xulosa

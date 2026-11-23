@@ -91,6 +91,25 @@ Karuselni butun ekran kengligida qoldirish uchun uni `.container` dan tashqarida
 - Navbar uchun `.navbar-inverse` tayyor qorong‘i variant.
 - Rasmlarga `alt` yozing — karusel rasmlarida ham.
 
+```tekshir
+Loyihadagi “Chipta sotib olish” oynasi qaysi komponent bilan qilinadi?
++ modal
+- well
+- pager
+> Modal sahifani tark etmasdan forma ko‘rsatadi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <div class="row text-center" style="background: #2d2d30; color: #bbb; padding: 20px 0">
+    <div class="col-sm-4"><p><strong>Ali</strong></p><p>Gitara</p></div>
+    <div class="col-sm-4"><p><strong>Vali</strong></p><p>Baraban</p></div>
+    <div class="col-sm-4"><p><strong>Lola</strong></p><p>Vokal</p></div>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - Karusel, modal, list group va setkani bitta sahifada birlashtirish.

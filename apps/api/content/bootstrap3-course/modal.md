@@ -71,6 +71,30 @@ $('#oyna').on('hidden.bs.modal', function () {
 
 `show.bs.modal`, `shown.bs.modal`, `hide.bs.modal`, `hidden.bs.modal` — modal hodisalari.
 
+```tekshir
+Modal oynani ochadigan tugmaga qaysi atributlar yoziladi (Bootstrap 3)?
++ `data-toggle="modal"` va `data-target="#id"`
+- `data-open="modal"`
+- `href="modal"`
+> Modalning o‘zi `class="modal fade"` va `role="dialog"` bilan yoziladi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <button class="btn btn-primary" data-toggle="modal" data-target="#m">Modalni ochish</button>
+  <div class="modal fade" id="m" tabindex="-1" role="dialog" aria-labelledby="mt">
+    <div class="modal-dialog" role="document"><div class="modal-content">
+      <div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Yopish">&times;</button><h4 class="modal-title" id="mt">Salom!</h4></div>
+      <div class="modal-body">Bu modal oyna.</div>
+      <div class="modal-footer"><button class="btn btn-default" data-dismiss="modal">Yopish</button></div>
+    </div></div>
+  </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+```
+
 ## Xulosa
 
 - `.modal.fade` > `.modal-dialog` > `.modal-content` > header/body/footer.

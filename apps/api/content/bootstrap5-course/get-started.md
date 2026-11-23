@@ -83,6 +83,21 @@ import * as bootstrap from 'bootstrap';
 
 Ko‘k, yumaloq tugma — CSS ulandi. Konsolda `bootstrap` obyekti mavjudligi (`typeof bootstrap` → `"object"`) — JS ulandi.
 
+```tekshir
+Bootstrap 5 JavaScript’i `<head>` ichida ulansa, qaysi atribut tavsiya etiladi?
++ `defer`
+- `async` (har doim)
+- `type="module"` (majburiy)
+> `defer` skriptni HTML o‘qib bo‘lingandan keyin, tartib bilan bajaradi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="alert alert-success">Bootstrap 5 ulangan — bu yashil xabar.</div>
+</div>
+```
+
 ## Xulosa
 
 - CSS `<head>` da, `bootstrap.bundle.min.js` `</body>` dan oldin (yoki `defer`).

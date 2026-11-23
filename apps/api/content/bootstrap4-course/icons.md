@@ -63,6 +63,24 @@ Bootstrap Icons’ni shrift o‘rniga to‘g‘ridan-to‘g‘ri SVG kodi sifati
 
 `fill="currentColor"` — ikonka matn rangini oladi.
 
+```tekshir
+Bootstrap 4 da o‘zining ikonka shrifti bormi?
+- ha, Glyphicons kiritilgan
++ yo‘q — alohida kutubxona (masalan, Bootstrap Icons) ulanadi
+- ikonkalar faqat rasm bo‘ladi
+> Glyphicons Bootstrap 4 da olib tashlangan.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+<div class="container py-3">
+  <p style="font-size: 24px"><i class="bi bi-search" aria-hidden="true"></i> <i class="bi bi-heart-fill text-danger" aria-hidden="true"></i> <i class="bi bi-person" aria-hidden="true"></i></p>
+  <button class="btn btn-primary"><i class="bi bi-download" aria-hidden="true"></i> Yuklab olish</button>
+  <button class="btn btn-outline-secondary" aria-label="Sozlamalar"><i class="bi bi-gear" aria-hidden="true"></i></button>
+</div>
+```
+
 ## Xulosa
 
 - Bootstrap 4 da ikonka yo‘q; Bootstrap Icons alohida ulanadi.

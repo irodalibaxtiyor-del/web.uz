@@ -87,6 +87,22 @@ Bootstrap 5 da input group soddalashdi: `.input-group-prepend` va `.input-group-
 
 `.flex-nowrap` — tor ekranda ham qo‘shimchalar maydon bilan bir qatorda qoladi.
 
+```tekshir
+Bootstrap 5 da input group tuzilmasi Bootstrap 4 dan qanday farq qiladi?
++ `input-group-prepend`/`-append` o‘ramlari yo‘q — `input-group-text` va tugmalar to‘g‘ridan-to‘g‘ri yoziladi
+- `input-group` umuman olib tashlangan
+- faqat `append` qolgan
+> Tuzilma soddalashdi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="input-group mb-2"><span class="input-group-text">@</span><input class="form-control" placeholder="foydalanuvchi" aria-label="Foydalanuvchi nomi"></div>
+  <div class="input-group"><input class="form-control" placeholder="Qidirish" aria-label="Qidirish"><button class="btn btn-primary" type="button">Topish</button></div>
+</div>
+```
+
 ## Xulosa
 
 - `.input-group` ichida `.input-group-text`, `.btn`, `.form-control`, `.form-select` — kerakli tartibda.

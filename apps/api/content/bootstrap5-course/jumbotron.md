@@ -65,6 +65,25 @@ Bu yerda yumaloq burchak yo‘q va fon butun ekran bo‘ylab.
 | `.jumbotron.jumbotron-fluid`   | `.py-5` + ichida `.container`, burchaklarsiz      |
 | `.display-4` + `.lead`         | o‘zgarmagan (yoki `.fs-4`)                        |
 
+```tekshir
+Bootstrap 5 da jumbotron o‘rniga katta bannerni qanday qilish mumkin?
++ utilitalar bilan: masalan `p-5 mb-4 bg-body-tertiary rounded-3`
+- `class="jumbotron"` hali ishlaydi
+- faqat rasm bilan
+> Jumbotron Bootstrap 5 da olib tashlangan.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="p-5 mb-4 bg-body-tertiary rounded-3">
+    <h1 class="display-5 fw-bold">WEBDIZAYN.UZ</h1>
+    <p class="col-md-8 fs-5">Veb-dizaynni o‘zbek tilida o‘rganing.</p>
+    <button class="btn btn-primary btn-lg">Boshlash</button>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - `.jumbotron` yo‘q — banner utilitalardan yig‘iladi.

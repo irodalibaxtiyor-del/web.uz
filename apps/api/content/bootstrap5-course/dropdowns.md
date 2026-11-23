@@ -78,6 +78,30 @@ const dd = bootstrap.Dropdown.getOrCreateInstance(document.querySelector('#kursM
 dd.toggle();
 ```
 
+```tekshir
+Bootstrap 5 da menyuni ochadigan tugmaga qaysi atribut?
++ `data-bs-toggle="dropdown"`
+- `data-toggle="dropdown"`
+- `data-dropdown="open"`
+> Bootstrap 5 dagi barcha data atributlari `data-bs-` bilan boshlanadi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Kurslar</button>
+    <ul class="dropdown-menu dropdown-menu-dark">
+      <li><a class="dropdown-item" href="#">HTML</a></li>
+      <li><a class="dropdown-item active" href="#" aria-current="true">CSS</a></li>
+      <li><hr class="dropdown-divider"></li>
+      <li><a class="dropdown-item" href="#">Bootstrap</a></li>
+    </ul>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+```
+
 ## Xulosa
 
 - `.dropdown` > `button.dropdown-toggle[data-bs-toggle="dropdown"]` + `ul.dropdown-menu` > `li` > `.dropdown-item`.

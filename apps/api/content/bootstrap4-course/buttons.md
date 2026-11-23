@@ -69,6 +69,26 @@ Ma’lumot yuborilayotganini ko‘rsatish uchun (spinner keyinroq alohida darsda
 </button>
 ```
 
+```tekshir
+Faqat chegarasi rangli, ichi shaffof tugma uchun qaysi klass?
++ `btn-outline-primary`
+- `btn-border-primary`
+- `btn-primary-empty`
+> Outline tugmalar ikkinchi darajali amallar uchun qulay.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <button class="btn btn-primary">primary</button>
+  <button class="btn btn-outline-primary">outline</button>
+  <button class="btn btn-success btn-sm">sm</button>
+  <button class="btn btn-secondary" disabled>disabled</button>
+  <button class="btn btn-primary" disabled><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Yuklanmoqda…</button>
+  <button class="btn btn-danger btn-block mt-2">btn-block</button>
+</div>
+```
+
 ## Xulosa
 
 - `.btn` + rang: `-primary`, `-secondary`, `-success`, `-danger`, `-warning`, `-info`, `-light`, `-dark`, `-link`.

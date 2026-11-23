@@ -78,6 +78,30 @@ $('#slayder').carousel(2);        // 3-slayd
 $('#slayder').carousel('pause');  // to‘xtatish
 ```
 
+```tekshir
+Karuselning birinchi ko‘rinadigan slaydiga qaysi klass beriladi?
++ `item active`
+- `slide first`
+- `item show`
+> Bootstrap 3 da slaydlar `item`, Bootstrap 4–5 da `carousel-item`.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <div id="k" class="carousel slide" data-ride="carousel">
+    <div class="carousel-inner">
+      <div class="item active"><div style="height: 120px; background: #0071dc; color: #fff; padding: 40px">1-slayd</div></div>
+      <div class="item"><div style="height: 120px; background: #f5a623; padding: 40px">2-slayd</div></div>
+    </div>
+    <a class="left carousel-control" href="#k" data-slide="prev"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span><span class="sr-only">Oldingi</span></a>
+    <a class="right carousel-control" href="#k" data-slide="next"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span><span class="sr-only">Keyingi</span></a>
+  </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+```
+
 ## Xulosa
 
 - `.carousel.slide` > `.carousel-indicators`, `.carousel-inner` > `.item` (bittasi `.active`), `.carousel-control`.

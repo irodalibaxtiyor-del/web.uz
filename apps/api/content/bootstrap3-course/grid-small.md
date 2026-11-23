@@ -58,6 +58,24 @@ Bloklar balandligi har xil bo‘lsa, `float` tufayli “zinapoya” hosil bo‘l
 
 `.visible-xs-block` — bu `div` faqat telefonda mavjud bo‘ladi va u yerda qatorni yangidan boshlaydi.
 
+```tekshir
+`col-sm-*` klasslari qaysi ekran kengligidan boshlab yonma-yon ishlaydi?
+- 480px
++ 768px
+- 992px
+> Bootstrap 3: `xs` < 768, `sm` ≥ 768, `md` ≥ 992, `lg` ≥ 1200.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <div class="row">
+    <div class="col-sm-3" style="background: #d9edf7">sm-3</div>
+    <div class="col-sm-9" style="background: #dff0d8">sm-9</div>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - `col-xs-*` + `col-sm-*` — telefon va planshetda turli nisbat.

@@ -76,6 +76,26 @@ Bootstrap 5 da `.media` yo‘q — xuddi shu tuzilma flex utilitalari bilan:
 
 `.order-0` … `.order-5`, `.order-first`, `.order-last` (ekranga qarab: `.order-md-1`). Ko‘rinishdagi tartib HTML tartibini o‘zgartirmaydi — klaviatura va ekran o‘quvchi HTML tartibida yuradi.
 
+```tekshir
+`d-flex` ichida bitta elementni o‘ng chetga surish uchun unga qaysi utilita?
++ `ms-auto`
+- `float-end`
+- `ml-auto` (Bootstrap 5 da)
+> Flex ichida `auto` margin bo‘sh joyni egallab, elementni itaradi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="d-flex justify-content-center align-items-center bg-body-tertiary border" style="height: 100px">
+    <div class="p-2 text-bg-primary">Markazda</div>
+  </div>
+  <div class="d-flex mt-2 bg-body-tertiary border">
+    <div class="p-2">Logo</div><div class="p-2 ms-auto">Kirish</div>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - `d-flex` + `gap-*`; yo‘nalish — `flex-row|column` (+ ekran sinfi).

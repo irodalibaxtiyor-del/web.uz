@@ -89,6 +89,23 @@ Keyingi darslarda uchta to‘liq sahifa yig‘amiz:
 
 Har birida o‘rgangan komponentlaringizni birlashtirasiz.
 
+```tekshir
+Bootstrap uslubini o‘zgartirishning to‘g‘ri usuli qaysi?
++ o‘z CSS faylini Bootstrap’dan keyin ulab, kerakli qoidalarni qayta yozish
+- `bootstrap.min.css` faylini to‘g‘ridan-to‘g‘ri tahrirlash
+- har bir elementga `!important` bilan inline uslub
+> Bootstrap fayliga tegilmasa, uni yangilash oson bo‘ladi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<style>
+  /* o‘z uslublarimiz Bootstrap’dan keyin */
+  .btn-primary { background: #8e44ad; border-color: #6c3483; }
+</style>
+<div class="container" style="padding-top: 15px"><button class="btn btn-primary">Bizning rangdagi tugma</button></div>
+```
+
 ## Xulosa
 
 - Asosiy shablon: doctype, viewport, Bootstrap CSS, o‘z CSS’ingiz, oxirida jQuery va Bootstrap JS.

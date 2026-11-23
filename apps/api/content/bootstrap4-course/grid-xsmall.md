@@ -68,6 +68,24 @@ Bootstrap 4.4 dan qatorning o‘ziga “bir qatorda nechta” ni aytish mumkin:
 
 Natija: ikki qatorda ikkitadan. Har bir bolaga alohida `col-6` yozish shart emas.
 
+```tekshir
+Ustun kenglikni faqat kontentiga qarab olishi uchun qaysi klass?
++ `col-auto`
+- `col-fit`
+- `col-0`
+> Qolgan `col` ustunlar bo‘sh joyni teng bo‘lishib oladi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="row">
+    <div class="col-auto"><div class="p-2 border bg-light">col-auto: qisqa</div></div>
+    <div class="col"><div class="p-2 border bg-light">col: qolgan joy</div></div>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - `.col-N` — har doim ishlaydi (xs uchun prefiks yo‘q).

@@ -72,6 +72,21 @@ Bootstrap ulanganini tekshirishning oson yo‘li — tugma:
 
 Yashil, yumaloq tugma chiqsa — CSS ishlayapti. JavaScript ishlashini konsoldagi xatolar yo‘qligidan bilasiz (`Bootstrap's JavaScript requires jQuery` xatosi tartib noto‘g‘ri ekanini bildiradi).
 
+```tekshir
+Bootstrap 4’dagi “Reboot” nima?
++ brauzerlar orasidagi standart uslub farqlarini tekislaydigan asosiy CSS qatlami
+- sahifani qayta yuklash funksiyasi
+- JavaScript plagini
+> Reboot `box-sizing`, shriftlar va marginlarni hamma brauzerda bir xil qiladi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="alert alert-success">Bootstrap 4 ulangan — bu yashil xabar.</div>
+</div>
+```
+
 ## Xulosa
 
 - CSS `<head>` da; jQuery (slim) va `bootstrap.bundle.min.js` `</body>` dan oldin, shu tartibda.

@@ -78,6 +78,27 @@ Ma’lum sinfgacha: `.table-responsive-sm` … `.table-responsive-xxl`.
 
 `.caption-top` — izoh jadval tepasida.
 
+```tekshir
+Bootstrap 5 da jadvalning sarlavha qatorini qora qilish uchun nima yoziladi?
++ `<thead class="table-dark">`
+- `<thead class="thead-dark">`
+- `<tr class="dark">`
+> `thead-dark` — Bootstrap 4 dagi nomi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="table-responsive">
+  <table class="table table-striped table-hover align-middle caption-top">
+    <caption>Natijalar</caption>
+    <thead class="table-dark"><tr><th scope="col">Ism</th><th scope="col">Ball</th></tr></thead>
+    <tbody class="table-group-divider"><tr><td>Ali</td><td>90</td></tr><tr class="table-success"><td>Lola</td><td>97</td></tr></tbody>
+  </table>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - `.table` + `-striped`, `-hover`, `-bordered`, `-borderless`, `-sm`, `-dark`.

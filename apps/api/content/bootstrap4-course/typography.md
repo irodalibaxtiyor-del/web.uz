@@ -78,6 +78,24 @@ O‘ngga tekislash: `<blockquote class="blockquote text-right">`.
 
 Bootstrap 4 da qatorli ro‘yxatning har bir bandiga `.list-inline-item` beriladi.
 
+```tekshir
+Juda katta, e’tiborni tortuvchi sarlavha uchun qaysi klass?
++ `display-4`
+- `h-big`
+- `title-xl`
+> `display-1`…`display-4` — oddiy `h1` dan kattaroq sarlavhalar.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <h1 class="display-4">Display 4</h1>
+  <p class="lead">Lead matn</p>
+  <p class="text-muted">text-muted</p>
+  <blockquote class="blockquote"><p class="mb-0">Bilim — kuch.</p><footer class="blockquote-footer">Muallif</footer></blockquote>
+</div>
+```
+
 ## Xulosa
 
 - Asosiy o‘lcham 16px, sarlavhalar `rem` da.

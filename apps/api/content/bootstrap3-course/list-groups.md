@@ -69,6 +69,25 @@ Band ichida sarlavha va matn bo‘lishi mumkin:
 
 Tanlangan bandga faqat `.active` emas, `aria-current="true"` ham qo‘shing — ekran o‘quvchi qaysi band tanlanganini aytadi.
 
+```tekshir
+List group bandida o‘ng tomonda son ko‘rsatish uchun nima qo‘shiladi?
++ `<span class="badge">`
+- `<span class="label-right">`
+- `<b class="count">`
+> List group ichidagi `badge` avtomatik o‘ngga suriladi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <ul class="list-group">
+    <li class="list-group-item">HTML <span class="badge">60</span></li>
+    <li class="list-group-item list-group-item-success">CSS <span class="badge">101</span></li>
+    <li class="list-group-item active">JavaScript</li>
+  </ul>
+</div>
+```
+
 ## Xulosa
 
 - `.list-group` > `.list-group-item`.

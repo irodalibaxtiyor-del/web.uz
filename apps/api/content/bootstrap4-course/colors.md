@@ -64,6 +64,24 @@ Rangni ajrata olmaydigan foydalanuvchilar ko‘p (erkaklarning ~8%). Ma’noni r
 <p class="text-danger"><strong>Xato:</strong> parol juda qisqa.</p>
 ```
 
+```tekshir
+Rang yagona belgi bo‘lmasligi kerak — bu nimani anglatadi?
++ xato yoki muvaffaqiyat matn yoki ikonka bilan ham bildirilsin
+- faqat qizil va yashil ishlatilsin
+- ranglar umuman ishlatilmasin
+> Rangni ajratolmaydigan foydalanuvchilar ma’noni boshqa belgidan bilishi kerak.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <p class="text-primary">text-primary</p>
+  <p class="text-danger">text-danger: Xato!</p>
+  <div class="p-2 mb-2 bg-success text-white">bg-success</div>
+  <div class="p-2 bg-warning text-dark">bg-warning</div>
+</div>
+```
+
 ## Xulosa
 
 - Sakkizta ma’noli rang: primary, secondary, success, danger, warning, info, light, dark.

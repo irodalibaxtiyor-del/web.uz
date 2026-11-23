@@ -64,6 +64,26 @@ $('#tugma').popover('hide');
 
 Popover ichiga forma yoki uzun matn qo‘ymang — buning uchun modal bor.
 
+```tekshir
+Popover’ning tooltip’dan farqi nima?
++ sarlavha va kattaroq matnni ko‘rsatadi, odatda bosilganda ochiladi
+- u hech qachon JavaScript talab qilmaydi
+- u faqat formalarda ishlaydi
+> Popover ham tooltip kabi JavaScript bilan yoqiladi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <p style="margin-top: 20px"><button class="btn btn-info" data-toggle="popover" data-placement="right" title="Popover sarlavhasi" data-content="Bu yerda batafsil izoh turadi.">Bosing</button></p>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script>
+  $('[data-toggle="popover"]').popover();
+</script>
+```
+
 ## Xulosa
 
 - `data-toggle="popover"` + `title` + `data-content`.

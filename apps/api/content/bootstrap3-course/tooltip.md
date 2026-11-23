@@ -60,6 +60,26 @@ $('#tugma').tooltip('show');
 - O‘chirilgan (`disabled`) tugmaga to‘g‘ridan-to‘g‘ri tooltip ishlamaydi — uni o‘rab turgan `<span>` ga bering.
 - Tooltip faqat qo‘shimcha tushuntirish. Elementning nomi baribir `aria-label` yoki `.sr-only` matn bilan berilishi kerak.
 
+```tekshir
+Bootstrap 3’da tooltip nega `data-toggle="tooltip"` yozilgandan keyin ham chiqmaydi?
++ uni JavaScript bilan o‘zingiz yoqishingiz kerak: `$('[data-toggle="tooltip"]').tooltip()`
+- tooltip faqat rasmlarda ishlaydi
+- `title` atributi taqiqlangan
+> Tezlik uchun tooltip va popover avtomatik yoqilmaydi (opt-in).
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <p style="margin-top: 40px"><button class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Saqlash: Ctrl + S">Ustiga olib keling</button></p>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script>
+  $('[data-toggle="tooltip"]').tooltip();
+</script>
+```
+
 ## Xulosa
 
 - `data-toggle="tooltip"` + `title="…"`.

@@ -65,6 +65,26 @@ bootstrap.ScrollSpy.getInstance(el).refresh();
 - Har bir havolaning `href` i mavjud `id` ga ishora qilishi shart, aks holda plagin uni e’tiborsiz qoldiradi.
 - Bo‘limlar ko‘rinadigan bo‘lishi kerak (`display: none` bo‘lmasin).
 
+```tekshir
+Bootstrap 5 da scrollspy qanday ulanadi?
++ aylantiriladigan elementga `data-bs-spy="scroll"` va `data-bs-target="#menu"`
+- `data-spy="scroll"`
+- menyuga `data-scroll="spy"`
+> Aylantiriladigan element `tabindex="0"` bilan klaviaturadan ham aylantiriladi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <nav id="sn" class="nav nav-pills mb-2"><a class="nav-link" href="#b1">1-bo‘lim</a><a class="nav-link" href="#b2">2-bo‘lim</a></nav>
+  <div data-bs-spy="scroll" data-bs-target="#sn" data-bs-smooth-scroll="true" tabindex="0" style="height: 140px; overflow: auto; position: relative" class="border p-2">
+    <h5 id="b1">1-bo‘lim</h5><p style="height: 150px">Ichini aylantiring…</p>
+    <h5 id="b2">2-bo‘lim</h5><p style="height: 150px">Menyuda shu band belgilanadi.</p>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+```
+
 ## Xulosa
 
 - `data-bs-spy="scroll"` + `data-bs-target` + (blok bo‘lsa) balandlik va `overflow-y-scroll`.

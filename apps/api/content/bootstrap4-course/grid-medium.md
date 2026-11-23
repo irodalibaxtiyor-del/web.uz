@@ -58,6 +58,24 @@ Bootstrap 3 dagi `col-md-*` noutbuk uchun edi. Bootstrap 4 da noutbukka **`col-l
 | `col-md-*`   | `col-lg-*`             |
 | `col-lg-*`   | `col-xl-*`             |
 
+```tekshir
+Bootstrap 3’dagi `col-xs-6` Bootstrap 4’da qanday yoziladi?
++ `col-6`
+- `col-xs-6`
+- `col-sm-6`
+> Bootstrap 4 da eng kichik sinf uchun infiks yozilmaydi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="row">
+    <div class="col-md-8"><div class="p-2 border bg-light">col-md-8 (kontent)</div></div>
+    <div class="col-md-4"><div class="p-2 border bg-light">col-md-4 (yon panel)</div></div>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - `col-md-*` — 768px dan (planshet).

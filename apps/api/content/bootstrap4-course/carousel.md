@@ -82,6 +82,30 @@ $('#slayder').on('slid.bs.carousel', function (e) {
 });
 ```
 
+```tekshir
+Bootstrap 4 da karusel slaydi qaysi klass bilan?
++ `carousel-item`
+- `item`
+- `slide-item`
+> Bootstrap 3 da `item` edi; faqat bitta slayd `active` bo‘ladi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div id="kr" class="carousel slide" data-ride="carousel">
+    <div class="carousel-inner">
+      <div class="carousel-item active"><div class="d-flex align-items-center justify-content-center bg-primary text-white" style="height: 120px">1-slayd</div></div>
+      <div class="carousel-item"><div class="d-flex align-items-center justify-content-center bg-warning" style="height: 120px">2-slayd</div></div>
+    </div>
+    <a class="carousel-control-prev" href="#kr" role="button" data-slide="prev"><span class="carousel-control-prev-icon" aria-hidden="true"></span><span class="sr-only">Oldingi</span></a>
+    <a class="carousel-control-next" href="#kr" role="button" data-slide="next"><span class="carousel-control-next-icon" aria-hidden="true"></span><span class="sr-only">Keyingi</span></a>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+```
+
 ## Xulosa
 
 - `.carousel.slide` > `.carousel-inner` > `.carousel-item` (bittasi `.active`), rasm `d-block w-100`.

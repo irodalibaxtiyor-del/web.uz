@@ -48,6 +48,25 @@ Matnli sahifalarda ustunlar sonini ko‘paytirmang — o‘qish qulayligi uchun 
 
 Bu juda kamdan-kam kerak. Odatda 2–3 ta sinf yetarli; yoki `row-cols-*` bilan qatorga yozing.
 
+```tekshir
+`col-xxl-3` qaysi ekranda chorak kenglik bo‘ladi?
++ 1400px va undan keng
+- 1200px va undan keng
+- har qanday ekranda
+> Kichikroq ekranlarda ustun butun kenglikni egallaydi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="row g-2">
+    <div class="col-xxl-3 col-md-6"><div class="p-2 border bg-body-tertiary">xxl-3 md-6</div></div>
+    <div class="col-xxl-3 col-md-6"><div class="p-2 border bg-body-tertiary">xxl-3 md-6</div></div>
+    <div class="col-xxl-6"><div class="p-2 border bg-body-tertiary">xxl-6</div></div>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - `xxl` — ≥ 1400px, `.container` 1320px.

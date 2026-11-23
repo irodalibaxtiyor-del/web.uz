@@ -81,6 +81,24 @@ Ekranga qarab: `p-2 p-md-5` — telefonda kichik, `md` dan katta padding. Manfiy
 - Bir-ikki joyda kerak bo‘lgan bo‘shliq, rang, display — utilita.
 - Ko‘p joyda takrorlanadigan murakkab uslub — o‘z klassingiz (`.kurs-kartasi`). HTML’ni 15 ta utilita bilan to‘ldirib yubormang.
 
+```tekshir
+`mt-3 px-2` utilitalari nima qiladi?
++ yuqoridan margin (3-daraja) va chap-o‘ngdan padding (2-daraja)
+- matn o‘lchami va qalinligi
+- 3 ta ustun va 2 ta qator
+> `m`/`p` + tomon (`t`, `b`, `l`, `r`, `x`, `y`) + o‘lcham (0–5).
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="bg-light border rounded p-3 mb-3 shadow-sm">p-3 mb-3 rounded shadow-sm</div>
+  <div class="d-flex justify-content-between bg-info text-white px-2"><span>chap</span><span>o‘ng</span></div>
+  <div class="w-50 bg-warning mt-2 p-1">w-50</div>
+  <p class="text-center font-weight-bold mt-2">text-center font-weight-bold</p>
+</div>
+```
+
 ## Xulosa
 
 - Spacing: `m|p` + `t|b|l|r|x|y` + `0–5|auto` (`mt-3`, `px-2`, `mx-auto`).

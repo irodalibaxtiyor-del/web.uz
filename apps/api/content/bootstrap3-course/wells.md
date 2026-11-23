@@ -48,6 +48,23 @@ Well’ni qisqa eslatma, yon panel yoki ajratilgan ma’lumot bloki uchun ishlat
 
 > Bootstrap 4 da `.well` olib tashlangan — uning o‘rniga `.card` ishlatiladi. Bootstrap 3 loyihalarida esa u juda ko‘p uchraydi.
 
+```tekshir
+Bootstrap 4 da `well` komponentining o‘rnini nima egalladi?
++ `card`
+- `panel-well`
+- `jumbotron`
+> Bootstrap 4 da `well`, `panel` va `thumbnail` o‘rniga bitta `card` komponenti keldi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <div class="well">Oddiy well</div>
+  <div class="well well-sm">Kichik well</div>
+  <div class="well well-lg">Katta well</div>
+</div>
+```
+
 ## Xulosa
 
 - `.well` — kulrang, ichkariga botgan quti.

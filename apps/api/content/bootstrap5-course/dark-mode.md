@@ -81,6 +81,29 @@ Tanlovni keyingi safar eslab qolish uchun `localStorage` ga yozish mumkin (platf
 }
 ```
 
+```tekshir
+Bootstrap 5.3 da faqat bitta blokni qorong‘i rejimga o‘tkazish uchun nima yoziladi?
++ o‘sha blokka `data-bs-theme="dark"`
+- `class="dark"`
+- `prefers-color-scheme` atributi
+> `<html data-bs-theme="dark">` butun sahifani o‘tkazadi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="p-3 border rounded mb-2" data-bs-theme="dark" style="background: var(--bs-body-bg); color: var(--bs-body-color)">Bu blok qorong‘i <button class="btn btn-primary btn-sm ms-2">Tugma</button></div>
+  <button class="btn btn-outline-secondary" id="tg">Butun sahifa rejimini almashtirish</button>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  document.getElementById('tg').onclick = () => {
+    const h = document.documentElement;
+    h.dataset.bsTheme = h.dataset.bsTheme === 'dark' ? 'light' : 'dark';
+  };
+</script>
+```
+
 ## Xulosa
 
 - `data-bs-theme="dark"` — `<html>` da butun sahifa, elementda faqat shu blok.

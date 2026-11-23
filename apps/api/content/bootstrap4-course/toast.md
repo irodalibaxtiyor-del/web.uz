@@ -78,6 +78,29 @@ $('#xabar').on('hidden.bs.toast', function () {
 });
 ```
 
+```tekshir
+Toast nega o‘zi ko‘rinmaydi?
++ uni JavaScript bilan yoqish kerak: `$('.toast').toast('show')`
+- u faqat mobil qurilmada ishlaydi
+- `display: none` majburiy
+> Tooltip va popover kabi toast ham opt-in komponent.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="toast" role="status" aria-live="polite" aria-atomic="true" data-delay="4000">
+    <div class="toast-header"><strong class="mr-auto">WEBDIZAYN</strong><button type="button" class="ml-2 close" data-dismiss="toast" aria-label="Yopish"><span aria-hidden="true">&times;</span></button></div>
+    <div class="toast-body">Mashq saqlandi.</div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  $('.toast').toast('show');
+</script>
+```
+
 ## Xulosa
 
 - `.toast` > `.toast-header` + `.toast-body`; yopish — `data-dismiss="toast"`.

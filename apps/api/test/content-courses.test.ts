@@ -414,6 +414,10 @@ describe('course glossary', () => {
       const course = CONTENT_COURSES.find((c) => c.slug === slug);
       expect(course?.glossary?.length).toBeGreaterThanOrEqual(60);
     }
+    for (const slug of ['bootstrap3', 'bootstrap4', 'bootstrap5']) {
+      const course = CONTENT_COURSES.find((c) => c.slug === slug);
+      expect(course?.glossary?.length).toBeGreaterThanOrEqual(50);
+    }
   });
 
   it('a broken glossary entry fails the manifest', () => {

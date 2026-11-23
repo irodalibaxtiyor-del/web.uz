@@ -87,6 +87,21 @@ Bootstrap ulanganda sahifa shrifti o‘zgaradi (Helvetica/Arial), `body` chetida
 
 Agar tugma ko‘k va yumaloq bo‘lsa — CSS ulandi. Ko‘k bo‘lmasa, `<link>` dagi manzil yoki `rel="stylesheet"` ni tekshiring.
 
+```tekshir
+Bootstrap 3’ning JavaScript komponentlari ishlashi uchun nima kerak?
++ avval jQuery, keyin `bootstrap.min.js` ulanadi
+- faqat `bootstrap.min.css` yetarli
+- jQuery `bootstrap.min.js` dan keyin ulanadi
+> Bootstrap 3 plaginlari jQuery’ga tayanadi, shuning uchun jQuery birinchi bo‘lishi shart.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <div class="alert alert-success">Bootstrap ulangan bo‘lsa, bu yashil xabar bo‘lib ko‘rinadi.</div>
+</div>
+```
+
 ## Xulosa
 
 - CSS — `<head>` da, jQuery va `bootstrap.min.js` — `</body>` dan oldin, shu tartibda.

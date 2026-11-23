@@ -90,6 +90,24 @@ Sarlavha ko‘rinishini boshqa tegga ham berish mumkin: `<p class="h3">` — par
 
 Ta’riflar ro‘yxati `<dl class="dl-horizontal">` bilan ikki ustunli bo‘ladi (keng ekranda).
 
+```tekshir
+Sarlavha ichidagi kulrang ikkilamchi matn qaysi teg bilan yoziladi?
++ `<small>`
+- `<sub>`
+- `<span class="grey">`
+> Masalan: `<h1>Kurslar <small>2026</small></h1>`.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <h2>Kurslar <small>bahor mavsumi</small></h2>
+  <p class="lead">Lead — kirish matni.</p>
+  <p class="text-muted">text-muted</p> <p class="text-danger">text-danger</p>
+  <blockquote><p>Bilim — kuch.</p><footer>Muallif</footer></blockquote>
+</div>
+```
+
 ## Xulosa
 
 - Bootstrap asosiy shrift o‘lchami 14px; sarlavhalar 36px dan 12px gacha.

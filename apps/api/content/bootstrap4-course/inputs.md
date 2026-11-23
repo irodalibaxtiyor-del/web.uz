@@ -84,6 +84,24 @@ Bir qatorda — `.form-check-inline`:
 
 `.form-control` — 100% kenglik. Torroq maydon uchun setka (`.col-md-4`) yoki sizing utilitasi (`.w-50`) ishlating.
 
+```tekshir
+Bootstrap 4 da maydonni kattaroq qilish uchun qaysi klass?
++ `form-control-lg`
+- `input-lg`
+- `form-lg`
+> `input-lg` — Bootstrap 3 dagi nomi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <input class="form-control form-control-lg mb-2" placeholder="form-control-lg">
+  <input class="form-control mb-2" placeholder="oddiy">
+  <input class="form-control-plaintext" readonly value="Statik matn (plaintext)">
+  <div class="form-check"><input class="form-check-input" type="checkbox" id="c"><label class="form-check-label" for="c">Eslab qolish</label></div>
+</div>
+```
+
 ## Xulosa
 
 - Maydonlar — `.form-control`; o‘lcham — `.form-control-lg|sm`.

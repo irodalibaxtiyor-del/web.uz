@@ -74,6 +74,25 @@ Bu Bootstrap 5 ranglari CSS o‘zgaruvchilar (`--bs-primary-rgb`) orqali ishlaga
 - Sariq (`warning`) va moviy (`info`) fonda to‘q matn ishlating — `text-bg-*` buni o‘zi qiladi.
 - Rang yagona belgi bo‘lmasin: “Xato:” so‘zi yoki ikonka ham bo‘lsin.
 
+```tekshir
+Fon va unga mos kontrastli matn rangini birga beradigan klass qaysi?
++ `text-bg-warning`
+- `bg-text-warning`
+- `color-warning`
+> `text-bg-*` fon rangiga qarab matnni avtomatik qora yoki oq qiladi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <p class="text-primary">text-primary</p>
+  <p class="text-danger">text-danger: Xato!</p>
+  <div class="p-2 mb-2 text-bg-success">text-bg-success</div>
+  <div class="p-2 mb-2 text-bg-warning">text-bg-warning</div>
+  <div class="p-2 bg-primary bg-opacity-25">bg-opacity-25</div>
+</div>
+```
+
 ## Xulosa
 
 - `text-*`, `bg-*`, `text-bg-*` (fon + mos matn).

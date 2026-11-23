@@ -60,6 +60,23 @@ Havola bo‘lsa, hover va fokus holatlari avtomatik qo‘shiladi.
 | `<span class="label label-success">` | `<span class="badge badge-success">` |
 | bo‘sh badge yashirinadi           | bo‘sh badge ham yashirinadi (`:empty`) |
 
+```tekshir
+Bootstrap 4’da yumaloq (pill) badge qaysi klass bilan?
++ `badge-pill`
+- `rounded-pill`
+- `badge-round`
+> Bootstrap 5 da buning o‘rniga `rounded-pill` utilitasi ishlatiladi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <h4>Kurs <span class="badge badge-secondary">Yangi</span></h4>
+  <span class="badge badge-pill badge-success">97 ball</span>
+  <button class="btn btn-primary ml-2">Xabarlar <span class="badge badge-light">4</span></button>
+</div>
+```
+
 ## Xulosa
 
 - `.badge` + `.badge-success | -danger | …`; yumaloq — `.badge-pill`.

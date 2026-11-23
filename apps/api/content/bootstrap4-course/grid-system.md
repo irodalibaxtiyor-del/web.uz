@@ -89,6 +89,27 @@ Bootstrap 3 dagi push/pull o‘rniga Flexbox `order`:
 
 Ustun ichida yangi `.row` — u ham 12 ga bo‘linadi.
 
+```tekshir
+Ustunlar orasidagi bo‘shliqni (gutter) olib tashlash uchun `row` ga qaysi klass?
++ `no-gutters`
+- `g-0`
+- `gutter-none`
+> `g-0` — Bootstrap 5 dagi nomi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="row no-gutters">
+    <div class="col-4"><div class="p-2 border bg-light">no-gutters</div></div>
+    <div class="col-4 offset-4"><div class="p-2 border bg-light">offset-4</div></div>
+  </div>
+  <div class="row justify-content-center mt-2">
+    <div class="col-4"><div class="p-2 border bg-light">markazda</div></div>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - Flex setka: `.row` (wrap), ustunlar `flex` va `max-width` bilan.

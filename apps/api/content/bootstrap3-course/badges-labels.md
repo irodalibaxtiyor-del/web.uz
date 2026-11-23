@@ -61,6 +61,22 @@ Label sarlavha ichida bo‘lsa, sarlavha o‘lchamiga mos ravishda kattalashadi 
 
 `.sr-only` matnni ekranda yashiradi, lekin ekran o‘quvchi uni o‘qiydi.
 
+```tekshir
+Son ko‘rsatkichi (masalan, xabarlar soni) uchun qaysi komponent?
++ `badge`
+- `label`
+- `alert`
+> `badge` — son, `label` — matnli yorliq (masalan, “Yangi”).
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <button class="btn btn-primary">Xabarlar <span class="badge">4</span></button>
+  <h3>Kurs <span class="label label-success">Yangi</span></h3>
+</div>
+```
+
 ## Xulosa
 
 - `.badge` — son ko‘rsatkichi, rangli tugma ichida ranglar teskari.

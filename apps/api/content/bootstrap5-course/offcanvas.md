@@ -85,6 +85,26 @@ document.getElementById('filtr').addEventListener('hidden.bs.offcanvas', () => {
 | Modal     | Diqqat talab qiladigan dialog (tasdiq, forma)       |
 | Collapse  | Sahifa ichida joyida ochiladigan blok               |
 
+```tekshir
+Offcanvas nima?
++ ekran chetidan chiqadigan yashirin panel (masalan, mobil menyu)
+- sahifa fonini o‘zgartiruvchi rasm
+- jadvalning yashirin ustuni
+> `offcanvas-start` chapdan, `offcanvas-end` o‘ngdan chiqadi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#oc" aria-controls="oc">Menyuni ochish</button>
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="oc" aria-labelledby="oct">
+    <div class="offcanvas-header"><h5 class="offcanvas-title" id="oct">Menyu</h5><button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Yopish"></button></div>
+    <div class="offcanvas-body"><a href="#">Kurslar</a><br><a href="#">Profil</a></div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+```
+
 ## Xulosa
 
 - `.offcanvas.offcanvas-start|end|top|bottom` > header (`.offcanvas-title`, `.btn-close`) + body.

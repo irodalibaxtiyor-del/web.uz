@@ -84,6 +84,26 @@ Flex konteynerda `ml-auto` elementni va undan keyingilarni o‘ng chetga suradi:
 
 `order-0` … `order-12`, ekranga qarab `order-md-1`. Tartibni ko‘rinishda o‘zgartirish klaviatura tartibini o‘zgartirmaydi — muhim kontentni HTML’da ham to‘g‘ri tartibda yozing.
 
+```tekshir
+Bootstrap 4 da elementlarni flex qatorda markazga tekislash uchun qaysi klasslar?
++ `d-flex justify-content-center`
+- `flex center`
+- `text-center` (har doim)
+> `d-flex` — konteyner, `justify-content-*` — asosiy o‘q, `align-items-*` — kesuvchi o‘q.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="d-flex justify-content-center align-items-center bg-light border" style="height: 100px">
+    <div class="p-2 bg-primary text-white">Markazda</div>
+  </div>
+  <div class="d-flex mt-2 bg-light border">
+    <div class="p-2">Logo</div><div class="p-2 ml-auto">Kirish</div>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - `d-flex` → `flex-row|column`, `justify-content-*`, `align-items-*`.

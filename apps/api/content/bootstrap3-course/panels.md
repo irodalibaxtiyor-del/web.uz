@@ -70,6 +70,25 @@ Jadval yoki list group panelga to‘g‘ridan-to‘g‘ri (`.panel-body` dan tas
 
 > Bootstrap 4 da panel, well va thumbnail o‘rniga bitta **card** komponenti bor. Bootstrap 3 loyihasini ko‘chirishda `.panel` → `.card`, `.panel-heading` → `.card-header`, `.panel-body` → `.card-body`.
 
+```tekshir
+Panelning sarlavha qismi qaysi klass bilan?
++ `panel-heading`
+- `panel-title-bar`
+- `panel-top`
+> Tuzilma: `panel` → `panel-heading` → `panel-body` → `panel-footer`.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <div class="panel panel-primary">
+    <div class="panel-heading"><h3 class="panel-title">Panel sarlavhasi</h3></div>
+    <div class="panel-body">Panel matni</div>
+    <div class="panel-footer">Footer</div>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - `.panel` + `.panel-default | -primary | -success | …`.

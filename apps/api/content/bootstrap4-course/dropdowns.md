@@ -70,6 +70,32 @@ $('#kursMenyu').dropdown('toggle');
 $('.dropdown').on('shown.bs.dropdown', function () { /* … */ });
 ```
 
+```tekshir
+Bootstrap 4 dropdown’ining joylashuvini qaysi kutubxona hisoblaydi?
++ Popper
+- Moment
+- Lodash
+> `bootstrap.bundle.min.js` ichida Popper bor; alohida faylda esa Popper’ni oldin ulash kerak.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">Kurslar</button>
+    <div class="dropdown-menu">
+      <a class="dropdown-item" href="#">HTML</a>
+      <a class="dropdown-item active" href="#">CSS</a>
+      <div class="dropdown-divider"></div>
+      <h6 class="dropdown-header">Qo‘shimcha</h6>
+      <a class="dropdown-item" href="#">Bootstrap</a>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+```
+
 ## Xulosa
 
 - `.dropdown` > `button.dropdown-toggle[data-toggle="dropdown"]` + `div.dropdown-menu` > `a.dropdown-item`.

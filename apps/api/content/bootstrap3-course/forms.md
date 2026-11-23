@@ -73,6 +73,27 @@ Yorliqni ko‘rsatmasangiz ham uni yozing va `.sr-only` bilan yashiring — `pla
 | `.form-inline`     | Hammasi bir qatorda             | Qidiruv, obuna, filtr       |
 | `.form-horizontal` | Yorliq chapda, maydon o‘ngda    | Sozlamalar, uzun formalar   |
 
+```tekshir
+Bootstrap 3’da yorliq chapda, maydon o‘ngda turadigan forma qaysi klass bilan?
++ `form-horizontal`
+- `form-inline`
+- `form-row`
+> `form-inline` — hamma maydonlar bir qatorda; `form-horizontal` setka ustunlari bilan ishlaydi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <form class="form-horizontal">
+    <div class="form-group">
+      <label for="e" class="col-sm-2 control-label">Email</label>
+      <div class="col-sm-10"><input type="email" class="form-control" id="e" placeholder="Email"></div>
+    </div>
+    <div class="form-group"><div class="col-sm-offset-2 col-sm-10"><button class="btn btn-primary">Yuborish</button></div></div>
+  </form>
+</div>
+```
+
 ## Xulosa
 
 - Maydon — `.form-control`, guruh — `.form-group`.

@@ -101,6 +101,29 @@ Serverdan kelgan xato uchun to‘g‘ridan-to‘g‘ri `.is-invalid` (yoki `.is-
 
 > Brauzerdagi tekshiruv — faqat qulaylik. Ma’lumotni albatta **serverda** ham tekshiring.
 
+```tekshir
+Bootstrap 4 da maydon xato ekanini ko‘rsatish uchun inputga qaysi klass?
++ `is-invalid`
+- `has-error`
+- `error`
+> Xabar uchun maydondan keyin `invalid-feedback` blok yoziladi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <form>
+    <div class="form-group">
+      <label for="em">Email</label>
+      <input type="email" class="form-control is-invalid" id="em" value="noto‘g‘ri" aria-describedby="emf">
+      <div id="emf" class="invalid-feedback">To‘g‘ri email kiriting.</div>
+    </div>
+    <div class="form-group"><label for="nm">Ism</label><input class="form-control is-valid" id="nm" value="Lola"></div>
+    <button class="btn btn-primary">Yuborish</button>
+  </form>
+</div>
+```
+
 ## Xulosa
 
 - `.form-group` + `.form-control`; yordamchi matn — `.form-text`.

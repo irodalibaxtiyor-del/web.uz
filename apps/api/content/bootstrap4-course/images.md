@@ -71,6 +71,22 @@ Rasm va uning izohi:
 
 > Platforma preview’ida tashqi rasmlar bloklangan — mashqlarda `data:` URL ichidagi SVG ishlatilgan.
 
+```tekshir
+Bootstrap 4’da moslashuvchan rasm klassi qaysi?
++ `img-fluid`
+- `img-responsive`
+- `img-auto`
+> `img-responsive` — Bootstrap 3 dagi nomi edi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <img class="rounded-circle mr-2" width="90" height="90" alt="Avatar" src="data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2790%27%20height=%2790%27%3E%3Crect%20width=%2790%27%20height=%2790%27%20fill=%27%230071dc%27/%3E%3C/svg%3E">
+  <img class="img-thumbnail" width="90" height="90" alt="Thumbnail" src="data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2790%27%20height=%2790%27%3E%3Crect%20width=%2790%27%20height=%2790%27%20fill=%27%23f5a623%27/%3E%3C/svg%3E">
+</div>
+```
+
 ## Xulosa
 
 - Shakl: `.rounded`, `.rounded-circle`, `.img-thumbnail`.

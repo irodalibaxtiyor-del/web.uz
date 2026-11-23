@@ -74,6 +74,25 @@ Bootstrap 4 da badge o‘zi o‘ngga surilmaydi — flex utilitalari bilan:
 </a>
 ```
 
+```tekshir
+Chetidagi chegara va burchaklarsiz list group (karta ichida) uchun qaysi klass?
++ `list-group-flush`
+- `list-group-borderless`
+- `list-group-clean`
+> `flush` karta ichiga joylashtirilganda chiroyli ko‘rinadi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <ul class="list-group">
+    <li class="list-group-item d-flex justify-content-between align-items-center">HTML <span class="badge badge-primary badge-pill">60</span></li>
+    <li class="list-group-item list-group-item-success">CSS</li>
+    <li class="list-group-item active" aria-current="true">JavaScript</li>
+  </ul>
+</div>
+```
+
 ## Xulosa
 
 - `.list-group` > `.list-group-item`; `.active`, `.disabled`.

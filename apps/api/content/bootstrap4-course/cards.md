@@ -89,6 +89,29 @@
 | `.well`             | `.card.card-body` |
 | `.thumbnail`        | `.card` + `.card-img-top` |
 
+```tekshir
+Bootstrap 4 dagi `card` qaysi Bootstrap 3 komponentlari o‘rniga keldi?
++ `panel`
++ `well`
++ `thumbnail`
+- `modal`
+> Uchta komponent bitta moslashuvchan `card` ga birlashtirildi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="card" style="max-width: 18rem">
+    <div class="card-header">Kurs</div>
+    <div class="card-body">
+      <h5 class="card-title">CSS: to‘liq kurs</h5>
+      <p class="card-text">101 dars, mashqlar va testlar.</p>
+      <a href="#" class="btn btn-primary">Boshlash</a>
+    </div>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - `.card` > `.card-header`, `.card-body` (`.card-title`, `.card-text`), `.card-footer`; rasm — `.card-img-top`.

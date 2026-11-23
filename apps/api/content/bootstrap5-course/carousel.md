@@ -73,6 +73,29 @@ carousel.next();
 el.addEventListener('slid.bs.carousel', (e) => console.log('Slayd:', e.to));
 ```
 
+```tekshir
+Bootstrap 5 da karusel avtomatik aylanishi uchun qaysi atribut?
++ `data-bs-ride="carousel"`
+- `data-ride="carousel"`
+- `data-auto="true"`
+> `data-bs-ride="true"` esa birinchi bosilgandan keyin aylantiradi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div id="kr" class="carousel slide carousel-fade">
+    <div class="carousel-inner">
+      <div class="carousel-item active"><div class="d-flex align-items-center justify-content-center text-bg-primary" style="height: 120px">1-slayd</div></div>
+      <div class="carousel-item"><div class="d-flex align-items-center justify-content-center text-bg-warning" style="height: 120px">2-slayd</div></div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#kr" data-bs-slide="prev"><span class="carousel-control-prev-icon" aria-hidden="true"></span><span class="visually-hidden">Oldingi</span></button>
+    <button class="carousel-control-next" type="button" data-bs-target="#kr" data-bs-slide="next"><span class="carousel-control-next-icon" aria-hidden="true"></span><span class="visually-hidden">Keyingi</span></button>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+```
+
 ## Xulosa
 
 - `.carousel.slide[data-bs-ride="carousel"]` > `.carousel-inner` > `.carousel-item` (bittasi `.active`).

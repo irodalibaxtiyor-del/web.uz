@@ -95,6 +95,28 @@ Bootstrap 5 da `.card-deck` **olib tashlangan**. Uning o‘rniga setka va gutter
 </div>
 ```
 
+```tekshir
+Butun kartani bosiladigan qilish uchun ichidagi havolaga qaysi klass?
++ `stretched-link`
+- `card-link-full`
+- `link-block`
+> `stretched-link` havolaning bosish maydonini eng yaqin `position: relative` otagacha kengaytiradi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="card position-relative" style="max-width: 18rem">
+    <div class="card-body">
+      <h5 class="card-title">CSS: to‘liq kurs</h5>
+      <p class="card-text">101 dars, mashqlar va testlar.</p>
+      <a href="#" class="btn btn-primary stretched-link">Boshlash</a>
+    </div>
+  </div>
+  <div class="card mt-2" aria-hidden="true" style="max-width: 18rem"><div class="card-body"><p class="card-text placeholder-glow"><span class="placeholder col-7"></span> <span class="placeholder col-4"></span></p></div></div>
+</div>
+```
+
 ## Xulosa
 
 - `.card` > header/body/footer; rasm — `.card-img-top`; rang — `text-bg-*`.

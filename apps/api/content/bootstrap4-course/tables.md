@@ -75,6 +75,26 @@ Ma’lum sinfgacha: `.table-responsive-sm`, `-md`, `-lg`, `-xl` — shu sinfdan 
 
 Bootstrap `caption` ni jadval ostida, kulrang rangda ko‘rsatadi.
 
+```tekshir
+Bootstrap 4’da jadvalning sarlavha qatorini qora qilish uchun qaysi klass?
++ `thead-dark`
+- `table-head-black`
+- `th-dark`
+> Bootstrap 5 da buning o‘rniga `table-dark` `thead` ga beriladi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="table-responsive">
+  <table class="table table-striped table-hover">
+    <thead class="thead-dark"><tr><th>Ism</th><th>Ball</th></tr></thead>
+    <tbody><tr><td>Ali</td><td>90</td></tr><tr class="table-success"><td>Lola</td><td>97</td></tr></tbody>
+  </table>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - `.table` + `.table-striped | -bordered | -borderless | -hover | -sm | -dark`.

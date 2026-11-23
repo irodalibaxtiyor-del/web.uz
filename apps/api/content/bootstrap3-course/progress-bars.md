@@ -66,6 +66,26 @@ Bitta `.progress` ichiga bir nechta bar qo‘yish mumkin — ular yonma-yon tizi
 
 Kengliklar yig‘indisi 100% dan oshmasligi kerak.
 
+```tekshir
+Progress bar to‘ldirilgan qismi qanday beriladi?
++ `.progress-bar` ga `style="width: 60%"`
+- `data-value="60"`
+- `.progress-60` klassi
+> Ekran o‘quvchilar uchun `aria-valuenow`, `aria-valuemin`, `aria-valuemax` ham yoziladi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <div class="progress">
+    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%">60%</div>
+  </div>
+  <div class="progress">
+    <div class="progress-bar progress-bar-striped active" style="width: 40%">40%</div>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - `.progress` > `.progress-bar` + `style="width: N%"`.

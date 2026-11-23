@@ -71,6 +71,26 @@ Ajratuvchini o‘zgartirish:
 <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">…</nav>
 ```
 
+```tekshir
+Joriy sahifa bandi ekran o‘quvchiga qanday bildiriladi?
++ `aria-current="page"`
+- faqat `active` klassi
+- `title="joriy"`
+> `active` ko‘rinish beradi, `aria-current` esa ma’noni.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <nav aria-label="Sahifalar"><ul class="pagination">
+    <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+    <li class="page-item active" aria-current="page"><span class="page-link">1</span></li>
+    <li class="page-item"><a class="page-link" href="#">2</a></li>
+  </ul></nav>
+  <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="#">Bosh</a></li><li class="breadcrumb-item active" aria-current="page">Kurslar</li></ol></nav>
+</div>
+```
+
 ## Xulosa
 
 - `ul.pagination` > `li.page-item` (`.active`, `.disabled`) > `a.page-link`.

@@ -76,6 +76,23 @@ Bootstrap 5.3 dan:
 
 > Platforma preview’ida tashqi rasmlar bloklangan — mashqlarda `data:` URL ichidagi SVG ishlatilgan.
 
+```tekshir
+Video yoki iframe uchun 16:9 nisbatli o‘ram qaysi klass bilan?
++ `ratio ratio-16x9`
+- `embed-responsive-16by9`
+- `aspect-16-9`
+> `embed-responsive` — Bootstrap 4 dagi nomi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <img class="rounded-circle me-2" width="90" height="90" alt="Avatar" src="data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2790%27%20height=%2790%27%3E%3Crect%20width=%2790%27%20height=%2790%27%20fill=%27%230071dc%27/%3E%3C/svg%3E">
+  <img class="img-thumbnail" width="90" height="90" alt="Thumbnail" src="data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2790%27%20height=%2790%27%3E%3Crect%20width=%2790%27%20height=%2790%27%20fill=%27%23f5a623%27/%3E%3C/svg%3E">
+  <div class="ratio ratio-16x9 mt-2" style="max-width: 320px"><div class="bg-dark text-white d-flex align-items-center justify-content-center">16:9</div></div>
+</div>
+```
+
 ## Xulosa
 
 - `.rounded-*`, `.rounded-circle`, `.img-thumbnail`, `.img-fluid`.

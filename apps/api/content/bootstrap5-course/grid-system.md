@@ -70,6 +70,27 @@ Bootstrap 5 da `ml-auto` → **`ms-auto`**.
 
 Bootstrap 5.1 dan `$enable-cssgrid` Sass sozlamasi yoqilsa, `.grid` va `.g-col-*` klasslari CSS Grid bilan ishlaydi. Standart CDN faylida u o‘chirilgan — darslarda Flexbox setkasidan foydalanamiz.
 
+```tekshir
+Bootstrap 5 da ustunlar orasidagi bo‘shliqni butunlay olib tashlash uchun qaysi klass?
++ `g-0`
+- `no-gutters`
+- `gutter-0`
+> `no-gutters` — Bootstrap 4 dagi nomi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="row g-0">
+    <div class="col-4"><div class="p-2 border bg-body-tertiary">g-0</div></div>
+    <div class="col-4 ms-auto"><div class="p-2 border bg-body-tertiary">ms-auto</div></div>
+  </div>
+  <div class="row justify-content-center mt-2">
+    <div class="col-4"><div class="p-2 border bg-body-tertiary">markazda</div></div>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - 12 ustun, oltita sinf (`xxl` ≥ 1400px).

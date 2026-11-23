@@ -87,6 +87,24 @@ document.getElementById('hammasi').indeterminate = true;
 </fieldset>
 ```
 
+```tekshir
+Bootstrap 5 da switch (kalit) qanday yoziladi?
++ `<div class="form-check form-switch">` ichida checkbox
+- `custom-switch`
+- `<input type="switch">`
+> `custom-switch` — Bootstrap 4 dagi nomi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="form-check"><input class="form-check-input" type="checkbox" id="c1" checked><label class="form-check-label" for="c1">Eslab qolish</label></div>
+  <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="r" id="r1" checked><label class="form-check-label" for="r1">Talaba</label></div>
+  <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="r" id="r2"><label class="form-check-label" for="r2">O‘qituvchi</label></div>
+  <div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="sw"><label class="form-check-label" for="sw">Qorong‘i rejim</label></div>
+</div>
+```
+
 ## Xulosa
 
 - `.form-check` > `.form-check-input` + `.form-check-label` (`id`/`for`).

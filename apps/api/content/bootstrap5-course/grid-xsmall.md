@@ -44,6 +44,26 @@ Telefonda ham uchtadan — rasm galereyasi uchun qulay. `.row-cols-auto` — har
 - Bosiladigan elementlar kamida 44×44px bo‘lsin — tor ustunda tugmalar mayda bo‘lib qolmasin.
 - Gorizontal aylanish paydo bo‘lmasligini tekshiring (qatordagi ustunlar yig‘indisi 12 dan oshmasin, keng rasmlarga `img-fluid`).
 
+```tekshir
+Bir qatorda nechta ustun bo‘lishini ota elementdan boshqarish uchun qaysi klass?
++ `row-cols-*`
+- `cols-*`
+- `grid-*`
+> Masalan: `row row-cols-2 row-cols-md-4`.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="row row-cols-2 g-2">
+    <div class="col"><div class="p-2 border bg-body-tertiary">1</div></div>
+    <div class="col"><div class="p-2 border bg-body-tertiary">2</div></div>
+    <div class="col"><div class="p-2 border bg-body-tertiary">3</div></div>
+    <div class="col"><div class="p-2 border bg-body-tertiary">4</div></div>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - `.col-N` — har doim; `.col` — teng; `.col-auto` — kontent kengligi.

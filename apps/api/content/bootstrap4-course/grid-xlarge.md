@@ -54,6 +54,26 @@ Natija xuddi yuqoridagidek, lekin HTML qisqa va o‘zgartirish oson.
 
 > Bootstrap 5 da yana bitta sinf qo‘shilgan: `xxl` (≥ 1400px, konteyner 1320px).
 
+```tekshir
+Bir qatorda har doim 3 tadan ustun bo‘lishi uchun ota `row` ga qaysi klass?
++ `row-cols-3`
+- `cols-3`
+- `row-3`
+> `row-cols-*` bolalarga alohida `col-*` yozmasdan kenglik beradi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="row row-cols-2 row-cols-md-3">
+    <div class="col"><div class="p-2 border bg-light">1</div></div>
+    <div class="col"><div class="p-2 border bg-light">2</div></div>
+    <div class="col"><div class="p-2 border bg-light">3</div></div>
+    <div class="col"><div class="p-2 border bg-light">4</div></div>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - `col-xl-*` — 1200px dan, `.container` 1140px.

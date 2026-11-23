@@ -82,6 +82,25 @@ Telefonda matn rasmdan **oldin** (HTML tartibi), noutbukda rasm o‘ngda.
 | Yashirish              | `hidden-xs`           | `d-none d-sm-block`  | `d-none d-sm-block`    |
 | Eng katta sinf         | `lg` (1200)           | `xl` (1200)          | `xxl` (1400)           |
 
+```tekshir
+Bootstrap 4 dagi `ml-auto` Bootstrap 5 da qanday yoziladi?
++ `ms-auto`
+- `ml-auto` (o‘zgarmagan)
+- `left-auto`
+> Bootstrap 5 yo‘nalishlarni RTL uchun mantiqiy nomladi: `s` — start, `e` — end.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="row row-cols-1 row-cols-md-3 g-3">
+    <div class="col"><div class="card h-100"><div class="card-body">HTML</div></div></div>
+    <div class="col"><div class="card h-100"><div class="card-body">CSS — uzunroq tavsif ikki qatorga o‘tadi</div></div></div>
+    <div class="col"><div class="card h-100"><div class="card-body">JS</div></div></div>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - Katalog: `row-cols-*` + `g-4` + `.card.h-100`.

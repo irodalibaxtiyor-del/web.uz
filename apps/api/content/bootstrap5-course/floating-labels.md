@@ -82,6 +82,22 @@ Select’da yorliq doim yuqorida turadi.
 - Yorliq hech qachon yo‘qolmaydi — oddiy `placeholder` dan farqli ravishda yozilgandan keyin ham ko‘rinib turadi (yuqorida).
 - U haqiqiy `<label>` — ekran o‘quvchi uni to‘g‘ri o‘qiydi.
 
+```tekshir
+Floating label ishlashi uchun qaysi qoida shart?
++ `<input>` `<label>` dan oldin yoziladi va `placeholder` bo‘lishi kerak
+- label inputdan oldin yoziladi
+- `placeholder` yozilmasligi kerak
+> Uslub `:placeholder-shown` holatiga tayanadi, shuning uchun placeholder bo‘sh bo‘lmasin.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="form-floating mb-2"><input type="email" class="form-control" id="fe" placeholder="nom@misol.uz"><label for="fe">Email</label></div>
+  <div class="form-floating"><select class="form-select" id="fs"><option>HTML</option><option>CSS</option></select><label for="fs">Kurs</label></div>
+</div>
+```
+
 ## Xulosa
 
 - `.form-floating` > `input.form-control[placeholder]` + `label[for]` — shu tartibda.

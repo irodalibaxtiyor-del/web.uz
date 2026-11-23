@@ -55,6 +55,21 @@ Bootstrap 5.3 dan har qanday elementga mavzu berish mumkin:
 
 Buni “Qorong‘i rejim” darsida batafsil ko‘ramiz.
 
+```tekshir
+Bootstrap 5 da qaysi konteyner `xxl` sinfigacha 100% kenglikda turadi?
++ `container-xxl`
+- `container-fluid-xxl`
+- `container-max`
+> `container-{sinf}` shu sinfgacha to‘liq kenglik, keyin cheklangan.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container bg-body-tertiary border p-2 mb-2">.container</div>
+<div class="container-fluid bg-info p-2 mb-2">.container-fluid</div>
+<div class="container-lg bg-warning p-2">.container-lg</div>
+```
+
 ## Xulosa
 
 - `.container` — 540 / 720 / 960 / 1140 / 1320px; `.container-fluid` — doim 100%.

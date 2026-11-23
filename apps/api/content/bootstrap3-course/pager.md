@@ -49,6 +49,24 @@ Birinchi darsda “Oldingi” havolasi kerak emas — uni o‘chiring:
 
 Havola matnida qayerga o‘tilishini yozing: “Keyingi dars: Jadvallar” — “Keyingi” dan aniqroq. Ayniqsa ekran o‘quvchi havolalar ro‘yxatini o‘qiganda bu muhim.
 
+```tekshir
+Pager’ning pagination’dan farqi nima?
++ faqat “Oldingi” va “Keyingi” havolalari bor
+- u raqamlarni ko‘proq ko‘rsatadi
+- u faqat jadvallarda ishlaydi
+> Pager blog postlari kabi ketma-ket sahifalar uchun qulay.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <ul class="pager">
+    <li class="previous"><a href="#">&larr; Oldingi</a></li>
+    <li class="next"><a href="#">Keyingi &rarr;</a></li>
+  </ul>
+</div>
+```
+
 ## Xulosa
 
 - `ul.pager` — oddiy “Oldingi / Keyingi”.

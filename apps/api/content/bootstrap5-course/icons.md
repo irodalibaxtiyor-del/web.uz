@@ -71,6 +71,24 @@ Tashqi fayl yuklamaslik uchun ikonkaning SVG kodini to‘g‘ridan-to‘g‘ri q
 | Faqat ikonka tugmada/havolada       | Tugmaga `aria-label`                          |
 | Ikonka ma’lumot beradi (✓ bajarildi) | Yonida `<span class="visually-hidden">Bajarildi</span>` |
 
+```tekshir
+Faqat ikonkadan iborat tugmada ekran o‘quvchi uchun nima yoziladi?
++ tugmaga `aria-label`, ikonkaga `aria-hidden="true"`
+- ikonkaga `alt`
+- hech narsa — ikonka o‘zi tushunarli
+> Ekran o‘quvchi ikonkani o‘qiy olmaydi, shuning uchun tugma nomi matn bilan beriladi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+<div class="container py-3">
+  <p style="font-size: 24px"><i class="bi bi-search" aria-hidden="true"></i> <i class="bi bi-heart-fill text-danger" aria-hidden="true"></i> <i class="bi bi-person" aria-hidden="true"></i></p>
+  <button class="btn btn-primary"><i class="bi bi-download" aria-hidden="true"></i> Yuklab olish</button>
+  <button class="btn btn-outline-secondary" aria-label="Sozlamalar"><i class="bi bi-gear" aria-hidden="true"></i></button>
+</div>
+```
+
 ## Xulosa
 
 - Bootstrap Icons alohida ulanadi: `bootstrap-icons.min.css` yoki SVG.

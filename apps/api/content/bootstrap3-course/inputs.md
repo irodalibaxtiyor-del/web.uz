@@ -84,6 +84,24 @@ Bir nechta checkbox yoki radio bitta savolga tegishli bo‘lsa, ularni `<fieldse
 
 Ekran o‘quvchi har bir variantni “Qaysi kurslar qiziq? HTML” deb o‘qiydi.
 
+```tekshir
+Matn maydoni Bootstrap uslubini olishi uchun qaysi klass?
++ `form-control`
+- `input-control`
+- `form-input`
+> `form-control` maydonni to‘liq kenglikda, chiroyli chegara va fokus bilan bezaydi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <div class="form-group"><label for="t">Izoh</label><textarea class="form-control" id="t" rows="2"></textarea></div>
+  <div class="checkbox"><label><input type="checkbox"> Eslab qolish</label></div>
+  <div class="radio"><label><input type="radio" name="r" checked> Talaba</label></div>
+  <select class="form-control"><option>HTML</option><option>CSS</option></select>
+</div>
+```
+
 ## Xulosa
 
 - `input` larga to‘g‘ri `type` va `.form-control`.

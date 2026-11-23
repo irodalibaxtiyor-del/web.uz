@@ -57,6 +57,23 @@ Har bir darsdan keyin **amaliy mashq** bor: kodni IDE’da yozasiz, **Ishga tush
 
 > Platformada Bootstrap fayllari serverning o‘zida saqlanadi. Siz odatdagi CDN havolasini yozasiz (keyingi darsda ko‘rasiz) — platforma uni o‘zidagi xuddi shu faylga almashtiradi. Boshqa tashqi havolalar (rasm, shrift, skript) xavfsizlik uchun preview’da bloklangan.
 
+```tekshir
+Bootstrap nima?
++ tayyor CSS klasslari va JavaScript komponentlaridan iborat front-end freymvork
+- yangi dasturlash tili
+- server tomonidagi kutubxona
+> Bootstrap HTML elementlariga klass berish orqali tayyor dizayn va komponentlarni beradi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <h1>Salom, Bootstrap!</h1>
+  <p class="lead">Bu matn Bootstrap uslubida.</p>
+  <button class="btn btn-primary">Tugma</button>
+</div>
+```
+
 ## Xulosa
 
 - Bootstrap — tayyor CSS klasslari va JS komponentlari to‘plami.

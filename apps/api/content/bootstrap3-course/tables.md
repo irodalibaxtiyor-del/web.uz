@@ -70,6 +70,26 @@ Ustunlar ko‘p bo‘lsa, telefonda jadval ekrandan chiqib ketadi. Uni `.table-r
 - Jadval nimani ko‘rsatishini `<caption>` bilan yozing.
 - Faqat ma’lumot uchun jadval ishlating; sahifa maketi uchun setka bor.
 
+```tekshir
+Qatorlari navbatma-navbat rangli jadval uchun qaysi klass?
++ `table-striped`
+- `table-zebra`
+- `table-bordered`
+> Asosiy `table` klassiga `table-striped`, `table-hover`, `table-bordered` qo‘shiladi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <div class="table-responsive">
+  <table class="table table-striped table-hover">
+    <thead><tr><th>Ism</th><th>Ball</th></tr></thead>
+    <tbody><tr><td>Ali</td><td>90</td></tr><tr class="success"><td>Lola</td><td>97</td></tr><tr class="danger"><td>Vali</td><td>45</td></tr></tbody>
+  </table>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - `.table` — asosiy uslub; `.table-striped`, `.table-bordered`, `.table-hover`, `.table-condensed` — qo‘shimchalar.

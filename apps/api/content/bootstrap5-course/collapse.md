@@ -77,6 +77,31 @@ document.getElementById('batafsil').addEventListener('shown.bs.collapse', () => 
 });
 ```
 
+```tekshir
+Bootstrap 5 da tayyor akkordeon qaysi komponent bilan?
++ `accordion` (`accordion-item`, `accordion-button`)
+- `panel-group`
+- `collapse-group`
+> `data-bs-parent` bir vaqtda faqat bitta bo‘lim ochiq turishini ta’minlaydi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="accordion" id="ac">
+    <div class="accordion-item">
+      <h2 class="accordion-header"><button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#a1" aria-expanded="true" aria-controls="a1">HTML nima?</button></h2>
+      <div id="a1" class="accordion-collapse collapse show" data-bs-parent="#ac"><div class="accordion-body">Belgilash tili.</div></div>
+    </div>
+    <div class="accordion-item">
+      <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a2" aria-expanded="false" aria-controls="a2">CSS nima?</button></h2>
+      <div id="a2" class="accordion-collapse collapse" data-bs-parent="#ac"><div class="accordion-body">Uslublar tili.</div></div>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+```
+
 ## Xulosa
 
 - `.collapse` / `.collapse.show` + `data-bs-toggle="collapse"` + `data-bs-target`.

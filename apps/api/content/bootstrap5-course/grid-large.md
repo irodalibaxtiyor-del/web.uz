@@ -51,6 +51,24 @@ Planshetda video va reja ustma-ust (har biri to‘liq kenglikda), noutbukda yonm
 
 `.sticky-lg-top` — faqat `lg` dan aylantirganda tepada yopishib qoladi; telefonda oddiy blok.
 
+```tekshir
+Yon panel aylantirilganda yuqorida yopishib turishi uchun qaysi utilita?
++ `sticky-top`
+- `fixed-side`
+- `position-static`
+> `sticky-top` — `position: sticky; top: 0`.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="row g-2">
+    <div class="col-lg-8"><div class="p-2 border bg-body-tertiary">Maqola</div></div>
+    <div class="col-lg-4"><div class="p-2 border bg-body-tertiary">Yon panel</div></div>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - `col-lg-*` — 992px dan, `.container` 960px.

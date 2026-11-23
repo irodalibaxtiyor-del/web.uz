@@ -84,6 +84,22 @@ Turli balandlikdagi bloklar `float` tufayli noto‘g‘ri tizilishi mumkin. Qato
 3. Ustun ichiga `.row` siz yangi ustunlar qo‘yish.
 4. Qatorda 12 dan ko‘p ustun — keyingi qatorga tushadi.
 
+```tekshir
+Bootstrap 3’da elementni faqat telefonda yashirish uchun qaysi klass?
++ `hidden-xs`
+- `d-none`
+- `hide-mobile`
+> `hidden-*` va `visible-*-*` — Bootstrap 3’ning ko‘rinish klasslari.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <p class="hidden-xs alert alert-info">Telefonda ko‘rinmayman (hidden-xs)</p>
+  <p class="visible-xs-block alert alert-warning">Faqat telefonda ko‘rinaman</p>
+</div>
+```
+
 ## Xulosa
 
 - Kartochkalar: `col-xs-12 col-sm-6 col-md-3`.

@@ -73,6 +73,26 @@ Faqat rang yoki ikonka bilan xatoni bildirish yetarli emas — xatoning **matni*
 
 > Bootstrap klasslari faqat ko‘rinish. Ma’lumotni haqiqatan tekshirish brauzerda (`required`, `type="email"`) va albatta **serverda** bajariladi.
 
+```tekshir
+Maydonni xato holatida (qizil) ko‘rsatish uchun `form-group` ga qaysi klass?
++ `has-error`
+- `is-invalid`
+- `error-field`
+> `is-invalid` — Bootstrap 4/5 dagi nomi; Bootstrap 3 da `has-success`, `has-warning`, `has-error`.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <div class="form-group has-error">
+    <label class="control-label" for="p">Parol</label>
+    <input type="password" class="form-control" id="p" aria-describedby="ph">
+    <span id="ph" class="help-block">Parol kamida 8 belgi bo‘lsin.</span>
+  </div>
+  <div class="form-group has-success"><label class="control-label" for="i">Ism</label><input class="form-control" id="i" value="Lola"></div>
+</div>
+```
+
 ## Xulosa
 
 - `.form-control-static` — statik qiymat; `disabled` va `readonly` holatlari.

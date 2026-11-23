@@ -72,6 +72,32 @@ Tugma bosilganda plagin ota elementga `.open` klassini qo‘shadi va menyu ko‘
 
 Bu “split button”: asosiy amal chapda, qo‘shimcha variantlar o‘ngdagi strelkada.
 
+```tekshir
+Bootstrap 3’da tugma bosilganda menyu ochilishi uchun tugmaga qaysi atribut?
++ `data-toggle="dropdown"`
+- `data-bs-toggle="dropdown"`
+- `onclick="dropdown()"`
+> `data-bs-*` prefiksi Bootstrap 5 dan boshlandi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <div class="dropdown">
+    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Kurslar <span class="caret"></span></button>
+    <ul class="dropdown-menu">
+      <li><a href="#">HTML</a></li>
+      <li><a href="#">CSS</a></li>
+      <li role="separator" class="divider"></li>
+      <li class="dropdown-header">Qo‘shimcha</li>
+      <li><a href="#">Bootstrap</a></li>
+    </ul>
+  </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+```
+
 ## Xulosa
 
 - `.dropdown` > `button.dropdown-toggle[data-toggle="dropdown"]` + `ul.dropdown-menu`.

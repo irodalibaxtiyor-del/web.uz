@@ -67,6 +67,25 @@ const p = new bootstrap.Popover('#kurs', {
 
 Popover ichiga forma yoki uzun matn qo‘ymang — buning uchun modal yoki offcanvas bor.
 
+```tekshir
+Bootstrap 5 da popover boshqa joyga bosilganda yopilishi uchun nima yoziladi?
++ `data-bs-trigger="focus"`
+- `data-trigger="focus"`
+- `data-bs-close="outside"`
+> Popover ham `new bootstrap.Popover(el)` bilan yoqiladi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <p class="mt-3"><button type="button" class="btn btn-info" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-title="Popover" data-bs-content="Boshqa joyga bosing — yopiladi.">Bosing</button></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  document.querySelectorAll('[data-bs-toggle="popover"]').forEach((el) => new bootstrap.Popover(el));
+</script>
+```
+
 ## Xulosa
 
 - `data-bs-toggle="popover"` + `data-bs-title` + `data-bs-content`.

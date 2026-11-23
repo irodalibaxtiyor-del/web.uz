@@ -56,6 +56,25 @@ Bo‘lim sarlavhasini pastki chiziq bilan ajratish uchun `.page-header`:
 
 Bitta sahifada bittadan ortiq jumbotron qo‘ymang — u “eng muhim joy” bo‘lgani uchun ta’sirli.
 
+```tekshir
+Jumbotron nima uchun ishlatiladi?
++ sahifaning asosiy, katta e’lon qismi uchun
+- jadvalni kattalashtirish uchun
+- modal oyna uchun
+> Odatda bosh sahifaning yuqorisida eng muhim xabar va tugma uchun.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <div class="jumbotron">
+    <h1>WEBDIZAYN.UZ</h1>
+    <p>Veb-dizaynni o‘zbek tilida o‘rganing.</p>
+    <p><a class="btn btn-primary btn-lg" href="#">Boshlash</a></p>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - `.jumbotron` — katta, kulrang, e’tiborni tortadigan blok.

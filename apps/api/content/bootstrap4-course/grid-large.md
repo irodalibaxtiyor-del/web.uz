@@ -52,6 +52,24 @@ Planshet va telefonda yon panel kontentdan **keyin** (HTML tartibi), noutbukda e
 
 Navbar ham shu sinflarga tayanadi: `.navbar-expand-lg` — 992px dan menyu ochiq. Setka va navbar uchun bir xil sinfni tanlash sahifani izchil qiladi.
 
+```tekshir
+Ustunlar tartibini katta ekranda o‘zgartirish uchun qaysi klass?
++ `order-lg-first` yoki `order-lg-1`
+- `col-lg-push-1`
+- `float-lg-left`
+> Bootstrap 3 dagi push/pull o‘rniga flex `order-*` klasslari.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="row">
+    <div class="col-lg-6"><div class="p-2 border bg-light">Birinchi (HTMLda)</div></div>
+    <div class="col-lg-6 order-lg-first"><div class="p-2 border bg-light">Katta ekranda oldinda</div></div>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - `col-lg-*` — 992px dan, `.container` 960px.

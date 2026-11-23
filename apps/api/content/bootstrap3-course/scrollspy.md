@@ -73,6 +73,27 @@ $('#mundarija').on('activate.bs.scrollspy', function () {
 });
 ```
 
+```tekshir
+Scrollspy qaysi elementga ulanadi?
++ aylantiriladigan elementga (`body` yoki `overflow` li blok) `data-spy="scroll"` va `data-target`
+- faqat navbar’ga
+- har bir bo‘limga alohida
+> Aylantirilganda menyudagi mos band avtomatik `active` bo‘ladi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <ul class="nav nav-pills" id="nm"><li><a href="#s1">1-bo‘lim</a></li><li><a href="#s2">2-bo‘lim</a></li></ul>
+  <div data-spy="scroll" data-target="#nm" data-offset="10" style="height: 140px; overflow: auto; position: relative; border: 1px solid #ddd; padding: 10px">
+    <h4 id="s1">1-bo‘lim</h4><p style="height: 150px">Ichini aylantiring…</p>
+    <h4 id="s2">2-bo‘lim</h4><p style="height: 150px">Menyuda shu band belgilanadi.</p>
+  </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+```
+
 ## Xulosa
 
 - `body` (yoki blok): `data-spy="scroll"`, `data-target="#menyu"`, `position: relative`.

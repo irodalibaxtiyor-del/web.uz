@@ -75,6 +75,25 @@ Flex konteyner bo‘lgani uchun qatordagi ustunlar **avtomatik bir xil balandlik
 - 576px dan: 2 ustun;
 - 992px dan: 4 ustun.
 
+```tekshir
+Bootstrap 4’da nechta ekran sinfi bor?
+- 4
++ 5 (xs, sm, md, lg, xl)
+- 6
+> `xs` uchun prefiks yozilmaydi: `col-6`; Bootstrap 5 da `xxl` qo‘shildi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="row">
+    <div class="col"><div class="p-2 border bg-light">col</div></div>
+    <div class="col"><div class="p-2 border bg-light">col</div></div>
+    <div class="col-6"><div class="p-2 border bg-light">col-6</div></div>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - `.container` > `.row` > `.col-*`; qatorda 12 ustun.

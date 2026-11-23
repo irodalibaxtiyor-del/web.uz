@@ -79,6 +79,25 @@ List group yorliqlar kabi ham ishlay oladi:
 </div>
 ```
 
+```tekshir
+List group bandlarini bosiladigan qilish uchun qaysi klass?
++ `list-group-item-action`
+- `list-group-click`
+- `list-group-link`
+> Odatda `<a>` yoki `<button>` bandlarga beriladi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="list-group">
+    <a href="#" class="list-group-item list-group-item-action active" aria-current="true">JavaScript</a>
+    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between">HTML <span class="badge text-bg-primary rounded-pill">60</span></a>
+    <label class="list-group-item"><input class="form-check-input me-1" type="checkbox"> Vazifa bajarildi</label>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - `.list-group` > `.list-group-item` (`.active`, `.disabled`), bosiladigan — `-action`.

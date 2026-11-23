@@ -67,6 +67,27 @@ select.addEventListener('change', () => {
 - Juda uzun ro‘yxat (masalan, 200 ta mamlakat) uchun qidiruvli maydon qulayroq bo‘lishi mumkin.
 - 2–5 ta variant uchun radio tugmalar ko‘pincha tushunarliroq — hammasi birdaniga ko‘rinadi.
 
+```tekshir
+Bootstrap 5 da select menyu uchun qaysi klass?
++ `form-select`
+- `custom-select`
+- `form-control` (select uchun majburiy)
+> `custom-select` — Bootstrap 4 dagi nomi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <label for="s1" class="form-label">Kurs</label>
+  <select class="form-select" id="s1">
+    <optgroup label="Asoslar"><option>HTML</option><option>CSS</option></optgroup>
+    <optgroup label="Freymvorklar"><option>Bootstrap 5</option></optgroup>
+  </select>
+  <p class="mt-2" id="tan"></p>
+  <script>document.getElementById('s1').onchange = (e) => (document.getElementById('tan').textContent = 'Tanlandi: ' + e.target.value);</script>
+</div>
+```
+
 ## Xulosa
 
 - `<select class="form-select">`; o‘lcham — `-lg`, `-sm`; o‘chirilgan — `disabled`.

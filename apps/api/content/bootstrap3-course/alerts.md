@@ -67,6 +67,27 @@ Foydalanuvchi xabarni yopishi uchun:
 </div>
 ```
 
+```tekshir
+Yopiladigan ogohlantirish xabari uchun qaysi klass qo‘shiladi?
++ `alert-dismissible` va ichida `data-dismiss="alert"` tugma
+- `alert-close`
+- `alert-hide`
+> Yopish tugmasi Bootstrap JS orqali xabarni olib tashlaydi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <div class="alert alert-success">Saqlandi!</div>
+  <div class="alert alert-warning alert-dismissible fade in">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Yopish">&times;</button>
+    Diqqat: muddat ertaga tugaydi.
+  </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+```
+
 ## Xulosa
 
 - `.alert` + `.alert-success | -info | -warning | -danger`.

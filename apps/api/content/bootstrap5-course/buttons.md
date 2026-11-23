@@ -97,6 +97,26 @@ Bootstrap 5.3 tugmalari CSS o‘zgaruvchilar bilan bezalgan, rangni CSS’da tez
 <button class="btn btn-brend">Sariq tugma</button>
 ```
 
+```tekshir
+Bootstrap 5 da `btn-block` yo‘q. To‘liq kenglikdagi tugmalar qanday qilinadi?
++ ota elementga `d-grid` (kerak bo‘lsa `gap-2`)
+- `btn-full`
+- `w-auto`
+> `d-grid` ichidagi tugmalar butun kenglikni egallaydi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <button class="btn btn-primary">primary</button>
+  <button class="btn btn-outline-primary">outline</button>
+  <button class="btn btn-success btn-sm">sm</button>
+  <button class="btn btn-secondary" disabled>disabled</button>
+  <div class="d-grid gap-2 mt-2"><button class="btn btn-danger">d-grid ichida</button></div>
+  <button class="btn mt-2" style="--bs-btn-bg: #8e44ad; --bs-btn-color: #fff; --bs-btn-hover-bg: #6c3483; --bs-btn-hover-color: #fff">CSS o‘zgaruvchilari bilan</button>
+</div>
+```
+
 ## Xulosa
 
 - `.btn` + `-primary` … `-link`, chegarali `-outline-*`, o‘lcham `-lg|-sm`.

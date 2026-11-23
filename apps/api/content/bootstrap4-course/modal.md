@@ -77,6 +77,30 @@ $('#kurs').on('show.bs.modal', function (e) {
 - ochilganda fokus modal ichiga o‘tadi, yopilganda ochgan tugmaga qaytadi (Bootstrap buni o‘zi qiladi);
 - modal ichidagi asosiy amal tugmasi aniq nomlansin.
 
+```tekshir
+Fonga bosilganda modal yopilmasligi uchun nima yoziladi?
++ `data-backdrop="static"`
+- `data-close="false"`
+- `data-modal="fixed"`
+> Muhim ma’lumot kiritilayotgan oynalarda tasodifiy yopilishning oldini oladi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <button class="btn btn-primary" data-toggle="modal" data-target="#md">Modalni ochish</button>
+  <div class="modal fade" id="md" tabindex="-1" aria-labelledby="mdt" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title" id="mdt">Salom!</h5><button type="button" class="close" data-dismiss="modal" aria-label="Yopish"><span aria-hidden="true">&times;</span></button></div>
+      <div class="modal-body">Bu markazdagi modal.</div>
+      <div class="modal-footer"><button class="btn btn-secondary" data-dismiss="modal">Yopish</button></div>
+    </div></div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+```
+
 ## Xulosa
 
 - `.modal.fade` > `.modal-dialog` > `.modal-content` > header (sarlavha + `.close`), body, footer.

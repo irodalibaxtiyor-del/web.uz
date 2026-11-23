@@ -83,6 +83,25 @@ Ikonkalarni kattalashtirish uchun:
 - Telefonda: rasm, ism va ko‘nikmalar bitta ustunda, ustma-ust.
 - Planshetdan boshlab: ko‘nikmalar uch ustunda.
 
+```tekshir
+Bo‘limlar orasidagi ritmni bir xil qilish uchun eng yaxshi usul qaysi?
++ hamma bo‘limlarga bir xil `padding` beruvchi umumiy klass
+- har bo‘limga turli tasodifiy bo‘shliqlar
+- `<br>` teglarini ko‘paytirish
+> Bir xil vertikal ritm sahifani tartibli ko‘rsatadi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <div class="text-center" style="background: #1abc9c; color: #fff; padding: 30px">
+    <h1>Aziza Karimova</h1>
+    <p>Veb-dizayner</p>
+  </div>
+  <div class="text-center" style="padding: 30px"><span class="label label-default">HTML</span> <span class="label label-primary">CSS</span> <span class="label label-success">Bootstrap</span></div>
+</div>
+```
+
 ## Xulosa
 
 - To‘liq kenglikdagi rangli bo‘lim — o‘z klassingiz + ichida `.container`.

@@ -70,6 +70,27 @@ HTML’da birinchi turgan ustunni ekranda o‘ngga, ikkinchisini chapga o‘tkaz
 
 Bu muhim kontentni HTML’da (va ekran o‘quvchida) birinchi qoldirib, ko‘rinishni o‘zgartirishga imkon beradi. Lekin klaviatura tartibi HTML tartibida qolishini unutmang.
 
+```tekshir
+Bootstrap setkasida bir qatorda nechta ustun bor?
+- 10
++ 12
+- 16
+> Ustun klasslaridagi raqamlar yig‘indisi bir qatorda 12 ga teng bo‘lsa, qator to‘ladi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <div class="row">
+    <div class="col-sm-4" style="background: #d9edf7">col-sm-4</div>
+    <div class="col-sm-8" style="background: #dff0d8">col-sm-8</div>
+  </div>
+  <div class="row">
+    <div class="col-sm-4 col-sm-offset-4" style="background: #fcf8e3">offset-4</div>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - Ustunlar `float: left` + 15px padding; `.row` −15px margin va clearfix.

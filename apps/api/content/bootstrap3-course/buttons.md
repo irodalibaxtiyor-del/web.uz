@@ -75,6 +75,26 @@ Qoidani eslab qoling: **sahifaga o‘tish — havola (`<a>`), amal bajarish — 
 
 O‘chirilgan tugma xiralashadi (`opacity: .65`) va kursor `not-allowed` ko‘rinishida bo‘ladi.
 
+```tekshir
+To‘liq kenglikdagi tugma Bootstrap 3’da qaysi klass bilan?
++ `btn-block`
+- `btn-full`
+- `w-100`
+> `btn-block` tugmani ota element kengligida cho‘zadi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <button class="btn btn-default">default</button>
+  <button class="btn btn-primary">primary</button>
+  <button class="btn btn-success btn-lg">success lg</button>
+  <button class="btn btn-danger btn-xs">danger xs</button>
+  <button class="btn btn-info" disabled>disabled</button>
+  <p></p><button class="btn btn-warning btn-block">btn-block</button>
+</div>
+```
+
 ## Xulosa
 
 - Tugma = `.btn` + rang klassi (`.btn-primary`, `.btn-danger`…).

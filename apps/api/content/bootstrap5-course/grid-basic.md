@@ -81,6 +81,25 @@ Bootstrap 5 da gutter **CSS o‘zgaruvchi** (`--bs-gutter-x`, standart `1.5rem`)
 
 Ustunning o‘ziga fon bermang — fon ichki blokda bo‘lsin, shunda gutter oraliq bo‘lib ko‘rinadi.
 
+```tekshir
+Bootstrap 5 da nechta ekran sinfi bor?
+- 4
+- 5
++ 6 (xs, sm, md, lg, xl, xxl)
+> `xxl` ≥ 1400px — Bootstrap 5 da qo‘shildi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="row g-2">
+    <div class="col"><div class="p-2 border bg-body-tertiary">col</div></div>
+    <div class="col"><div class="p-2 border bg-body-tertiary">col</div></div>
+    <div class="col-6"><div class="p-2 border bg-body-tertiary">col-6</div></div>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - `.container` > `.row` > `.col-*`; oltita sinf, `xxl` — yangi.

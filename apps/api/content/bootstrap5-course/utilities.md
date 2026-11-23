@@ -80,6 +80,24 @@ Pozitsiya: `top-0|50|100`, `bottom-*`, `start-*`, `end-*`, `translate-middle` (m
 | `.no-gutters`          | `.g-0`                    |
 | `.rounded-lg`/`-sm`    | `.rounded-3`/`-1`         |
 
+```tekshir
+Bootstrap 5 da elementlar orasidagi bo‘shliq uchun flex/grid konteynerga qaysi utilita?
++ `gap-3`
+- `space-3`
+- `m-between-3`
+> `gap-*` flex va grid elementlari orasidagi masofani beradi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="d-flex gap-3 p-3 mb-3 border rounded-3 shadow-sm"><span class="p-2 text-bg-primary">1</span><span class="p-2 text-bg-success">2</span><span class="p-2 text-bg-warning">3</span></div>
+  <div class="w-50 bg-info-subtle p-1 mb-2">w-50 bg-info-subtle</div>
+  <p class="text-center fw-semibold opacity-75">text-center fw-semibold opacity-75</p>
+  <div class="position-relative bg-body-tertiary" style="height: 60px"><span class="position-absolute top-50 start-50 translate-middle badge text-bg-dark">markazda</span></div>
+</div>
+```
+
 ## Xulosa
 
 - Spacing: `ms/me/ps/pe` (start/end); `gap-*` flex va grid uchun.

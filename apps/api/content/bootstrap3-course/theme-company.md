@@ -113,6 +113,24 @@ O‘rtadagi (tavsiya etilgan) tarif rangli panel bilan ajratiladi:
 </section>
 ```
 
+```tekshir
+Sahifa aylantirilganda navbar yuqorida qotib turishi uchun qaysi klass?
++ `navbar-fixed-top`
+- `navbar-sticky`
+- `navbar-static-top`
+> Mahkamlangan navbar kontentni yopmasligi uchun `body` ga yuqoridan `padding` beriladi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <div class="row">
+    <div class="col-sm-4"><div class="panel panel-default text-center"><div class="panel-heading"><h3>Oddiy</h3></div><div class="panel-body"><h2>99 000</h2><p>so‘m/oy</p></div></div></div>
+    <div class="col-sm-4"><div class="panel panel-primary text-center"><div class="panel-heading"><h3>Pro</h3></div><div class="panel-body"><h2>199 000</h2><p>so‘m/oy</p></div></div></div>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - `.navbar-fixed-top` + `body { padding-top: 50px; }`.

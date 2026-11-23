@@ -71,6 +71,27 @@ $('[data-spy="scroll"]').each(function () {
 $('body').scrollspy({ target: '#mundarija', offset: 70 });
 ```
 
+```tekshir
+Scrollspy ishlashi uchun aylantiriladigan elementga qaysi CSS kerak?
++ `position: relative`
+- `position: fixed`
+- `display: grid`
+> Bo‘limlarning joylashuvi shu element nisbatan hisoblanadi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <nav id="sn" class="nav nav-pills mb-2"><a class="nav-link" href="#b1">1-bo‘lim</a><a class="nav-link" href="#b2">2-bo‘lim</a></nav>
+  <div data-spy="scroll" data-target="#sn" data-offset="10" style="height: 140px; overflow: auto; position: relative" class="border p-2">
+    <h5 id="b1">1-bo‘lim</h5><p style="height: 150px">Ichini aylantiring…</p>
+    <h5 id="b2">2-bo‘lim</h5><p style="height: 150px">Menyuda shu band belgilanadi.</p>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+```
+
 ## Xulosa
 
 - `data-spy="scroll"` + `data-target` + `position: relative`.

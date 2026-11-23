@@ -76,6 +76,30 @@ Natija soni o‘zgarganini ekran o‘quvchiga aytish uchun `aria-live` hududiga 
 $('#natija').text($('#jadval tr:visible').length + ' ta natija');
 ```
 
+```tekshir
+Jadval qatorlarini qidiruv bo‘yicha filtrlashda jQuery’ning qaysi metodi qatorni ko‘rsatadi yoki yashiradi?
++ `.toggle(shart)`
+- `.filterRow()`
+- `.hideIf()`
+> `$(this).toggle(matn.indexOf(soz) > -1)` — mos kelsa ko‘rinadi, aks holda yashirinadi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <input class="form-control" id="q" placeholder="Qidirish…">
+  <ul class="list-group" id="r" style="margin-top: 10px"><li class="list-group-item">HTML asoslari</li><li class="list-group-item">CSS Grid</li><li class="list-group-item">Bootstrap 3</li></ul>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script>
+  $('#q').on('input', function () {
+    const soz = $(this).val().toLowerCase();
+    $('#r li').each(function () { $(this).toggle($(this).text().toLowerCase().indexOf(soz) > -1); });
+  });
+</script>
+```
+
 ## Xulosa
 
 - Qidiruv maydonining `input` hodisasi + `.filter()` + `.toggle()`.

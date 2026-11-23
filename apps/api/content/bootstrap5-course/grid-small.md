@@ -48,6 +48,23 @@ Natija bir xil, lekin klasslar faqat qatorda.
 <div class="d-none d-sm-block">576px dan kattada ko‘rinadi</div>
 ```
 
+```tekshir
+`offset-sm-2` qachon ishlaydi?
++ faqat `sm` (≥ 576px) va undan katta ekranda
+- faqat telefonda
+- har doim
+> Offset va `order-*` ham ekran sinfiga bog‘lanadi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="row g-2">
+    <div class="col-sm-8 offset-sm-2"><div class="p-2 border bg-body-tertiary">col-sm-8 offset-sm-2</div></div>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - `col-*` + `col-sm-*` — telefon va kichik planshet uchun turli nisbat.

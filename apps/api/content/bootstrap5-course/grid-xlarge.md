@@ -42,6 +42,26 @@
 
 `.container` 1200–1399px ekranda 1140px. Admin panel kabi keng interfeyslar uchun `.container-fluid`, matnli sahifalar uchun `.container` qulay.
 
+```tekshir
+`xl` sinfi qaysi kenglikdan boshlanadi?
+- 992px
++ 1200px
+- 1400px
+> sm 576, md 768, lg 992, xl 1200, xxl 1400.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-2">
+    <div class="col"><div class="p-2 border bg-body-tertiary">Talabalar</div></div>
+    <div class="col"><div class="p-2 border bg-body-tertiary">Kurslar</div></div>
+    <div class="col"><div class="p-2 border bg-body-tertiary">Testlar</div></div>
+    <div class="col"><div class="p-2 border bg-body-tertiary">Sertifikat</div></div>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - `col-xl-*` — 1200px dan, `.container` 1140px.

@@ -47,6 +47,23 @@ Har darsdan keyin amaliy mashq bor — IDE’da yozasiz, **Ishga tushirish** bil
 
 > Platformada Bootstrap fayllari serverning o‘zida saqlanadi. Siz odatdagi CDN havolasini yozasiz — platforma uni o‘zidagi xuddi shu faylga almashtiradi. Boshqa tashqi havolalar xavfsizlik uchun bloklangan.
 
+```tekshir
+Bootstrap 4 Bootstrap 3 dan qaysi asosiy jihati bilan farq qiladi?
++ setka va komponentlar Flexbox asosida qurilgan
+- jQuery umuman ishlatilmaydi
+- `panel` va `well` qo‘shildi
+> Bootstrap 4 Flexbox’ga o‘tdi va `panel`/`well`/`thumbnail` o‘rniga `card` keldi; jQuery hali kerak (Bootstrap 5 da olib tashlandi).
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <h1 class="display-4">Bootstrap 4</h1>
+  <p class="lead">Flexbox asosidagi freymvork.</p>
+  <button class="btn btn-primary">Boshlash</button>
+</div>
+```
+
 ## Xulosa
 
 - Bootstrap 4 — Flexbox asosidagi, utilitalarga boy freymvork.

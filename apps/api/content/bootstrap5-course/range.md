@@ -62,6 +62,24 @@ Tutqich rangi asosiy rangdan olinadi. O‘zgartirish uchun:
 .form-range::-moz-range-thumb { background-color: #198754; }
 ```
 
+```tekshir
+Bootstrap 5 da diapazon (range) maydoni qaysi klass bilan?
++ `form-range`
+- `custom-range`
+- `form-control-range`
+> `min`, `max` va `step` atributlari chegaralarni beradi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <label for="rg" class="form-label">Shrift o‘lchami: <output id="ro">16</output>px</label>
+  <input type="range" class="form-range" min="12" max="32" step="2" value="16" id="rg">
+  <p id="rt">Namuna matn</p>
+  <script>document.getElementById('rg').oninput = (e) => { document.getElementById('ro').value = e.target.value; document.getElementById('rt').style.fontSize = e.target.value + 'px'; };</script>
+</div>
+```
+
 ## Xulosa
 
 - `<input type="range" class="form-range">` + `min`, `max`, `step`, `value`.

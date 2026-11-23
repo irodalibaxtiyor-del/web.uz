@@ -71,6 +71,23 @@ Setka va `.thumbnail` klassi bilan rasmlar galereyasi:
 
 > Platforma preview’ida tashqi rasmlar bloklangan. Mashqlarda rasm o‘rniga `data:` URL ichidagi SVG ishlatilgan — o‘z kompyuteringizda oddiy fayl yoki havola ishlating.
 
+```tekshir
+Rasm konteyner kengligiga moslashishi uchun Bootstrap 3’da qaysi klass?
++ `img-responsive`
+- `img-fluid`
+- `img-auto`
+> `img-fluid` — Bootstrap 4 va 5 dagi nomi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <img class="img-circle" width="100" height="100" alt="Avatar" src="data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%27100%27%20height=%27100%27%3E%3Crect%20width=%27100%27%20height=%27100%27%20fill=%27%230071dc%27/%3E%3C/svg%3E">
+  <img class="img-rounded" width="100" height="100" alt="Kvadrat" src="data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%27100%27%20height=%27100%27%3E%3Crect%20width=%27100%27%20height=%27100%27%20fill=%27%23f5a623%27/%3E%3C/svg%3E">
+  <img class="img-thumbnail" width="100" height="100" alt="Thumbnail" src="data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%27100%27%20height=%27100%27%3E%3Crect%20width=%27100%27%20height=%27100%27%20fill=%27%232e8b57%27/%3E%3C/svg%3E">
+</div>
+```
+
 ## Xulosa
 
 - Shakllar: `.img-rounded`, `.img-circle`, `.img-thumbnail`.

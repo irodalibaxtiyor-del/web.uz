@@ -67,6 +67,24 @@ Ba’zi elementlar kichik ekranda kerak emas (masalan, katta reklama banneri):
 <div class="visible-xs-block">Faqat telefonda</div>
 ```
 
+```tekshir
+`class="col-sm-12 col-md-6"` nimani bildiradi?
++ planshetda butun kenglik, noutbukdan boshlab yarim kenglik
+- hamma ekranda yarim kenglik
+- telefonda yarim, katta ekranda butun kenglik
+> Bir nechta sinf klassi har ekran oralig‘i uchun alohida kenglik beradi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <div class="row">
+    <div class="col-sm-12 col-md-6" style="background: #d9edf7">sm-12 md-6</div>
+    <div class="col-sm-12 col-md-6" style="background: #dff0d8">sm-12 md-6</div>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - `col-md-*` — 992px va undan katta ekran.

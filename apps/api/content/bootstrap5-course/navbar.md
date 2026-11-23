@@ -73,6 +73,30 @@ Telefonda menyu yuqoridan ochilish o‘rniga yon tomondan chiqishi uchun `.colla
 
 Offcanvas’ni 5-modulda batafsil ko‘ramiz.
 
+```tekshir
+Bootstrap 5 navbarida menyuni o‘ngga surish uchun `ul` ga qaysi klass?
++ `ms-auto`
+- `ml-auto`
+- `float-end`
+> Bootstrap 4 dagi `ml-auto` o‘rniga mantiqiy `ms-auto`.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <nav class="navbar navbar-expand-md bg-dark" data-bs-theme="dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">WEBDIZAYN</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nv" aria-controls="nv" aria-expanded="false" aria-label="Menyu"><span class="navbar-toggler-icon"></span></button>
+      <div class="collapse navbar-collapse" id="nv">
+        <ul class="navbar-nav ms-auto"><li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Bosh</a></li><li class="nav-item"><a class="nav-link" href="#">Kurslar</a></li></ul>
+      </div>
+    </div>
+  </nav>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+```
+
 ## Xulosa
 
 - `nav.navbar.navbar-expand-lg` + `bg-dark data-bs-theme="dark"` (yoki `bg-body-tertiary`), ichida konteyner.

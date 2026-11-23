@@ -59,6 +59,29 @@ Bandlar orasidagi `/` belgisini Bootstrap o‘zi qo‘shadi.
 - Faqat belgidan iborat havolaga (`«`) `aria-label="Oldingi"` bering.
 - Joriy sahifaga `.sr-only` matn (“joriy”) yoki `aria-current="page"` qo‘shing.
 
+```tekshir
+Sahifalashda joriy sahifa bandiga qaysi klass beriladi?
++ `active`
+- `current`
+- `selected`
+> O‘chirilgan band — `disabled`; ekran o‘quvchiga esa `aria-current` yoki `sr-only` matn.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <nav aria-label="Sahifalar">
+    <ul class="pagination">
+      <li class="disabled"><span>&laquo;</span></li>
+      <li class="active"><span>1</span></li>
+      <li><a href="#">2</a></li>
+      <li><a href="#">3</a></li>
+    </ul>
+  </nav>
+  <ol class="breadcrumb"><li><a href="#">Bosh</a></li><li class="active">Kurslar</li></ol>
+</div>
+```
+
 ## Xulosa
 
 - `ul.pagination` > `li` > `a`; joriy sahifa — `.active`, o‘chirilgan — `.disabled`.

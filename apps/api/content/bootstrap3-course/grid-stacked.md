@@ -61,6 +61,25 @@ Xuddi shu setka `.container-fluid` ichida ham ishlaydi — farqi faqat tashqi ke
 
 Natijani tekshirishning eng yaxshi usuli — oynani toraytirib-kengaytirish yoki DevTools’dagi “qurilma rejimi” (Ctrl + Shift + M). 768px chegarasida bloklar qanday “sakrashini” kuzating.
 
+```tekshir
+`col-md-6` kichik ekranda (768px dan tor) qanday ko‘rinadi?
++ butun kenglikda, ustma-ust
+- yarim kenglikda
+- yashirinadi
+> Ekran sinfidan kichik ekranda ustun 100% kenglikka o‘tadi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <div class="row">
+    <div class="col-md-6" style="background: #d9edf7">Chap</div>
+    <div class="col-md-6" style="background: #dff0d8">O‘ng</div>
+  </div>
+  <p>Oynani 992px dan toraytiring — ustunlar ustma-ust tushadi.</p>
+</div>
+```
+
 ## Xulosa
 
 - Bitta sinf: kichik ekranda ustma-ust, katta ekranda yonma-yon.

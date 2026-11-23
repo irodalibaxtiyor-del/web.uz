@@ -73,6 +73,23 @@ fetch('/api/kurslar')
 
 Foydalanuvchi tizimda animatsiyani kamaytirishni yoqqan bo‘lsa (`prefers-reduced-motion`), Bootstrap spinner animatsiyasini sekinlashtiradi.
 
+```tekshir
+Bootstrap 5 da faqat ekran o‘quvchiga ko‘rinadigan matn uchun qaysi klass?
++ `visually-hidden`
+- `sr-only`
+- `d-none`
+> `sr-only` — Bootstrap 4 dagi nomi; `d-none` esa ekran o‘quvchidan ham yashiradi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Yuklanmoqda…</span></div>
+  <div class="spinner-grow text-success ms-2" role="status"><span class="visually-hidden">Yuklanmoqda…</span></div>
+  <button class="btn btn-primary ms-2" disabled><span class="spinner-border spinner-border-sm" aria-hidden="true"></span> <span role="status">Saqlanmoqda…</span></button>
+</div>
+```
+
 ## Xulosa
 
 - `.spinner-border` / `.spinner-grow` + `role="status"` + `.visually-hidden` matn.

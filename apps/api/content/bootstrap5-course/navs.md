@@ -74,6 +74,29 @@ const tab = bootstrap.Tab.getOrCreateInstance(document.querySelector('#dastur-ta
 tab.show();
 ```
 
+```tekshir
+Bootstrap 5 da yorliqni ochadigan tugmaga qaysi atribut?
++ `data-bs-toggle="tab"` va `data-bs-target="#id"`
+- `data-toggle="tab"`
+- `href` yetarli, atribut kerak emas
+> Yorliqlar tugma bo‘lsa, `role="tab"` va `aria-controls` ham yoziladi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <ul class="nav nav-tabs" role="tablist">
+    <li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#p1" type="button" role="tab" aria-controls="p1" aria-selected="true">Bosh</button></li>
+    <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#p2" type="button" role="tab" aria-controls="p2" aria-selected="false">Profil</button></li>
+  </ul>
+  <div class="tab-content p-2">
+    <div class="tab-pane fade show active" id="p1" role="tabpanel">Bosh sahifa matni</div>
+    <div class="tab-pane fade" id="p2" role="tabpanel">Profil matni</div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+```
+
 ## Xulosa
 
 - `.nav` > `.nav-item` > `.nav-link`; `.nav-tabs`, `.nav-pills`, `.nav-underline`.

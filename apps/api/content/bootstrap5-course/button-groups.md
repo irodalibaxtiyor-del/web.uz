@@ -71,6 +71,25 @@ Checkbox bilan — bir nechta variant tanlash mumkin:
 </div>
 ```
 
+```tekshir
+Radio tugmalarni tugma ko‘rinishida qilish uchun inputga qaysi klass?
++ `btn-check`
+- `btn-radio`
+- `form-button`
+> Input yashirinadi, unga bog‘langan `<label class="btn">` tugma bo‘lib ko‘rinadi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="btn-group" role="group" aria-label="Daraja">
+    <input type="radio" class="btn-check" name="d" id="d1" checked><label class="btn btn-outline-primary" for="d1">Oson</label>
+    <input type="radio" class="btn-check" name="d" id="d2"><label class="btn btn-outline-primary" for="d2">O‘rta</label>
+    <input type="radio" class="btn-check" name="d" id="d3"><label class="btn btn-outline-primary" for="d3">Qiyin</label>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - `.btn-group` (+ `role`, `aria-label`), `.btn-group-vertical`, `.btn-toolbar`.

@@ -76,6 +76,30 @@ Tekislash flex utilitalari bilan: `.justify-content-center`, `.justify-content-e
 </li>
 ```
 
+```tekshir
+Bootstrap 4 da navigatsiya havolasiga qaysi klass beriladi?
++ `nav-link` (bandga esa `nav-item`)
+- faqat `<a>` yetarli
+- `nav-anchor`
+> Faol yorliq `nav-link active` bo‘ladi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <ul class="nav nav-tabs" role="tablist">
+    <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#t1" role="tab">Bosh</a></li>
+    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#t2" role="tab">Profil</a></li>
+  </ul>
+  <div class="tab-content p-2">
+    <div class="tab-pane fade show active" id="t1" role="tabpanel">Bosh sahifa matni</div>
+    <div class="tab-pane fade" id="t2" role="tabpanel">Profil matni</div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+```
+
 ## Xulosa
 
 - `.nav` > `.nav-item` > `.nav-link`; `.active` va `.disabled` havolada.

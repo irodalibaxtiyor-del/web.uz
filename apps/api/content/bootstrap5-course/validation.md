@@ -78,6 +78,25 @@ Ota elementga `position-relative` kerak.
 
 > Brauzerdagi tekshiruv — faqat qulaylik. Ma’lumot baribir **serverda** tekshirilishi shart: foydalanuvchi brauzer tekshiruvini osongina chetlab o‘ta oladi.
 
+```tekshir
+Bootstrap 5 forma tekshiruvi xabarlari qachon ko‘rinadi?
++ formaga `was-validated` klassi qo‘shilgandan keyin (yoki maydonga `is-invalid`)
+- sahifa yuklanishi bilan darhol
+- faqat server javobidan keyin
+> Odatda `novalidate` forma `submit` da tekshiriladi va `was-validated` qo‘shiladi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <form class="needs-validation" novalidate id="vf">
+    <div class="mb-2"><label for="vn" class="form-label">Ism</label><input class="form-control" id="vn" required><div class="invalid-feedback">Ismni kiriting.</div></div>
+    <button class="btn btn-primary">Yuborish</button>
+  </form>
+  <script>document.getElementById('vf').addEventListener('submit', (e) => { if (!e.target.checkValidity()) e.preventDefault(); e.target.classList.add('was-validated'); });</script>
+</div>
+```
+
 ## Xulosa
 
 - `form.needs-validation[novalidate]` + JS: `checkValidity()`, `preventDefault()`, `.was-validated`.

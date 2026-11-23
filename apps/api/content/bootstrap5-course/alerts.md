@@ -66,6 +66,26 @@ alertEl.addEventListener('closed.bs.alert', () => {
 
 Bootstrap 5 da har bir plaginning `getOrCreateInstance()` usuli bor — element uchun mavjud obyektni qaytaradi yoki yangisini yaratadi.
 
+```tekshir
+Bootstrap 5 da alertni yopish tugmasi qanday yoziladi?
++ `<button class="btn-close" data-bs-dismiss="alert" aria-label="Yopish">`
+- `<button class="close" data-dismiss="alert">&times;</button>`
+- `<a class="alert-close">`
+> `close` klassi va `data-dismiss` — Bootstrap 4 dagi usul.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="alert alert-info">Yangi dars qo‘shildi. <a href="#" class="alert-link">Ko‘rish</a></div>
+  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    Diqqat: muddat ertaga!
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Yopish"></button>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+```
+
 ## Xulosa
 
 - `.alert` + `.alert-{rang}`, `role="alert"`.

@@ -64,6 +64,26 @@ Ekran o‘quvchi ikonkani tushunmaydi. Ikki holat bor:
 
 Bootstrap 4 da Glyphicons olib tashlangan. Yangi loyihalarda **Bootstrap Icons** yoki boshqa ikonkalar to‘plami ishlatiladi. Bootstrap 3 dan ko‘chirishda shuni yodda tuting.
 
+```tekshir
+Glyphicon ikonka qanday yoziladi?
++ `<span class="glyphicon glyphicon-search" aria-hidden="true"></span>`
+- `<i class="icon-search">`
+- `<img src="glyphicon-search">`
+> Ikonka klassi ikki qismdan: umumiy `glyphicon` va aniq nom.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <p style="font-size: 24px">
+    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+    <span class="glyphicon glyphicon-heart" aria-hidden="true"></span>
+    <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+  </p>
+  <button class="btn btn-primary"><span class="glyphicon glyphicon-download" aria-hidden="true"></span> Yuklab olish</button>
+</div>
+```
+
 ## Xulosa
 
 - Ikonka: `<span class="glyphicon glyphicon-NOMI" aria-hidden="true"></span>`.

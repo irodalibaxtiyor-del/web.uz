@@ -97,7 +97,7 @@ Fon rasmi butun maydonni qoplashi (kerak bo‘lsa kesilishi) uchun qaysi qiymat?
 ```jonli
 <style>
   .h { height: 140px; color: white; padding: 12px; background-color: #234;
-      background-image: url(https://picsum.photos/600/300); background-size: cover; background-position: center; }
+      background-image: url(data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%27600%27%20height=%27300%27%20viewBox=%270%200%20600%20300%27%3E%3Cdefs%3E%3ClinearGradient%20id=%27g%27%20x1=%270%27%20y1=%270%27%20x2=%271%27%20y2=%271%27%3E%3Cstop%20offset=%270%27%20stop-color=%27%23c0392b%27/%3E%3Cstop%20offset=%271%27%20stop-color=%27%23f1c40f%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width=%27600%27%20height=%27300%27%20fill=%27url(%23g)%27/%3E%3Ccircle%20cx=%27432%27%20cy=%2790%27%20r=%2748%27%20fill=%27%23fff%27%20fill-opacity=%27.75%27/%3E%3Cpath%20d=%27M0%20300%20L0%20210%20L210%20135%20L360%20225%20L480%20180%20L600%20240%20L600%20300%20Z%27%20fill=%27%233b1a14%27%20fill-opacity=%27.8%27/%3E%3C/svg%3E); background-size: cover; background-position: center; }
 </style>
 <div class="h">Fon rasmi + zaxira rang</div>
 ```

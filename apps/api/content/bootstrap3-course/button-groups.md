@@ -67,6 +67,30 @@ Bir nechta guruhni `.btn-toolbar` ichida yonma-yon joylashtirish mumkin:
 
 Guruh ichida ochiladigan menyu (dropdown) ham bo‘lishi mumkin — buni “Dropdown” darsida ko‘ramiz.
 
+```tekshir
+Tugmalarni bir-biriga yopishtirib guruhlash uchun ota elementga qaysi klass?
++ `btn-group`
+- `btn-row`
+- `button-set`
+> Vertikal guruh uchun `btn-group-vertical`, to‘liq kenglik uchun `btn-group-justified`.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <div class="btn-group">
+    <button class="btn btn-default">Chap</button>
+    <button class="btn btn-default">O‘rta</button>
+    <button class="btn btn-default">O‘ng</button>
+  </div>
+  <p></p>
+  <div class="btn-group-vertical">
+    <button class="btn btn-primary">1</button>
+    <button class="btn btn-primary">2</button>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - `.btn-group` — tugmalarni bir qatorga yopishtiradi; `role="group"` va `aria-label` qo‘shing.

@@ -71,6 +71,26 @@ Tanlangan fayl nomi o‘zi yorliqqa yozilmaydi — buning uchun kichik skript yo
 
 > Bootstrap 5 da custom klasslar asosiy klasslarga birlashtirilgan: `.form-check` endi o‘zi chiroyli, `.form-switch`, `.form-select`, `.form-range`. Bootstrap 4 loyihalarida esa `custom-*` keng tarqalgan.
 
+```tekshir
+Bootstrap 4 da “switch” (kalit) qanday yoziladi?
++ `custom-control custom-switch` ichida checkbox
+- `<input type="switch">`
+- `form-switch` (Bootstrap 4 da)
+> `form-switch` — Bootstrap 5 dagi nomi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="custom-control custom-switch">
+    <input type="checkbox" class="custom-control-input" id="sw" checked>
+    <label class="custom-control-label" for="sw">Qorong‘i rejim</label>
+  </div>
+  <select class="custom-select mt-2" aria-label="Kurs"><option>HTML</option><option>CSS</option></select>
+  <label for="rg" class="mt-2">Hajm</label><input type="range" class="custom-range" id="rg">
+</div>
+```
+
 ## Xulosa
 
 - `.custom-control` + `.custom-checkbox | .custom-radio | .custom-switch` > `.custom-control-input` + `.custom-control-label`.

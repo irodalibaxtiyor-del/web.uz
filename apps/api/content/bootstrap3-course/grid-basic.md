@@ -93,6 +93,24 @@ Bu yerda `md` ishlatildi: bloklar faqat 992px dan keng ekranda yonma-yon turadi.
 </div>
 ```
 
+```tekshir
+Setka ustunlari to‘g‘ri ishlashi uchun ular qayerda turishi kerak?
++ `.container` ichidagi `.row` ichida
+- to‘g‘ridan-to‘g‘ri `<body>` ichida
+- `<table>` ichida
+> `.row` ustunlarning ichki bo‘shlig‘ini muvozanatlaydi, `.container` esa kenglikni cheklaydi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="container" style="padding-top: 15px">
+  <div class="row">
+    <div class="col-xs-6" style="background: #d9edf7">col-xs-6</div>
+    <div class="col-xs-6" style="background: #dff0d8">col-xs-6</div>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - Setka 12 ustundan iborat; qatordagi ustunlar yig‘indisi 12.

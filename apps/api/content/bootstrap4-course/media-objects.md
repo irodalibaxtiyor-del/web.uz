@@ -77,6 +77,24 @@ Rasmni `media-body` dan keyin yozing va masofani chapdan bering:
 
 > Bootstrap 5 da `.media` komponenti olib tashlangan — xuddi shu natija `d-flex` va `flex-grow-1` (yoki `flex-shrink-0`) utilitalari bilan olinadi. Bootstrap 4 dagi `.media` aslida shu utilitalarning qisqa yozuvi.
 
+```tekshir
+Bootstrap 4 da media object asosan qaysi klasslar bilan quriladi?
++ `media` va `media-body` (flexbox asosida)
+- `media-left` va `media-right`
+- `card-media`
+> Bootstrap 5 da `media` olib tashlandi — o‘rniga `d-flex` utilitalari.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="media">
+    <div class="mr-3 bg-primary rounded-circle" style="width: 48px; height: 48px"></div>
+    <div class="media-body"><h5 class="mt-0">Aziza</h5>Darslik juda foydali bo‘ldi!</div>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - `.media` (flex) > rasm + `.media-body`.

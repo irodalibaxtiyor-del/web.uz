@@ -70,6 +70,31 @@ Sarlavhasiz, rangli variant:
 xabar.addEventListener('hidden.bs.toast', () => console.log('Yopildi'));
 ```
 
+```tekshir
+Bootstrap 5 da toastni ko‘rsatish uchun qaysi kod?
++ `bootstrap.Toast.getOrCreateInstance(el).show()`
+- `$('.toast').toast('show')` (jQuery shart)
+- `el.style.display = 'toast'`
+> Toast avtomatik ko‘rinmaydi; ekran o‘quvchi uchun `role="status"` va `aria-live`.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <button class="btn btn-primary" id="tb">Saqlash</button>
+  <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="tt" class="toast" role="status" aria-live="polite" aria-atomic="true">
+      <div class="toast-header"><strong class="me-auto">WEBDIZAYN</strong><button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Yopish"></button></div>
+      <div class="toast-body">Mashq saqlandi.</div>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  document.getElementById('tb').onclick = () => bootstrap.Toast.getOrCreateInstance(document.getElementById('tt')).show();
+</script>
+```
+
 ## Xulosa
 
 - `.toast` > `.toast-header` + `.toast-body`, `.toast-container` + pozitsiya utilitalari.

@@ -85,6 +85,28 @@ Bootstrap 3 bilan farq:
 
 Input group ichidagi “@” yoki “so‘m” yorliq **o‘rnini bosmaydi**. Maydonga `<label>` (kerak bo‘lsa `.sr-only`) yoki `aria-label` bering.
 
+```tekshir
+Bootstrap 4 da maydon oldidagi qo‘shimcha qaysi tuzilma bilan yoziladi?
++ `input-group-prepend` ichida `input-group-text`
+- `input-group-addon`
+- `input-before`
+> Bootstrap 5 da `prepend`/`append` o‘ramlari olib tashlangan.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <div class="input-group mb-2">
+    <div class="input-group-prepend"><span class="input-group-text">@</span></div>
+    <input class="form-control" placeholder="foydalanuvchi" aria-label="Foydalanuvchi nomi">
+  </div>
+  <div class="input-group">
+    <input class="form-control" placeholder="Qidirish" aria-label="Qidirish">
+    <div class="input-group-append"><button class="btn btn-primary">Topish</button></div>
+  </div>
+</div>
+```
+
 ## Xulosa
 
 - `.input-group` > `.input-group-prepend` / `.input-group-append` > `.input-group-text` yoki `.btn`.

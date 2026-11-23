@@ -58,6 +58,23 @@ Har darsdan keyin amaliy mashq: IDE’da yozasiz, **Ishga tushirish** bilan ko�
 
 > Platformada Bootstrap fayllari serverning o‘zida saqlanadi. Siz odatdagi CDN havolasini yozasiz — platforma uni o‘zidagi xuddi shu faylga almashtiradi. Boshqa tashqi havolalar xavfsizlik uchun bloklangan.
 
+```tekshir
+Bootstrap 5 ning Bootstrap 4 dan eng katta farqi qaysi?
++ jQuery’siz ishlaydi — plaginlar oddiy JavaScript’da
+- Flexbox o‘rniga float ishlatadi
+- `card` komponenti olib tashlangan
+> Bundan tashqari `data-bs-*` atributlari, `xxl` sinfi, `ms-*`/`me-*` utilitalari paydo bo‘ldi.
+```
+
+```jonli
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+<div class="container py-3">
+  <h1 class="display-5">Bootstrap 5</h1>
+  <p class="lead">jQuery’siz, CSS o‘zgaruvchilari bilan.</p>
+  <button class="btn btn-primary">Boshlash</button>
+</div>
+```
+
 ## Xulosa
 
 - Bootstrap 5 — jQuery’siz, `data-bs-*` atributli, `xxl` sinfli.
