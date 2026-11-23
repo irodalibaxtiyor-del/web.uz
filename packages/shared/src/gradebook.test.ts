@@ -3,6 +3,7 @@ import {
   columnKey,
   columnLabel,
   creditControlOf,
+  creditHeaderMatch,
   excelSerialToIso,
   gradeBand,
   gradebookImportSchema,
@@ -62,30 +63,37 @@ describe('gradebook helpers', () => {
         ['y', 'YN', 40],
       ] as const
     ).map(([id, control, maxScore]) => ({ id, control, maxScore }));
-    const pending = gradebookMark('CREDIT', cols, { j1: 20, j2: 18, o1: 9, o2: 5, y: null }, 60);
+    const H60 = new Set(['j1', 'j2', 'o1', 'o2']);
+    const ALL = new Set(['j1', 'j2', 'o1', 'o2', 'y']);
+    // Only JN-1 held so far: JN is out of 20, not 40.
+    expect(gradebookMark('CREDIT', cols, { j1: 15 }, new Set(['j1'])).sections).toEqual({
+      JN: { score: 15, max: 20, band: 'GOOD' },
+      ON: null,
+    });
+    const pending = gradebookMark('CREDIT', cols, { j1: 20, j2: 18, o1: 9, o2: 5, y: null }, H60);
     expect(pending).toMatchObject({ total: 52, final: 'PENDING', band: 'GOOD', filled: 4 });
     expect(pending.sections).toEqual({
       JN: { score: 38, max: 40, band: 'EXCELLENT' },
       ON: { score: 14, max: 20, band: 'GOOD' },
     });
     // An empty control counts as 0 in its section.
-    expect(gradebookMark('CREDIT', cols, { j2: 8, o2: 5 }, 60).sections?.JN).toEqual({
+    expect(gradebookMark('CREDIT', cols, { j2: 8, o2: 5 }, H60).sections?.JN).toEqual({
       score: 8,
       max: 40,
       band: 'FAIL',
     });
     expect(
-      gradebookMark('CREDIT', cols, { j1: 20, j2: 20, o1: 10, o2: 10, y: 36 }, 100),
+      gradebookMark('CREDIT', cols, { j1: 20, j2: 20, o1: 10, o2: 10, y: 36 }, ALL),
     ).toMatchObject({ total: 96, final: 'PASSED', band: 'EXCELLENT' });
     expect(
-      gradebookMark('CREDIT', cols, { j1: 20, j2: 20, o1: 10, o2: 10, y: 23 }, 100),
+      gradebookMark('CREDIT', cols, { j1: 20, j2: 20, o1: 10, o2: 10, y: 23 }, ALL),
     ).toMatchObject({ total: 83, final: 'YN_FAILED', band: 'FAIL' });
-    expect(gradebookMark('CREDIT', cols, {}, 60)).toMatchObject({ total: null, band: null });
+    expect(gradebookMark('CREDIT', cols, {}, H60)).toMatchObject({ total: null, band: null });
 
     const rows = [
       { scores: { j1: 20, j2: 18, o1: 9, o2: 5 } },
       { scores: { j1: 6, j2: 8, o1: 3, o2: 5 } },
-    ].map((r) => ({ ...r, ...gradebookMark('CREDIT', cols, r.scores, 60) }));
+    ].map((r) => ({ ...r, ...gradebookMark('CREDIT', cols, r.scores, H60) }));
     const st = gradebookStats('CREDIT', cols, rows);
     expect(st).toMatchObject({ heldMax: 60, pending: 2, average: 37, jnAverage: 26 });
     expect(st.jnBands).toEqual({ EXCELLENT: 1, GOOD: 0, SATISFACTORY: 0, FAIL: 1 });
@@ -108,6 +116,17 @@ describe('gradebook helpers', () => {
     expect(map('Jami ball\r\n10 ball')).toBeNull();
     expect(map('02/03\r\nQayta ish topshirganligi')).toBeNull();
     expect(map('29,04,2026')).toBeNull();
+    // Other vedomost layouts.
+    expect(map('1 JN JAMI (20)')).toBe('JN1');
+    expect(map('1-ON 10-ball')).toBe('ON1');
+    expect(map('1 ON  yozma ish 5 ball')).toBeNull();
+    expect(map('Hemis ON 5 ball')).toBeNull();
+    expect(map('ON 5-ball')).toBeNull();
+    expect(map('JN 5 ball')).toBeNull();
+    expect(map('Hemis JN Tabrik 5 ball')).toBeNull();
+    expect(creditHeaderMatch('AMALIY JAMI')).toEqual({ control: 'JN1', weak: true });
+    expect(creditHeaderMatch('JAMI JN')).toEqual({ control: 'JN1', weak: true });
+    expect(creditHeaderMatch('1 JN JAMI (20)')).toEqual({ control: 'JN1', weak: false });
   });
 
   it('means ignore empty cells and round to one decimal', () => {
@@ -126,7 +145,7 @@ describe('gradebook helpers', () => {
       cols,
       [{ scores: { a: 90, b: 100 } }, { scores: { a: 60, b: null } }, { scores: {} }].map((r) => ({
         ...r,
-        ...gradebookMark('LESSONS', cols, r.scores, 0),
+        ...gradebookMark('LESSONS', cols, r.scores, new Set()),
       })),
     );
     expect(s.average).toBe(83.3);

@@ -154,8 +154,11 @@ export class GroupGradebooksController {
     @Param('groupId', Id) groupId: string,
     @Param('id', Id) id: string,
     @UploadedFile() file: Upload | undefined,
+    @Body('sheet') sheet: unknown,
   ) {
-    return this.gradebooks.previewImport(auth, m, groupId, id, file?.buffer);
+    // Optional multipart field: the worksheet to read (default: the one matching the group).
+    const name = typeof sheet === 'string' && sheet.length > 0 ? sheet.slice(0, 100) : undefined;
+    return this.gradebooks.previewImport(auth, m, groupId, id, file?.buffer, name);
   }
 
   @Post(':id/import')

@@ -214,6 +214,8 @@ export interface GradebookStats {
   jnBands: Record<GradeBand, number> | null;
   /** CREDIT: mean JN sum. */
   jnAverage: number | null;
+  /** CREDIT: JN maximum so far (20 until JN-2 is held, then 40). */
+  jnMax: number | null;
   /** Mean per column, in column order. */
   columnAverages: (number | null)[];
   /** How many students' current marks fall into each band. */
@@ -251,6 +253,9 @@ export interface GradebookImportPreview {
   missing: string[];
   /** File columns that were not taken (CREDIT: everything except the control totals). */
   ignored: string[];
+  /** Worksheet the preview was read from, and every sheet with its matched-student count. */
+  sheet?: string;
+  sheets?: { name: string; matched: number }[];
 }
 
 export interface GradebookImportResult {
@@ -302,26 +307,43 @@ const emptyBands = (): Record<GradeBand, number> => ({
   FAIL: 0,
 });
 
-/** CREDIT: sum of the maxima of controls anyone has a score in (“held so far”). */
-export function creditHeldMax(columns: readonly ScoreColumn[], rows: readonly ScoreMap[]): number {
-  return round1(
+/** CREDIT: ids of the controls anyone has a score in (“held so far”). */
+export function creditHeld(
+  columns: readonly ScoreColumn[],
+  rows: readonly ScoreMap[],
+): Set<string> {
+  return new Set(
     columns
       .filter((c) => rows.some((r) => r[c.id] !== null && r[c.id] !== undefined))
-      .reduce((s, c) => s + c.maxScore, 0),
+      .map((c) => c.id),
   );
 }
 
+/** CREDIT: sum of the maxima of the held controls. */
+export function creditHeldMax(columns: readonly ScoreColumn[], rows: readonly ScoreMap[]): number {
+  const held = creditHeld(columns, rows);
+  return round1(columns.filter((c) => held.has(c.id)).reduce((s, c) => s + c.maxScore, 0));
+}
+
+/**
+ * Sum of a control group over its controls held so far: before JN-2 is held, JN is out of 20,
+ * not 40 (otherwise everyone would look failing halfway through the term).
+ */
 function sectionMark(
   section: CreditSection,
   columns: readonly ScoreColumn[],
   scores: ScoreMap,
+  held: ReadonlySet<string>,
 ): SectionMark | null {
   const def = CREDIT_SECTIONS[section];
-  const cols = columns.filter((c) => c.control && def.controls.includes(c.control));
+  const cols = columns.filter(
+    (c) => c.control && def.controls.includes(c.control) && held.has(c.id),
+  );
   const vals = cols.map((c) => scores[c.id] ?? null);
   if (vals.every((v) => v === null)) return null;
   const score = round1(vals.reduce<number>((s, v) => s + (v ?? 0), 0));
-  return { score, max: def.max, band: gradeBand(score, def.max) };
+  const max = round1(cols.reduce((s, c) => s + c.maxScore, 0));
+  return { score, max, band: gradeBand(score, max) };
 }
 
 /** One student's mark under the gradebook's scheme. */
@@ -329,7 +351,7 @@ export function gradebookMark(
   scheme: GradebookScheme,
   columns: readonly ScoreColumn[],
   scores: ScoreMap,
-  heldMax: number,
+  held: ReadonlySet<string>,
 ): Pick<GradebookStudentRow, 'average' | 'total' | 'sections' | 'band' | 'final' | 'filled'> {
   const vals = columns.map((c) => scores[c.id] ?? null);
   const filled = vals.filter((v) => v !== null).length;
@@ -344,9 +366,10 @@ export function gradebookMark(
       filled,
     };
   }
+  const heldMax = round1(columns.filter((c) => held.has(c.id)).reduce((s, c) => s + c.maxScore, 0));
   const sections = {
-    JN: sectionMark('JN', columns, scores),
-    ON: sectionMark('ON', columns, scores),
+    JN: sectionMark('JN', columns, scores, held),
+    ON: sectionMark('ON', columns, scores, held),
   };
   if (filled === 0)
     return { average: null, total: null, sections, band: null, final: null, filled };
@@ -408,6 +431,7 @@ export function gradebookStats(
     pending: credit ? students.filter((s) => s.final === 'PENDING').length : 0,
     jnBands,
     jnAverage: credit ? meanScore(students.map((s) => s.sections?.JN?.score ?? null)) : null,
+    jnMax: credit ? (students.find((s) => s.sections?.JN)?.sections?.JN?.max ?? null) : null,
     columnAverages: columns.map((c) => meanScore(students.map((s) => s.scores[c.id] ?? null))),
     bands,
     filledCells: all.length,
@@ -416,14 +440,16 @@ export function gradebookStats(
 }
 
 /**
- * CREDIT import: which control a spreadsheet header holds. Only the control totals are taken —
- * “AMALIY JAMI (20)” → JN-1, “2 JN JAMI (20)” → JN-2, “1 ON (10)” → ON-1, “YaN (40)” → YaN,
- * “JAMI” → TOTAL (used only to cross-check the sum). Item columns (“1-amaliy ish … 2 ball”) are
- * not controls and give null.
+ * CREDIT import: which control a spreadsheet header holds. Only the control totals are taken:
+ * - numbered totals are exact: “1 JN JAMI (20)”, “2 JN JAMI (20)”, “JN-2”, “1 ON (10)”, “1-ON 10-ball”;
+ * - “AMALIY JAMI” or an unnumbered “JAMI JN” is a weak JN-1: used only when the sheet has no
+ *   exact JN-1 column (some vedomosts keep a practical-work subtotal next to the JN total);
+ * - “YaN (40)” is YaN; a bare “JAMI” is TOTAL (only cross-checks the sum).
+ * Item columns (“1-amaliy ish … 2 ball”, “1 ON yozma ish 5 ball”, “Hemis ON 5 ball”) give null.
  */
-export function creditControlOf(
+export function creditHeaderMatch(
   raw: string | number | null | undefined,
-): CreditControl | 'TOTAL' | null {
+): { control: CreditControl | 'TOTAL'; weak: boolean } | null {
   if (raw === null || raw === undefined || typeof raw === 'number') return null;
   const t = raw
     .toLowerCase()
@@ -431,19 +457,37 @@ export function creditControlOf(
     .replace(/\s+/g, ' ')
     .trim();
   if (t === '') return null;
-  if (/\b(yan|yn|yakuniy)\b/.test(t)) return 'YN';
-  const lead = /^([12])\b/.exec(t)?.[1];
-  const suffix = /\b(?:jn|on|nazorat)\s*[-–]?\s*([12])\b/.exec(t)?.[1];
-  const n = lead ?? suffix;
-  if (/\b(on|oraliq)\b/.test(t)) return n === '1' ? 'ON1' : n === '2' ? 'ON2' : null;
-  if (/\bjami\b/.test(t) && /\b(jn|joriy|amaliy)\b/.test(t)) {
-    if (/\bamaliy\b/.test(t) && !/\bjn\b/.test(t)) return 'JN1';
-    return n === '1' ? 'JN1' : n === '2' ? 'JN2' : null;
+  const exact = (control: CreditControl) => ({ control, weak: false });
+  if (/\b(yan|yn|yakuniy)\b/.test(t)) return exact('YN');
+  // Short ON headers only: [n] ON|oraliq nazorat [-n] [jami] [(10) | 10-ball].
+  const on =
+    /^(?:([12])\s*[-–]?\s*)?(?:on|oraliq nazorat)(?:\s*[-–]?\s*([12]))?(?:\s*jami)?(?:\s*\(?\d+(?:\s*-?\s*ball)?\)?)?$/.exec(
+      t,
+    );
+  if (on) {
+    const n = on[1] ?? on[2];
+    return n === '1' ? exact('ON1') : n === '2' ? exact('ON2') : null;
   }
-  const short = /^(?:jn|joriy nazorat)\s*[-–]?\s*([12])(?:\s*\(?\d+(?:\s*ball)?\)?)?$/.exec(t);
-  if (short) return short[1] === '1' ? 'JN1' : 'JN2';
-  if (/^(jami|umumiy)(\s*ball)?(\s*\(?100\)?)?$/.test(t)) return 'TOTAL';
+  const lead = /^([12])\b/.exec(t)?.[1];
+  const suffix = /\b(?:jn|nazorat)\s*[-–]?\s*([12])\b/.exec(t)?.[1];
+  const n = lead ?? suffix;
+  if (/\bjami\b/.test(t) && /\b(jn|joriy|amaliy)\b/.test(t)) {
+    if (n === '1') return exact('JN1');
+    if (n === '2') return exact('JN2');
+    // “AMALIY JAMI 20 ball”, “JAMI JN”, “JN JAMI” without a number.
+    return { control: 'JN1', weak: true };
+  }
+  const short = /^(?:jn|joriy nazorat)\s*[-–]?\s*([12])(?:\s*\(?\d+(?:\s*-?\s*ball)?\)?)?$/.exec(t);
+  if (short) return exact(short[1] === '1' ? 'JN1' : 'JN2');
+  if (/^(jami|umumiy)(\s*ball)?(\s*\(?100\)?)?$/.test(t)) return { control: 'TOTAL', weak: false };
   return null;
+}
+
+/** The control a header holds (exact or weak), or null. */
+export function creditControlOf(
+  raw: string | number | null | undefined,
+): CreditControl | 'TOTAL' | null {
+  return creditHeaderMatch(raw)?.control ?? null;
 }
 
 // ---- Spreadsheet parsing helpers ---------------------------------------------

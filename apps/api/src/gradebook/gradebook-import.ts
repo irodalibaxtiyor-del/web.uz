@@ -2,7 +2,7 @@ import {
   columnKey,
   columnLabel,
   CREDIT_CONTROL_INFO,
-  creditControlOf,
+  creditHeaderMatch,
   type CreditControl,
   type GradebookScheme,
   GRADEBOOK_MAX_COLUMNS,
@@ -87,16 +87,24 @@ export function previewGradebookImport(
     max: number;
   }[] = [];
   let totalCol = -1;
+  // CREDIT: an exact control header wins over a weak one ("AMALIY JAMI" next to "1 JN JAMI").
+  const hasExact = new Set<string>();
+  if (scheme === 'CREDIT')
+    header.forEach((cell, index) => {
+      const m = index === nameCol ? null : creditHeaderMatch(text(cell));
+      if (m && !m.weak) hasExact.add(m.control);
+    });
   header.forEach((cell, index) => {
     if (index === nameCol) return;
     if (scheme === 'CREDIT') {
       const label = text(cell).replace(/\s+/g, ' ');
       if (label === '' || isIgnoredHeader(label) === 'number') return;
-      const control = creditControlOf(text(cell));
-      if (control === 'TOTAL') {
+      const m = creditHeaderMatch(text(cell));
+      if (m?.control === 'TOTAL') {
         totalCol = index;
         return;
       }
+      const control = m && !(m.weak && hasExact.has(m.control)) ? m.control : null;
       const target = control ? existing.find((c) => c.control === control) : undefined;
       if (!control || !target) {
         ignored.push(label);

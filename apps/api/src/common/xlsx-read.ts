@@ -103,32 +103,50 @@ function attr(tag: string, name: string): string | null {
   return m ? decodeXml(m[1] ?? '') : null;
 }
 
-function firstSheetPath(entries: Map<string, ZipEntry>, buf: Buffer): string {
+const MAX_SHEETS = 20;
+
+/** Worksheets in workbook order: display name and part path. */
+function sheetPaths(entries: Map<string, ZipEntry>, buf: Buffer): { name: string; path: string }[] {
   const wb = entries.get('xl/workbook.xml');
   const rels = entries.get('xl/_rels/workbook.xml.rels');
+  const out: { name: string; path: string }[] = [];
   if (wb && rels) {
-    const sheet = /<sheet\b[^>]*>/.exec(readEntry(buf, wb))?.[0];
-    const rid = sheet ? attr(sheet, 'r:id') : null;
-    if (rid) {
-      for (const m of readEntry(buf, rels).matchAll(/<Relationship\b[^>]*>/g)) {
-        if (attr(m[0], 'Id') !== rid) continue;
-        const target = attr(m[0], 'Target') ?? '';
-        const path = target.startsWith('/') ? target.slice(1) : `xl/${target.replace(/^\.\//, '')}`;
-        if (entries.has(path)) return path;
-      }
+    const targets = new Map<string, string>();
+    for (const m of readEntry(buf, rels).matchAll(/<Relationship\b[^>]*>/g)) {
+      const id = attr(m[0], 'Id');
+      const target = attr(m[0], 'Target') ?? '';
+      if (id)
+        targets.set(
+          id,
+          target.startsWith('/') ? target.slice(1) : `xl/${target.replace(/^\.\//, '')}`,
+        );
+    }
+    for (const m of readEntry(buf, wb).matchAll(/<sheet\b[^>]*>/g)) {
+      const rid = attr(m[0], 'r:id');
+      const path = rid ? targets.get(rid) : undefined;
+      if (path && entries.has(path)) out.push({ name: attr(m[0], 'name') ?? path, path });
     }
   }
-  if (entries.has('xl/worksheets/sheet1.xml')) return 'xl/worksheets/sheet1.xml';
-  throw new SpreadsheetError('Excel faylida varaq topilmadi');
+  if (out.length === 0 && entries.has('xl/worksheets/sheet1.xml'))
+    out.push({ name: 'Sheet1', path: 'xl/worksheets/sheet1.xml' });
+  if (out.length === 0) throw new SpreadsheetError('Excel faylida varaq topilmadi');
+  return out.slice(0, MAX_SHEETS);
 }
 
-function readXlsx(buf: Buffer): ReadCell[][] {
+function readXlsx(buf: Buffer, onlyFirst: boolean): Sheet[] {
   const entries = zipEntries(buf);
   const ss = entries.get('xl/sharedStrings.xml');
   const shared = ss
     ? [...readEntry(buf, ss).matchAll(/<si>([\s\S]*?)<\/si>/g)].map((m) => textRuns(m[1] ?? ''))
     : [];
-  const sheet = readEntry(buf, entries.get(firstSheetPath(entries, buf))!);
+  const list = sheetPaths(entries, buf);
+  return (onlyFirst ? list.slice(0, 1) : list).map((s) => ({
+    name: s.name,
+    rows: readSheet(readEntry(buf, entries.get(s.path)!), shared),
+  }));
+}
+
+function readSheet(sheet: string, shared: string[]): ReadCell[][] {
   const rows: ReadCell[][] = [];
   for (const rm of sheet.matchAll(/<row\b([^>]*)>([\s\S]*?)<\/row>/g)) {
     const r = Number(attr(` ${rm[1] ?? ''}`, 'r')) || rows.length + 1;
@@ -200,12 +218,26 @@ function readCsv(text: string): ReadCell[][] {
   return rows;
 }
 
-/** Rows of the first sheet of an .xlsx file, or of a CSV file. */
-export function readSpreadsheet(buf: Buffer): ReadCell[][] {
-  if (buf.length >= 4 && buf.readUInt32LE(0) === 0x04034b50) return readXlsx(buf);
+export interface Sheet {
+  name: string;
+  rows: ReadCell[][];
+}
+
+function read(buf: Buffer, onlyFirst: boolean): Sheet[] {
+  if (buf.length >= 4 && buf.readUInt32LE(0) === 0x04034b50) return readXlsx(buf, onlyFirst);
   if (buf.length >= 8 && buf.readUInt32LE(0) === 0xe011cfd0)
     throw new SpreadsheetError('Eski .xls formati o‘qilmaydi — faylni .xlsx qilib saqlang');
   const text = buf.toString('utf8');
   if (text.includes('\u0000')) throw new SpreadsheetError('Fayl Excel (.xlsx) yoki CSV emas');
-  return readCsv(text);
+  return [{ name: 'CSV', rows: readCsv(text) }];
+}
+
+/** Rows of the first sheet of an .xlsx file, or of a CSV file. */
+export function readSpreadsheet(buf: Buffer): ReadCell[][] {
+  return read(buf, true)[0]!.rows;
+}
+
+/** Every worksheet (at most 20) of an .xlsx file, in workbook order; a CSV is one sheet. */
+export function readWorkbook(buf: Buffer): Sheet[] {
+  return read(buf, false);
 }

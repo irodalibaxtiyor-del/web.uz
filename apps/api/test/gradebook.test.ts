@@ -516,3 +516,65 @@ describe('credit gradebook (JN / ON / YaN)', () => {
     ]);
   });
 });
+
+describe('credit import from a workbook with several group sheets', () => {
+  it('picks the sheet of this group; an exact JN total wins over AMALIY JAMI', async () => {
+    const book = await req(teacherA, 'post', books(), {
+      title: 'Ikki varaqli fayl',
+      scheme: 'CREDIT',
+    }).expect(201);
+    const file = buildXlsx([
+      {
+        name: 'Boshqa guruh',
+        rows: [
+          ['№', 'F.I.Sh.', 'JAMI JN'],
+          [1, 'BOSHQA GURUH TALABASI', 17],
+        ],
+      },
+      {
+        name: '8-24',
+        rows: [
+          [
+            '№',
+            'F.I.Sh.',
+            'AMALIY JAMI',
+            '1 JN JAMI (20)',
+            '1 ON  yozma ish 5 ball',
+            'Hemis ON 5 ball',
+            '1 ON (10)',
+            '2 JN JAMI (20)',
+            '2 ON (10)',
+            'JAMI',
+          ],
+          [1, 'TESTOV ALI VALIYEVICH', 14, 19, 4, 5, 9, 18, 8, 54],
+          [2, 'SINOVOVA LOLA', 9, 13, 3, 4, 7, 13, 6, 39],
+        ],
+      },
+    ]);
+    const preview = (sheet?: string) => {
+      const r = ctx
+        .http()
+        .post(`${books()}/${book.body.id}/import/preview`)
+        .set('Cookie', teacherA.cookie);
+      if (sheet) r.field('sheet', sheet);
+      return r.attach('file', file, 'baholar.xlsx');
+    };
+    const p = (await preview().expect(200)).body;
+    expect(p.sheet).toBe('8-24');
+    expect(p.sheets).toEqual([
+      { name: 'Boshqa guruh', matched: 0 },
+      { name: '8-24', matched: 2 },
+    ]);
+    expect(p.issues).toEqual([]);
+    expect(p.rows.map((r: { scores: unknown[] }) => r.scores)).toEqual([
+      [19, 18, 9, 8],
+      [13, 13, 7, 6],
+    ]);
+    expect(p.ignored).toEqual(['AMALIY JAMI', '1 ON yozma ish 5 ball', 'Hemis ON 5 ball']);
+
+    // The teacher may read another sheet; an unknown sheet is refused.
+    const other = (await preview('Boshqa guruh').expect(200)).body;
+    expect(other).toMatchObject({ sheet: 'Boshqa guruh', rows: [] });
+    await preview('Yo‘q varaq').expect(400);
+  });
+});

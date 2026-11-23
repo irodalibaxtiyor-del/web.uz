@@ -214,8 +214,8 @@ function Editor({
             <StatTile label="Talabalar" value={v.students.length} />
             <StatTile
               label="O‘rtacha joriy nazorat (JN)"
-              value={s.jnAverage === null ? '—' : `${s.jnAverage} / 40`}
-              hint="JN-1 + JN-2"
+              value={s.jnAverage === null ? '—' : `${s.jnAverage} / ${s.jnMax ?? 40}`}
+              hint={s.jnMax === 20 ? 'Hozircha faqat JN-1' : 'JN-1 + JN-2'}
             />
             <StatTile
               label="O‘rtacha jami ball"
@@ -250,8 +250,8 @@ function Editor({
         {credit && s.jnBands && (
           <BandCounts
             id="jn-bands-h"
-            title="Joriy nazorat (JN, 40 ball) bo‘yicha baholar"
-            note="“Ballar taqsimoti”: 36–40 → “5”, 28–35,9 → “4”, 24–27,9 → “3”, 0–23,9 → “2”."
+            title={`Joriy nazorat (JN, ${s.jnMax ?? 40} ball) bo‘yicha baholar`}
+            note={jnNote(s.jnMax ?? 40)}
             counts={s.jnBands}
           />
         )}
@@ -379,7 +379,7 @@ function Editor({
                     {credit ? (
                       <>
                         <th scope="col" className="px-3 py-2 text-left align-bottom">
-                          JN jami (40)
+                          JN jami ({s.jnMax ?? 40})
                         </th>
                         <th scope="col" className="px-3 py-2 text-left align-bottom">
                           ON jami (20)
@@ -496,6 +496,12 @@ function Editor({
   );
 }
 
+/** “Ballar taqsimoti” thresholds for a JN maximum: 90 / 70 / 60 %. */
+function jnNote(max: number) {
+  const f = (n: number) => String(Math.round(n * 10) / 10).replace('.', ',');
+  return `“Ballar taqsimoti”: ${f(max * 0.9)}–${max} → “5”, ${f(max * 0.7)}–${f(max * 0.9 - 0.1)} → “4”, ${f(max * 0.6)}–${f(max * 0.7 - 0.1)} → “3”, 0–${f(max * 0.6 - 0.1)} → “2”.`;
+}
+
 function BandCounts({
   id,
   title,
@@ -597,15 +603,18 @@ function ImportPanel({
 }) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<GradebookImportPreview | null>(null);
+  const [picked, setPicked] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
-  async function pick(file: File | undefined) {
+  async function pick(file: File | undefined, sheet?: string) {
     if (!file) return;
     setError(null);
     setPreview(null);
     setPending(true);
+    setPicked(file);
     const form = new FormData();
+    if (sheet) form.append('sheet', sheet);
     form.append('file', file);
     const r = await upload<GradebookImportPreview>(`${path}/import/preview`, form);
     setPending(false);
@@ -682,6 +691,29 @@ function ImportPanel({
           role="region"
           aria-label="Import natijasini oldindan ko‘rish"
         >
+          {preview.sheets && preview.sheets.length > 1 && (
+            <div className="flex flex-wrap items-center gap-2 text-sm">
+              <label htmlFor="imp-sheet" className="font-semibold">
+                Varaq
+              </label>
+              <select
+                id="imp-sheet"
+                className="field w-auto py-1"
+                value={preview.sheet}
+                disabled={pending}
+                onChange={(e) => void pick(picked ?? undefined, e.target.value)}
+              >
+                {preview.sheets.map((sh) => (
+                  <option key={sh.name} value={sh.name}>
+                    {sh.name} — {sh.matched} talaba mos
+                  </option>
+                ))}
+              </select>
+              <span className="text-muted">
+                Guruh ro‘yxatiga eng ko‘p mos kelgan varaq avtomatik tanlandi.
+              </span>
+            </div>
+          )}
           <p>
             <strong>{preview.rows.length}</strong> talaba moslandi, <strong>{filled}</strong> ta
             baho, <strong>{preview.columns.length}</strong> ta {credit ? 'nazorat' : 'dars'} ustuni

@@ -11,7 +11,7 @@ import {
   CREDIT_CONTROL_INFO,
   CREDIT_CONTROLS,
   CREDIT_YN_PASS,
-  creditHeldMax,
+  creditHeld,
   GRADE_BAND_LABEL,
   GRADE_BAND_MARK,
   GRADE_BANDS,
@@ -37,7 +37,7 @@ import {
 import { AuditService } from '../audit/audit.service';
 import type { AuthContext, MembershipContext } from '../common/types';
 import { buildXlsx, type Cell } from '../common/xlsx';
-import { readSpreadsheet, SpreadsheetError } from '../common/xlsx-read';
+import { readWorkbook, SpreadsheetError } from '../common/xlsx-read';
 import type { Db } from '../db/client';
 import { DbService } from '../db/db.module';
 import { gradebookColumns, gradebooks, gradebookScores, groups, groupStudents } from '../db/schema';
@@ -142,12 +142,12 @@ export class GradebookService {
       for (const c of columns) row[c.id] = scores.get(`${c.id}|${s.userId}`) ?? null;
       return row;
     });
-    const heldMax = creditHeldMax(columns, maps);
+    const held = creditHeld(columns, maps);
     const students = roster.map((s, i) => ({
       userId: s.userId,
       fullName: s.fullName,
       scores: maps[i]!,
-      ...gradebookMark(scheme, columns, maps[i]!, heldMax),
+      ...gradebookMark(scheme, columns, maps[i]!, held),
     }));
     return {
       id: book.id,
@@ -305,23 +305,41 @@ export class GradebookService {
     groupId: string,
     id: string,
     file: Buffer | undefined,
+    sheet?: string,
   ): Promise<GradebookImportPreview> {
     const { book, group } = await this.book(auth, m, groupId, id);
     if (!file || file.length === 0) throw new BadRequestException('Fayl tanlanmagan');
-    let rows;
+    let sheets;
     try {
-      rows = readSpreadsheet(file);
+      sheets = readWorkbook(file);
     } catch (e) {
       if (e instanceof SpreadsheetError) throw new BadRequestException(e.message);
       throw e;
     }
-    return previewGradebookImport(
-      rows,
-      await this.students(group),
-      await this.columns(book.id),
-      tashkentYear(),
-      schemeOf(book),
-    );
+    const roster = await this.students(group);
+    const columns = await this.columns(book.id);
+    const previews = sheets.map((s) => ({
+      name: s.name,
+      preview: previewGradebookImport(s.rows, roster, columns, tashkentYear(), schemeOf(book)),
+    }));
+    const cells = (p: GradebookImportPreview) =>
+      p.rows.reduce((n, r) => n + r.scores.filter((x) => x !== null).length, 0);
+    let chosen;
+    if (sheet !== undefined) {
+      chosen = previews.find((p) => p.name === sheet);
+      if (!chosen) throw new BadRequestException(`“${sheet}” varag‘i faylda yo‘q`);
+    } else {
+      // The sheet of this group: most students matched, then most grades.
+      chosen = [...previews].sort(
+        (a, b) =>
+          b.preview.rows.length - a.preview.rows.length || cells(b.preview) - cells(a.preview),
+      )[0]!;
+    }
+    return {
+      ...chosen.preview,
+      sheet: chosen.name,
+      sheets: previews.map((p) => ({ name: p.name, matched: p.preview.rows.length })),
+    };
   }
 
   async applyImport(
@@ -424,7 +442,7 @@ export class GradebookService {
       '№',
       'F.I.Sh.',
       ...cols.map(label),
-      'JN jami (40)',
+      `JN jami (${v.stats.jnMax ?? 40})`,
       'JN bahosi',
       'ON jami (20)',
       'Jami (100)',
@@ -450,7 +468,7 @@ export class GradebookService {
       ['Talabalar', v.students.length],
       ['O‘tkazilgan nazoratlar (maksimal ball)', v.stats.heldMax],
       ['O‘rtacha jami ball', v.stats.average],
-      ['O‘rtacha JN (40 dan)', v.stats.jnAverage],
+      [`O‘rtacha JN (${v.stats.jnMax ?? 40} dan)`, v.stats.jnAverage],
       ['YaN qo‘yilmagan talabalar', v.stats.pending],
       [],
       ['Joriy nazorat (JN) bahosi', 'Talabalar'],
@@ -510,8 +528,11 @@ export class GradebookService {
       const scheme = schemeOf(b);
       const scores = Object.fromEntries(withScores.map((c) => [c.id, c.score]));
       // “Held so far” comes from the whole group (a control the student missed still counts).
-      const heldMax = scheme === 'CREDIT' ? await this.heldMax(columns) : 0;
-      const mark = gradebookMark(scheme, columns, scores, heldMax);
+      const held = scheme === 'CREDIT' ? await this.held(columns) : new Set<string>();
+      const heldMax =
+        Math.round(columns.filter((c) => held.has(c.id)).reduce((s, c) => s + c.maxScore, 0) * 10) /
+        10;
+      const mark = gradebookMark(scheme, columns, scores, held);
       out.push({
         id: b.id,
         title: b.title,
@@ -570,9 +591,9 @@ export class GradebookService {
     }));
   }
 
-  /** CREDIT: sum of the maxima of columns that have any score. */
-  private async heldMax(columns: GradebookColumn[]): Promise<number> {
-    if (columns.length === 0) return 0;
+  /** CREDIT: ids of the columns that have any score in the whole group. */
+  private async held(columns: GradebookColumn[]): Promise<Set<string>> {
+    if (columns.length === 0) return new Set();
     const rows = await this.db
       .selectDistinct({ columnId: gradebookScores.columnId })
       .from(gradebookScores)
@@ -582,11 +603,7 @@ export class GradebookService {
           columns.map((c) => c.id),
         ),
       );
-    const held = new Set(rows.map((r) => r.columnId));
-    return (
-      Math.round(columns.filter((c) => held.has(c.id)).reduce((s, c) => s + c.maxScore, 0) * 10) /
-      10
-    );
+    return new Set(rows.map((r) => r.columnId));
   }
 
   private assertLessons(book: BookRow) {
