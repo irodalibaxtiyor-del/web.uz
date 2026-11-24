@@ -545,3 +545,7 @@ Oldingi sessiyalar (2026-10-08 … 2026-10-27): [docs/ISH_JURNALI_ARXIV.md](docs
 - Brauzer tekshiruvi (haqiqiy demo sayt, demo talaba; scratchpad `reader-check.cjs`) **11/11**, xatolar 0: matnli betlar A4 nisbatida (1,415), yotiq muqova o'z nisbatida; bitta bet + kenglik bo'yicha sahifa enini to'ldiradi; sepiya filtri; sozlamalar sahifa yangilangandan keyin saqlanadi; "+" → 125%, "0" → 100%; ikki bet + tungi; asl holiga qaytarish; telefon (390, dark) — gorizontal scroll yo'q, sozlamalar oynasi sig'adi.
 - Ochiq kuzatuv: `books.test.ts` dagi "broken PDF" testi bir marta 1606 s osilib yiqildi (qayta ishga tushirishda 20/20 va to'liq regressiyada o'tdi). Bu birinchi "Web dizayn" yuklashdagi osilishga o'xshaydi; tayyorlovchi child process'ning 10 daqiqalik majburiy to'xtatish taymeri u holda ishlamagani ko'rinadi — sababi topilmadi, takrorlansa tekshirish kerak.
 - Regressiya: format ✅, typecheck ✅, lint ✅, test ✅ (shared 142 + libs 3 + sandbox 16 + web 67 + check-engine 23 + api 549 = **800**).
+
+### Push
+
+- Foydalanuvchi: "commit qil va push ham qilgin". Push'dan oldin yuboriladigan 32 commit tekshirildi (repo ochiq): demo parol, guruh ro'yxatidagi 74 ism va baholar faylidagi 72 ism diff'da yo'q; test fixture'dagi ismlar to'qima; `.env.example` faqat bo'sh namunalar; tokenlar yo'q. `main` push qilindi (`ba17760..c17d0b5`), CI ishga tushdi. `apps/web/next-env.d.ts` ataylab commit qilinmaydi.
