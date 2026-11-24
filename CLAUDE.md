@@ -512,3 +512,10 @@ Oldingi sessiyalar (2026-10-08 … 2026-10-27): [docs/ISH_JURNALI_ARXIV.md](docs
 - Brauzer tekshiruvi (haqiqiy demo baza, faqat o'qish; import oldindan ko'rish ochilib bekor qilindi): 3 jurnal ochiladi, 9-24 da JN "/ 20" va 18/14/12 chegaralari, 10-24 da varaq avtomatik tanlanadi va boshqa varaqqa o'tish ishlaydi, telefonda (390, dark) gorizontal scroll yo'q, xatolar 0. Ismli skrinshotlar o'chirildi.
 - "Barcha fanlarga joylash" bo'yicha: fayldagi baholar bitta fanga (amaliy ishlar, JN/ON) tegishli; ularni boshqa fanlarga (HTML, CSS va h.k.) nusxalash — o'sha fanlardan qo'yilmagan baholarni yaratish bo'ladi, shuning uchun qilinmadi. Har guruh baholari o'z jurnalida.
 - Regressiya: format ✅, typecheck ✅, lint ✅, test ✅ (shared 142 + libs 3 + sandbox 16 + web 67 + check-engine 23 + api 546 = **797**).
+
+## 2026-11-24
+
+### 9-24 ATT: familiyasi o‘zgargan 3 talaba
+
+- Foydalanuvchi tasdiqladi: fayldagi 3 talaba turmushga chiqqach familiyasini o‘zgartirgan, platformadagi (yangi) familiya to‘g‘ri. Ularning JN-1 bali aniq juftlik bo‘yicha (ism va otasining ismi bir xil) yangi familiyali hisobga yozildi (`PUT scores`, scratchpad `renamed3.py`). 9-24 ATT: 25/28 talabada JN-1; faylda qatori yo‘q 3 talaba bo‘sh. Ismlar repoga yozilmadi.
+- Demo serverlar (API 4000, sandbox 3100, web 3000) foydalanuvchi tekshirishi uchun qayta ishga tushirildi.
