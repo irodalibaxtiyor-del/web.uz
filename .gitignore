@@ -13,3 +13,5 @@ coverage/
 apps/web/public/monaco/
 # Production env files referenced by deploy/docker-compose.prod.yml (contain secrets)
 deploy/*.env
+# Book PDFs the author drops in for upload (copyrighted, never committed)
+apps/Kitoblar/
