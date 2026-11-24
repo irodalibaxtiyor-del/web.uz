@@ -2,6 +2,7 @@ import { createCanvas, loadImage } from '@napi-rs/canvas';
 import { buildPageText, type PageText, type TextItem } from '@webdizayn/shared';
 import { copyFile, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join, sep } from 'node:path';
+import { dominantPageSize } from './page-size';
 
 /** Rendered widths: large for desktop/zoom, small for phones, thumbnails and the cover. */
 export const PAGE_WIDTH = { lg: 1400, sm: 700 } as const;
@@ -88,12 +89,12 @@ export async function rasterize(
   }
   await mkdir(outDir, { recursive: true });
 
-  let first = { width: 0, height: 0 };
+  const sizes: { width: number; height: number }[] = [];
   const texts: TextFile = [];
   for (let n = 1; n <= doc.numPages; n++) {
     const page = await doc.getPage(n);
     const base = page.getViewport({ scale: 1 });
-    if (n === 1) first = { width: base.width, height: base.height };
+    sizes.push({ width: base.width, height: base.height });
     const scale = Math.min(PAGE_WIDTH.lg / base.width, MAX_HEIGHT / base.height);
     const viewport = page.getViewport({ scale });
     const w = Math.max(1, Math.round(viewport.width));
@@ -125,7 +126,7 @@ export async function rasterize(
 
   const toc = await readOutline(doc);
   await task.destroy();
-  return { pageCount: doc.numPages, ...first, toc, textPages: texts.length };
+  return { pageCount: doc.numPages, ...dominantPageSize(sizes), toc, textPages: texts.length };
 }
 
 type Page = Awaited<ReturnType<Doc['getPage']>>;

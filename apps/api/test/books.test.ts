@@ -172,6 +172,31 @@ describe('book upload', () => {
     ]);
   });
 
+  it('keeps the uploaded cover when the book is rebuilt', async () => {
+    const coverColor = async () => {
+      const res = await get(admin, `${admBase()}/${bookId}/cover`)
+        .buffer(binary.buffer)
+        .parse(binary.parser as never)
+        .expect(200);
+      const img = await loadImage(res.body as Buffer);
+      const c = createCanvas(img.width, img.height);
+      c.getContext('2d').drawImage(img, 0, 0);
+      const d = c.getContext('2d').getImageData(img.width >> 1, img.height >> 1, 1, 1).data;
+      return [d[0]!, d[1]!, d[2]!];
+    };
+    const blue = (rgb: number[]) => rgb[2]! > 180 && rgb[0]! < 60;
+    expect(blue(await coverColor())).toBe(true);
+    await ctx
+      .http()
+      .post(`${admBase()}/${bookId}/reprocess`)
+      .set('Cookie', admin.cookie)
+      .expect(201);
+    await idle();
+    // Still the uploaded (blue) picture, not the first page (white with text).
+    expect(blue(await coverColor())).toBe(true);
+    expect(existsSync(bookPaths(dir, bookId).coverUpload)).toBe(false);
+  });
+
   it('marks a broken PDF as failed and does not let it be published', async () => {
     const broken = Buffer.from('%PDF-1.4\nthis is not really a pdf\n%%EOF');
     const res = await upload(admin, { title: 'Buzilgan' }, pdfFile(broken)).expect(201);

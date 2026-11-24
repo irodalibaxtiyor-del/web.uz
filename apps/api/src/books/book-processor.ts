@@ -2,7 +2,7 @@ import { Inject, Injectable, Logger, type OnModuleInit } from '@nestjs/common';
 import { workerEnv } from '@webdizayn/check-engine';
 import { and, eq } from 'drizzle-orm';
 import { spawn } from 'node:child_process';
-import { readFile, rm, stat } from 'node:fs/promises';
+import { copyFile, readFile, rm, stat } from 'node:fs/promises';
 import { join } from 'node:path';
 import { APP_CONFIG, type AppConfig } from '../config';
 import { DbService } from '../db/db.module';
@@ -84,6 +84,10 @@ export class BookProcessor implements OnModuleInit {
       .from(books)
       .where(eq(books.id, bookId));
     if (!row) return; // deleted meanwhile
+    // A rebuild has no fresh upload: reuse the custom cover made last time, otherwise the
+    // rebuild would silently replace it with the first page.
+    if (row.hasCover && !(await isFile(paths.coverUpload)) && (await isFile(paths.cover)))
+      await copyFile(paths.cover, paths.coverUpload);
 
     const reply = await this.run({
       pdfPath: paths.original,
@@ -231,4 +235,12 @@ export function parseReply(raw: string): WorkerReply {
     // fall through
   }
   return { ok: false, code: 'RENDER' };
+}
+
+async function isFile(path: string): Promise<boolean> {
+  try {
+    return (await stat(path)).isFile();
+  } catch {
+    return false;
+  }
 }

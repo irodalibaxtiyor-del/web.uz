@@ -307,6 +307,21 @@
   display: block;
   width: 100%;
   height: 100%;
+  /* A page keeps its own proportions (never stretched to the book's page box). */
+  object-fit: contain;
+}
+/* Reading tones (reader settings). */
+.book-reader[data-tone='sepia'] .book-page {
+  background: #f4ecd8;
+}
+.book-reader[data-tone='sepia'] .book-page canvas {
+  filter: sepia(0.45) brightness(0.97) contrast(0.95);
+}
+.book-reader[data-tone='dark'] .book-page {
+  background: #1b1d21;
+}
+.book-reader[data-tone='dark'] .book-page canvas {
+  filter: invert(0.9) hue-rotate(180deg) brightness(0.95);
 }
 /* Search matches over a page (boxes in % of the page). */
 .book-hl {

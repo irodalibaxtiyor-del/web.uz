@@ -15,14 +15,37 @@ import { isBlockedShortcut, pagesToLoad, visiblePages } from '@/lib/books';
 import { Dialog } from './dialog';
 import { Icon, type IconName } from './icons';
 
-const ZOOMS = [1, 1.25, 1.5, 2] as const;
-/** Below this stage width the book shows one page at a time. */
+const ZOOMS = [0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3] as const;
+type Zoom = (typeof ZOOMS)[number];
+/** Below this stage width "auto" shows one page at a time. */
 const SPREAD_MIN_WIDTH = 768;
 /** Decoded pages kept around the current view (memory stays bounded on long books). */
 const KEEP_RADIUS = 6;
 
 type Layout = { portrait: boolean; width: number };
 type Cached = { size: BookPageSize; bitmap: ImageBitmap };
+
+/** Reader preferences, kept in this browser (localStorage) for every book. */
+type View = 'auto' | 'single' | 'double';
+type Fit = 'page' | 'width';
+type Tone = 'light' | 'sepia' | 'dark';
+type Prefs = { view: View; fit: Fit; tone: Tone; zoom: Zoom };
+const DEFAULT_PREFS: Prefs = { view: 'auto', fit: 'page', tone: 'light', zoom: 1 };
+const PREFS_KEY = 'wd-book-reader';
+
+function loadPrefs(): Prefs {
+  try {
+    const raw = JSON.parse(localStorage.getItem(PREFS_KEY) ?? '{}') as Partial<Prefs>;
+    return {
+      view: (['auto', 'single', 'double'] as const).find((v) => v === raw.view) ?? 'auto',
+      fit: (['page', 'width'] as const).find((v) => v === raw.fit) ?? 'page',
+      tone: (['light', 'sepia', 'dark'] as const).find((v) => v === raw.tone) ?? 'light',
+      zoom: ZOOMS.find((z) => z === raw.zoom) ?? 1,
+    };
+  } catch {
+    return DEFAULT_PREFS;
+  }
+}
 
 /**
  * Flipbook reader. Pages arrive as watermarked images through short-lived signed URLs and are
@@ -48,7 +71,29 @@ export function BookReader({ book }: { book: BookDetail }) {
   const indexRef = useRef(startIndex);
 
   const [layout, setLayout] = useState<Layout | null>(null);
-  const [zoom, setZoom] = useState<(typeof ZOOMS)[number]>(1);
+  // The reader only renders in the browser (the book is fetched client-side), so the saved
+  // preferences can be read for the first render.
+  const [prefs, setPrefsState] = useState<Prefs>(() =>
+    typeof window === 'undefined' ? DEFAULT_PREFS : loadPrefs(),
+  );
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const { zoom, view, fit, tone } = prefs;
+  const setPrefs = useCallback((patch: Partial<Prefs>) => {
+    setPrefsState((p) => {
+      const next = { ...p, ...patch };
+      try {
+        localStorage.setItem(PREFS_KEY, JSON.stringify(next));
+      } catch {
+        // storage may be unavailable (private mode); the choice still applies now
+      }
+      return next;
+    });
+  }, []);
+  const setZoom = useCallback((z: Zoom) => setPrefs({ zoom: z }), [setPrefs]);
+  const zoomRef = useRef<Zoom>(zoom);
+  useEffect(() => {
+    zoomRef.current = zoom;
+  }, [zoom]);
   const [index, setIndex] = useState(startIndex);
   const [ready, setReady] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
@@ -67,9 +112,15 @@ export function BookReader({ book }: { book: BookDetail }) {
     const measure = () => {
       const w = stage.clientWidth - 16;
       const h = stage.clientHeight - 16;
-      const portrait = stage.clientWidth < SPREAD_MIN_WIDTH;
+      const portrait =
+        view === 'single' || (view === 'auto' && stage.clientWidth < SPREAD_MIN_WIDTH);
       const perRow = portrait ? 1 : 2;
-      const width = Math.max(200, Math.floor(Math.min(w, (h / aspect) * perRow)));
+      // "page": the whole page (or spread) fits the screen; "width": it fills the width and
+      // the reader scrolls down — larger text on wide screens.
+      const width = Math.max(
+        200,
+        Math.floor(fit === 'width' ? w : Math.min(w, (h / aspect) * perRow)),
+      );
       setLayout((prev) =>
         prev && prev.portrait === portrait && Math.abs(prev.width - width) < 24
           ? prev
@@ -86,17 +137,39 @@ export function BookReader({ book }: { book: BookDetail }) {
       clearTimeout(t);
       ro.disconnect();
     };
-  }, [aspect]);
+  }, [aspect, view, fit]);
 
-  const draw = useCallback((page: number) => {
-    const canvas = canvases.current.get(page);
-    const c = cache.current.get(page);
-    if (!canvas || !c) return;
-    canvas.width = c.bitmap.width;
-    canvas.height = c.bitmap.height;
-    canvas.getContext('2d')?.drawImage(c.bitmap, 0, 0);
-    canvas.parentElement?.classList.remove('is-loading');
-  }, []);
+  const draw = useCallback(
+    (page: number) => {
+      const canvas = canvases.current.get(page);
+      const c = cache.current.get(page);
+      if (!canvas || !c) return;
+      canvas.width = c.bitmap.width;
+      canvas.height = c.bitmap.height;
+      canvas.getContext('2d')?.drawImage(c.bitmap, 0, 0);
+      canvas.parentElement?.classList.remove('is-loading');
+      // The image keeps its own proportions inside the page box (object-fit: contain), so a
+      // page of another size (a landscape cover) is letterboxed, never stretched. The search
+      // highlight layer follows the image's box.
+      const layer = overlays.current.get(page);
+      if (layer) {
+        const own = c.bitmap.height / Math.max(1, c.bitmap.width);
+        const box = { left: 0, top: 0, width: 1, height: 1 };
+        if (own > aspect) {
+          box.width = aspect / own;
+          box.left = (1 - box.width) / 2;
+        } else {
+          box.height = own / aspect;
+          box.top = (1 - box.height) / 2;
+        }
+        layer.style.left = `${box.left * 100}%`;
+        layer.style.top = `${box.top * 100}%`;
+        layer.style.width = `${box.width * 100}%`;
+        layer.style.height = `${box.height * 100}%`;
+      }
+    },
+    [aspect],
+  );
 
   /** Draws the search matches over every page that has some (boxes in page fractions). */
   const paint = useCallback(() => {
@@ -311,6 +384,14 @@ export function BookReader({ book }: { book: BookDetail }) {
       if (t?.closest('input, textarea, select, dialog')) return;
       const f = flipRef.current;
       if (!f) return;
+      if (!e.ctrlKey && !e.metaKey && !e.altKey && ['+', '=', '-', '0'].includes(e.key)) {
+        const i = ZOOMS.indexOf(zoomRef.current);
+        if (e.key === '0') setZoom(1);
+        else if (e.key === '-') setZoom(ZOOMS[Math.max(0, i - 1)]!);
+        else setZoom(ZOOMS[Math.min(ZOOMS.length - 1, i + 1)]!);
+        e.preventDefault();
+        return;
+      }
       if (e.key === 'ArrowRight' || e.key === 'PageDown') f.flipNext();
       else if (e.key === 'ArrowLeft' || e.key === 'PageUp') f.flipPrev();
       else if (e.key === 'Home') f.turnToPage(0);
@@ -320,7 +401,22 @@ export function BookReader({ book }: { book: BookDetail }) {
     };
     window.addEventListener('keydown', onKey, true);
     return () => window.removeEventListener('keydown', onKey, true);
-  }, [n, book.searchable]);
+  }, [n, book.searchable, setZoom]);
+
+  // Ctrl + mouse wheel (or a trackpad pinch) zooms the book, not the whole site.
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) return;
+    const onWheel = (e: WheelEvent) => {
+      if (!e.ctrlKey && !e.metaKey) return;
+      e.preventDefault();
+      const i = ZOOMS.indexOf(zoomRef.current);
+      const next = ZOOMS[Math.min(ZOOMS.length - 1, Math.max(0, i + (e.deltaY < 0 ? 1 : -1)))]!;
+      if (next !== zoomRef.current) setZoom(next);
+    };
+    stage.addEventListener('wheel', onWheel, { passive: false });
+    return () => stage.removeEventListener('wheel', onWheel);
+  }, [setZoom]);
 
   useEffect(() => {
     const onChange = () => setFullscreen(document.fullscreenElement === rootRef.current);
@@ -346,6 +442,7 @@ export function BookReader({ book }: { book: BookDetail }) {
     <div
       ref={rootRef}
       className="book-reader flex h-full min-h-[24rem] flex-col bg-canvas select-none"
+      data-tone={tone}
       onContextMenu={(e) => e.preventDefault()}
       onDragStart={(e) => e.preventDefault()}
       onCopy={(e) => e.preventDefault()}
@@ -456,6 +553,11 @@ export function BookReader({ book }: { book: BookDetail }) {
           />
         </span>
         <ToolButton
+          icon="settings"
+          label="Ko‘rinish sozlamalari"
+          onClick={() => setSettingsOpen(true)}
+        />
+        <ToolButton
           icon={fullscreen ? 'minimize' : 'maximize'}
           label={fullscreen ? 'To‘liq ekrandan chiqish' : 'To‘liq ekran'}
           onClick={() =>
@@ -463,6 +565,82 @@ export function BookReader({ book }: { book: BookDetail }) {
           }
         />
       </footer>
+
+      <Dialog
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        title="Ko‘rinish sozlamalari"
+        description="Tanlovingiz shu brauzerda eslab qolinadi."
+        footer={
+          <>
+            <button type="button" className="btn btn-ghost" onClick={() => setPrefs(DEFAULT_PREFS)}>
+              Asl holiga qaytarish
+            </button>
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={() => setSettingsOpen(false)}
+            >
+              Tayyor
+            </button>
+          </>
+        }
+      >
+        <div className="space-y-5">
+          <Choice
+            legend="Betlar"
+            value={view}
+            onChange={(v) => setPrefs({ view: v })}
+            options={[
+              { value: 'auto', label: 'Avtomatik', hint: 'Keng ekranda ikki bet, telefonda bitta' },
+              { value: 'single', label: 'Bitta bet' },
+              { value: 'double', label: 'Ikki bet (yoyilgan kitob)' },
+            ]}
+          />
+          <Choice
+            legend="Joylashuv"
+            value={fit}
+            onChange={(v) => setPrefs({ fit: v })}
+            options={[
+              { value: 'page', label: 'Bet ekranga to‘liq sig‘sin' },
+              {
+                value: 'width',
+                label: 'Kenglik bo‘yicha',
+                hint: 'Yozuvlar kattaroq, pastga aylantirib o‘qiladi',
+              },
+            ]}
+          />
+          <Choice
+            legend="O‘qish rangi"
+            value={tone}
+            onChange={(v) => setPrefs({ tone: v })}
+            options={[
+              { value: 'light', label: 'Oq' },
+              { value: 'sepia', label: 'Sepiya', hint: 'Ko‘zga yumshoqroq' },
+              { value: 'dark', label: 'Tungi', hint: 'Qorong‘ida o‘qish uchun' },
+            ]}
+          />
+          <div>
+            <p className="mb-2 font-semibold">Kattalik: {Math.round(zoom * 100)}%</p>
+            <div className="flex flex-wrap gap-2">
+              {ZOOMS.map((z) => (
+                <button
+                  key={z}
+                  type="button"
+                  aria-pressed={z === zoom}
+                  className={`btn min-w-14 px-2 ${z === zoom ? 'btn-primary' : 'btn-outline'}`}
+                  onClick={() => setZoom(z)}
+                >
+                  {Math.round(z * 100)}%
+                </button>
+              ))}
+            </div>
+            <p className="mt-2 text-sm text-muted">
+              Klaviaturada “+” va “−”, “0” — 100%. Ctrl + sichqoncha g‘ildiragi ham ishlaydi.
+            </p>
+          </div>
+        </div>
+      </Dialog>
 
       <Dialog open={tocOpen} onClose={() => setTocOpen(false)} title="Mundarija">
         <ol className="space-y-1">
@@ -485,6 +663,46 @@ export function BookReader({ book }: { book: BookDetail }) {
         </ol>
       </Dialog>
     </div>
+  );
+}
+
+function Choice<T extends string>({
+  legend,
+  value,
+  onChange,
+  options,
+}: {
+  legend: string;
+  value: T;
+  onChange: (v: T) => void;
+  options: { value: T; label: string; hint?: string }[];
+}) {
+  const name = useId();
+  return (
+    <fieldset>
+      <legend className="mb-2 font-semibold">{legend}</legend>
+      <div className="grid gap-2 sm:grid-cols-3">
+        {options.map((o) => (
+          <label
+            key={o.value}
+            className="flex cursor-pointer items-start gap-2 rounded-xl border border-line p-3 has-checked:border-brand-500 has-checked:bg-brand-50 dark:has-checked:bg-brand-950"
+          >
+            <input
+              type="radio"
+              name={name}
+              value={o.value}
+              checked={value === o.value}
+              onChange={() => onChange(o.value)}
+              className="mt-1"
+            />
+            <span>
+              <span className="block text-sm font-medium">{o.label}</span>
+              {o.hint && <span className="block text-xs text-muted">{o.hint}</span>}
+            </span>
+          </label>
+        ))}
+      </div>
+    </fieldset>
   );
 }
 

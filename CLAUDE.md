@@ -531,3 +531,17 @@ Oldingi sessiyalar (2026-10-08 … 2026-10-27): [docs/ISH_JURNALI_ARXIV.md](docs
 - Kod o'zgarmadi. PDF'lar va muqova rasmi `apps/api/.data/` da (git'ga tushmaydi).
 - Keyin foydalanuvchi `apps/Kitoblar/` papkasiga ham PDF'lar qo'ydi: ikkitasi joylangan kitoblarning eskiroq nusxasi (joylanganlari — 2024 nusxalari), yangisi — **"Kompyuter grafikasi"** darsligi (U.A. Yuldashev, S.X. Islikov, M.Z. Xudoyberdiyev, F.A. Xakimova; Bookmany print, 2026; ISBN 978-9910-288-02-9; 347 bet). PDF'ning 1-beti butun muqova (orqa + qirra + old) — old tomoni qirqilib muqova qilindi; yuklandi (110 s), e'lon qilindi. Jami "Muallif kitoblari"da 4 kitob.
 - `apps/Kitoblar/` `.gitignore` ga qo'shildi (repo ochiq — kitob PDF'lari tasodifan commit qilinmasin).
+
+### Kitob o'quvchisi: cho'zilgan betlar tuzatildi, ko'rinish sozlamalari
+
+- Foydalanuvchi skrinshoti: "Kompyuter grafikasi" betlari eniga cho'zilib, matn o'qishga qiyin. Sabab: kitobning bet o'lchami **1-betdan** olinardi — bu PDF'da 1-bet yotiq yoyilgan muqova (842 × 595), shuning uchun hamma tik betlar yotiq qutiga cho'zilgan; o'quvchida esa canvas `width/height: 100%` bilan qutiga to'liq cho'zilardi.
+- API: `books/page-size.ts` — `dominantPageSize` (eng ko'p uchraydigan bet o'lchami, ±2 pt; teng bo'lsa — avvalgisi) + 2 test; `rasterize.ts` shu bilan.
+- Web `book-reader.tsx`:
+  - bet rasmi o'z nisbatini saqlaydi (`object-fit: contain`), boshqa o'lchamli bet (yotiq muqova) cho'zilmaydi, chetlari bo'sh qoladi; qidiruv belgilari qatlami rasm qutisiga moslanadi;
+  - "Ko'rinish sozlamalari" oynasi (⚙): **Betlar** — avtomatik / bitta bet / ikki bet; **Joylashuv** — bet ekranga to'liq sig'sin / kenglik bo'yicha (yozuv kattaroq, pastga aylantiriladi); **O'qish rangi** — oq / sepiya / tungi (CSS filtr, suv belgisi saqlanadi); **Kattalik** 50–300% (8 qadam); "Asl holiga qaytarish". Tanlov `localStorage` da (`wd-book-reader`) eslab qolinadi;
+  - zoom: "+", "−", "0" (100%) tugmalari va Ctrl + g'ildirak (butun sayt emas, faqat kitob).
+- **Topilgan va tuzatilgan xato (avvaldan bor edi):** "Qayta ishlash" yuklangan muqovani yo'qotardi — tayyorlashdan keyin yuklangan muqova fayli o'chiriladi, qayta ishlashda esa 1-bet muqova bo'lib qolardi (`hasCover` ham `false`). Endi qayta ishlashda mavjud o'z muqovasi qayta ishlatiladi (`book-processor.ts`); test `books.test.ts` "keeps the uploaded cover when the book is rebuilt" (tuzatishdan oldin yiqildi, keyin o'tdi).
+- Demo bazada: "Kompyuter grafikasi" qirqilgan muqova bilan qayta yuklandi, "Web dasturlash va dizayn" qayta ishlandi (muqova saqlandi) — endi 4 kitobning hammasi 595 × 842.
+- Brauzer tekshiruvi (haqiqiy demo sayt, demo talaba; scratchpad `reader-check.cjs`) **11/11**, xatolar 0: matnli betlar A4 nisbatida (1,415), yotiq muqova o'z nisbatida; bitta bet + kenglik bo'yicha sahifa enini to'ldiradi; sepiya filtri; sozlamalar sahifa yangilangandan keyin saqlanadi; "+" → 125%, "0" → 100%; ikki bet + tungi; asl holiga qaytarish; telefon (390, dark) — gorizontal scroll yo'q, sozlamalar oynasi sig'adi.
+- Ochiq kuzatuv: `books.test.ts` dagi "broken PDF" testi bir marta 1606 s osilib yiqildi (qayta ishga tushirishda 20/20 va to'liq regressiyada o'tdi). Bu birinchi "Web dizayn" yuklashdagi osilishga o'xshaydi; tayyorlovchi child process'ning 10 daqiqalik majburiy to'xtatish taymeri u holda ishlamagani ko'rinadi — sababi topilmadi, takrorlansa tekshirish kerak.
+- Regressiya: format ✅, typecheck ✅, lint ✅, test ✅ (shared 142 + libs 3 + sandbox 16 + web 67 + check-engine 23 + api 549 = **800**).
