@@ -519,3 +519,13 @@ Oldingi sessiyalar (2026-10-08 … 2026-10-27): [docs/ISH_JURNALI_ARXIV.md](docs
 
 - Foydalanuvchi tasdiqladi: fayldagi 3 talaba turmushga chiqqach familiyasini o‘zgartirgan, platformadagi (yangi) familiya to‘g‘ri. Ularning JN-1 bali aniq juftlik bo‘yicha (ism va otasining ismi bir xil) yangi familiyali hisobga yozildi (`PUT scores`, scratchpad `renamed3.py`). 9-24 ATT: 25/28 talabada JN-1; faylda qatori yo‘q 3 talaba bo‘sh. Ismlar repoga yozilmadi.
 - Demo serverlar (API 4000, sandbox 3100, web 3000) foydalanuvchi tekshirishi uchun qayta ishga tushirildi.
+
+### Muallif kitoblari joylandi
+
+- Foydalanuvchi: o'z kitoblarini onlayn o'qiladigan, ko'chirib bo'lmaydigan, lekin ichidan qidiriladigan qilib joylash. Funksiya (2026-11-16, "Muallif kitoblari") tayyor edi, lekin PDF'lar platformaga yuklanmagan edi (`apps/api/.data/kitoblar/` bo'sh edi).
+- PDF'lar foydalanuvchining kafedra papkasidan topildi; qaysilarini joylashni foydalanuvchi o'zi tanladi (har kitobning eng yangi nusxasi olindi). Tanlangan to'rtinchi fayl kitob emas, 3-kitobni nashrga tavsiya etgan Kengash bayonnomasidan ko'chirma (1 bet, rasm) ekani aniqlandi — joylanmadi.
+- Admin API orqali "Muallif kitoblari" (`AUTHOR`) bo'limiga yuklandi va e'lon qilindi (titul betlaridagi ma'lumotlar bilan): "Kompyuter grafikasi va web dizayn" (2022, 293 bet), "Web dizayn" (2022, 212 bet), "Web dasturlash va dizayn" (amaliy va laboratoriya ishlari uslubiy qo'llanmasi, 2023, 93 bet). Uchalasida matn qatlami bor — ichidan qidiriladi.
+- Kuzatuv: "Web dizayn" birinchi tayyorlashda 10 daqiqalik chegaradan o'tib FAILED bo'ldi ("Qayta ishlash juda uzoq davom etdi"), garchi pdf.js alohida ishga tushirilganda 212 bet 45 s da xatosiz chizilsa ham (sekin bet yo'q). "Qayta ishlash" bilan 65 s da READY. Sababi aniqlanmadi (ehtimol bir vaqtda yuklangan boshqa kitob bilan raqobat); takrorlansa tekshirish kerak.
+- 3-kitob PDF'ining 1-beti Kengash bayonnomasi — muqova sifatida shu chiqqan edi; titul beti (2-bet) rasm sifatida muqova qilinib kitob qayta yuklandi (muqovani faqat yuklashda berish mumkin).
+- Brauzer tekshiruvi (haqiqiy demo sayt, faqat o'qish; scratchpad `books-check.cjs`) **14/14**: mehmon menyudan bo'limga kiradi, 3 kitob va muqovalar, sahifada PDF havolasi yo'q, mehmonga betlar 401, PDF beradigan route yo'q (404); talaba uchala kitobni o'qiydi (betlarda ismi, ID va sana bilan suv belgisi), o'quvchida belgilash/o'ng tugma/nusxalash bloklangan, Ctrl+F qidiruvi ("HTML" — 59 betda), API faqat ≤147 belgili parchalar beradi; telefon (390, dark) — gorizontal scroll yo'q.
+- Kod o'zgarmadi. PDF'lar va muqova rasmi `apps/api/.data/` da (git'ga tushmaydi).
